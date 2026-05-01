@@ -14,6 +14,24 @@ Implement an **Event-Driven Architecture (EDA)** using the **Transactional Outbo
 - **Relay**: A background poller or CDC (Change Data Capture) process reads from the outbox and publishes events to the message broker (Kafka/RabbitMQ).
 - **Idempotent Consumers**: All event handlers must be idempotent to handle at-least-once delivery.
 
+#### Outbox Flow Diagram
+```plantuml
+@startuml
+skinparam monochrome true
+participant "Domain Service" as Domain
+participant "Database" as DB
+participant "Outbox Relay" as Relay
+participant "Message Broker" as Broker
+
+Domain -> DB : 1. Save Business Entity
+Domain -> DB : 2. Save Event to Outbox Table
+DB -> DB : Commit Transaction
+Relay -> DB : 3. Poll Outbox Table
+Relay -> Broker : 4. Publish Event
+Broker -> Domain : 5. Trigger Consumer
+@enduml
+```
+
 ## Consequences
 - **Positive**: Guaranteed eventual consistency and high availability. No distributed transaction locks.
 - **Negative**: Increased complexity in the persistence layer and temporary lag (eventual consistency) between contexts.

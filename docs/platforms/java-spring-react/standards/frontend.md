@@ -30,6 +30,10 @@
 ```
 
 - **Consistent Components**: Use Ant Design for standard UI (forms, tables, modals, buttons).
+- **Automated Testing Identifiers**: 
+  - **Mandate**: All interactive elements (inputs, buttons, links) MUST have a stable, meaningful `data-testid` attribute.
+  - **Prohibit**: Never use dynamic IDs, CSS classes, or auto-generated selectors for E2E testing.
+  - **Naming Convention**: Use `kebab-case` and describe the purpose (e.g., `data-testid="submit-order-button"`, `data-testid="user-email-input"`).
 - **Forms**: Use `Form` with `rules`. Define validation schemas separately (Zod, Yup).
 - **Tables**: Use `Table` with `columns` defined outside the component or memoized.
 - **Icons**: Use `@ant-design/icons`. Import specific icons, not the whole package.
