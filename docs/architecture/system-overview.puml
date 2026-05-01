@@ -1,0 +1,39 @@
+@startuml
+!theme plain
+skinparam componentStyle rectangle
+
+package "Hermes System" {
+    [hermes-agent] as Agent <<Core Service>>
+    [hermes-mcp] as MCP <<Sidecar>>
+    [hermes-dashboard] as Dashboard <<Sidecar>>
+}
+
+package "Infrastructure Gateway" {
+    [dockerproxy] as Proxy <<Security Gateway>>
+}
+
+package "LLM Orchestration" {
+    [bifrost] as Bifrost <<Load Balancer / Gateway>>
+}
+
+package "LLM Cluster" {
+    component "Ollama Node 1" as Ollama1
+    component "Ollama Node 2" as Ollama2
+    component "Ollama Node N" as OllamaN
+}
+
+' Relationships
+Agent --> MCP : local communication
+Agent --> Dashboard : local communication
+Agent --> Proxy : Docker API requests
+Proxy --> [Docker Socket] : Filtered access
+
+Agent --> Bifrost : LLM Requests
+Bifrost --> Ollama1
+Bifrost --> Ollama2
+Bifrost --> OllamaN
+
+note right of Proxy : Prevents full access\nto docker socket
+note top of Bifrost : Load balances requests\nto Ollama farm
+
+@enduml
