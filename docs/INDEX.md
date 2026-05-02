@@ -13,7 +13,7 @@ These documents apply regardless of the technology stack.
 | **Resilience** | [`standards/resilience.md`](agnostic/standards/resilience.md) | Resilience & Observability patterns |
 | **Process** | [`standards/review.md`](agnostic/standards/review.md) | PR Review and onboarding process |
 | **Workflow** | [`standards/workflow.md`](agnostic/standards/workflow.md) | Engineering workflow and CI/CD |
-| **ADRs** | [`adr/`](agnostic/adr/) | Core architectural decisions (Clean Arch, EDA, Idempotency) |
+| **ADRs** | [`adr/`](agnostic/adr/) | Core architectural decisions (Clean Arch, EDA, Idempotency, Port & Adapter) |
 | **Guidelines** | [`guidelines/`](agnostic/guidelines/) | General design and coding patterns |
 
 ### 💻 Platform-Specific Implementations

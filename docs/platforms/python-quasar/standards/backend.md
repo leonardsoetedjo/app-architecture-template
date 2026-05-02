@@ -65,6 +65,19 @@ FastAPI controllers, SQLAlchemy models, mappers.
 - **Transactions**: Manage transactions at the use case level using context managers or decorators.
   - **Transaction Boundary Rule**: Prohibit transactions on methods that call external APIs or perform long-running I/O.
 - **Logging**: Use `loguru` or the standard `logging` module. INFO (business), DEBUG (details), WARN (recoverable), ERROR (failures).
+- **External Service Integration (Port & Adapter)**: For every third-party API or SDK, define an abstract `Port` (ABC) in the application layer. Implement the concrete `Adapter` in infrastructure. Application code depends on the Port only. See **ADR 012** for full rules and compliance checklist.
+  ```python
+  # domain/ports/payment_port.py
+  class PaymentPort(ABC):
+      @abstractmethod
+      async def charge(self, amount: Decimal, currency: str) -> str: ...
+
+  # infrastructure/adapters/stripe_adapter.py
+  class StripeAdapter(PaymentPort):
+      async def charge(self, amount: Decimal, currency: str) -> str:
+          # Only place Stripe SDK is imported
+          ...
+  ```
 
 ## 4. SQLAlchemy & Persistence
 
