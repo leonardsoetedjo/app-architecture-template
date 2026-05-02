@@ -62,17 +62,19 @@ DELETE /api/v1/orders/{id}      # Delete
 
 ```
 project-root/
-├── backend/
-│   └── src/main/java/com/example/app/
-│       ├── domain/              # Entities, value objects, events, repository ports
-│       ├── application/         # Use cases, DTOs, service interfaces
-│       ├── infrastructure/      # Adapters: persistence, web, external APIs
-│       └── App.java
+├── services/                # Microservices (Mono-repo or Poly-repo)
+│   └── service-name/
+│       ├── src/
+│       │   ├── domain/              # Entities, value objects, events, repository ports
+│       │   ├── application/         # Use cases, DTOs, service interfaces
+│       │   └── infrastructure/      # Adapters: persistence, web, external APIs
+│       ├── tests/                   # Integration and Unit tests
+│       └── migrations/              # DB versioning
 ├── frontend/
 │   ├── src/
-│   │   ├── components/          # Reusable UI (Ant Design)
+│   │   ├── components/          # Reusable UI (Ant Design / Quasar)
 │   │   ├── pages/               # Route-level components
-│   │   ├── hooks/               # Custom React hooks
+│   │   ├── hooks/               # Custom React/Vue hooks
 │   │   ├── services/            # API clients
 │   │   ├── store/               # State management
 │   │   ├── types/               # TypeScript interfaces
@@ -80,15 +82,11 @@ project-root/
 │   │   └── styles/              # Global styles, theme overrides
 │   └── tests/
 ├── docs/
-│   ├── standards/               # Detailed standards docs
-│   │   ├── backend.md
-│   │   ├── frontend.md
-│   │   ├── devops.md
-│   │   ├── architecture.md
-│   │   └── review.md
-│   └── adr/                     # Architecture Decision Records
+│   ├── agnostic/            # Platform-independent principles
+│   ├── platforms/          # Stack-specific implementation guides
+│   └── architecture/        # High-level diagrams
 ├── docker-compose.yml
-└── CLAUDE.md                    # This file
+└── AGENTS.md                    # This file
 ```
 
 ---
