@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, List
 from uuid import UUID, uuid4
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
+
+from .events import OrderPlacedEvent
 
 @dataclass(frozen=True)
 class OrderId:
@@ -25,6 +27,16 @@ class Order:
     items: List[OrderItem]
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     status: str = "PENDING"
+
+    def confirm(self) -> OrderPlacedEvent:
+        """Confirm the order and return a domain event."""
+        if self.status != "PENDING":
+            raise InvalidOrderException("Only pending orders can be confirmed")
+        self.status = "CONFIRMED"
+        return OrderPlacedEvent(
+            order_id=self.id.value,
+            customer_id=self.customer_id
+        )
 
 class DomainException(Exception):
     """Base exception for all domain violations."""

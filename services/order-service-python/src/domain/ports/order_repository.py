@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Optional
-from ..models.order import Order, OrderId
+from typing import Optional, List
+from .models.order import Order, OrderId
 
 class OrderRepository(ABC):
     @abstractmethod

@@ -7,6 +7,7 @@ version: 1.0
 
 **Status**: [Accepted | Proposed | Superseded | Deprecated]
 **Date**: [YYYY-MM-DD]
+**Owner**: [Team/Person]
 
 ## Context
 [Describe the problem, the constraints, and the current state. Explain why a decision is needed now.]
@@ -27,4 +28,9 @@ version: 1.0
 ## Alternatives Considered
 | Alternative | Pros | Cons | Why rejected? |
 | :--- | :--- | :--- | :--- |
+
+## References
+- Related standards
+- OpenAPI specs
+- External documentation
 | [Alternative X] | [Pros] | [Cons] | [Reason] |

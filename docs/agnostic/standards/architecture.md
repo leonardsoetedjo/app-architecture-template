@@ -229,9 +229,35 @@ Align services with bounded contexts from DDD. Each service owns its data, domai
 
 ### 4.7 Testing
 - Test event publishing and consumption in integration tests.
-- Use embedded broker (Testcontainers for Kafka) in-memory broker for tests.
+- Use embedded broker (Testcontainers for Kafka) or in-memory broker for tests.
 
-## 8. Data Integrity & Consistency
+## 5. API Contract Governance (Design-First)
+
+### 5.1 OpenAPI as Source of Truth
+- **Mandate**: Every service must have an OpenAPI specification (`docs/architecture/api-specs/v1/{service-name}.yaml`).
+- **Versioning**: Specs live in versioned directories. Breaking changes require a new version directory.
+- **Single Source**: The API spec is the contract. Implementation must derive from the spec.
+
+### 5.2 Common Schemas
+All services **must** use these shared schemas:
+- **ErrorResponse**: Standard error envelope with `status`, `message`, `timestamp`, and `error.code`.
+- **PaginationMeta**: Standard pagination fields (`total`, `limit`, `offset`, `hasMore`).
+
+### 5.3 Implementation Standards
+- **Java (Spring Boot)**: Use SpringDoc annotations (`@Operation`, `@ApiResponse`, `@Tag`).
+- **Python (FastAPI)**: Document Pydantic models with `description` fields. Use `responses` dict in endpoint decorators.
+- **Code Generation**: Use `openapi-typescript` or `openapi-generator` to generate type-safe clients from the spec.
+
+### 5.4 Contract Testing
+- Run Spectral linting on specs in CI (`spectral lint docs/architecture/api-specs/v1/*.yaml`).
+- Use Prism to validate implementation against the spec.
+- Block PRs with contract test failures.
+
+### 5.5 Files
+- `docs/architecture/api-specs/v1/order-service.yaml` - Order service contract
+- `docs/architecture/api-specs/v1/common-schemas.yaml` - Shared schemas
+
+## 6. Data Integrity & Consistency
 (Existing content)
 
 ## 9. Reliability & Performance
