@@ -1,4 +1,4 @@
-# ADR 012: Port and Adapter Pattern for External Service Integration
+# ADR 12: Port and Adapter Pattern for External Service Integration
 
 **Status**: Accepted
 **Date**: 2026-05-02

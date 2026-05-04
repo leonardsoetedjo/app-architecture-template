@@ -1,4 +1,4 @@
-# ADR 011: JWT Security (Python/Quasar)
+# ADR 11: JWT Security (Python/Quasar)
 
 **Status**: Accepted
 **Date**: 2026-05-01

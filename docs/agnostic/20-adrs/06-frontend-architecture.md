@@ -1,4 +1,4 @@
-# ADR 006: Frontend Architecture (Container/Presentational)
+# ADR 06: Frontend Architecture (Container/Presentational)
 
 **Status**: Accepted
 **Date**: 2026-04-30

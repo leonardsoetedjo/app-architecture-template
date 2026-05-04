@@ -1,4 +1,4 @@
-# ADR 010: Secret Management (Python/Quasar)
+# ADR 10: Secret Management (Python/Quasar)
 
 **Status**: Accepted
 **Date**: 2026-05-01

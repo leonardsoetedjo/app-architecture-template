@@ -1,4 +1,4 @@
-# ADR 003: Event-Driven Architecture and Outbox Pattern
+# ADR 03: Event-Driven Architecture and Outbox Pattern
 
 **Status**: Accepted
 **Date**: 2026-04-30

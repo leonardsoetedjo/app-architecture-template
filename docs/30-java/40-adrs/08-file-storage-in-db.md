@@ -1,4 +1,4 @@
-# ADR 008: File Storage in Database
+# ADR 08: File Storage in Database
 
 **Status**: Accepted
 **Date**: 2026-04-30

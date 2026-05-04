@@ -3,7 +3,7 @@ name: API Contract Governance (Design-First)
 type: ADR
 version: 1.0
 ---
-# ADR 013: API Contract Governance (Design-First)
+# ADR 13: API Contract Governance (Design-First)
 
 **Status**: Accepted
 **Date**: 2026-05-03

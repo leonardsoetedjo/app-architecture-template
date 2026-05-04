@@ -1,4 +1,4 @@
-# ADR 009: Structured Logging for Observability (NDJSON & MDC)
+# ADR 09: Structured Logging for Observability (NDJSON & MDC)
 
 **Status**: Accepted
 **Date**: 2026-04-30

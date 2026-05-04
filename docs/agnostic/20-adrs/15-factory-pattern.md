@@ -1,4 +1,4 @@
-# ADR 015: Factory Pattern for Use Case Creation
+# ADR 15: Factory Pattern for Use Case Creation
 
 **Status**: Accepted
 **Date**: 2026-05-04

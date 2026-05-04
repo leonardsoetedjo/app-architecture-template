@@ -28,22 +28,22 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 | 70 | [mdc-logging.md](10-standards/70-mdc-logging.md) | Multi-Dimensional Correlation Logging |
 | 80 | [testing.md](10-standards/80-testing.md) | Testing standards and coverage rules |
 | 90 | [review.md](10-standards/90-review.md) | PR Review and onboarding process |
-| 100 | [frontend-architecture.md](10-standards/100-frontend-architecture.md) | Frontend Architecture Standards |
-| 110 | [workflow.md](10-standards/110-workflow.md) | Engineering workflow and CI/CD |
+| 10 | [frontend-architecture.md](10-standards/10-frontend-architecture.md) | Frontend Architecture Standards |
+| 11 | [workflow.md](10-standards/11-workflow.md) | Engineering workflow and CI/CD |
 
 ## 20 — ADRs
 
 | # | Document | Purpose |
 |---|----------|---------|
-| 001 | [clean-architecture.md](20-adrs/001-clean-architecture.md) | Clean Architecture + DDD adoption |
-| 003 | [eda-outbox.md](20-adrs/003-eda-outbox.md) | Event-Driven Architecture with Outbox pattern |
-| 004 | [batch-idempotency.md](20-adrs/004-batch-idempotency.md) | Batch processing idempotency |
-| 005 | [api-idempotency.md](20-adrs/005-api-idempotency.md) | REST API idempotency |
-| 006 | [frontend-architecture.md](20-adrs/006-frontend-architecture.md) | SPA vs SSR decision |
-| 007 | [migration-strategy.md](20-adrs/007-migration-strategy.md) | Database migration approach |
-| 009 | [structured-logging.md](20-adrs/009-structured-logging.md) | JSON structured logging |
-| 012 | [port-adapter.md](20-adrs/012-port-adapter.md) | Hexagonal (Port-Adapter) architecture |
-| 013 | [api-contract-governance.md](20-adrs/013-api-contract-governance.md) | OpenAPI-driven contract enforcement |
+| 01 | [clean-architecture.md](20-adrs/01-clean-architecture.md) | Clean Architecture + DDD adoption |
+| 03 | [eda-outbox.md](20-adrs/03-eda-outbox.md) | Event-Driven Architecture with Outbox pattern |
+| 04 | [batch-idempotency.md](20-adrs/04-batch-idempotency.md) | Batch processing idempotency |
+| 05 | [api-idempotency.md](20-adrs/05-api-idempotency.md) | REST API idempotency |
+| 06 | [frontend-architecture.md](20-adrs/06-frontend-architecture.md) | SPA vs SSR decision |
+| 07 | [migration-strategy.md](20-adrs/07-migration-strategy.md) | Database migration approach |
+| 09 | [structured-logging.md](20-adrs/09-structured-logging.md) | JSON structured logging |
+| 12 | [port-adapter.md](20-adrs/12-port-adapter.md) | Hexagonal (Port-Adapter) architecture |
+| 13 | [api-contract-governance.md](20-adrs/13-api-contract-governance.md) | OpenAPI-driven contract enforcement |
 
 ## 30 — Guidelines
 

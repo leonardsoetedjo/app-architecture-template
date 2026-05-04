@@ -10,25 +10,52 @@
 ```plantuml
 @startuml
 skinparam monochrome true
-package "Domain" #white {
-    [Entities]
-    [Value Objects]
-    [Domain Events]
-    [Repository Ports]
+
+class OrderDomainService <<Domain>>
+class OrderRepository <<Domain Port>>
+class EventPublisher <<Domain Port>>
+
+class PlaceOrderUseCase <<Application>> {
+  + execute(command)
 }
-package "Application" #lightgrey {
-    [Use Cases]
-    [DTOs]
-}
-package "Infrastructure" #grey {
-    [Controllers]
-    [Persistence Adapters]
-    [External API Clients]
-    [Secrets Manager]
-}
-[Infrastructure] --> [Application] : Calls
-[Application] --> [Domain] : Calls
-[Infrastructure] --> [Domain] : Implement Ports
+class OrderResponseDto <<Application>>
+
+class OrderJpaRepository <<Infrastructure>>
+class OrderController <<Infrastructure>>
+class KafkaEventPublisher <<Infrastructure>>
+class OrderEntityMapper <<Infrastructure>>
+
+PlaceOrderUseCase --> OrderDomainService : uses
+PlaceOrderUseCase --> OrderRepository : depends on port
+PlaceOrderUseCase --> EventPublisher : depends on port
+
+OrderJpaRepository ..|> OrderRepository : implements
+KafkaEventPublisher ..|> EventPublisher : implements
+
+OrderController --> PlaceOrderUseCase : injects
+OrderController --> OrderResponseDto : returns
+
+OrderJpaRepository --> OrderEntityMapper : uses
+
+note right of PlaceOrderUseCase
+  **Application Layer**
+  Orchestrates domain logic.
+  Depends ONLY on domain ports.
+end note
+
+note bottom of OrderRepository
+  **Domain Port (Interface)**
+  Defined in inner layer.
+  Infrastructure provides concrete
+  implementations via adapters.
+end note
+
+note right of OrderJpaRepository
+  **Infrastructure Layer**
+  Implements domain ports.
+  Depends inward on domain.
+  Frameworks live here.
+end note
 @enduml
 ```
 
@@ -40,7 +67,7 @@ package "Infrastructure" #grey {
 - **Ports and Adapters**: Define interfaces (ports) in inner layers. Implement them (adapters) in outer layers.
   - **External Service Integration**: For any third-party API, SDK, or protocol, the Port interface lives in the domain/application layer and speaks the application's language. The concrete Adapter lives in infrastructure and handles vendor-specific quirks (error codes, data formats, authentication schemes, rate limits).
   - **Factory + Mock**: Use a factory to select the real adapter vs a deterministic mock based on environment config. Application services depend on the Port type only.
-  - See **ADR 012: Port and Adapter Pattern** for full rules, compliance checklist, and code templates.
+  - See **ADR 12: Port and Adapter Pattern** for full rules, compliance checklist, and code templates.
 - **DTOs for boundaries**: Use Data Transfer Objects to pass data across layer boundaries.
 
 ## 2. Domain-Driven Design (DDD)

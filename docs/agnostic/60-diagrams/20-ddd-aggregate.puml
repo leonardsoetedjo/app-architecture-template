@@ -57,7 +57,7 @@ abstract class ValueObject {
 Order --|> AggregateRoot
 OrderItem --|> Entity
 Order "1" *-- "many" OrderItem : contains
-OrderItem "many" >-- "1" Money : references
+OrderItem "many" --> "1" Money : references
 Money --|> ValueObject
 OrderConfirmed --|> DomainEvent
 OrderConfirmed "many" <-- "1" Order : raises

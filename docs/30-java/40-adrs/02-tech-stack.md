@@ -1,4 +1,4 @@
-# ADR 002: Technology Stack Selection
+# ADR 02: Technology Stack Selection
 
 **Status**: Accepted
 **Date**: 2026-04-30

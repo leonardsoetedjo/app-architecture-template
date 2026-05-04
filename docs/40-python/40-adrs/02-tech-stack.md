@@ -1,4 +1,4 @@
-# ADR 002: Technology Stack Selection (Python/Quasar Platform)
+# ADR 02: Technology Stack Selection (Python/Quasar Platform)
 
 **Status**: Accepted
 **Date**: 2026-05-01

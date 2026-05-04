@@ -1,4 +1,4 @@
-# ADR 011: Secure JWT Storage & Transmission
+# ADR 11: Secure JWT Storage & Transmission
 
 **Status**: Accepted
 **Date**: 2026-04-30

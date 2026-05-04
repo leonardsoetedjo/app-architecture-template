@@ -1,4 +1,4 @@
-# ADR 001: Clean Architecture and Domain-Driven Design (DDD)
+# ADR 01: Clean Architecture and Domain-Driven Design (DDD)
 
 **Status**: Accepted
 **Date**: 2026-04-30

@@ -1,4 +1,4 @@
-# ADR 005: API Idempotency (Idempotency Keys)
+# ADR 05: API Idempotency (Idempotency Keys)
 
 **Status**: Accepted
 **Date**: 2026-04-30

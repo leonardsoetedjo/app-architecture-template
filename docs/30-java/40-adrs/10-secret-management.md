@@ -1,4 +1,4 @@
-# ADR 010: Secret Management Strategy
+# ADR 10: Secret Management Strategy
 
 **Status**: Accepted
 **Date**: 2026-04-30

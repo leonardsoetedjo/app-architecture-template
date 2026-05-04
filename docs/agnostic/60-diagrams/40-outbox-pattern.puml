@@ -9,7 +9,6 @@ participant "Order DB\n(PostgreSQL)" as DB #CCCCFF
 participant "Outbox Table" as OB #CCCCFF
 participant "Event Relay\n(Outbox Poller)" as Relay #FFFFCC
 queue "Event Bus\n(Kafka / RabbitMQ)" as Bus #FFCCCC
-title Outbox Pattern — Transactional Event Publishing
 
 == Happy Path ==
 Client -> OS : POST /orders

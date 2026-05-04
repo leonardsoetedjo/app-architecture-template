@@ -1,4 +1,4 @@
-# ADR 008: File Storage in Database (Python/Quasar)
+# ADR 08: File Storage in Database (Python/Quasar)
 
 **Status**: Accepted
 **Date**: 2026-05-01

@@ -1,4 +1,4 @@
-# ADR 014: Resilience Patterns with Resilience4j
+# ADR 14: Resilience Patterns with Resilience4j
 
 **Status**: Accepted
 **Date**: 2026-05-04
@@ -93,12 +93,50 @@ class ExternalServiceClient:
 
 ## Circuit Breaker States
 
-```
-CLOSED ──(failures > threshold)──> OPEN ──(wait duration)──> HALF_OPEN
-                                             │                      │
-                                    (fail)   │                      │   (success)
-                                             ▼                      ▼
-                                        OPEN (back to)          CLOSED
+```plantuml
+@startuml
+skinparam monochrome true
+skinparam state {
+  BackgroundColor #white
+  BorderColor #333
+}
+
+[*] -> CLOSED : service starts
+
+state CLOSED {
+}
+state OPEN {
+}
+state HALF_OPEN {
+}
+
+CLOSED -> OPEN : failures > threshold
+OPEN -> HALF_OPEN : wait duration elapsed
+HALF_OPEN -> CLOSED : probe success
+HALF_OPEN -> OPEN : probe failure
+
+note right of CLOSED
+  **CLOSED**
+  All requests pass through.
+  Failure counter increments
+  on each exception.
+end note
+
+note right of OPEN
+  **OPEN**
+  All requests fail fast.
+  No upstream calls made.
+  After timeout, transition
+  to HALF_OPEN.
+end note
+
+note right of HALF_OPEN
+  **HALF_OPEN**
+  Single probe request allowed.
+  Determines if service
+  recovered before resetting.
+end note
+@enduml
 ```
 
 ## Retry Configuration

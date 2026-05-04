@@ -1,4 +1,4 @@
-# ADR 004: Batch Idempotency Framework
+# ADR 04: Batch Idempotency Framework
 
 **Status**: Accepted
 **Date**: 2026-04-30

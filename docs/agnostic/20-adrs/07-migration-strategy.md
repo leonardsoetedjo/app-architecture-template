@@ -1,4 +1,4 @@
-# ADR 007: Database Migration Strategy (Expand-Contract)
+# ADR 07: Database Migration Strategy (Expand-Contract)
 
 **Status**: Accepted
 **Date**: 2026-04-30

@@ -151,6 +151,6 @@ secret_manager.initialize()
 
 ## References
 
-- ADR 012: Port and Adapter Pattern
+- ADR 12: Port and Adapter Pattern
 - Resilience & Observability Standards
 - Common API Schemas
