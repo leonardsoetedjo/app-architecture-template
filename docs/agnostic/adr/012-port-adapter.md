@@ -31,9 +31,14 @@ backend/src/
 │   └── ports/
 │       └── notification_port.py   # Abstract interface
 ├── infrastructure/
-│   └── adapters/
-│       ├── twilio_adapter.py     # Concrete: calls Twilio SDK
-│       └── mock_notification_adapter.py  # Deterministic fake
+│   ├── adapters/              # Concrete adapter implementations
+│   │   ├── twilio_adapter.py     # Calls Twilio SDK
+│   │   └── mock_notification_adapter.py  # Deterministic fake
+│   └── secrets/               # Secrets and credentials management
+│       ├── secret_manager.py     # Unified secret loading
+│       └── mtls/                 # mTLS configuration
+│           ├── configuration.py  # Primary/secondary cert config
+│           └── selector.py       # Automatic failover logic
 └── services/
     └── alert_service.py          # Depends on NotificationPort only
 ```
@@ -130,6 +135,59 @@ def create_notification_port() -> NotificationPort:
     )
 ```
 
+### Factory Injection (Java - Spring Boot)
+
+```java
+@Service
+public class NotificationService {
+    private final NotificationPort notificationPort;
+
+    public NotificationService(NotificationPort notificationPort) {
+        this.notificationPort = notificationPort;
+    }
+
+    public void sendNotification(String to, String body) {
+        notificationPort.send(to, body, Map.of());
+    }
+}
+
+@Configuration
+public class NotificationConfig {
+    @Bean
+    @Primary
+    public NotificationPort notificationPort(NotificationSettings settings) {
+        if (settings.isMockEnabled()) {
+            return new MockNotificationAdapter();
+        }
+        return new TwilioNotificationAdapter(
+            settings.getAccountSid(),
+            settings.getAuthToken(),
+            settings.getFromNumber()
+        );
+    }
+}
+```
+
+### Java - MTLS Configuration with Failover
+
+```java
+@Configuration
+public class ExternalHttpClientConfig {
+    @Bean
+    public WebClient externalWebClient(SSLContext sslContext) {
+        HttpClient httpClient = HttpClient.create()
+            .secure(sslSpec -> sslSpec.sslContext(sslContext))
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+            .responseTimeout(Duration.ofMillis(30000));
+        
+        return WebClient.builder()
+            .baseUrl("https://api.example.com")
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
+            .build();
+    }
+}
+```
+
 ### Frontend Equivalent (TypeScript — e.g., analytics SDK)
 
 ```typescript
@@ -171,10 +229,13 @@ export class MockAnalyticsAdapter implements AnalyticsPort {
 - **Swappability**: Changing from Twilio to SendGrid, Segment to Mixpanel, or Stripe to PayPal requires only a new adapter class.
 - **No vendor leakage**: Business logic never references vendor-specific error codes, IDs, or data shapes.
 - **Deterministic CI**: Mock adapters eliminate flaky tests caused by external API outages or rate limits.
+- **Secrets Management**: Java Keystore integration for secure credentials storage with fallback to environment variables.
+- **mTLS Support**: Automatic certificate failover between primary and secondary certificates for external service communication.
 
 ### Negative
 - **Boilerplate**: Every external service requires a Port interface + at least two adapter implementations (real + mock).
 - **Mapping overhead**: Adapters must translate between vendor formats and application formats. This is tedious for complex APIs.
+- **Configuration Complexity**: Secrets management requires proper keystore setup and environment configuration.
 
 ### Trade-off
 We accept the upfront boilerplate cost to prevent vendor lock-in and enable reliable testing. The alternative — direct SDK calls scattered across services — creates untestable code that becomes exponentially harder to refactor.
@@ -189,3 +250,44 @@ For every new external service integration, verify:
 - [ ] Factory function selects real vs mock based on environment configuration
 - [ ] Application services depend on the Port type, never the concrete adapter type
 - [ ] Migration path documented: what files must change when swapping providers
+- [ ] Secrets stored in keystore (production) with environment fallback (development)
+- [ ] MTLS certificates configured with primary/secondary failover
+- [ ] Circuit breaker and retry patterns applied to external calls
+- [ ] Database configuration externalized via environment variables
+- [ ] No database-specific types in domain models (use UUID, standard types)
+- [ ] Repository implementations depend only on domain ports, not database frameworks
+
+## Java Boilerplate Reference
+
+### Directory Structure
+```
+boilerplate/java/common/src/main/java/com/example/common/
+├── infrastructure/
+│   ├── api/
+│   │   └── CorrelationFilter.java         # MDC logging
+│   ├── config/
+│   │   └── DatabaseConfig.java            # DataSource configuration
+│   └── http/
+│       ├── ExternalHttpClientConfig.java   # WebClient with mTLS
+│       ├── ExternalServiceClient.java      # Resilience patterns
+│       ├── MTLSConfiguration.java          # Cert config
+│       ├── MTLSConfiguration.java          # Cert selector
+│       └── ResilienceConfig.java           # Circuit breaker/Retry
+└── secrets/
+    ├── SecretManager.java                  # Keystore loader
+    ├── SecretManagerConfiguration.java
+    ├── KeystoreConfiguration.java
+    └── FallbackConfiguration.java
+```
+
+## Python Boilerplate Reference
+
+### Directory Structure
+```
+boilerplate/python/common/src/common/infrastructure/
+├── api/
+│   └── middleware.py                       # MDC, log_use_case decorator
+├── config/
+└── secrets/
+    └── secret_manager.py                   # Keystore loader
+```

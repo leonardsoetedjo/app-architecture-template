@@ -32,6 +32,44 @@ Broker -> Domain : 5. Trigger Consumer
 @enduml
 ```
 
+### Database Portability
+
+The outbox model uses database-agnostic types (SQLAlchemy `Uuid()` or JPA `UUID`), enabling:
+- Switching PostgreSQL ↔ MySQL ↔ Oracle ↔ MSSQL without code changes
+- Testing with H2/SQLite in memory without code changes
+
+#### Python Implementation
+```python
+from sqlalchemy import Column, String, DateTime, JSON
+from sqlalchemy.types import Uuid  # Cross-database UUID type
+
+class OutboxEvent(Base):
+    __tablename__ = "outbox_events"
+    
+    id = Column(Uuid(), primary_key=True, default=uuid.uuid4)
+    event_type = Column(String(100), nullable=False)
+    payload = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    published = Column(Integer, default=0)
+    publish_error = Column(String(500), nullable=True)
+```
+
+#### Java Implementation
+```java
+@Entity
+@Table(name = "outbox_events")
+public class OutboxEvent {
+    @Id
+    private UUID id;  // Standard Java UUID - works on all databases
+    
+    private String eventType;
+    private Map<String, Object> payload;
+    private OffsetDateTime createdAt;
+    private Integer published = 0;
+    private String publishError;
+}
+```
+
 ## Consequences
 - **Positive**: Guaranteed eventual consistency and high availability. No distributed transaction locks.
 - **Negative**: Increased complexity in the persistence layer and temporary lag (eventual consistency) between contexts.
