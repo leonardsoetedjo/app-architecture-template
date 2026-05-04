@@ -99,6 +99,33 @@ public class OrderServiceClient {
   - **Exponential Backoff**: Increase wait time between retries (e.g., 100ms, 200ms, 400ms).
   - **Jitter**: Add random noise to backoff to prevent "thundering herd" effect on the downstream service.
   - **Max Attempts**: Limit retries (typically 3) to avoid hanging the user request.
+  - **Fallback Method**: When retry exhausted, use fallback to return graceful degradation response.
+
+**Boilerplate Example**:
+```java
+@Service
+@RequiredArgsConstructor
+public class ExternalServiceClient {
+
+    private final WebClient webClient;
+
+    @CircuitBreaker(name = "externalApi", fallbackMethod = "fallbackCall")
+    @Retry(name = "externalApiRetry", fallbackMethod = "retryFallbackCall")
+    public <T> T callExternalSystem(String endpoint, T request, Class<T> responseType) {
+        // ... request execution ...
+    }
+
+    public <T> T fallbackCall(String endpoint, T request, Class<T> responseType, Throwable t) {
+        log.warn("Circuit breaker OPEN. Using fallback.");
+        return createFallbackResponse(responseType);
+    }
+
+    public <T> T retryFallbackCall(String endpoint, T request, Class<T> responseType, Throwable t) {
+        log.warn("Retry exhausted. Using fallback.");
+        return createFallbackResponse(responseType);
+    }
+}
+```
 
 ### 2.3 Timeouts
 - **Rule**: Every external call (HTTP, DB, Cache) **must** have an explicit timeout.
@@ -110,6 +137,49 @@ public class OrderServiceClient {
 ### 2.4 Bulkheads
 - **Purpose**: Isolate failure to a specific pool of resources to prevent a single failing endpoint from consuming all server threads.
 - **Implementation**: Use separate thread pools or semaphores for different external dependencies.
+
+### 2.5 Circuit Breaker Configuration
+
+**Resilience4j Configuration (application.yml)**:
+```yaml
+resilience4j:
+  circuitbreaker:
+    instances:
+      externalApi:
+        failure-rate-threshold: 50  # % of failures to open circuit
+        minimum-number-of-calls: 5  # Calls needed before evaluating
+        wait-duration-in-open-state: 5s  # Time before half-open test
+        automatic-transition-from-open-to-half-open-enabled: true
+        sliding-window-size: 10  # Number of calls in sliding window
+  
+  retry:
+    instances:
+      externalApiRetry:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - java.net.TimeoutException
+          - java.io.IOException
+```
+
+**Circuit Breaker States Flow**:
+```plantuml
+@startuml
+skinparam monochrome true
+[*] --> CLOSED
+CLOSED --> OPEN : failure_rate > threshold
+OPEN --> HALF_OPEN : wait_duration
+HALF_OPEN --> CLOSED : success
+HALF_OPEN --> OPEN : failure
+OPEN --> OPEN : failures continue
+@enduml
+```
+
+**Circuit Breaker Events**:
+- **CLOSED**: Normal operation, requests pass through
+- **OPEN**: Circuit tripped, requests fail fast
+- **HALF_OPEN**: Testing if service recovered, limited requests allowed
 
 ---
 

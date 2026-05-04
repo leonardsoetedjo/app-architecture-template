@@ -168,7 +168,7 @@ public class NotificationConfig {
 }
 ```
 
-### Java - MTLS Configuration with Failover
+## Java - MTLS Configuration with Failover and Automatic Failback
 
 ```java
 @Configuration
@@ -186,6 +186,74 @@ public class ExternalHttpClientConfig {
             .build();
     }
 }
+```
+
+### mTLS Automatic Failback
+
+The `MTLSCertificateSelector` automatically switches back to the primary certificate after a configurable number of successful calls with the secondary certificate:
+
+```java
+@RequiredArgsConstructor
+public class MTLSCertificateSelector implements ExchangeFilterFunction {
+    public static final String PRIMARY_CERTIFICATE = "primary";
+    public static final String SECONDARY_CERTIFICATE = "secondary";
+
+    private final MTLSConfiguration configuration;
+    private volatile String currentCertificate = PRIMARY_CERTIFICATE;
+    private int successCountSinceFailover = 0;
+
+    private Mono<ClientResponse> switchToPrimaryCert(ClientRequest request, ExchangeFunction next) {
+        if (successCountSinceFailover >= configuration.getSuccessThresholdForFailback()) {
+            currentCertificate = PRIMARY_CERTIFICATE;
+            successCountSinceFailover = 0;
+            log.info("Switching back to primary mTLS certificate after successful calls");
+            return next.exchange(request);
+        }
+        return Mono.empty();
+    }
+}
+```
+
+**Failback Configuration** (application.yml):
+```yaml
+mtls:
+  success-threshold-for-failback: 10  # Switch back after 10 successful calls
+  primary:
+    cert-path: /etc/ssl/certs/primary.crt
+    key-path: /etc/ssl/private/primary.key
+  secondary:
+    cert-path: /etc/ssl/certs/secondary.crt
+    key-path: /etc/ssl/private/secondary.key
+```
+
+### Factory Pattern for Use Case Creation
+
+For use cases requiring per-request dependency injection, use a factory pattern:
+
+```java
+@Service
+public class OrderController {
+    private final ObjectFactory<PlaceOrderUseCase> useCaseFactory;
+    
+    public OrderController(ObjectFactory<PlaceOrderUseCase> useCaseFactory) {
+        this.useCaseFactory = useCaseFactory;
+    }
+    
+    @PostMapping("/orders")
+    public OrderResult createOrder(@RequestBody CreateOrderCommand command) {
+        PlaceOrderUseCase useCase = useCaseFactory.getObject();
+        return useCase.execute(command);
+    }
+}
+```
+
+Python equivalent uses factory functions:
+
+```python
+def create_place_order_use_case(db: Session) -> PlaceOrderUseCase:
+    repo = SqlAlchemyOrderRepository(db)
+    domain_service = OrderPlacementService(repo)
+    return PlaceOrderUseCaseImpl(domain_service)
 ```
 
 ### Frontend Equivalent (TypeScript — e.g., analytics SDK)
