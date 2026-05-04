@@ -1,0 +1,70 @@
+@startuml Microservices
+!theme plain
+
+title Microservices Topology — Event-Driven with API Gateway
+
+cloud "External Clients" {
+    rectangle SPA as "SPA / Mobile / Third-party"
+}
+
+node "API Gateway" {
+    rectangle GW as "Auth, Rate Limit,\nRouting, Load Balance"
+}
+
+rectangle "Service Mesh" {
+    rectangle "User Service" as US
+    rectangle "Order Service" as OS
+    rectangle "Payment Service" as PS
+    rectangle "Inventory Service" as IS
+    rectangle "Notification Service" as NS
+}
+
+database "PostgreSQL" {
+    rectangle USDB
+    rectangle OSDB
+    rectangle PSDB
+    rectangle ISDB
+}
+
+queue "Kafka / RabbitMQ" {
+    rectangle TopicOrders
+    rectangle TopicPayments
+    rectangle TopicInventory
+    rectangle DLQ
+}
+
+SPA --> GW : HTTPS
+GW --> US : /api/users/**
+GW --> OS : /api/orders/**
+GW --> PS : /api/payments/**
+GW --> IS : /api/inventory/**
+
+US --> USDB
+OS --> OSDB
+PS --> PSDB
+IS --> ISDB
+
+OS -right-> TopicOrders : publish
+TopicOrders --> PS : consume
+TopicOrders --> IS : consume
+TopicOrders --> NS : consume
+
+PS -right-> TopicPayments : publish
+TopicPayments --> OS : consume
+TopicPayments --> DLQ : on failure
+
+note right of DLQ
+  **Dead Letter Queue:**
+  Failed messages land here
+  with metadata + headers.
+  Alert & re-process manually.
+end note
+
+legend right
+  Each service owns its own
+  database. Services communicate
+  via async events (event bus)
+  or sync REST (mesh / gateway).
+endlegend
+
+@enduml

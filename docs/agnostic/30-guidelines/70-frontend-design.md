@@ -1,6 +1,6 @@
 # Frontend Design Deep-Dive: Implementation Patterns
 
-This document expands on the [Frontend Architecture Standards](docs/agnostic/standards/frontend-architecture.md) by providing concrete implementation patterns, decision matrices, and technical workflows.
+This document expands on the [Frontend Architecture Standards](../10-standards/100-frontend-architecture.md) by providing concrete implementation patterns, decision matrices, and technical workflows.
 
 ## 1. FSD Decision Matrix: "Where does this go?"
 

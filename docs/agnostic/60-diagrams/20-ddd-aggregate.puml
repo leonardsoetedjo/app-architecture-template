@@ -1,0 +1,81 @@
+@startuml DDD_Tactical
+!theme plain
+
+title DDD — Tactical Design Patterns
+
+abstract class AggregateRoot {
+  + UUID id
+  + List<DomainEvent> events
+  + void apply(DomainEvent)
+  + void commit()
+}
+
+class Order {
+  - List<OrderItem> items
+  - OrderStatus status
+  - Money totalPrice
+  + void addItem(ProductId, Quantity)
+  + void confirm()
+  + void ship()
+}
+
+class OrderItem {
+  + ProductId productId
+  + Quantity quantity
+  + Money price
+}
+
+class Money {
+  + BigDecimal amount
+  + Currency currency
+}
+
+class OrderRepository {
+  + Order findById(OrderId)
+  + void save(Order)
+  + List<Order> findUnconfirmed()
+}
+
+class OrderConfirmed {
+  + OrderId orderId
+  + Instant occurredOn
+}
+
+abstract class DomainEvent {
+  + abstract Instant occurredOn()
+}
+
+abstract class Entity {
+  + UUID id
+}
+
+abstract class ValueObject {
+  + boolean equals(Object)
+  + int hashCode()
+}
+
+Order --|> AggregateRoot
+OrderItem --|> Entity
+Order "1" *-- "many" OrderItem : contains
+OrderItem "many" >-- "1" Money : references
+Money --|> ValueObject
+OrderConfirmed --|> DomainEvent
+OrderConfirmed "many" <-- "1" Order : raises
+OrderRepository .. Order : manages
+
+note right of Order
+  **AggregateRoot Rules:**
+  1. External refs only via ID
+  2. Child entities cannot be
+     accessed from outside
+  3. Invariant checks on mutations
+end note
+
+note right of ValueObject
+  **Value Object Rules:**
+  1. Immutable
+  2. Identity-free
+  3. Content equality
+end note
+
+@enduml

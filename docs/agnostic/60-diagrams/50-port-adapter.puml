@@ -1,0 +1,75 @@
+@startuml HexagonalArchitecture
+!theme plain
+
+title Hexagonal Architecture — Ports & Adapters
+
+skinparam rectangle {
+    BorderColor #333
+}
+
+rectangle "Domain (Core)" as Domain #CCCCFF {
+    rectangle "Order Aggregate" as Agg
+    rectangle "Order\nRepository Port" as PortRepo #CCFFCC
+    rectangle "Order\nUseCase Port" as PortUC #CCFFCC
+}
+
+rectangle "Driving Adapters\n(Input / Primary)" as Driving #CCFFCC {
+    rectangle "REST\nController" as RestCtrl
+    rectangle "CLI\nCommand" as CLI
+    rectangle "gRPC\nService" as GRPC
+    rectangle "Message\nConsumer" as MsgIn
+}
+
+rectangle "Driven Adapters\n(Output / Secondary)" as Driven #CCFFCC {
+    rectangle "JPA\nRepository" as JPA
+    rectangle "PostgreSQL\nClient" as PG
+    rectangle "Kafka\nProducer" as Kafka
+    rectangle "Stripe\nGateway" as Stripe
+}
+
+RestCtrl -right-> PortUC : drives
+CLI -right-> PortUC : drives
+GRPC -right-> PortUC : drives
+MsgIn -right-> PortUC : drives
+
+PortUC -right-> Agg : orchestrates
+Agg -right-> PortRepo : depends on
+
+PortRepo -right-> JPA : drives
+JPA -right-> PG : drives
+
+Agg -[hidden]d-> Kafka
+Agg -[hidden]d-> Stripe
+
+note right of Domain
+  **Domain (Inner Hexagon):**
+  Pure business logic.
+  Defines ports (interfaces).
+  Has ZERO knowledge of
+  adapters, framework, or DB.
+end note
+
+note right of Driving
+  **Driving Adapters (Primary):**
+  Trigger use-cases.
+  Convert external I/O formats
+  into internal domain commands.
+  e.g. REST, CLI, gRPC, AMQP
+end note
+
+note right of Driven
+  **Driven Adapters (Secondary):**
+  Implement domain-defined ports.
+  Handle tech-specific concerns.
+  e.g. JPA, Kafka, Stripe
+end note
+
+legend right
+  Arrows show dependency direction:
+  Adapters depend on Ports.
+  Ports depend on Domain.
+  Domain knows nothing of the
+  outside world.
+endlegend
+
+@enduml

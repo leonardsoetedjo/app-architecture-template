@@ -1,0 +1,60 @@
+@startuml CleanArchitecture
+!theme plain
+
+title Clean Architecture — Layered Dependency Rule
+
+skinparam rectangle {
+    BorderColor #333
+}
+skinparam arrow {
+    Color #333
+}
+
+rectangle "Frameworks & Drivers" as FW #FFCCCC {
+    rectangle "Controllers\n(RestControllers)\nPresenters" as Ctrl
+    rectangle "External Services\n(RabbitMQ, AWS, DB)" as Ext
+}
+
+rectangle "Interface Adapters" as IA #CCFFCC {
+    rectangle "Gateways\n(RepositoryImpl)\nMappers\n(DTO <-> Entity)" as Gate
+}
+
+rectangle "Use Cases" as UC #FFFFCC {
+    rectangle "Interactors\n(Application Services)\nInput/Output Ports" as Inter
+}
+
+rectangle "Entities" as Ent #CCCCFF {
+    rectangle "Enterprise Business Rules\nDomain Models\nAggregates, Value Objects" as EntRules
+}
+
+' Dependency arrows — only inward
+FW -d-[hidden]-> IA
+IA -d-[hidden]-> UC
+UC -d-[hidden]-> Ent
+
+Ctrl -d-> Gate
+Gate -d-> Inter
+Inter -d-> EntRules
+
+note right of EntRules
+  **Inner Circle** — Pure domain logic.
+  No dependencies on frameworks, DB, or UI.
+end note
+
+note right of FW
+  **Outer Circle** — Framework-specific glue code.
+  All dependencies point inward.
+end note
+
+note "The Dependency Rule:\nSource code dependencies\nmay only point INWARD" as N1
+N1 .. UC
+
+legend right
+  | Color | Layer |
+  | #CCCCFF | Entities (Domain) |
+  | #FFFFCC | Use Cases (Application) |
+  | #CCFFCC | Interface Adapters |
+  | #FFCCCC | Frameworks & Drivers |
+endlegend
+
+@enduml

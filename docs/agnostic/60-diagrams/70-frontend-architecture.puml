@@ -1,0 +1,95 @@
+@startuml FrontendArchitecture
+!theme plain
+
+title Frontend Architecture — SPA Layered Design
+
+skinparam rectangle {
+    BorderColor #333
+}
+
+rectangle "Presentation Layer" as Pres #FFCCCC {
+    rectangle "Pages /
+Route Components" as Pages
+    rectangle "UI Components
+(Ant Design / Quasar)" as UI
+    rectangle "Composable /
+Hooks (Vue3 / React)" as Hooks
+}
+
+rectangle "Application Layer" as App #FFFFCC {
+    rectangle "ViewModels /
+State Stores (Pinia)" as VM
+    rectangle "UseCase
+Facades" as Facades
+    rectangle "DTOs &
+Validation" as DTO
+}
+
+rectangle "Infrastructure Layer" as Infra #CCFFCC {
+    rectangle "API Client
+(axios / fetch)" as API
+    rectangle "Auth Adapter
+(JWT / OAuth)" as Auth
+    rectangle "WS/Realtime
+(Socket.IO)" as WS
+}
+
+rectangle "Domain (Shared)" as Domain #CCCCFF {
+    rectangle "Entity
+Models" as Entity
+    rectangle "Value
+Objects" as VO
+    rectangle "Domain
+Event Handlers" as DE
+}
+
+pages --> UI : renders
+pages --> Hooks : uses
+UI --> VM : binds state
+Hooks --> VM : reads/writes
+VM --> Facades : calls
+Facades --> DTO : transforms
+Facades --> API : request
+Facades --> Auth : token
+Facades --> WS : subscribe
+API --> DTO : deserializes
+Domain --> Entity : models
+Domain --> VO : models
+Domain --> DE : handles
+
+note right of Pages
+  **Presentation Rules**
+  1. Must stay "dumb" — only
+     display UI and delegate.
+  2. No direct API calls.
+  3. Use composition for
+     shared behavior.
+end note
+
+note right of Facades
+  **UseCase Facades**
+  Orchestrate side effects:
+  - API request
+  - Error mapping
+  - Loading state
+  - Cache invalidation
+end note
+
+note right of API
+  **API Client Config**
+  - Base URL from env
+  - Request/Response interceptors
+  - MDC header injection:
+    X-Correlation-Id
+  - Retry + circuit breaker
+end note
+
+legend right
+  | Color | Layer |
+  | #FFCCCC | Presentation |
+  | #FFFFCC | Application |
+  | #CCFFCC | Infrastructure |
+  | #CCCCFF | Domain |
+endlegend
+
+@enduml

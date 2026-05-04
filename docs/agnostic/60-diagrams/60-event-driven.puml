@@ -1,0 +1,73 @@
+@startuml EventDriven
+!theme plain
+
+title Event-Driven Architecture — Message Flow
+
+actor "External\nClient" as Client
+participant "API\nGateway" as GW
+participant "Order\nService" as OS
+database "Order\nDB" as ODB
+participant "Outbox\nRelay" as Relay
+queue "Event\nBus" as EB
+participant "Payment\nService" as PS
+database "Payment\nDB" as PDB
+participant "Inventory\nService" as IS
+database "Inventory\nDB" as IDB
+participant "Notification\nService" as NS
+queue "Dead\nLetter" as DLQ
+
+== Command (Synchronous) ==
+Client -> GW : POST /orders
+GW -> OS : Route request
+OS -> OS : Validate + create Aggregate
+OS -> ODB : INSERT order + outbox (TX)
+OS --> GW : 201 Created
+GW --> Client : OrderDto
+
+== Event (Asynchronous, eventually) ==
+Relay -> ODB : Poll outbox
+ODB --> Relay : OrderCreated event
+Relay -> EB : Publish OrderCreated
+
+par Parallel Consumers
+    EB -> PS : OrderCreated
+    PS -> PDB : Process payment
+    PS -> EB : publish PaymentProcessed
+
+    EB -> IS : OrderCreated
+    IS -> IDB : Reserve stock
+    IS -> EB : publish StockReserved
+
+    EB -> NS : OrderCreated
+    NS -> NS : Send confirmation email
+end
+
+== Compensation (Saga) — Payment Fails ==
+PS -> EB : publish PaymentFailed
+EB -> OS : PaymentFailed
+OS -> OS : Mark order cancelled
+OS -> ODB : UPDATE status (TX + outbox)
+EB -> IS : PaymentFailed
+IS -> IDB : Release reserved stock
+
+== Dead Letter Handling ==
+PS -> EB : Nack (retry exhausted)
+EB -> DLQ : Move message
+DLQ -> Ops : Alert + manual review
+
+note right of EB
+  **Event Bus Guarantees**
+  - At-least-once delivery
+  - Topic/queue isolation
+  - Publisher confirms
+  - Consumer idempotency required
+end note
+
+note right of DLQ
+  **DLQ Rules**
+  - Max retries: 5 (exponential backoff)
+  - Dead message retention: 14 days
+  - Alert threshold: > 10 msgs / 5 min
+end note
+
+@enduml
