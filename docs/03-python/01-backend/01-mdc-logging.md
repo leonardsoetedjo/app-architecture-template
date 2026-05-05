@@ -89,7 +89,128 @@ def process_order_task(payload):
         tenant_id.reset(token_tenant)
 ```
 
-## 4. Log Format for NDJSON
+## 4. Centralized Exception & Business Error Logging
+Use FastAPI exception handlers to capture all errors in one place. ContextVars are already populated by `CorrelationMiddleware`, so every error log carries the same context.
+
+### 4.1 Global Exception Handler
+```python
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from loguru import logger
+
+class BusinessException(Exception):
+    def __init__(self, code: str, message: str):
+        self.code = code
+        self.message = message
+
+app = FastAPI()
+
+@app.exception_handler(BusinessException)
+async def handle_business(request: Request, exc: BusinessException):
+    # correlation_id, user_id, tenant_id already in ContextVars
+    logger.warning(f"Business rule violation: {exc.code} - {exc.message}")
+    return JSONResponse(
+        status_code=409,
+        content={"error": exc.code, "message": exc.message}
+    )
+
+@app.exception_handler(Exception)
+async def handle_unexpected(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception occurred", exc_info=exc)
+    return JSONResponse(
+        status_code=500,
+        content={"error": "INTERNAL_ERROR", "message": "An unexpected error occurred"}
+    )
+```
+
+### 4.2 Business Error Logging in Domain Services
+Propagate typed exceptions and let the handler log them — no manual ContextVar calls in business code.
+
+```python
+def cancel_order(order_id: str):
+    order = order_repository.find_by_id(order_id)
+    if not order:
+        raise BusinessException("ORDER_NOT_FOUND", "Order does not exist")
+    if order.is_shipped():
+        raise BusinessException("ORDER_ALREADY_SHIPPED", "Cannot cancel shipped order")
+    # ... proceed
+```
+
+## 5. Critical Actions Audit Trail
+Security-relevant events must emit an audit log with `event_type` in the context. Use middleware, decorators, or event listeners so business code stays clean.
+
+### 5.1 Audit Decorator
+```python
+from functools import wraps
+from loguru import logger
+import contextvars
+
+event_type = contextvars.ContextVar("event_type", default="")
+actor = contextvars.ContextVar("actor", default="")
+
+def auditable(action_name: str):
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            user = get_current_user()  # from your auth context
+            token_event = event_type.set("ADMIN_ACTION")
+            token_action = action.set(action_name)
+            token_actor = actor.set(user)
+            
+            try:
+                logger.info(f"Admin action '{action_name}' started by {user}")
+                result = await func(*args, **kwargs)
+                logger.info(f"Admin action '{action_name}' completed")
+                return result
+            except Exception as ex:
+                logger.error(f"Admin action '{action_name}' failed", exc_info=ex)
+                raise
+            finally:
+                event_type.reset(token_event)
+                actor.reset(token_actor)
+        return wrapper
+    return decorator
+
+# Usage
+@auditable("USER_EXPORT")
+async def export_user_data(user_id: str):
+    # business logic only
+    ...
+```
+
+## 6. Performance Tracing via Decorator
+Log function entry and exit at **TRACE** level with elapsed time. Use a decorator so business functions stay clean.
+
+```python
+import time
+from functools import wraps
+from loguru import logger
+
+def trace_performance(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        logger.trace(f"[START] {func.__qualname__}")
+        try:
+            return await func(*args, **kwargs)
+        finally:
+            elapsed = (time.perf_counter() - start) * 1000
+            logger.trace(f"[END] {func.__qualname__} | {elapsed:.2f} ms")
+    return wrapper
+
+# Usage
+@trace_performance
+async def process_order(order_id: str):
+    # business logic only
+    ...
+```
+
+Enable trace output:
+```python
+logger.add(sys.stderr, level="TRACE")
+```
+
+## 7. Log Format for NDJSON
 To emit logs in the required NDJSON format, configure the logging handler to output JSON.
 
 ```python
@@ -104,9 +225,23 @@ def json_serializer(record):
         "context": {
             "trace_id": record["extra"].get("trace_id"),
             "user_id": record["extra"].get("user_id"),
-            "tenant_id": record["extra"].get("tenant_id")
+            "tenant_id": record["extra"].get("tenant_id"),
+            "event_type": record["extra"].get("event_type"),
+            "actor": record["extra"].get("actor"),
+            "action": record["extra"].get("action")
         }
     })
 
 logger.add(lambda msg: print(json_serializer(msg)), format="{message}")
 ```
+
+## 8. Summary — Where to Place Each Concern
+
+| Concern | Python Mechanism | ContextVar Keys |
+|---------|------------------|-----------------|
+| Correlation | FastAPI Middleware | `correlation_id`, `span_id` |
+| Identity | FastAPI Middleware | `user_id`, `tenant_id` |
+| Business Errors | Exception handlers | reuses existing ContextVars |
+| Exceptions | Exception handlers + middleware | reuses existing ContextVars |
+| Critical Actions | Decorator / middleware | `event_type`, `actor`, `action` |
+| Performance | Decorator / `contextlib` | reuses existing ContextVars |
