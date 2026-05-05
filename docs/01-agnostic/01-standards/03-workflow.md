@@ -56,12 +56,12 @@ Once qualified and prioritized, the implementation strategy is designed.
 ---
 
 ## 4. Implementation
-Coding must adhere to the project standards (`docs/standards/`).
+Coding must adhere to the project standards (`docs/01-agnostic/01-standards/`).
 
 - **Clean Architecture**: Implement via `Domain` $\rightarrow$ `Application` $\rightarrow$ `Infrastructure`.
 - **TDD / Test-First**: Write the test cases based on the AC defined in Phase 1.
 - **Atomic Commits**: Use small, logical commits with descriptive messages.
-- **Self-Audit**: Run the `docs/audit/performance.md` and `docs/audit/architecture.md` checklists before submitting for review.
+- **Self-Audit**: Run the `docs/01-agnostic/05-audit/performance.md` and `docs/01-agnostic/05-audit/architecture.md` checklists before submitting for review.
 
 ---
 

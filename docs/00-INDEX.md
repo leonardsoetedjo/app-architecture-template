@@ -9,40 +9,40 @@ Documents that apply regardless of the technology stack.
 
 | # | Directory | Purpose |
 |---|-----------|---------|
-| [10](agnostic/10-standards/) | **Standards** | Core principles (Clean Arch, DDD, SOLID, Microservices) |
-| [20](agnostic/20-adrs/) | **ADRs** | Architectural Decision Records — the "why" behind key choices |
-| [30](agnostic/30-guidelines/) | **Guidelines** | Practical patterns and how-to guides |
-| [40](agnostic/40-templates/) | **Templates** | Reusable ADR and Standard templates |
-| [50](agnostic/50-audit/) | **Audit** | Architecture and performance audit reports |
-| [60](agnostic/60-diagrams/) | **Diagrams** | Visual depictions of complex concepts |
+| [10](01-agnostic/01-standards/) | **Standards** | Core principles (Clean Arch, DDD, SOLID, Microservices) |
+| [20](01-agnostic/02-adrs/) | **ADRs** | Architectural Decision Records — the "why" behind key choices |
+| [30](01-agnostic/03-guidelines/) | **Guidelines** | Practical patterns and how-to guides |
+| [40](01-agnostic/04-templates/) | **Templates** | Reusable ADR and Standard templates |
+| [50](01-agnostic/05-audit/) | **Audit** | Architecture and performance audit reports |
+| [60](01-agnostic/06-diagrams/) | **Diagrams** | Visual depictions of complex concepts |
 
-See [agnostic/00-INDEX.md](agnostic/00-INDEX.md) for the full catalog.
+See [01-agnostic/00-INDEX.md](01-agnostic/00-INDEX.md) for the full catalog.
 
 ### ☕ Java / Spring Boot / React
 Platform-specific guidance for the Java stack.
 
 | # | Directory | Purpose |
 |---|-----------|---------|
-| [10](30-java/10-backend/) | **Backend** | Spring Boot, JPA, Domain-Driven Design |
-| [20](30-java/20-frontend/) | **Frontend** | React, Ant Design |
-| [30](30-java/30-devops/) | **DevOps** | CI/CD, Docker, Kubernetes |
-| [40](30-java/40-adrs/) | **ADRs** | Stack-specific architectural decisions |
-| [50](30-java/50-guidelines/) | **Guidelines** | Batch processing patterns |
+| [10](02-java/01-backend/) | **Backend** | Spring Boot, JPA, Domain-Driven Design |
+| [20](02-java/02-frontend/) | **Frontend** | React, Ant Design |
+| [30](02-java/03-devops/) | **DevOps** | CI/CD, Docker, Kubernetes |
+| [40](02-java/04-adrs/) | **ADRs** | Stack-specific architectural decisions |
+| [50](02-java/05-guidelines/) | **Guidelines** | Batch processing patterns |
 
-See [30-java/00-INDEX.md](30-java/00-INDEX.md) for the full catalog.
+See [02-java/00-INDEX.md](02-java/00-INDEX.md) for the full catalog.
 
 ### 🐍 Python / FastAPI / Quasar
 Platform-specific guidance for the Python stack.
 
 | # | Directory | Purpose |
 |---|-----------|---------|
-| [10](40-python/10-backend/) | **Backend** | FastAPI, SQLAlchemy, Domain-Driven Design |
-| [20](40-python/20-frontend/) | **Frontend** | Quasar, Vue 3 |
-| [30](40-python/30-devops/) | **DevOps** | CI/CD, Docker, Kubernetes |
-| [40](40-python/40-adrs/) | **ADRs** | Stack-specific architectural decisions |
-| [50](40-python/50-guidelines/) | **Guidelines** | Batch processing patterns |
+| [10](03-python/01-backend/) | **Backend** | FastAPI, SQLAlchemy, Domain-Driven Design |
+| [20](03-python/02-frontend/) | **Frontend** | Quasar, Vue 3 |
+| [30](03-python/03-devops/) | **DevOps** | CI/CD, Docker, Kubernetes |
+| [40](03-python/04-adrs/) | **ADRs** | Stack-specific architectural decisions |
+| [50](03-python/05-guidelines/) | **Guidelines** | Batch processing patterns |
 
-See [40-python/00-INDEX.md](40-python/00-INDEX.md) for the full catalog.
+See [03-python/00-INDEX.md](03-python/00-INDEX.md) for the full catalog.
 
 ---
 
@@ -51,8 +51,8 @@ See [40-python/00-INDEX.md](40-python/00-INDEX.md) for the full catalog.
 To ensure consistency and correctness, AI agents should follow this lookup sequence:
 
 1. **Identify Goal**: Is this a new feature or a bug fix?
-2. **Core Principle**: Read [agnostic/10-standards/10-architecture.md](agnostic/10-standards/10-architecture.md) to understand the architectural constraints.
-3. **Platform Fit**: Identify the active platform: `[30-java/00-INDEX.md](30-java/00-INDEX.md)` or `[40-python/00-INDEX.md](40-python/00-INDEX.md)`.
-4. **Implementation Detail**: Read the corresponding `10-backend/00-overview.md` or `20-frontend/00-overview.md`.
-5. **The "Why"**: Check the `40-adrs/` folder for the reasoning behind specific constraints.
-6. **Verification**: Use [agnostic/10-standards/90-review.md](agnostic/10-standards/90-review.md) to validate the implementation before reporting completion.
+2. **Core Principle**: Read [01-agnostic/01-standards/02-architecture.md](01-agnostic/01-standards/02-architecture.md) to understand the architectural constraints.
+3. **Platform Fit**: Identify the active platform: `[02-java/00-INDEX.md](02-java/00-INDEX.md)` or `[03-python/00-INDEX.md](03-python/00-INDEX.md)`.
+4. **Implementation Detail**: Read the corresponding `01-backend/00-overview.md` or `02-frontend/00-overview.md`.
+5. **The "Why"**: Check the `04-adrs/` folder for the reasoning behind specific constraints.
+6. **Verification**: Use [01-agnostic/01-standards/11-review.md](01-agnostic/01-standards/11-review.md) to validate the implementation before reporting completion.

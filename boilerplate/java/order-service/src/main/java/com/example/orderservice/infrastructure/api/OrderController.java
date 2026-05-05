@@ -23,7 +23,7 @@ public class OrderController {
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // In a real app, use @ControllerAdvice to map domain exceptions to HTTP codes
-            // as defined in docs/agnostic/standards/resilience.md
+            // as defined in docs/01-agnostic/01-standards/resilience.md
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
     }

@@ -29,7 +29,7 @@ This document provides criteria for auditing the codebase for architectural inte
 - **Detection**: Grep for keywords like `password`, `secret`, `apikey`, `token` in `.java`, `.yml`, `.properties`, and `.tsx` files.
 - **Requirement**:
     - No secrets in Git. Use `.env.example` for local development.
-    - Production secrets must be stored in a centralized manager (e.g., HashiCorp Vault, AWS Secrets Manager) and injected at runtime (See `docs/adr/10-secret-management.md`).
+    - Production secrets must be stored in a centralized manager (e.g., HashiCorp Vault, AWS Secrets Manager) and injected at runtime (See `docs/adr/03-secret-management.md`).
 
 ## 4. Hardcoding & Magic Values
 *Goal: Ensure the system is portable and configurable across environments.*

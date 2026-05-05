@@ -43,7 +43,7 @@ Create the skeletal structure based on the selected platform.
 
 ### Phase 4: Verification (The Audit)
 The feature is not "Done" until it passes the architectural audit.
-1. **Self-Audit**: Run through `docs/agnostic/standards/audit-checklist.md`.
+1. **Self-Audit**: Run through `docs/01-agnostic/01-standards/audit-checklist.md`.
 2. **Testing**:
     - **Integration Tests**: Verify the service boundary using Testcontainers.
     - **E2E Tests**: Create a Playwright test for the critical user journey.

@@ -1,6 +1,6 @@
 # Batch Job Framework Boilerplate
 
-This document provides a standardized implementation pattern for batch jobs to reduce manual coding and ensure adherence to `docs/standards/batch.md` and `ADR-004`.
+This document provides a standardized implementation pattern for batch jobs to reduce manual coding and ensure adherence to `docs/01-agnostic/01-standards/batch.md` and `ADR-004`.
 
 ## 1. Core Architecture
 To avoid deviations, all batch jobs must follow the **Template-Based Configuration** pattern.

@@ -82,8 +82,9 @@ project-root/
 │   │   └── styles/              # Global styles, theme overrides
 │   └── tests/
 ├── docs/
-│   ├── agnostic/            # Platform-independent principles
-│   ├── platforms/          # Stack-specific implementation guides
+│   ├── 01-agnostic/         # Platform-independent principles
+│   ├── 02-java/             # Java stack implementation guides
+│   ├── 03-python/           # Python stack implementation guides
 │   └── architecture/        # High-level diagrams
 ├── docker-compose.yml
 └── AGENTS.md                    # This file
@@ -160,11 +161,11 @@ interface OrderListProps {
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Java, Spring Boot, JPA, Batch, Ignite, REST, Events | [`docs/standards/backend.md`](docs/standards/backend.md) | Writing backend code |
-| React, TypeScript, Ant Design, a11y, Performance | [`docs/standards/frontend.md`](docs/standards/frontend.md) | Writing frontend code |
-| Git, Docker, CI/CD, Deployment, Alerting | [`docs/standards/devops.md`](docs/standards/devops.md) | DevOps tasks |
-| DDD deep dive, Microservices, Context Maps, EDA | [`docs/standards/architecture.md`](docs/standards/architecture.md) | Design decisions |
-| Review checklists, Onboarding, Dependencies | [`docs/standards/review.md`](docs/standards/review.md) | Preparing/reviewing PRs |
+| Java, Spring Boot, JPA, Batch, Ignite, REST, Events | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Writing backend code |
+| React, TypeScript, Ant Design, a11y, Performance | [`docs/01-agnostic/01-standards/01-frontend-architecture.md`](docs/01-agnostic/01-standards/01-frontend-architecture.md) | Writing frontend code |
+| Git, Docker, CI/CD, Deployment, Alerting | [`docs/01-agnostic/03-guidelines/01-deployment.md`](docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
+| DDD deep dive, Microservices, Context Maps, EDA | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](docs/01-agnostic/02-adrs/01-clean-architecture.md) | Design decisions |
+| Review checklists, Onboarding, Dependencies | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
 
 ---
 

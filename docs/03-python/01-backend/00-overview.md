@@ -13,7 +13,7 @@
   - Perform manipulations using `datetime.timedelta`.
 - **Type Hinting**: Mandate strict type hints throughout the project. Use `mypy` for static analysis.
 - **Mapping Isolation**: Prohibit manual mapping logic in Controllers or Use Cases. Use libraries like `pydantic` for data validation and transformation between layers.
-- **General Patterns**: Refer to [`docs/agnostic/guidelines/patterns.md`](../../agnostic/30-guidelines/30-patterns.md) for a catalog of approved vs. discouraged coding patterns.
+- **General Patterns**: Refer to [`docs/01-agnostic/03-guidelines/patterns.md`](../../01-agnostic/03-guidelines/03-patterns.md) for a catalog of approved vs. discouraged coding patterns.
 
 ## 2. Clean Architecture in Python
 
@@ -87,7 +87,7 @@ FastAPI controllers, SQLAlchemy models, mappers.
 - No business logic in SQLAlchemy models — keep them as simple data holders.
 
 ## 5. REST API Design
-(Refer to [`docs/agnostic/standards/architecture.md`](../../agnostic/10-standards/10-architecture.md) for general REST conventions. Implementation details are as follows:)
+(Refer to [`docs/01-agnostic/01-standards/02-architecture.md`](../../01-agnostic/01-standards/02-architecture.md) for general REST conventions. Implementation details are as follows:)
 
 - **Resource naming**: plural nouns, no verbs in paths.
 - **Versioning**: `/api/v1/`.
@@ -97,7 +97,7 @@ FastAPI controllers, SQLAlchemy models, mappers.
   - Use a fast-access store (e.g., Redis or Apache Ignite) to cache responses.
 
 ## 6. Batch Processing
-Use Celery or Airflow for batch processing. See [`docs/platforms/python-quasar/guidelines/batch/implementation.md`](../50-guidelines/20-batch-implementation.md) (TBD).
+Use Celery or Airflow for batch processing. See [`docs/platforms/python-quasar/guidelines/batch/implementation.md`](../05-guidelines/02-batch-implementation.md) (TBD).
 
 ## 7. Database Migrations
 
@@ -122,7 +122,7 @@ Use Celery or Airflow for batch processing. See [`docs/platforms/python-quasar/g
 
 ## 10. File Handling
 - Validate MIME type, size, and content.
-- Store files in PostgreSQL using `BYTEA` (Refer to [`docs/agnostic/adr/08-file-storage-in-db.md`](../40-adrs/08-file-storage-in-db.md)).
+- Store files in PostgreSQL using `BYTEA` (Refer to [`docs/01-agnostic/02-adrs/02-file-storage-in-db.md`](../04-adrs/02-file-storage-in-db.md)).
 
 ## 11. Auth & Security
 - JWT in `Authorization: Bearer <token>`.

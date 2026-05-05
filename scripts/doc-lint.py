@@ -96,9 +96,9 @@ def get_file_type(file_path: Path) -> str:
 
     if '/adr/' in path_str and path_str.startswith('docs/'):
         return 'ADR'
-    elif '/standards/' in path_str and path_str.startswith('docs/agnostic/'):
+    elif '/standards/' in path_str and path_str.startswith('docs/01-agnostic/'):
         return 'Standard'
-    elif '/guidelines/' in path_str and path_str.startswith('docs/agnostic/'):
+    elif '/guidelines/' in path_str and path_str.startswith('docs/01-agnostic/'):
         return 'Standard'
     elif '/templates/' in path_str:
         return 'template'

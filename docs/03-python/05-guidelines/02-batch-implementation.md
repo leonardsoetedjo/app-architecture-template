@@ -28,7 +28,7 @@ def process_shipment_batch(self, shipment_ids):
 - **Visibility Timeout**: Configure visibility timeouts to match the expected maximum execution time of a task to avoid duplicate processing.
 
 ## 3. Error Handling
-Follow the **Agnostic Resilience Standards** (`docs/agnostic/standards/resilience.md`):
+Follow the **Agnostic Resilience Standards** (`docs/01-agnostic/01-standards/resilience.md`):
 - **Transient Errors**: Use Celery's `retry` mechanism with exponential backoff.
 - **Semantic Errors**: Log the error and skip the item; do not retry.
 - **Systemic Errors**: Stop the worker and alert operations.

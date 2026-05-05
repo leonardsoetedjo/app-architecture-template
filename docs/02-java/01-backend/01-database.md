@@ -88,4 +88,4 @@ In accordance with Clean Architecture, the domain layer must remain agnostic of 
 - **Mapper**: Use MapStruct in the infrastructure layer to convert between Persistence Entities and Domain Entities.
 
 ## 4. Database Migrations
-Refer to [`docs/standards/backend.md`](../../agnostic/10-standards/10-architecture.md) Section 7 for migration rules (Flyway/Liquibase).
+Refer to [`docs/01-agnostic/01-standards/02-architecture.md`](../../01-agnostic/01-standards/02-architecture.md) Section 7 for migration rules (Flyway/Liquibase).

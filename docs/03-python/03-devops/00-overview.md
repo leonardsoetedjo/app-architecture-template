@@ -30,7 +30,7 @@ We use GitHub Actions for the CI/CD pipeline.
 4. **Deploy**: Update the deployment manifest (Kubernetes/Docker Compose).
 
 ## 3. Deployment (Docker Compose & Traefik)
-Follow the agnostic guidelines in `docs/agnostic/guidelines/deployment.md` for routing and network configuration.
+Follow the agnostic guidelines in `docs/01-agnostic/03-guidelines/deployment.md` for routing and network configuration.
 
 - **Domain**: `api.python-platform.localhost`
 - **Port**: `8000`
