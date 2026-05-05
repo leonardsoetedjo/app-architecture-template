@@ -1,3 +1,9 @@
+---
+name: "Documentation Index"
+type: "Index"
+version: "1.0"
+---
+
 # Agnostic Documentation Index
 
 Documents in this directory apply regardless of the technology stack (Java, Python, React, Quasar).
@@ -30,6 +36,7 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 | 09 | [mdc-logging.md](01-standards/09-mdc-logging.md) | Multi-Dimensional Correlation Logging |
 | 10 | [testing.md](01-standards/10-testing.md) | Testing standards and coverage rules |
 | 11 | [review.md](01-standards/11-review.md) | PR Review and onboarding process |
+| 12 | [frontend-structure.md](01-standards/12-frontend-structure.md) | Frontend directory structure (FSD + MVVM) |
 
 ## 20 — ADRs
 

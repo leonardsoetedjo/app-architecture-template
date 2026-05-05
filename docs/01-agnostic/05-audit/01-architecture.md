@@ -1,3 +1,9 @@
+---
+name: "Architecture Audit"
+type: "Audit"
+version: "1.0"
+---
+
 # Architecture & Hygiene Audit Checklist
 
 This document provides criteria for auditing the codebase for architectural integrity, security hygiene, and resource management.
@@ -87,3 +93,43 @@ This document provides criteria for auditing the codebase for architectural inte
 | **Resources**| Unclosed stream | `try-with-resources` check | Use `AutoCloseable` |
 | **Errors** | Empty catch block | `catch` block analysis | Handle or Re-throw |
 | **Batch** | Non-idempotent | Check PKs / Run-ID | Upsert / Deterministic IDs |
+
+## 9. Persistence Anti-Patterns
+*Goal: Prevent common Hibernate/JPA misconfigurations that cause data loss, performance degradation, and debugging nightmares.*
+
+- **Symptom**: `CascadeType.ALL`, `FetchType.EAGER`, `@Enumerated(ORDINAL)`, missing `@Version`, or `equals()`/`hashCode()` using generated IDs.
+- **Detection**:
+  - Search for `CascadeType.ALL` or `CascadeType.PERSIST` without explicit justification comments.
+  - Search for `FetchType.EAGER` on `@OneToMany`, `@ManyToMany`, `@ManyToOne`.
+  - Search for `@Enumerated(EnumType.ORDINAL)`.
+  - Check all `@Entity` classes for the absence of `@Version` on mutable entities.
+  - Check `equals()` and `hashCode()` implementations for references to `getId()` or generated primary keys.
+  - Check batch import / bulk update code for standard `EntityManager` usage (should use `StatelessSession` for >100 rows).
+  - Check for loops that persist entities without periodic `flush()` / `clear()`.
+- **Requirement**:
+  - Replace `CascadeType.ALL` with explicit per-entity saves or limit to `PERSIST` + `MERGE` with documentation.
+  - Replace `EAGER` with `LAZY` + explicit `JOIN FETCH` or `@EntityGraph`.
+  - Replace `ORDINAL` enum mapping with `STRING`.
+  - Add `@Version Long version` to every updatable entity.
+  - Re-implement `equals()` / `hashCode()` using immutable business keys or UUIDs assigned at construction.
+  - Use `StatelessSession` for bulk operations exceeding 100 rows.
+  - Add `flush()` / `clear()` every ≤50 iterations in batch loops.
+
+## 10. Frontend Architecture Anti-Patterns
+*Goal: Ensure frontend code follows FSD + MVVM discipline and maintains accessibility standards.*
+
+- **Symptom**: `src/components/` at root, API calls in presentational components, business logic in `pages/`, missing semantic HTML, or accessibility violations.
+- **Detection**:
+  - Search for `src/components/` or `src/hooks/` folders at the project root.
+  - Search for HTTP client imports (e.g., `axios`, `fetch`) inside `widgets/` or `pages/` (should only be in `features/` or `entities/`).
+  - Search for `useState` or `ref` inside `pages/` that manipulates business data.
+  - Search for non-semantic tags (`<div class="header">`, `<div class="nav">`) instead of `<header>`, `<nav>`, `<main>`, `<section>`, `<aside>`, `<footer>`.
+  - Check for missing `aria-label` on icon-only buttons.
+  - Check for hardcoded hex colors instead of design tokens.
+- **Requirement**:
+  - Remove `src/components/` at root; migrate to `shared/ui/`, `widgets/`, or `features/`.
+  - All API calls must go through `features/` ViewModels. `widgets/` and `pages/` must never call APIs directly.
+  - `pages/` must only compose widgets and layouts; all business logic lives in `features/`.
+  - Every page must contain exactly one `<main>` element. Navigation must use `<nav>`.
+  - Every interactive element must have a visible focus state and keyboard accessibility.
+  - All colors must come from the design token system; no hardcoded hex values.
