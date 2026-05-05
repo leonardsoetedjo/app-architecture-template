@@ -285,8 +285,10 @@ All services **must** use these shared schemas:
 ## 6. Data Integrity & Consistency
 
 ### 6.1 Concurrency Control
-- **Optimistic Locking**: Use for most aggregates. Add a `@Version` column to entities to prevent lost updates. Throw `OptimisticLockingFailureException` on conflict.
-- **Pessimistic Locking**: Use only for high-contention resources where conflicts are frequent. Use `PESSIMISTIC_WRITE` in JPA repositories to lock rows during the transaction.
+- **Optimistic Locking**: Use for most aggregates. Add a `@Version` column (Java) or `version_id`/`version_id_col` (Python) to entities to prevent lost updates. Throw `OptimisticLockingFailureException` (Java) or `StaleDataError` (Python) on conflict. Always pair with a bounded retry (exponential backoff) or a structured user-facing error.
+- **Pessimistic Locking**: Use only for high-contention resources where conflicts are frequent. Use `PESSIMISTIC_WRITE` (Java) or `with_for_update()` (Python) in repository adapters to lock rows during the transaction. Keep locking scope minimal and never call external services while holding a lock.
+
+**Deep dive**: See [`docs/02-java/01-backend/01-database.md`](../../02-java/01-backend/01-database.md) (Java) or [`docs/03-python/01-backend/02-database.md`](../../03-python/01-backend/02-database.md) (Python) for full code examples, retry configuration, and transaction isolation guidance.
 
 ### 6.2 Multi-tenancy Strategy
 - **Strategy**: Use **Schema-per-tenant** for strong isolation and regulatory compliance.

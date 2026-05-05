@@ -194,3 +194,235 @@ const fetchData = async (): Promise<<UserUserResponse> => {
   return await userService.get();
 }
 ```
+
+---
+
+## 4. Concurrency & Locking
+
+### Optimistic Locking Without Retry (Incomplete)
+**Rule**: Optimistic locking must always be paired with a bounded retry. Surfacing a raw concurrency failure as a 500 is unacceptable.
+
+#### Java
+
+❌ **Bad**: `@Version` entity with no retry. The user sees a 500 on every conflict.
+```java
+@Service
+@RequiredArgsConstructor
+public class InventoryService {
+    private final InventoryRepository repo;
+
+    @Transactional
+    public void deduct(UUID productId, int qty) {
+        InventoryEntity inv = repo.findById(productId).orElseThrow();
+        inv.setQuantity(inv.getQuantity() - qty); // May throw OptimisticLockException
+        repo.save(inv);
+    }
+    // No retry — every conflict surfaces as a 500.
+}
+```
+
+✅ **Good**: `@Retry` with exponential backoff + structured user-facing error.
+```java
+@Service
+@RequiredArgsConstructor
+public class InventoryService {
+    private final InventoryRepository repo;
+
+    @Retry(name = "optimisticLockRetry", fallbackMethod = "fallbackDeduct")
+    @Transactional
+    public void deduct(UUID productId, int qty) {
+        InventoryEntity inv = repo.findById(productId).orElseThrow();
+
+        if (inv.getQuantity() < qty) {
+            throw new InsufficientStockException(productId, qty, inv.getQuantity());
+        }
+
+        inv.setQuantity(inv.getQuantity() - qty);
+        repo.save(inv);
+    }
+
+    public void fallbackDeduct(UUID productId, int qty, Throwable t) {
+        throw new ConcurrentUpdateException(
+            "The record was modified by another operation. Please retry."
+        );
+    }
+}
+```
+
+#### Python
+
+❌ **Bad**: `version_id_col` with no retry. The user sees a 500 on every conflict.
+```python
+class InventoryService:
+    async def deduct(self, product_id: uuid.UUID, quantity: int) -> None:
+        async with self.session() as session:
+            inv = await session.get(InventorySqlModel, product_id)
+            inv.quantity -= quantity  # May raise StaleDataError
+            await session.commit()
+    # No retry — every conflict surfaces as a 500.
+```
+
+✅ **Good**: `tenacity` retry with exponential backoff.
+```python
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from sqlalchemy.orm.exc import StaleDataError
+
+class InventoryService:
+
+    @retry(
+        reraise=True,
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=0.1, max=1),
+        retry=retry_if_exception_type(StaleDataError),
+    )
+    async def deduct(self, product_id: uuid.UUID, quantity: int) -> None:
+        async with self.session() as session:
+            inv = await session.get(InventorySqlModel, product_id)
+            if inv.quantity < quantity:
+                raise InsufficientStockException(...)
+            inv.quantity -= quantity
+            await session.commit()
+```
+
+### Wide Transaction Scope with External Calls
+**Rule**: Never perform external I/O (HTTP, file write, message publish) while holding a DB lock or inside a write transaction.
+
+#### Java
+
+❌ **Bad**: HTTP call inside a write transaction. The DB lock is held for the duration of the slow external call, blocking all other writers.
+```java
+@Transactional
+public void processOrder(UUID orderId) {
+    OrderEntity order = repo.findById(orderId).orElseThrow();
+    // Row locked here (or version read)
+
+    // ❌ External call inside the transaction
+    paymentService.charge(order.getTotalAmount());
+
+    order.setStatus("PAID");
+    repo.save(order);
+    // Lock released / committed here — held for entire paymentService latency.
+}
+```
+
+✅ **Good**: Split into two transactions. Lock the minimum surface area.
+```java
+// 1. Reserve (short, guarded transaction)
+@Retry(name = "optimisticLockRetry")
+@Transactional
+public void reserve(UUID orderId) {
+    OrderEntity order = repo.findById(orderId).orElseThrow();
+    order.setStatus("RESERVED"); // Fast write, lock released immediately
+    repo.save(order);
+}
+
+// 2. Process payment OUTSIDE the DB transaction
+public void processPayment(UUID orderId) {
+    reserve(orderId); // Fast, isolated DB write
+
+    paymentService.charge(order.getTotalAmount()); // No lock held.
+
+    // 3. Finalize in a second short transaction
+    finalize(orderId);
+}
+
+@Retry(name = "optimisticLockRetry")
+@Transactional
+public void finalize(UUID orderId) {
+    OrderEntity order = repo.findById(orderId).orElseThrow();
+    order.setStatus("PAID");
+    repo.save(order);
+}
+```
+
+#### Python
+
+❌ **Bad**: HTTP call inside a write async session.
+```python
+async def process_order(self, order_id: uuid.UUID) -> None:
+    async with self.session() as session:
+        order = await session.get(OrderSqlModel, order_id)
+        # Version read / lock acquired
+
+        # ❌ External call inside the session
+        await payment_client.charge(order.total_amount)
+
+        order.status = "PAID"
+        await session.commit()
+```
+
+✅ **Good**: Split reads, external calls, and writes.
+```python
+async def process_order(self, order_id: uuid.UUID) -> None:
+    # 1. Reserve (short write)
+    order = await self.reserve_order(order_id)
+
+    # 2. Payment outside DB session
+    await payment_client.charge(order.total_amount)
+
+    # 3. Finalize (short write)
+    await self.finalize_order(order_id)
+
+@retry(...)
+async def reserve_order(self, order_id: uuid.UUID) -> OrderSqlModel:
+    async with self.session() as session:
+        order = await session.get(OrderSqlModel, order_id)
+        order.status = "RESERVED"
+        await session.commit()
+        return order
+
+@retry(...)
+async def finalize_order(self, order_id: uuid.UUID) -> None:
+    async with self.session() as session:
+        order = await session.get(OrderSqlModel, order_id)
+        order.status = "PAID"
+        await session.commit()
+```
+
+### Pessimistic Lock Overuse
+**Rule**: Use pessimistic locking only after proving optimistic locking causes unacceptable retry churn. Default to optimistic.
+
+#### Java
+
+❌ **Bad**: Using pessimistic locking on every entity by default.
+```java
+@Repository
+public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE) // ❌ Overkill for most entities
+    Optional<OrderEntity> findById(UUID id);
+}
+```
+
+✅ **Good**: Start with optimistic. Switch to pessimistic only for proven hotspots.
+```java
+// Default repository — no lock. Optimistic by default.
+Optional<OrderEntity> findById(UUID id);
+
+// Separate method for known high-contention paths.
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+Optional<OrderEntity> findByIdForUpdate(UUID id);
+```
+
+#### Python
+
+❌ **Bad**: `with_for_update()` on every query.
+```python
+result = await session.execute(
+    select(OrderSqlModel).where(OrderSqlModel.id == order_id)
+    .with_for_update()  # ❌ Overkill
+)
+```
+
+✅ **Good**: Optimistic by default. Pessimistic only on hotspot paths.
+```python
+# Default — no lock
+result = await session.execute(
+    select(OrderSqlModel).where(OrderSqlModel.id == order_id)
+)
+
+# High-contention path only
+result = await session.execute(
+    select(OrderSqlModel).where(OrderSqlModel.id == order_id)
+    .with_for_update()  # ✅ Justified by measured contention
+)
+```
