@@ -24,7 +24,7 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 | 03 | [workflow.md](01-standards/03-workflow.md) | Engineering workflow and CI/CD |
 | 04 | [solid-principles.md](01-standards/04-solid-principles.md) | SOLID design principles |
 | 05 | [resilience.md](01-standards/05-resilience.md) | Resilience & Observability patterns |
-| 06 | [api-contract.md](01-standards/06-api-contract.md) | API Contract Governance |
+| 06 | [api-contract.md](01-standards/06-api-contract.md) | API Contract Governance (Code-first) |
 | 07 | [common-schemas.md](01-standards/07-common-schemas.md) | Shared API data structures |
 | 08 | [secrets.md](01-standards/08-secrets.md) | Secrets Management |
 | 09 | [mdc-logging.md](01-standards/09-mdc-logging.md) | Multi-Dimensional Correlation Logging |
@@ -43,7 +43,7 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 | 07 | [migration-strategy.md](02-adrs/06-migration-strategy.md) | Database migration approach |
 | 09 | [structured-logging.md](02-adrs/07-structured-logging.md) | JSON structured logging |
 | 12 | [port-adapter.md](02-adrs/08-port-adapter.md) | Hexagonal (Port-Adapter) architecture |
-| 13 | [api-contract-governance.md](02-adrs/09-api-contract-governance.md) | OpenAPI-driven contract enforcement |
+| 13 | | OpenAPI-driven contract enforcement |
 
 ## 30 — Guidelines
 

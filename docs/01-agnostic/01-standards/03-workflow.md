@@ -2,6 +2,12 @@
 
 This document defines the mandatory lifecycle for every requirement, from the moment it is received until it is successfully deployed in production. The goal is to eliminate ambiguity early, prevent wasted effort, and ensure high-quality releases.
 
+## AI Agent Guidance
+**Mandatory for AI Agents**: When assigned a feature request via GitHub issues, you **must** follow this workflow strictly. 
+1. **Qualification Phase**: Before writing any code, you must analyze the issue and post a comment in the GitHub issue to clarify any ambiguities, identify edge cases, and agree on the Acceptance Criteria (AC) with the user.
+2. **Explicit Alignment**: Do not proceed to the Planning or Implementation phases until the user has explicitly confirmed your understanding and the defined AC.
+3. **Workflow Reference**: Always reference `docs/01-agnostic/01-standards/03-workflow.md` in your issue comments when initiating the qualification process.
+
 ## 1. Qualification & Refinement (The "Doubts" Phase)
 **No work may begin on a task until it is fully qualified.** This phase is designed to identify gaps and "unknown unknowns" before they become blockers during implementation.
 

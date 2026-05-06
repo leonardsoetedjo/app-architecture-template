@@ -22,7 +22,6 @@ class OrderResponseDto <<Application>>
 
 class OrderJpaRepository <<Infrastructure>>
 class OrderController <<Infrastructure>>
-class KafkaEventPublisher <<Infrastructure>>
 class OrderEntityMapper <<Infrastructure>>
 
 PlaceOrderUseCase --> OrderDomainService : uses
@@ -30,7 +29,6 @@ PlaceOrderUseCase --> OrderRepository : depends on port
 PlaceOrderUseCase --> EventPublisher : depends on port
 
 OrderJpaRepository ..|> OrderRepository : implements
-KafkaEventPublisher ..|> EventPublisher : implements
 
 OrderController --> PlaceOrderUseCase : injects
 OrderController --> OrderResponseDto : returns
@@ -56,6 +54,7 @@ note right of OrderJpaRepository
   Depends inward on domain.
   Frameworks live here.
 end note
+caption Clean Architecture class diagram
 @enduml
 ```
 
@@ -67,8 +66,11 @@ end note
 - **Ports and Adapters**: Define interfaces (ports) in inner layers. Implement them (adapters) in outer layers.
   - **External Service Integration**: For any third-party API, SDK, or protocol, the Port interface lives in the domain/application layer and speaks the application's language. The concrete Adapter lives in infrastructure and handles vendor-specific quirks (error codes, data formats, authentication schemes, rate limits).
   - **Factory + Mock**: Use a factory to select the real adapter vs a deterministic mock based on environment config. Application services depend on the Port type only.
-  - See **ADR 12: Port and Adapter Pattern** for full rules, compliance checklist, and code templates.
-- **DTOs for boundaries**: Use Data Transfer Objects to pass data across layer boundaries.
+  - See **ADR 12: Port and Adapter Pattern** and [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) for full rules, compliance checklist, and code templates.
+- **DTOs for boundaries**: Use Data Transfer Objects (DTOs) to pass data across layer boundaries.
+  - **Entity**: Represents a domain object with a unique identity, used within the Domain layer to enforce business rules.
+  - **Model**: A simplified representation of data used for internal processing or between application layers.
+  - **DTO**: A plain object used to transfer data between the API/Interface and Application layers, ensuring internal domain models are not exposed.
 
 ## 2. Domain-Driven Design (DDD)
 

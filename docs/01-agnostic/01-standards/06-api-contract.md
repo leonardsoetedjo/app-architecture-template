@@ -1,50 +1,27 @@
-# API Contract Governance (Design-First)
+# API Contract Governance (Code-First)
 
-## Overview
-All services **must** follow a Design-First approach where OpenAPI specifications are the source of truth before implementation begins.
+This standard defines the governance of API contracts. To ensure agility and maintainability, this project adopts a **Code-First** approach for API documentation.
 
-## Requirements
+## 1. The Code-First Approach
+Instead of manually maintaining YAML files, which is slow and prone to divergence from the implementation, the OpenAPI specification is generated directly from the source code.
 
-### 1. OpenAPI Specification
-Every service must have an OpenAPI specification stored in:
-```
-docs/architecture/api-specs/v1/{service-name}.yaml
-```
+### 1.1 Implementation
+- **Java (Spring Boot)**: Use `springdoc-openapi` to automatically generate the Swagger UI and OpenAPI JSON/YAML from controllers and models.
+- **Python (FastAPI)**: Use built-in Pydantic models and FastAPI's automatic OpenAPI generation.
 
-### 2. Versioning
-- Specs are versioned by directory: `v1/`, `v2/`, etc.
-- Breaking changes require a new version directory.
-- Non-breaking changes can be made within the same version.
+### 1.2 Requirements
+Every API endpoint **must** include:
+- **Summary and Description**: Clear explanation of the endpoint's purpose.
+- **Request/Response Models**: Explicitly defined DTOs.
+- **Response Codes**: All possible outcomes (200, 400, 404, 500) must be documented.
+- **Tags**: Logical grouping of endpoints (e.g., "Orders", "Users").
 
-### 3. Common Schemas
-All services must use these shared schemas:
+## 2. Governance & Validation
+While the spec is generated from code, it still serves as the contract.
 
-**ErrorResponse**:
-- `status`: "error" (string)
-- `message`: Error description (string)
-- `timestamp`: ISO8601 timestamp
-- `error.code`: Machine-readable error code (e.g., "VALIDATION_ERROR")
-- `error.details`: Array of field-level errors with `field` and `message`
+- **Validation**: The generated spec must be validated against organizational standards using Spectral or similar linting tools in the CI pipeline.
+- **Versioning**: Breaking changes must result in a version increment in the URL (e.g., `/v1/` $\rightarrow$ `/v2/`).
+- **Review**: API changes must be reviewed by the architecture team to ensure consistency across services.
 
-**PaginationMeta**:
-- `total`: Total count of items
-- `limit`: Page size
-- `offset`: Current offset
-- `hasMore`: Boolean indicating more pages
-
-### 4. Implementation Standards
-
-**Java (Spring Boot)**:
-- Use SpringDoc annotations: `@Operation`, `@ApiResponse`, `@Tag`
-- Generate OpenAPI spec via SpringDoc auto-generation
-- Run Spectral linting: `spectral lint docs/architecture/api-specs/v1/*.yaml`
-
-**Python (FastAPI)**:
-- Use Pydantic model `description` fields
-- Use `responses` dict in endpoint decorators
-- FastAPI auto-generates OpenAPI spec
-
-### 5. CI/CD Integration
-- Run Spectral linting in CI pipeline
-- Run Prism contract tests against implementation
-- Block PRs with contract test failures
+## 3. Distribution
+The generated OpenAPI spec is published to a central portal (e.g., Swagger Hub or a shared internal page) as part of the deployment pipeline to allow consumers to generate type-safe clients.
