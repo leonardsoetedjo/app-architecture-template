@@ -68,3 +68,28 @@ The frontend must be a type-safe reflection of the backend. Manual type definiti
 ### 🟢 Testable UI
 - **Stable IDs**: Use `data-testid` attributes for all interactive elements.
 - **No Dynamic IDs**: IDs must be deterministic and not generated at runtime to ensure E2E tests (Playwright) remain stable.
+
+---
+
+## 6. Graceful UX Standards
+
+To ensure a professional, reliable, and supportable user experience, all frontend implementations must adhere to the following graceful UX standards.
+
+### 6.1 Interaction & Feedback
+- **Prevent Double Submission**: Interactive elements (buttons, links) must be disabled immediately upon the first click and remain disabled until the operation completes or fails.
+- **Loading States**: Provide immediate visual feedback for all asynchronous operations using appropriate indicators (e.g., spinners, skeleton screens, or progress bars).
+- **Optimistic Updates**: For low-risk operations, update the UI immediately to feel instantaneous, with a robust rollback mechanism if the server request fails.
+- **Destructive Action Confirmation**: Any action that deletes or irreversibly modifies data must trigger an explicit confirmation dialog before execution.
+
+### 6.2 Data Presentation (Tables)
+To maintain performance and usability, all data tables must implement the following features:
+- **Pagination**: Mandatory for all lists to prevent DOM overload and improve load times.
+- **Sorting**: Users must be able to sort by primary and secondary columns.
+- **Filtering**: Provide a way to filter data based on common attributes to reduce cognitive load.
+
+### 6.3 Error Handling & Supportability
+- **User-Facing Errors**: Technical jargon, stack traces, and raw API errors must never be shown to the user. Provide clear, human-readable, and actionable messages.
+- **Support Identifiers (Correlation IDs)**:
+  - For unsolvable or unexpected errors, the UI must display a unique **Correlation ID** (derived from the backend trace/correlation ID).
+  - The error message should explicitly instruct the user to provide this ID when reporting the issue.
+  - **Purpose**: This enables Day 2 operations teams to instantly locate the corresponding log trace in the backend observability stack (e.g., Jaeger, Splunk) without requiring the user to reproduce the error.
