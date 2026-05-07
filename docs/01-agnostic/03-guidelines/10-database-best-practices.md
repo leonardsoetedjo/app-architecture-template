@@ -7,7 +7,7 @@ This document summarizes critical best practices for database persistence, speci
 ### ❌ Bad Practice: Extensive use of `cascade` and `orphanRemoval`
 Using `cascade = CascadeType.ALL` or `orphanRemoval = true` creates a tight coupling between the service layer and the JPA API. This "abstraction leakage" makes it difficult to change persistence strategies or move away from ORM.
 
-**Mitigation**: Explicitly call repository methods in the service layer to persist, update, or delete related entities.
+**Mitigation**: Explicitly call repository methods in the service layer to persist, update, or delete related entities. This ensures atomicity via `@Transactional` while maintaining a clean separation between business logic and persistence mechanics.
 
 **Boilerplate (Recommended)**:
 ```java
@@ -18,8 +18,10 @@ public class OrderService {
 
     @Transactional
     public void createOrder(OrderRequest request) {
+        // 1. Persist Parent
         Order order = orderRepo.save(new Order(request.getCustomerId()));
         
+        // 2. Map and Persist Children explicitly
         List<OrderItem> items = request.getItems().stream()
             .map(item -> new OrderItem(order.getId(), item.getProductId(), item.getQty()))
             .toList();
