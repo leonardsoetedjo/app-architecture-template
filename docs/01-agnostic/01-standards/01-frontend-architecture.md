@@ -77,11 +77,34 @@ The frontend must be a type-safe reflection of the backend. Manual type definiti
 
 ---
 
-## 6. Model-View-ViewModel (MVVM)
+## 6. Graceful UX Standards
+
+To ensure a professional, reliable, and supportable user experience, all frontend implementations must adhere to the following graceful UX standards.
+
+### 6.1 Interaction & Feedback
+- **Prevent Double Submission**: Interactive elements (buttons, links) must be disabled immediately upon the first click and remain disabled until the operation completes or fails.
+- **Loading States**: Provide immediate visual feedback for all asynchronous operations using appropriate indicators (e.g., spinners, skeleton screens, or progress bars).
+- **Optimistic Updates**: For low-risk operations, update the UI immediately to feel instantaneous, with a robust rollback mechanism if the server request fails.
+- **Destructive Action Confirmation**: Any action that deletes or irreversibly modifies data must trigger an explicit confirmation dialog before execution.
+
+### 6.2 Data Presentation (Tables)
+To maintain performance and usability, all data tables must implement the following features:
+- **Pagination**: Mandatory for all lists to prevent DOM overload and improve load times.
+- **Sorting**: Users must be able to sort by primary and secondary columns.
+- **Filtering**: Provide a way to filter data based on common attributes to reduce cognitive load.
+
+### 6.3 Error Handling & Supportability
+- **User-Facing Errors**: Technical jargon, stack traces, and raw API errors must never be shown to the user. Provide clear, human-readable, and actionable messages.
+- **Support Identifiers (Correlation IDs)**:
+  - For unsolvable or unexpected errors, the UI must display a unique **Correlation ID** (derived from the backend trace/correlation ID).
+  - The error message should explicitly instruct the user to provide this ID when reporting the issue.
+  - **Purpose**: This enables Day 2 operations teams to instantly locate the corresponding log trace in the backend observability stack (e.g., Jaeger, Splunk) without requiring the user to reproduce the error.
+
+## 7. Model-View-ViewModel (MVVM)
 
 All frontend projects **must** structure internal code within each FSD layer using the **MVVM** pattern. This ensures a clear separation of concerns: the View is purely declarative, the ViewModel owns all reactive state and business logic, and the Model (Entity) holds pure domain data.
 
-### 6.1 MVVM Layer Mapping within FSD
+### 7.1 MVVM Layer Mapping within FSD
 
 | FSD Layer | MVVM Role | Responsibility |
 | :--- | :--- | :--- |
@@ -94,7 +117,7 @@ All frontend projects **must** structure internal code within each FSD layer usi
 
 **Key Rule**: The **View never calls an API directly** and **never accesses raw store state**. All data flows through the ViewModel.
 
-### 6.2 One-Way Data Flow
+### 7.2 One-Way Data Flow
 
 ```
 View ──(events)──▶ ViewModel ──(commands)──▶ Model/Entity
@@ -106,7 +129,7 @@ View ──(events)──▶ ViewModel ──(commands)──▶ Model/Entity
 - **ViewModel** transforms raw entity data into presentation state and handles user actions.
 - **Model** remains pure — no framework imports, no reactive wrappers.
 
-### 6.3 Boilerplate — MVVM in Quasar/Vue
+### 7.3 Boilerplate — MVVM in Quasar/Vue
 
 ```typescript
 // entities/order/model.ts  ──  Model (pure)
@@ -162,7 +185,7 @@ function onSubmit() {
 </script>
 ```
 
-### 6.4 Boilerplate — MVVM in React/TypeScript
+### 7.4 Boilerplate — MVVM in React/TypeScript
 
 ```typescript
 // entities/order/model.ts  ──  Model (pure)
@@ -216,7 +239,7 @@ export function OrderForm() {
 }
 ```
 
-### 6.5 Anti-Patterns
+### 7.5 Anti-Patterns
 
 | Anti-Pattern | Why It Fails |
 |-------------|-------------|

@@ -35,6 +35,10 @@ This checklist is designed for both human reviewers and AI agents to ensure a fe
 ## 5. Persistence & Data
 - [ ] **Migration Safety**: Does the DB migration follow the **Expand-Contract pattern** for backward compatibility?
 - [ ] **Locker/Concurrency**: Is optimistic locking (`@Version`) used for aggregates to prevent lost updates?
+- [ ] **N+1 Prevention**: Are lazy-loaded associations fetched using `JOIN FETCH` in repositories to avoid N+1 select issues?
+- [ ] **Relationship Management**: Are child entities saved explicitly via repositories in the service layer rather than relying on `cascade` or `orphanRemoval`?
+- [ ] **Join Entities**: Are `@ManyToMany` relationships replaced by explicit join entities with single primary keys?
+- [ ] **Entity Integrity**: Do `equals()` and `hashCode()` use a stable business key and getter methods instead of the primary key?
 - [ ] **Cache Strategy**: If caching is used, is there a defined TTL and invalidation strategy?
 
 ## 6. Frontend & UI
