@@ -1,46 +1,65 @@
 @startuml FrontendArchitecture
-!theme plain
 
 title Frontend Architecture — SPA Layered Design
 
+' Color Palette Definitions
 skinparam rectangle {
-    BorderColor #333
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam arrow {
+    Color #000000
+    Thickness 2
+}
+skinparam defaultIconSize 16
+
+' Red - Presentation Layer
+skinparam rectangle<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
 }
 
-rectangle "Presentation Layer" as Pres #FFCCCC {
-    rectangle "Pages /
-Route Components" as Pages
-    rectangle "UI Components
-(Ant Design / Quasar)" as UI
-    rectangle "Composable /
-Hooks (Vue3 / React)" as Hooks
+' Tan - Application Layer
+skinparam rectangle<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
 }
 
-rectangle "Application Layer" as App #FFFFCC {
-    rectangle "ViewModels /
-State Stores (Pinia)" as VM
-    rectangle "UseCase
-Facades" as Facades
-    rectangle "DTOs &
-Validation" as DTO
+' Green - Infrastructure Layer
+skinparam rectangle<<Green>> {
+    BackgroundColor #66B032
+    FontColor #000000
 }
 
-rectangle "Infrastructure Layer" as Infra #CCFFCC {
-    rectangle "API Client
-(axios / fetch)" as API
-    rectangle "Auth Adapter
-(JWT / OAuth)" as Auth
-    rectangle "WS/Realtime
-(Socket.IO)" as WS
+' Blue - Domain (Shared)
+skinparam rectangle<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
 }
 
-rectangle "Domain (Shared)" as Domain #CCCCFF {
-    rectangle "Entity
-Models" as Entity
-    rectangle "Value
-Objects" as VO
-    rectangle "Domain
-Event Handlers" as DE
+rectangle "Presentation Layer" <<Red>> as Pres {
+    rectangle "Pages / Route Components" <<Red>> as Pages
+    rectangle "UI Components\n(Ant Design / Quasar)" <<Red>> as UI
+    rectangle "Composable / Hooks (Vue3 / React)" <<Red>> as Hooks
+}
+
+rectangle "Application Layer" <<Tan>> as App {
+    rectangle "ViewModels / State Stores (Pinia)" <<Tan>> as VM
+    rectangle "UseCase Facades" <<Tan>> as Facades
+    rectangle "DTOs & Validation" <<Tan>> as DTO
+}
+
+rectangle "Infrastructure Layer" <<Green>> as Infra {
+    rectangle "API Client\n(axios / fetch)" <<Green>> as API
+    rectangle "Auth Adapter\n(JWT / OAuth)" <<Green>> as Auth
+    rectangle "WS/Realtime\n(Socket.IO)" <<Green>> as WS
+}
+
+rectangle "Domain (Shared)" <<Blue>> as Domain {
+    rectangle "Entity Models" <<Blue>> as Entity
+    rectangle "Value Objects" <<Blue>> as VO
+    rectangle "Domain Event Handlers" <<Blue>> as DE
 }
 
 pages --> UI : renders
@@ -84,12 +103,12 @@ note right of API
   - Retry + circuit breaker
 end note
 
-legend right
+legend top
   | Color | Layer |
-  | #FFCCCC | Presentation |
-  | #FFFFCC | Application |
-  | #CCFFCC | Infrastructure |
-  | #CCCCFF | Domain |
+  | #B22222 | Presentation - Red |
+  | #F5EBDC | Application - Tan |
+  | #66B032 | Infrastructure - Green |
+  | #2B579A | Domain - Blue |
 endlegend
 
 @enduml

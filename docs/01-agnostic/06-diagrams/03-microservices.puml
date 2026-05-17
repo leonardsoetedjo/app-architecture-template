@@ -1,36 +1,87 @@
 @startuml Microservices
-!theme plain
 
 title Microservices Topology — Event-Driven with API Gateway
 
+' Color Palette Definitions
+skinparam rectangle {
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam arrow {
+    Color #000000
+    Thickness 2
+}
+skinparam defaultIconSize 16
+
+' Red - External/Boundary
+skinparam cloud<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
+}
+skinparam rectangle<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
+}
+
+' Blue - Services/Domain
+skinparam rectangle<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
+}
+skinparam node<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
+}
+
+' Green - Infrastructure (Database)
+skinparam database<<Green>> {
+    BackgroundColor #66B032
+    FontColor #000000
+}
+skinparam rectangle<<Green>> {
+    BackgroundColor #66B032
+    FontColor #000000
+}
+
+' Tan - Neutral/Shared (Event Bus)
+skinparam queue<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+}
+skinparam rectangle<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+}
+
 cloud "External Clients" {
-    rectangle SPA as "SPA / Mobile / Third-party"
+    rectangle "SPA / Mobile / Third-party" <<Red>> as SPA
 }
 
 node "API Gateway" {
-    rectangle GW as "Auth, Rate Limit,\nRouting, Load Balance"
+    rectangle "Auth, Rate Limit,\nRouting, Load Balance" <<Red>> as GW
 }
 
 rectangle "Service Mesh" {
-    rectangle "User Service" as US
-    rectangle "Order Service" as OS
-    rectangle "Payment Service" as PS
-    rectangle "Inventory Service" as IS
-    rectangle "Notification Service" as NS
+    rectangle "User Service" <<Blue>> as US
+    rectangle "Order Service" <<Blue>> as OS
+    rectangle "Payment Service" <<Blue>> as PS
+    rectangle "Inventory Service" <<Blue>> as IS
+    rectangle "Notification Service" <<Blue>> as NS
 }
 
 database "PostgreSQL" {
-    rectangle USDB
-    rectangle OSDB
-    rectangle PSDB
-    rectangle ISDB
+    rectangle "User DB" <<Green>> as USDB
+    rectangle "Order DB" <<Green>> as OSDB
+    rectangle "Payment DB" <<Green>> as PSDB
+    rectangle "Inventory DB" <<Green>> as ISDB
 }
 
 queue "Kafka / RabbitMQ" {
-    rectangle TopicOrders
-    rectangle TopicPayments
-    rectangle TopicInventory
-    rectangle DLQ
+    rectangle "TopicOrders" <<Tan>> as TopicOrders
+    rectangle "TopicPayments" <<Tan>> as TopicPayments
+    rectangle "TopicInventory" <<Tan>> as TopicInventory
+    rectangle "DLQ" <<Tan>> as DLQ
 }
 
 SPA --> GW : HTTPS
@@ -60,11 +111,12 @@ note right of DLQ
   Alert & re-process manually.
 end note
 
-legend right
-  Each service owns its own
-  database. Services communicate
-  via async events (event bus)
-  or sync REST (mesh / gateway).
+legend top
+  | Color | Component |
+  | #B22222 | API Gateway, External Clients (Red) |
+  | #2B579A | Services, Service Mesh (Blue) |
+  | #66B032 | PostgreSQL Database (Green) |
+  | #F5EBDC | Kafka/RabbitMQ, DLQ (Tan) |
 endlegend
 
 @enduml

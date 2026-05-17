@@ -1,16 +1,51 @@
 @startuml DDD_Tactical
-!theme plain
 
 title DDD — Tactical Design Patterns
 
-abstract class AggregateRoot {
+' Color Palette Definitions
+skinparam rectangle {
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam arrow {
+    Color #000000
+    Thickness 2
+}
+skinparam defaultIconSize 16
+
+' Blue - Entities/Domain Objects
+skinparam class<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
+}
+
+' Green - Infrastructure/Adapters
+skinparam class<<Green>> {
+    BackgroundColor #66B032
+    FontColor #000000
+}
+
+' Red - External/Boundary
+skinparam class<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
+}
+
+' Tan - Neutral/Shared
+skinparam class<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+}
+
+class AggregateRoot <<Blue>> {
   + UUID id
   + List<DomainEvent> events
   + void apply(DomainEvent)
   + void commit()
 }
 
-class Order {
+class Order <<Blue>> {
   - List<OrderItem> items
   - OrderStatus status
   - Money totalPrice
@@ -19,37 +54,37 @@ class Order {
   + void ship()
 }
 
-class OrderItem {
+class OrderItem <<Blue>> {
   + ProductId productId
   + Quantity quantity
   + Money price
 }
 
-class Money {
+class Money <<Blue>> {
   + BigDecimal amount
   + Currency currency
 }
 
-class OrderRepository {
+class OrderRepository <<Green>> {
   + Order findById(OrderId)
   + void save(Order)
   + List<Order> findUnconfirmed()
 }
 
-class OrderConfirmed {
+class OrderConfirmed <<Tan>> {
   + OrderId orderId
   + Instant occurredOn
 }
 
-abstract class DomainEvent {
+class DomainEvent <<Blue>> {
   + abstract Instant occurredOn()
 }
 
-abstract class Entity {
+class Entity <<Blue>> {
   + UUID id
 }
 
-abstract class ValueObject {
+class ValueObject <<Blue>> {
   + boolean equals(Object)
   + int hashCode()
 }
@@ -77,5 +112,12 @@ note right of ValueObject
   2. Identity-free
   3. Content equality
 end note
+
+legend top
+  | Color | Category |
+  | #2B579A | AggregateRoot, Order, Entities (Blue) |
+  | #66B032 | Repository (Green) |
+  | #F5EBDC | DomainEvent (Tan) |
+endlegend
 
 @enduml
