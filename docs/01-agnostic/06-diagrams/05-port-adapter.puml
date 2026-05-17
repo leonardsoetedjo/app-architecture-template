@@ -1,75 +1,96 @@
-@startuml HexagonalArchitecture
-!theme plain
-
+@startuml
 title Hexagonal Architecture — Ports & Adapters
 
-skinparam rectangle {
-    BorderColor #333
+package "Domain" {
+    component "Order Aggregate"
+    component "Order Repository Port"
+    component "Order UseCase Port"
 }
 
-rectangle "Domain (Core)" as Domain #CCCCFF {
-    rectangle "Order Aggregate" as Agg
-    rectangle "Order\nRepository Port" as PortRepo #CCFFCC
-    rectangle "Order\nUseCase Port" as PortUC #CCFFCC
+package "Driving Adapters (Input)" {
+    component "REST Controller"
+    component "CLI Command"
+    component "gRPC Service"
+    component "Message Consumer"
 }
 
-rectangle "Driving Adapters\n(Input / Primary)" as Driving #CCFFCC {
-    rectangle "REST\nController" as RestCtrl
-    rectangle "CLI\nCommand" as CLI
-    rectangle "gRPC\nService" as GRPC
-    rectangle "Message\nConsumer" as MsgIn
+package "Driven Adapters (Output)" {
+    component "JPA Repository"
+    component "PostgreSQL Client"
+    component "Kafka Producer"
+    component "Stripe Gateway"
 }
 
-rectangle "Driven Adapters\n(Output / Secondary)" as Driven #CCFFCC {
-    rectangle "JPA\nRepository" as JPA
-    rectangle "PostgreSQL\nClient" as PG
-    rectangle "Kafka\nProducer" as Kafka
-    rectangle "Stripe\nGateway" as Stripe
+' Color definitions using package-based skinparam
+skinparam packageBackgroundColor #00000000
+
+' Blue - Domain
+skinparam component {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
 }
 
-RestCtrl -right-> PortUC : drives
-CLI -right-> PortUC : drives
-GRPC -right-> PortUC : drives
-MsgIn -right-> PortUC : drives
+' Green - Adapters
+package "Infrastructure" {
+    skinparam component {
+        BackgroundColor #66B032
+        FontColor #000000
+        BorderColor #000000
+        BorderThickness 3
+        RoundCorner 8
+    }
+}
 
-PortUC -right-> Agg : orchestrates
-Agg -right-> PortRepo : depends on
+' Tan - Ports (in Domain package these will use domain colors)
+package "Ports" {
+    skinparam component {
+        BackgroundColor #F5EBDC
+        FontColor #000000
+        BorderColor #000000
+        BorderThickness 3
+        RoundCorner 8
+    }
+}
 
-PortRepo -right-> JPA : drives
-JPA -right-> PG : drives
+' Dependencies
+"REST Controller" -> "Order UseCase Port"
+"CLI Command" -> "Order UseCase Port"
+"gRPC Service" -> "Order UseCase Port"
+"Message Consumer" -> "Order UseCase Port"
 
-Agg -[hidden]d-> Kafka
-Agg -[hidden]d-> Stripe
+"Order UseCase Port" -> "Order Aggregate"
+"Order Aggregate" -> "Order Repository Port"
+"Order Repository Port" -> "JPA Repository"
+"JPA Repository" -> "PostgreSQL Client"
 
-note right of Domain
-  **Domain (Inner Hexagon):**
+note right of "Domain"
+  Domain (Inner Hexagon):
   Pure business logic.
-  Defines ports (interfaces).
+  Defines ports.
   Has ZERO knowledge of
-  adapters, framework, or DB.
+  adapters or DB.
 end note
 
-note right of Driving
-  **Driving Adapters (Primary):**
+note right of "Driving Adapters (Input)"
+  Driving Adapters (Primary):
   Trigger use-cases.
-  Convert external I/O formats
-  into internal domain commands.
-  e.g. REST, CLI, gRPC, AMQP
+  Convert external formats.
 end note
 
-note right of Driven
-  **Driven Adapters (Secondary):**
+note right of "Driven Adapters (Output)"
+  Driven Adapters (Secondary):
   Implement domain-defined ports.
   Handle tech-specific concerns.
-  e.g. JPA, Kafka, Stripe
 end note
 
-legend right
-  Arrows show dependency direction:
-  Adapters depend on Ports.
-  Ports depend on Domain.
-  Domain knows nothing of the
-  outside world.
+legend top
+  Color | Category
+  #2B579A | Domain (Blue)
+  #66B032 | Adapters (Green)
+  #F5EBDC | Ports (Tan)
 endlegend
 
 @enduml

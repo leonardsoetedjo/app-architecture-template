@@ -1,37 +1,61 @@
 @startuml CleanArchitecture
-!theme plain
 
 title Clean Architecture — Layered Dependency Rule
 
+' Color Palette Definitions
 skinparam rectangle {
-    BorderColor #333
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
 }
 skinparam arrow {
-    Color #333
+    Color #000000
+    Thickness 2
+}
+skinparam defaultIconSize 16
+
+' Blue - Core/Domain
+skinparam rectangle<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
 }
 
-rectangle "Frameworks & Drivers" as FW #FFCCCC {
+' Green - Infrastructure/Adapters
+skinparam rectangle<<Green>> {
+    BackgroundColor #66B032
+    FontColor #000000
+}
+
+' Red - External/Boundary
+skinparam rectangle<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
+}
+
+' Tan - Neutral/Shared
+skinparam rectangle<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+}
+
+package "Frameworks & Drivers" <<Red>> as FW {
     rectangle "Controllers\n(RestControllers)\nPresenters" as Ctrl
     rectangle "External Services\n(RabbitMQ, AWS, DB)" as Ext
 }
 
-rectangle "Interface Adapters" as IA #CCFFCC {
+package "Interface Adapters" <<Green>> as IA {
     rectangle "Gateways\n(RepositoryImpl)\nMappers\n(DTO <-> Entity)" as Gate
 }
 
-rectangle "Use Cases" as UC #FFFFCC {
+package "Use Cases" <<Tan>> as UC {
     rectangle "Interactors\n(Application Services)\nInput/Output Ports" as Inter
 }
 
-rectangle "Entities" as Ent #CCCCFF {
+package "Entities" <<Blue>> as Ent {
     rectangle "Enterprise Business Rules\nDomain Models\nAggregates, Value Objects" as EntRules
 }
 
 ' Dependency arrows — only inward
-FW -d-[hidden]-> IA
-IA -d-[hidden]-> UC
-UC -d-[hidden]-> Ent
-
 Ctrl -d-> Gate
 Gate -d-> Inter
 Inter -d-> EntRules
@@ -51,10 +75,10 @@ N1 .. UC
 
 legend right
   | Color | Layer |
-  | #CCCCFF | Entities (Domain) |
-  | #FFFFCC | Use Cases (Application) |
-  | #CCFFCC | Interface Adapters |
-  | #FFCCCC | Frameworks & Drivers |
+  | #2B579A | Entities (Domain) - Blue |
+  | #F5EBDC | Use Cases (Application) - Tan |
+  | #66B032 | Interface Adapters - Green |
+  | #B22222 | Frameworks & Drivers - Red |
 endlegend
 
 @enduml

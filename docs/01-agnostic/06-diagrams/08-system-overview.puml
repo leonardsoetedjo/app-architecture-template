@@ -1,32 +1,80 @@
-@startuml
-!theme plain
-skinparam componentStyle rectangle
+@startuml HermesSystemOverview
 
-package "Hermes System" {
-    [hermes-agent] as Agent <<Core Service>>
-    [hermes-mcp] as MCP <<Sidecar>>
-    [hermes-dashboard] as Dashboard <<Sidecar>>
+title Hermes System — Component Architecture
+
+' Color Palette Definitions
+skinparam component {
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam arrow {
+    Color #000000
+    Thickness 2
+}
+skinparam defaultIconSize 16
+
+' Blue - Hermes System Components
+skinparam package<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
+}
+skinparam component<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
 }
 
-package "Infrastructure Gateway" {
-    [dockerproxy] as Proxy <<Security Gateway>>
+' Green - Infrastructure
+skinparam component<<Green>> {
+    BackgroundColor #66B032
+    FontColor #000000
 }
 
-package "LLM Orchestration" {
-    [bifrost] as Bifrost <<Load Balancer / Gateway>>
+' Red - LLM Orchestration
+skinparam package<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
+}
+skinparam component<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
 }
 
-package "LLM Cluster" {
-    component "Ollama Node 1" as Ollama1
-    component "Ollama Node 2" as Ollama2
-    component "Ollama Node N" as OllamaN
+' Tan - LLM Cluster
+skinparam package<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+}
+skinparam component<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+}
+
+package "Hermes System" <<Blue>> {
+    component "hermes-agent" <<Blue>> as Agent
+    component "hermes-mcp" <<Blue>> as MCP
+    component "hermes-dashboard" <<Blue>> as Dashboard
+}
+
+package "Infrastructure Gateway" <<Green>> {
+    component "dockerproxy" <<Green>> as Proxy
+}
+
+package "LLM Orchestration" <<Red>> {
+    component "bifrost" <<Red>> as Bifrost
+}
+
+package "LLM Cluster" <<Tan>> {
+    component "Ollama Node 1" <<Tan>> as Ollama1
+    component "Ollama Node 2" <<Tan>> as Ollama2
+    component "Ollama Node N" <<Tan>> as OllamaN
 }
 
 ' Relationships
 Agent --> MCP : local communication
 Agent --> Dashboard : local communication
 Agent --> Proxy : Docker API requests
-Proxy --> [Docker Socket] : Filtered access
+Proxy --> "Docker Socket" : Filtered access
 
 Agent --> Bifrost : LLM Requests
 Bifrost --> Ollama1
@@ -35,5 +83,13 @@ Bifrost --> OllamaN
 
 note right of Proxy : Prevents full access\nto docker socket
 note top of Bifrost : Load balances requests\nto Ollama farm
+
+legend top
+  | Color | Component |
+  | #2B579A | Hermes System (Blue) |
+  | #66B032 | Infrastructure (Green) |
+  | #B22222 | LLM Orchestration (Red) |
+  | #F5EBDC | LLM Cluster (Tan) |
+endlegend
 
 @enduml

@@ -1,7 +1,57 @@
 @startuml EventDriven
-!theme plain
 
 title Event-Driven Architecture — Message Flow
+
+' Color Palette Definitions
+skinparam actor {
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam participant {
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam database {
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam queue {
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+skinparam arrow {
+    Color #000000
+    Thickness 2
+}
+skinparam defaultIconSize 16
+
+' Blue - Services
+skinparam participant<<Blue>> {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
+}
+
+' Green - Infrastructure (Database)
+skinparam database<<Green>> {
+    BackgroundColor #66B032
+    FontColor #000000
+}
+
+' Red - External/Boundary (Event Bus)
+skinparam queue<<Red>> {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
+}
+
+' Tan - Neutral/Shared (Dead Letter Queue)
+skinparam queue<<Tan>> {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+}
 
 actor "External\nClient" as Client
 participant "API\nGateway" as GW
@@ -56,7 +106,7 @@ EB -> DLQ : Move message
 DLQ -> Ops : Alert + manual review
 
 note right of EB
-  **Event Bus Guarantees**
+  Event Bus Guarantees:
   - At-least-once delivery
   - Topic/queue isolation
   - Publisher confirms
@@ -64,10 +114,18 @@ note right of EB
 end note
 
 note right of DLQ
-  **DLQ Rules**
+  DLQ Rules:
   - Max retries: 5 (exponential backoff)
   - Dead message retention: 14 days
   - Alert threshold: > 10 msgs / 5 min
 end note
+
+legend top
+  Color | Component
+  #2B579A | Services (Blue)
+  #66B032 | Databases (Green)
+  #B22222 | Event Bus, API Gateway (Red)
+  #F5EBDC | Dead Letter Queue (Tan)
+endlegend
 
 @enduml

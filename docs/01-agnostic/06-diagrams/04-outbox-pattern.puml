@@ -1,57 +1,71 @@
-@startuml OutboxPattern
-!theme plain
-
+@startuml
 title Outbox Pattern — Transactional Event Publishing
 
-actor Client
-participant "Order Service" as OS #CCFFCC
-participant "Order DB\n(PostgreSQL)" as DB #CCCCFF
-participant "Outbox Table" as OB #CCCCFF
-participant "Event Relay\n(Outbox Poller)" as Relay #FFFFCC
-queue "Event Bus\n(Kafka / RabbitMQ)" as Bus #FFCCCC
+actor "Client"
+component "Order Service"
+database "Order DB"
+database "Outbox Table"
+component "Event Relay"
+queue "Event Bus"
 
-== Happy Path ==
-Client -> OS : POST /orders
-activate OS
-OS -> OS : Validate, compute total
-OS -> DB : BEGIN TX
-OS -> DB : INSERT INTO orders ...
-OS -> OB : INSERT INTO outbox\n(topic, payload, headers, created_at)
-OS -> DB : COMMIT TX
-OS --> Client : 201 Created
-deactivate OS
+' Color definitions using skinparam blocks
+skinparam component {
+    BackgroundColor #2B579A
+    FontColor #FFFFFF
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
 
-== Relay (Async, Every 1s) ==
-Relay -> OB : SELECT * FROM outbox
-OB --> Relay : (rows)
-Relay -> Bus : publish(topic, payload, headers)
-Bus --> Relay : ack
-Relay -> OB : DELETE FROM outbox WHERE id = ?
+skinparam database {
+    BackgroundColor #66B032
+    FontColor #000000
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
 
-== Failure Scenario — Message Broker Unavailable ==
-Relay -> Bus : publish(topic, payload)
-Bus --x Relay : Connection refused
-Relay -> Relay : Retry with exponential backoff
-Relay -> Relay : Alert if retry exhausted (Sentry/Opsgenie)
+skinparam queue {
+    BackgroundColor #B22222
+    FontColor #FFFFFF
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
 
-note right of OB
-  **Outbox guarantees**
-  1. Events written in the
-     same transaction as the
-     business mutation
-  2. At-least-once delivery
-     via relay retries
-  3. Idempotency handled by
-     consumers (message key)
+skinparam rectangle {
+    BackgroundColor #F5EBDC
+    FontColor #000000
+    BorderColor #000000
+    BorderThickness 3
+    RoundCorner 8
+}
+
+' Main flow
+Client -> "Order Service" : POST /orders
+"Order Service" -> "Order DB" : INSERT order
+"Order Service" -> "Outbox Table" : INSERT outbox
+"Order Service" -> "Order DB" : COMMIT
+"Event Relay" -> "Outbox Table" : SELECT
+"Outbox Table" --> "Event Relay" : rows
+"Event Relay" -> "Event Bus" : publish
+"Event Bus" --> "Event Relay" : ack
+"Event Relay" -> "Outbox Table" : DELETE
+
+note right of "Outbox Table"
+  Guarantees:
+  - Events in same
+    transaction
+  - At-least-once delivery
+  - Idempotency by consumers
 end note
 
-note right of Relay
-  **Operational concerns**
-  - Relay is deployed as
-    sidecar or k8s CronJob
-  - Observe relay lag via
-    custom metric:
-    `outbox.lag_seconds`
-end note
+legend top
+  Color | Component
+  #2B579A | Order Service (Blue)
+  #66B032 | Order DB, Outbox (Green)
+  #F5EBDC | Relay (Tan)
+  #B22222 | Event Bus (Red)
+endlegend
 
 @enduml
