@@ -1,1 +1,30 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Build / deps
+node_modules/
+target/
+build/
+dist/
+*.log
+
+# Secrets
+.env
+!.env.example
+
+# Runtime
+devbox/
+logs/
+*.log
+
+# Session artifacts
+state_handoff.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
 .serena/

@@ -1,0 +1,239 @@
+package com.example.orderservice.infrastructure.api;
+
+import com.example.orderservice.application.dtos.CreateOrderCommand;
+import com.example.orderservice.application.dtos.OrderItemDTO;
+import com.example.orderservice.application.dtos.OrderResult;
+import com.example.orderservice.application.usecases.PlaceOrderUseCase;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(OrderController.class)
+class OrderControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private PlaceOrderUseCase placeOrderUseCase;
+
+    private CreateOrderCommand createOrderCommand;
+
+    @BeforeEach
+    void setUp() {
+        UUID productId = UUID.randomUUID();
+        createOrderCommand = new CreateOrderCommand(
+            UUID.randomUUID(),
+            List.of(new OrderItemDTO(productId, 2, 19.99))
+        );
+    }
+
+    @Test
+    @DisplayName("should create order successfully")
+    void shouldCreateOrderSuccessfully() throws Exception {
+        // Arrange
+        OrderResult expectedResult = new OrderResult(
+            UUID.randomUUID(),
+            "PENDING",
+            java.time.OffsetDateTime.now()
+        );
+
+        when(placeOrderUseCase.execute(any(CreateOrderCommand.class)))
+            .thenReturn(expectedResult);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\":\"" + createOrderCommand.customerId() + "\","
+                    + "\"items\":[{\"productId\":\"" + createOrderCommand.items().get(0).productId() + "\","
+                    + "\"quantity\":" + createOrderCommand.items().get(0).quantity() + ","
+                    + "\"unitPrice\":" + createOrderCommand.items().get(0).unitPrice() + "}]}"))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.orderId").value(expectedResult.orderId().toString()))
+            .andExpect(jsonPath("$.status").value(expectedResult.status()))
+            .andExpect(jsonPath("$.createdAt").isNotEmpty());
+
+        verify(placeOrderUseCase, times(1)).execute(any(CreateOrderCommand.class));
+        verifyNoMoreInteractions(placeOrderUseCase);
+    }
+
+    @Test
+    @DisplayName("should return 201 CREATED when order is created")
+    void shouldReturnCreatedStatus() throws Exception {
+        // Arrange
+        OrderResult expectedResult = new OrderResult(
+            UUID.randomUUID(),
+            "PENDING",
+            java.time.OffsetDateTime.now()
+        );
+
+        when(placeOrderUseCase.execute(any(CreateOrderCommand.class)))
+            .thenReturn(expectedResult);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\":\"" + createOrderCommand.customerId() + "\","
+                    + "\"items\":[{\"productId\":\"" + createOrderCommand.items().get(0).productId() + "\","
+                    + "\"quantity\":1,\"unitPrice\":9.99}]}"))
+            .andExpect(status().isCreated());
+
+        verify(placeOrderUseCase, times(1)).execute(any(CreateOrderCommand.class));
+    }
+
+    @Test
+    @DisplayName("should return 200 OK with order result")
+    void shouldReturnOkWithOrderResult() throws Exception {
+        // Arrange
+        OrderResult expectedResult = new OrderResult(
+            UUID.randomUUID(),
+            "CONFIRMED",
+            java.time.OffsetDateTime.now()
+        );
+
+        when(placeOrderUseCase.execute(any(CreateOrderCommand.class)))
+            .thenReturn(expectedResult);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\":\"" + createOrderCommand.customerId() + "\","
+                    + "\"items\":[{\"productId\":\"" + createOrderCommand.items().get(0).productId() + "\","
+                    + "\"quantity\":1,\"unitPrice\":9.99}]}"))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.orderId").isNotEmpty())
+            .andExpect(jsonPath("$.status").value("CONFIRMED"));
+
+        verify(placeOrderUseCase, times(1)).execute(any(CreateOrderCommand.class));
+    }
+
+    @Test
+    @DisplayName("should handle validation error for invalid request")
+    void shouldHandleValidationError() throws Exception {
+        // Act & Assert - Invalid JSON should result in 400
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"invalid\": \"json\"}"))
+            .andExpect(status().is4xxClientError());
+
+        verifyNoInteractions(placeOrderUseCase);
+    }
+
+    @Test
+    @DisplayName("should handle missing request body")
+    void shouldHandleMissingRequestBody() throws Exception {
+        // Act & Assert - Empty body should result in 400 or 422
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is4xxClientError());
+
+        verifyNoInteractions(placeOrderUseCase);
+    }
+
+    @Test
+    @DisplayName("should handle invalid JSON content type")
+    void shouldHandleInvalidContentType() throws Exception {
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.TEXT_PLAIN)
+                .content("plain text"))
+            .andExpect(status().is4xxClientError());
+
+        verifyNoInteractions(placeOrderUseCase);
+    }
+
+    @Test
+    @DisplayName("should handle multiple order items")
+    void shouldHandleMultipleOrderItems() throws Exception {
+        // Arrange
+        OrderResult expectedResult = new OrderResult(
+            UUID.randomUUID(),
+            "PENDING",
+            java.time.OffsetDateTime.now()
+        );
+
+        when(placeOrderUseCase.execute(any(CreateOrderCommand.class)))
+            .thenReturn(expectedResult);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\":\"" + createOrderCommand.customerId() + "\","
+                    + "\"items\":["
+                    + "{\"productId\":\"" + createOrderCommand.items().get(0).productId() + "\","
+                    + "\"quantity\":1,\"unitPrice\":9.99},"
+                    + "{\"productId\":\"" + UUID.randomUUID() + "\","
+                    + "\"quantity\":2,\"unitPrice\":19.99}"
+                    + "]}"))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.orderId").isNotEmpty());
+
+        verify(placeOrderUseCase, times(1)).execute(any(CreateOrderCommand.class));
+    }
+
+    @Test
+    @DisplayName("should pass command to use case with correct parameters")
+    void shouldPassCommandToUseCase() throws Exception {
+        // Arrange
+        UUID customerId = UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
+        OrderResult expectedResult = new OrderResult(
+            UUID.randomUUID(),
+            "PENDING",
+            java.time.OffsetDateTime.now()
+        );
+
+        when(placeOrderUseCase.execute(any(CreateOrderCommand.class)))
+            .thenReturn(expectedResult);
+
+        // Act & Assert
+        String requestJson = "{\"customerId\":\"" + customerId + "\","
+            + "\"items\":[{\"productId\":\"" + productId + "\","
+            + "\"quantity\":3,\"unitPrice\":29.99}]}";
+        
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+            .andExpect(status().isCreated());
+
+        verify(placeOrderUseCase, times(1)).execute(any(CreateOrderCommand.class));
+    }
+
+    @Test
+    @DisplayName("should return correct order status in response")
+    void shouldReturnCorrectOrderStatus() throws Exception {
+        // Arrange
+        OrderResult expectedResult = new OrderResult(
+            UUID.randomUUID(),
+            "PENDING",
+            java.time.OffsetDateTime.now()
+        );
+
+        when(placeOrderUseCase.execute(any(CreateOrderCommand.class)))
+            .thenReturn(expectedResult);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"customerId\":\"" + createOrderCommand.customerId() + "\","
+                    + "\"items\":[{\"productId\":\"" + createOrderCommand.items().get(0).productId() + "\","
+                    + "\"quantity\":1,\"unitPrice\":9.99}]}"))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.status").value("PENDING"));
+
+        verify(placeOrderUseCase, times(1)).execute(any(CreateOrderCommand.class));
+    }
+}

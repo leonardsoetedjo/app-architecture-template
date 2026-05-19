@@ -1,7 +1,13 @@
 # Project Coding Guide
 
+> **Purpose**: This file is the developer's quick-reference and the architect's audit baseline. Every code change in this repo must be producible from, and auditable against, the verified boilerplate in [`boilerplate/`](../boilerplate/).
+>
+> **Rule**: If your PR pattern is not already demonstrated in [`boilerplate/java/order-service/`](...), add it there first, then copy it into your feature.
+
 > Stack: **Spring Boot 4 (Java 17+) | React 18+ (TypeScript, Ant Design) | Apache Ignite 3 | PostgreSQL**
 > Architecture: **Clean Architecture + Domain-Driven Design**
+
+---
 
 ---
 
@@ -81,10 +87,15 @@ project-root/
 │   │   ├── utils/               # Pure utility functions
 │   │   └── styles/              # Global styles, theme overrides
 │   └── tests/
+├── boilerplate/               # Copy-paste templates for new services and frontend
+│   ├── java/                    # Spring Boot service boilerplate
+│   ├── python/                  # Python service boilerplate
+│   └── frontend/                # React + TypeScript + Ant Design boilerplate
 ├── docs/
 │   ├── 01-agnostic/         # Platform-independent principles
 │   ├── 02-java/             # Java stack implementation guides
 │   ├── 03-python/           # Python stack implementation guides
+│   ├── 04-sops/             # Standard Operating Procedures (how-to guides)
 │   └── architecture/        # High-level diagrams
 ├── docker-compose.yml
 └── AGENTS.md                    # This file
@@ -92,7 +103,9 @@ project-root/
 
 ---
 
-## 3. Code Templates
+## 3. Code Templates (from real, working boilerplate)
+
+The snippets below are **excerpts from the verified boilerplate files**. Do not retype them — copy the actual files from [`boilerplate/java/order-service/`](boilerplate/java/order-service/) and [`boilerplate/frontend/`](boilerplate/frontend/).
 
 ### 3.1 Domain — Aggregate Root
 
@@ -166,6 +179,17 @@ interface OrderListProps {
 | Git, Docker, CI/CD, Deployment, Alerting | [`docs/01-agnostic/03-guidelines/01-deployment.md`](docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
 | DDD deep dive, Microservices, Context Maps, EDA | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](docs/01-agnostic/02-adrs/01-clean-architecture.md) | Design decisions |
 | Review checklists, Onboarding, Dependencies | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
+| **Standard Operating Procedures** | | |
+| Add a new aggregate root / entity | [`docs/04-sops/01-add-new-aggregate-root.md`](docs/04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
+| Add a new REST endpoint (backend + frontend) | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | Adding an API |
+| Add a new frontend page / feature | [`docs/04-sops/03-add-new-frontend-page.md`](docs/04-sops/03-add-new-frontend-page.md) | Adding UI |
+| Add a Flyway database migration | [`docs/04-sops/04-add-flyway-migration.md`](docs/04-sops/04-add-flyway-migration.md) | Schema changes |
+| Publish a domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
+| Configure a new external HTTP service | [`docs/04-sops/06-configure-external-service.md`](docs/04-sops/06-configure-external-service.md) | External integrations |
+| **Boilerplate Templates** | | |
+| New Spring Boot microservice | [`boilerplate/java/order-service/`](boilerplate/java/order-service/) | Bootstrapping a Java service |
+| New React + TS + Ant Design frontend | [`boilerplate/frontend/`](boilerplate/frontend/) | Bootstrapping a frontend app |
+| Flyway migration templates | [`boilerplate/migrations/`](boilerplate/migrations/) | Creating DB migrations |
 
 ---
 

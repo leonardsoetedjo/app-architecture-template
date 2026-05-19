@@ -1,0 +1,10 @@
+{
+  "name": "Health Check",
+  "url": "{{baseUrl}}/actuator/health",
+  "method": "GET",
+  "headers": {},
+  "tests": [
+    "assert res.getStatus() === 200",
+    "assert res.getBody().status === 'UP'"
+  ]
+}

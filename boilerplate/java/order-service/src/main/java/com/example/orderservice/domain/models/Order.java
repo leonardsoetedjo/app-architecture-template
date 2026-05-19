@@ -1,15 +1,8 @@
 package com.example.orderservice.domain.models;
 
-import java.util.*;
-import java.time.*;
-
-public record OrderId(UUID value) {
-    public static OrderId generate() {
-        return new OrderId(UUID.randomUUID());
-    }
-}
-
-public record OrderItem(UUID productId, int quantity, double unitPrice) {}
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
 
 public record Order(
     OrderId id,
@@ -18,31 +11,22 @@ public record Order(
     OffsetDateTime createdAt,
     String status
 ) {
-    public Order {
-        if (items == null || items.isEmpty()) {
-            throw new InvalidOrderException("Order must have at least one item");
-        }
-    }
-
     public static Order create(UUID customerId, List<OrderItem> items) {
         return new Order(
-            OrderId.generate(),
+            new OrderId(UUID.randomUUID()),
             customerId,
             items,
-            OffsetDateTime.now(ZoneOffset.UTC),
+            OffsetDateTime.now(),
             "PENDING"
         );
     }
-}
 
-public class InvalidOrderException extends RuntimeException {
-    public InvalidOrderException(String message) {
-        super(message);
-    }
-}
-
-public class DomainException extends RuntimeException {
-    public DomainException(String message) {
-        super(message);
+    public Order {
+        if (customerId == null) {
+            throw new IllegalArgumentException("Customer ID cannot be null");
+        }
+        if (items == null || items.isEmpty()) {
+            throw new InvalidOrderException("Order must have at least one item");
+        }
     }
 }

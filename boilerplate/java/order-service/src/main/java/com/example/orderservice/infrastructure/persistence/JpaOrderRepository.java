@@ -2,63 +2,49 @@ package com.example.orderservice.infrastructure.persistence;
 
 import com.example.orderservice.domain.models.*;
 import com.example.orderservice.domain.ports.OrderRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-@RequiredArgsConstructor
 public class JpaOrderRepository implements OrderRepository {
     private final OrderJpaRepository jpaRepository;
 
+    public JpaOrderRepository(OrderJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
     @Override
     public Order save(Order order) {
-        // Map Domain -> Entity
-        OrderEntity entity = OrderEntity.builder()
-            .id(order.id().value())
-            .customerId(order.customerId())
-            .createdAt(order.createdAt())
-            .status(order.status())
-            .items(order.items().stream()
-                .map(item -> OrderItemEntity.builder()
-                    .id(UUID.randomUUID())
-                    .order(null) // set in loop
-                    .productId(item.productId())
-                    .quantity(item.quantity())
-                    .unitPrice(item.unitPrice())
-                    .build())
-                .collect(Collectors.toList()))
-            .build();
-
-        // Set back-references
-        entity.getItems().forEach(i -> i.setOrder(entity));
+        List<OrderItemEntity> itemEntities = new ArrayList<>();
+        for (OrderItem item : order.items()) {
+            itemEntities.add(new OrderItemEntity(UUID.randomUUID(), null, item.productId(), item.quantity(), item.unitPrice()));
+        }
+        OrderEntity entity = new OrderEntity(order.id().value(), order.customerId(), order.createdAt(), order.status(), itemEntities);
+        for (OrderItemEntity i : entity.getItems()) {
+            i.setOrder(entity);
+        }
 
         OrderEntity saved = jpaRepository.save(entity);
 
-        // Map Entity -> Domain
-        return new Order(
-            new OrderId(saved.getId()),
-            saved.getCustomerId(),
-            saved.getItems().stream()
-                .map(i -> new OrderItem(i.getProductId(), i.getQuantity(), i.getUnitPrice()))
-                .collect(Collectors.toList()),
-            saved.getCreatedAt(),
-            saved.getStatus()
-        );
+        return toDomain(saved);
     }
 
     @Override
     public Optional<Order> findById(OrderId id) {
-        return jpaRepository.findById(id.value())
-            .map(entity -> new Order(
-                new OrderId(entity.getId()),
-                entity.getCustomerId(),
-                entity.getItems().stream()
-                    .map(i -> new OrderItem(i.getProductId(), i.getQuantity(), i.getUnitPrice()))
-                    .collect(Collectors.toList()),
-                entity.getCreatedAt(),
-                entity.getStatus()
-            ));
+        return jpaRepository.findById(id.value()).map(this::toDomain);
+    }
+
+    private Order toDomain(OrderEntity entity) {
+        return new Order(
+            new OrderId(entity.getId()),
+            entity.getCustomerId(),
+            entity.getItems().stream()
+                .map(i -> new OrderItem(i.getProductId(), i.getQuantity(), i.getUnitPrice()))
+                .toList(),
+            entity.getCreatedAt(),
+            entity.getStatus()
+        );
     }
 }

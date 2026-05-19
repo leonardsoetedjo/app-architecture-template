@@ -6,6 +6,8 @@ version: "1.0"
 
 # Agnostic Documentation Index
 
+> **Why this repo exists**: The architecture team maintains a working, verified boilerplate for every stack. Developers copy it. Architects audit against it. If a feature's pattern is not already in the boilerplate, add it there first.
+
 Documents in this directory apply regardless of the technology stack (Java, Python, React, Quasar).
 
 ## Reading Sequence

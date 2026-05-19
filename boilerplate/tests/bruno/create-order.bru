@@ -1,0 +1,17 @@
+{
+  "name": "Create Order",
+  "url": "{{baseUrl}}/api/v1/orders",
+  "method": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "mode": "json",
+    "json": "{\n  \"customerId\": \"550e8400-e29b-41d4-a716-446655440001\",\n  \"items\": [\n    {\n      \"productId\": \"550e8400-e29b-41d4-a716-446655440002\",\n      \"quantity\": 2,\n      \"unitPrice\": 29.99\n    }\n  ]\n}"
+  },
+  "tests": [
+    "assert res.getStatus() === 200 || res.getStatus() === 201",
+    "assert res.getBody().orderId !== undefined",
+    "assert res.getBody().status === 'PENDING'"
+  ]
+}
