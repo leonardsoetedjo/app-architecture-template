@@ -1,0 +1,25 @@
+#!/bin/sh
+# Pre-commit hook: run Spotless check (Java) + ESLint --fix (frontend)
+# Skips gracefully if tooling is not installed (CI handles enforcement)
+set -e
+
+JAVA_DIR="boilerplate/java/order-service"
+FRONTEND_DIR="boilerplate/frontend"
+
+# Java Spotless check
+if [ -f "$JAVA_DIR/pom.xml" ] && command -v mvn >/dev/null 2>&1; then
+    echo "[pre-commit] Running Spotless check on Java boilerplate..."
+    (cd "$JAVA_DIR" && mvn spotless:check)
+else
+    echo "[pre-commit] Skipping Spotless (mvn not available or pom.xml missing)"
+fi
+
+# Frontend ESLint + Prettier fix
+if [ -f "$FRONTEND_DIR/package.json" ] && command -v npx >/dev/null 2>&1; then
+    echo "[pre-commit] Running ESLint fix on frontend..."
+    (cd "$FRONTEND_DIR" && npx eslint 'src/**/*.{ts,tsx}' --fix --max-warnings=0) || true
+    echo "[pre-commit] Running Prettier on frontend..."
+    (cd "$FRONTEND_DIR" && npx prettier --write 'src/**/*.{ts,tsx,css,json}') || true
+else
+    echo "[pre-commit] Skipping ESLint/Prettier (npx not available or package.json missing)"
+fi

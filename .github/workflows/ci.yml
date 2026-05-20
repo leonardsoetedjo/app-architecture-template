@@ -37,9 +37,13 @@ jobs:
     run: mvn clean verify
   
   - name: Run Spotless Check
+    working-directory: ./boilerplate/java/common
+    run: mvn spotless:check
+
+  - name: Run Spotless Check (Order Service)
     working-directory: ./boilerplate/java/order-service
     run: mvn spotless:check
-  
+
   - name: Generate JUnit Report
     uses: dorny/test-reporter@v1
     if: always()
