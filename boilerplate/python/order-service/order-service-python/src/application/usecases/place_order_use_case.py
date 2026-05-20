@@ -1,9 +1,24 @@
+"""Application use case interface.
+
+Command type — orchestrates domain logic and returns a result.
+"""
+
 from abc import ABC, abstractmethod
-from typing import Optional
-from .dtos.order_dtos import CreateOrderCommand, OrderResult
+
+from application.dtos import CreateOrderCommand, OrderResult
+
 
 class PlaceOrderUseCase(ABC):
+    """Application layer port for placing orders."""
+
     @abstractmethod
-    async def execute(self, command: CreateOrderCommand) -> OrderResult:
-        """Execute the order placement process."""
-        pass
+    def execute(self, command: CreateOrderCommand) -> OrderResult:
+        """Execute the order placement.
+
+        Args:
+            command: Validated create-order command
+
+        Returns:
+            OrderResult with order_id, status, created_at
+        """
+        ...

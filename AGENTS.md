@@ -2,9 +2,9 @@
 
 > **Purpose**: This file is the developer's quick-reference and the architect's audit baseline. Every code change in this repo must be producible from, and auditable against, the verified boilerplate in [`boilerplate/`](../boilerplate/).
 >
-> **Rule**: If your PR pattern is not already demonstrated in [`boilerplate/java/order-service/`](...), add it there first, then copy it into your feature.
+> **Rule**: If your PR pattern is not already demonstrated in [`boilerplate/java/order-service/`](boilerplate/java/order-service/) or [`boilerplate/python/order-service/`](boilerplate/python/order-service/), add it there first, then copy it into your feature.
 
-> Stack: **Spring Boot 4 (Java 17+) | React 18+ (TypeScript, Ant Design) | Apache Ignite 3 | PostgreSQL**
+> Stack: **Spring Boot 4 (Java 17+) | FastAPI + SQLAlchemy (Python 3.11+) | React 18+ (TypeScript, Ant Design) | Apache Ignite 3 | PostgreSQL**
 > Architecture: **Clean Architecture + Domain-Driven Design**
 
 ---
@@ -17,11 +17,13 @@
 
 | Rule | Violation |
 |------|-----------|
-| Domain layer has **zero** framework imports | No Spring, no JPA, no Lombok in `domain/` |
-| Constructor injection **only** | Never `@Autowired` on fields |
+| Domain layer has **zero** framework imports | No Spring/JPA/Lombok in `domain/` (Java); no FastAPI/SQLAlchemy/Pydantic in `domain/` (Python) |
+| Constructor injection **only** | Never `@Autowired` on fields (Java); never global session/conn in domain (Python) |
 | DTOs at every boundary | Never pass entities to UI or DB layers |
-| Pure Java in domain | No `null` — use `Optional` or null objects |
+| Pure Java / Pure Python in domain | No `null` — use `Optional` (Java); no `None` without guard — use type hints (Python) |
 | TypeScript: **no `any`** | Every prop interface explicitly typed |
+| Financial precision | Use `BigDecimal` (Java) or `decimal.Decimal` (Python) for money |
+| Value objects immutable | Use `record` (Java ≥16) or `@dataclass(frozen=True)` (Python) |
 
 ### 1.2 Naming
 
@@ -29,12 +31,15 @@
 |-------|-----------|---------|
 | Java classes | PascalCase | `OrderService` |
 | Java methods/fields | camelCase | `findById` |
+| Python modules / functions | snake_case | `place_order_use_case.py`, `find_by_id` |
+| Python classes | PascalCase | `OrderService` |
 | Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
 | React components | PascalCase | `UserProfile.tsx` |
 | Hooks | useCamelCase | `useAuth` |
 | Domain events | Past tense | `OrderPlaced`, `PaymentConfirmed` |
 | Git branches | `feature/`, `bugfix/`, `hotfix/`, `refactor/` | `feature/order-cancellation` |
 | Migrations (Flyway) | `V{version}__{desc}.sql` | `V1__create_users_table.sql` |
+| Migrations (Alembic) | `{version}_{desc}.py` | `001_create_orders.py` |
 
 ### 1.3 HTTP Codes
 
@@ -107,7 +112,7 @@ project-root/
 
 The snippets below are **excerpts from the verified boilerplate files**. Do not retype them — copy the actual files from [`boilerplate/java/order-service/`](boilerplate/java/order-service/) and [`boilerplate/frontend/`](boilerplate/frontend/).
 
-### 3.1 Domain — Aggregate Root
+### 3.1 Domain — Aggregate Root (Java)
 
 ```java
 public class Order {
@@ -125,7 +130,40 @@ public class Order {
 }
 ```
 
-### 3.2 Application — Use Case
+### 3.1a Domain — Value Object + Entity (Python)
+
+```python
+# domain/order_id.py
+from dataclasses import dataclass
+from uuid import UUID
+
+@dataclass(frozen=True)
+class OrderId:
+    value: UUID
+
+# domain/order.py
+from dataclasses import dataclass, field
+from datetime import datetime
+from decimal import Decimal
+from typing import List
+
+@dataclass
+class Order:
+    id: OrderId
+    customer_id: str
+    items: List[OrderItem]
+    status: str = "PENDING"
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    confirmed_at: datetime | None = None
+
+    def confirm(self) -> None:
+        if self.status != "PENDING":
+            raise IllegalStateError("Only pending orders can be confirmed")
+        self.status = "CONFIRMED"
+        self.confirmed_at = datetime.utcnow()
+```
+
+### 3.2 Application — Use Case (Java)
 
 ```java
 public class PlaceOrderUseCase {
@@ -138,7 +176,34 @@ public class PlaceOrderUseCase {
 }
 ```
 
-### 3.3 Infrastructure — Controller
+### 3.2a Application — Use Case (Python)
+
+```python
+# application/usecases/place_order_use_case_impl.py
+class PlaceOrderUseCaseImpl:
+    def __init__(self, repository: OrderRepository, publisher: EventPublisher):
+        self._repository = repository
+        self._publisher = publisher
+
+    def execute(self, command: CreateOrderCommand) -> OrderResult:
+        order = Order(
+            id=OrderId(uuid4()),
+            customer_id=command.customer_id,
+            items=[
+                OrderItem(
+                    product_id=item.product_id,
+                    quantity=item.quantity,
+                    unit_price=item.unit_price,  # Decimal — never float for money
+                )
+                for item in command.items
+            ],
+        )
+        self._repository.save(order)
+        self._publisher.publish(OrderPlacedEvent(order.id))
+        return OrderResult(order_id=order.id.value, status=order.status)
+```
+
+### 3.3 Infrastructure — Controller (Java)
 
 ```java
 @RestController
@@ -151,6 +216,28 @@ public class OrderController {
         // Map request -> command -> use case -> response
     }
 }
+```
+
+### 3.3a Infrastructure — Controller (Python FastAPI)
+
+```python
+# infrastructure/api/controller.py
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+
+router = APIRouter()
+
+@router.post("/orders", status_code=status.HTTP_201_CREATED, response_model=OrderResponse)
+async def create_order(
+    request: CreateOrderRequest,
+    db: Session = Depends(get_db),
+):
+    use_case = PlaceOrderUseCaseImpl(
+        SqlalchemyOrderRepository(db),
+        OutboxEventPublisher(db),
+    )
+    result = use_case.execute(request.to_command())
+    return OrderResponse.from_result(result)
 ```
 
 ### 3.4 Frontend — Container + Presentational
@@ -186,8 +273,10 @@ interface OrderListProps {
 | Add a Flyway database migration | [`docs/04-sops/04-add-flyway-migration.md`](docs/04-sops/04-add-flyway-migration.md) | Schema changes |
 | Publish a domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
 | Configure a new external HTTP service | [`docs/04-sops/06-configure-external-service.md`](docs/04-sops/06-configure-external-service.md) | External integrations |
+| Add custom Actuator health indicator | [`boilerplate/java/order-service/infrastructure/DatabaseHealthIndicator.java`](boilerplate/java/order-service/infrastructure/DatabaseHealthIndicator.java) | Service health monitoring |
 | **Boilerplate Templates** | | |
 | New Spring Boot microservice | [`boilerplate/java/order-service/`](boilerplate/java/order-service/) | Bootstrapping a Java service |
+| New FastAPI microservice (Python) | [`boilerplate/python/order-service/`](boilerplate/python/order-service/) | Bootstrapping a Python service |
 | New React + TS + Ant Design frontend | [`boilerplate/frontend/`](boilerplate/frontend/) | Bootstrapping a frontend app |
 | Flyway migration templates | [`boilerplate/migrations/`](boilerplate/migrations/) | Creating DB migrations |
 

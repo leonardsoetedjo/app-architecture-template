@@ -16,6 +16,20 @@ class OrderPlacementServiceTest {
         @Override public Order save(Order order) {
             return order;
         }
+        @Override public List<Order> findAll() {
+            return List.of();
+        }
+        @Override public List<Order> findByCustomerId(UUID customerId) {
+            return List.of();
+        }
+        @Override public void deleteById(OrderId id) {
+        }
+        @Override public long count() {
+            return 0;
+        }
+        @Override public boolean existsById(OrderId id) {
+            return false;
+        }
     };
 
     private final OrderPlacementService service = new OrderPlacementService(DUMMY_REPO);
@@ -30,9 +44,9 @@ class OrderPlacementServiceTest {
         Order result = service.placeOrder(customerId, items);
 
         assertThat(result).isNotNull();
-        assertThat(result.customerId()).isEqualTo(customerId);
-        assertThat(result.items()).hasSize(1);
-        assertThat(result.status()).isEqualTo("PENDING");
+        assertThat(result.getCustomerId()).isEqualTo(customerId);
+        assertThat(result.getItems()).hasSize(1);
+        assertThat(result.getStatus()).isEqualTo("PENDING");
     }
 
     @Test

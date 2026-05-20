@@ -1,10 +1,16 @@
-{
-  "name": "Health Check",
-  "url": "{{baseUrl}}/actuator/health",
-  "method": "GET",
-  "headers": {},
-  "tests": [
-    "assert res.getStatus() === 200",
-    "assert res.getBody().status === 'UP'"
-  ]
+meta {
+  name: Health Check
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/actuator/health
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+  res.body.status: eq UP
 }

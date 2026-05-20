@@ -38,8 +38,35 @@ class PlaceOrderUseCaseTest {
             @Override
             public java.util.Optional<Order> findById(com.example.orderservice.domain.models.OrderId id) {
                 return savedOrders.stream()
-                    .filter(o -> o.id().value().equals(id.value()))
+                    .filter(o -> o.getId().getValue().equals(id.getValue()))
                     .findFirst();
+            }
+
+            @Override
+            public List<Order> findAll() {
+                return new ArrayList<>(savedOrders);
+            }
+
+            @Override
+            public List<Order> findByCustomerId(UUID customerId) {
+                return savedOrders.stream()
+                    .filter(o -> o.getCustomerId().equals(customerId))
+                    .toList();
+            }
+
+            @Override
+            public void deleteById(com.example.orderservice.domain.models.OrderId id) {
+                savedOrders.removeIf(o -> o.getId().getValue().equals(id.getValue()));
+            }
+
+            @Override
+            public long count() {
+                return savedOrders.size();
+            }
+
+            @Override
+            public boolean existsById(com.example.orderservice.domain.models.OrderId id) {
+                return savedOrders.stream().anyMatch(o -> o.getId().getValue().equals(id.getValue()));
             }
         };
         orderPlacementService = new OrderPlacementService(fakeRepo);
@@ -89,8 +116,8 @@ class PlaceOrderUseCaseTest {
 
             assertEquals(1, savedOrders.size());
             Order saved = savedOrders.get(0);
-            assertEquals(customerId, saved.customerId());
-            assertEquals(2, saved.items().size());
+            assertEquals(customerId, saved.getCustomerId());
+            assertEquals(2, saved.getItems().size());
         }
 
         @Test
@@ -131,7 +158,7 @@ class PlaceOrderUseCaseTest {
 
             assertNotNull(result);
             assertEquals(1, savedOrders.size());
-            assertEquals(3, savedOrders.get(0).items().size());
+            assertEquals(3, savedOrders.get(0).getItems().size());
         }
 
         @Test

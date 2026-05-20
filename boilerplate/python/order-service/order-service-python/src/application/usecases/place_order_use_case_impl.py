@@ -1,33 +1,46 @@
-from .place_order_use_case import PlaceOrderUseCase
-from ..domain.services.order_placement_service import OrderPlacementService
-from ..domain.ports.order_repository import OrderRepository
-from .dtos.order_dtos import CreateOrderCommand, OrderResult
-from loguru import logger
-from libs.python-common.src.common.infrastructure.api.middleware import log_use_case
+from datetime import datetime
+from decimal import Decimal
+from typing import List
+from uuid import UUID
 
-class PlaceOrderUseCaseImpl(PlaceOrderUseCase):
-    def __init__(self, order_placement_service: OrderPlacementService):
-        self.order_placement_service = order_placement_service
+from application.dtos import CreateOrderCommand, OrderResult
+from domain.order import Order, OrderItem
+from domain.services.order_placement_service import OrderPlacementService
 
-    @log_use_case
-    async def execute(self, command: CreateOrderCommand) -> OrderResult:
-        # Map DTO to Domain
-        from .dtos.order_dtos import OrderItemDTO
-        from ..domain.models.order import OrderItem
 
-        items = [
+class PlaceOrderUseCaseImpl:
+    """Application use case: maps commands, orchestrates domain service, returns result.
+
+    Follows CQS: this is a Command (mutates state, returns result DTO).
+    """
+
+    def __init__(self, placement_service: OrderPlacementService):
+        self._placement_service = placement_service
+
+    def execute(self, command: CreateOrderCommand) -> OrderResult:
+        """Execute the place order use case.
+
+        Steps:
+        1. Map DTO → domain objects (Domain Item uses Decimal)
+        2. Delegate to OrderPlacementService (domain)
+        3. Map domain result → application DTO
+        """
+        items: List[OrderItem] = [
             OrderItem(
                 product_id=item.product_id,
                 quantity=item.quantity,
-                unit_price=item.unit_price
-            ) for item in command.items
+                unit_price=item.unit_price,
+            )
+            for item in command.items
         ]
 
-        # Delegate to Domain Service for business logic
-        order = self.order_placement_service.place_order(command.customer_id, items)
+        saved = self._placement_service.place_order(
+            customer_id=command.customer_id,
+            items=items,
+        )
 
         return OrderResult(
-            order_id=order.id.value,
-            status=order.status,
-            created_at=order.created_at.isoformat()
+            order_id=saved.id,
+            status=saved.status,
+            created_at=saved.created_at,
         )

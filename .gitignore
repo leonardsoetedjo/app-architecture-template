@@ -26,5 +26,10 @@ state_handoff.md
 .DS_Store
 Thumbs.db
 
+# Python
+__pycache__/
+*.pyc
+.venv/
+
 # Misc
 .serena/

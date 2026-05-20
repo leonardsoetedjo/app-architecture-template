@@ -13,7 +13,7 @@ const OrderForm: React.FC = () => {
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
-    }, 1500);
+    }, 0);
   };
 
   return (

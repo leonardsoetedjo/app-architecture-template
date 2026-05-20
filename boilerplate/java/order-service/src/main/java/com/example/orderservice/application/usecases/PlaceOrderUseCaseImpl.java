@@ -26,6 +26,6 @@ public class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
             .map(dto -> new OrderItem(dto.productId(), dto.quantity(), dto.unitPrice()))
             .collect(Collectors.toList());
         Order order = orderPlacementService.placeOrder(command.customerId(), items);
-        return new OrderResult(order.id().value(), order.status(), order.createdAt());
+        return new OrderResult(order.getId().getValue(), order.getStatus(), order.getCreatedAt());
     }
 }

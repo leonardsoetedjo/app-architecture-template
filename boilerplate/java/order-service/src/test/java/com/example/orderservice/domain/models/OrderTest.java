@@ -30,11 +30,11 @@ class OrderTest {
 
             // Assert
             assertNotNull(order);
-            assertNotNull(order.id());
-            assertEquals(customerId, order.customerId());
-            assertEquals(2, order.items().size());
-            assertEquals("PENDING", order.status());
-            assertNotNull(order.createdAt());
+            assertNotNull(order.getId());
+            assertEquals(customerId, order.getCustomerId());
+            assertEquals(2, order.getItems().size());
+            assertEquals("PENDING", order.getStatus());
+            assertNotNull(order.getCreatedAt());
         }
 
         @Test
@@ -51,7 +51,7 @@ class OrderTest {
             Order order2 = Order.create(customerId, items);
 
             // Assert
-            assertNotEquals(order1.id(), order2.id());
+            assertNotEquals(order1.getId(), order2.getId());
         }
     }
 
@@ -113,9 +113,9 @@ class OrderTest {
             OrderItem item = new OrderItem(productId, 5, 10.99);
 
             // Assert
-            assertEquals(productId, item.productId());
-            assertEquals(5, item.quantity());
-            assertEquals(10.99, item.unitPrice(), 0.001);
+            assertEquals(productId, item.getProductId());
+            assertEquals(5, item.getQuantity());
+            assertEquals(10.99, item.getUnitPrice(), 0.001);
         }
     }
 
@@ -146,7 +146,7 @@ class OrderTest {
             OrderId orderId = new OrderId(value);
 
             // Assert
-            assertEquals(value, orderId.value());
+            assertEquals(value, orderId.getValue());
         }
     }
 

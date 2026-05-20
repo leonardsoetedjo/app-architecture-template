@@ -24,3 +24,20 @@ server:
 logging:
   level:
     com.example.orderservice: DEBUG
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    db:
+      enabled: true
+
+
+springdoc:
+  api-docs:
+    path: /api/v1/docs
+  swagger-ui:
+    path: /api/v1/swagger-ui.html
+    operationsSorter: method
