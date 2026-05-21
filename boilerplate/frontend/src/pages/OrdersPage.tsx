@@ -1,10 +1,11 @@
 import { Card, Row, Col, Button } from 'antd';
 import React, { useState } from 'react';
-import useOrders from '@src/hooks/useOrders';
+import useOrders, { UseOrdersReturn } from '@src/hooks/useOrders';
 import OrderList from '@src/components/OrderList';
+import { fetchOrders } from '@src/services/fetchOrders';
 
 const OrdersPage: React.FC = () => {
-  const { orders, loading, error, refresh } = useOrders();
+  const { orders, loading, error, refresh }: UseOrdersReturn = useOrders(fetchOrders);
   const [showForm, setShowForm] = useState(false);
 
   return (

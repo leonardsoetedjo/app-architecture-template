@@ -2,12 +2,10 @@ package com.example.orderservice.domain.services;
 
 import com.example.orderservice.domain.models.*;
 import com.example.orderservice.domain.ports.OrderRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
-@Service
 public class OrderPlacementService {
     private final OrderRepository orderRepository;
 

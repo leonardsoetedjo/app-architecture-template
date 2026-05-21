@@ -1,4 +1,5 @@
-from datetime import datetime
+from __future__ import annotations
+
 from decimal import Decimal
 from typing import List
 from uuid import UUID
@@ -40,7 +41,7 @@ class PlaceOrderUseCaseImpl:
         )
 
         return OrderResult(
-            order_id=saved.id,
+            order_id=saved.id.value,
             status=saved.status,
             created_at=saved.created_at,
         )

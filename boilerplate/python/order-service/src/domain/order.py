@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import List
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from .exceptions import InvalidOrderException, IllegalStateException
 from .order_id import OrderId
@@ -16,7 +16,7 @@ class Order:
     Mutable aggregate root (not frozen) to support state transitions.
     Identity equality via OrderId. Value objects are frozen.
     """
-    id: UUID
+    id: OrderId
     customer_id: UUID
     items: List[OrderItem]
     status: str = "PENDING"
@@ -33,13 +33,15 @@ class Order:
                 raise InvalidOrderException("Order items must have positive quantity")
             if item.unit_price < 0:
                 raise InvalidOrderException("Order items must have non-negative price")
-        if self.created_at is None:
-            object.__setattr__(self, "created_at", datetime.now(timezone.utc))
 
     @staticmethod
     def create(customer_id: UUID, items: List[OrderItem]) -> "Order":
         """Factory method to create a new Order with validation."""
-        return Order(id=uuid4(), customer_id=customer_id, items=list(items))
+        return Order(
+            id=OrderId.generate(),
+            customer_id=customer_id,
+            items=list(items),
+        )
 
     def confirm(self) -> None:
         """Confirm the order by changing status to CONFIRMED."""

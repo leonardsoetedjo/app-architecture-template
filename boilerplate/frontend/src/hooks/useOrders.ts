@@ -1,39 +1,40 @@
-import { useEffect, useState } from 'react';
-import apiClient from '@src/services/apiClient';
+import { useCallback, useEffect, useState } from 'react';
 import { Order } from '@src/types/Order';
 
-interface UseOrdersReturn {
+export interface UseOrdersReturn {
   orders: Order[];
   loading: boolean;
   error: Error | null;
   refresh: () => void;
 }
 
-const useOrders = (): UseOrdersReturn => {
+export type FetchOrders = () => Promise<Order[]>;
+
+const useOrders = (fetchOrders: FetchOrders): UseOrdersReturn => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchOrders = async () => {
+  const doFetch = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.get<Order[]>('/orders');
-      setOrders(response.data);
+      const data = await fetchOrders();
+      setOrders(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Unknown error occurred'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchOrders]);
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    doFetch();
+  }, [doFetch]);
 
-  const refresh = () => {
-    fetchOrders();
-  };
+  const refresh = useCallback(() => {
+    doFetch();
+  }, [doFetch]);
 
   return { orders, loading, error, refresh };
 };

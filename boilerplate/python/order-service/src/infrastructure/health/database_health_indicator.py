@@ -5,9 +5,9 @@ from typing import Any
 
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError, SQLAlchemyError
+from sqlalchemy.engine import Engine
 
 from infrastructure.persistence import get_engine
-from sqlalchemy.engine import Engine
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class DatabaseHealthIndicator:
     """Performs an actual round-trip to PostgreSQL.
 
     Returns shape:
-        {"status": "UP",  "database": "PostgreSQL", "validationQuery": "SELECT 1",  "version": "PostgreSQL 16.4"}
+        {"status": "UP", "database": "PostgreSQL", ...}
     or  {"status": "DOWN", "database": "PostgreSQL", "error": "..."}
     """
 

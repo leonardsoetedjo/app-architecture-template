@@ -10,7 +10,7 @@ from infrastructure.config import get_settings
 from .controller import router as orders_router
 from .exception_handlers import setup_exception_handlers
 from infrastructure.health.database_health_indicator import DatabaseHealthIndicator
-from domain.services.auth_service import AuthService
+from infrastructure.services.auth_service import AuthService
 
 
 class TokenRequest(BaseModel):

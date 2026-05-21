@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from typing import Any
+
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 
 from domain.order_id import OrderId
-from domain.order import Order, OrderItem
+from domain.order import Order
 from domain.exceptions import InvalidOrderException
 from domain.ports.order_repository import OrderRepository
-from domain.ports.event_publisher import EventPublisher
 
 from .models import OrderEntity, OrderItemEntity, OutboxEventEntity
 from .mapper import OrderMapper
@@ -21,9 +22,8 @@ class SqlAlchemyOrderRepository(OrderRepository):
     Persists orders with outbox events in the same transaction.
     """
 
-    def __init__(self, session: Session, event_publisher: EventPublisher):
+    def __init__(self, session: Session):
         self._session = session
-        self._event_publisher = event_publisher
 
     def save(self, order: Order) -> Order:
         """Persist order + outbox event atomically."""
@@ -34,7 +34,7 @@ class SqlAlchemyOrderRepository(OrderRepository):
 
             # Outbox pattern: write event in same transaction
             payload = {
-                "order_id": str(order.id),
+                "order_id": str(order.id.value),
                 "customer_id": str(order.customer_id),
                 "items": [
                     {
@@ -49,7 +49,7 @@ class SqlAlchemyOrderRepository(OrderRepository):
             }
             outbox = OutboxEventEntity(
                 event_type="OrderPlaced",
-                aggregate_id=str(order.id),
+                aggregate_id=str(order.id.value),
                 payload=str(payload),
             )
             self._session.add(outbox)
@@ -68,10 +68,11 @@ class SqlAlchemyOrderRepository(OrderRepository):
         )
         return OrderMapper.to_domain(entity) if entity else None
 
-    def find_by_customer_id(self, customer_id: OrderId) -> list[Order]:
+    def find_by_customer_id(self, customer_id: UUID) -> list[Order]:
+        from uuid import UUID
         entities = (
             self._session.query(OrderEntity)
-            .filter(OrderEntity.customer_id == customer_id.value)
+            .filter(OrderEntity.customer_id == customer_id)
             .all()
         )
         return [OrderMapper.to_domain(e) for e in entities]
@@ -90,3 +91,13 @@ class SqlAlchemyOrderRepository(OrderRepository):
     def find_all(self) -> list[Order]:
         entities = self._session.query(OrderEntity).all()
         return [OrderMapper.to_domain(e) for e in entities]
+
+    def delete_by_id(self, order_id: OrderId) -> None:
+        entity = (
+            self._session.query(OrderEntity)
+            .filter(OrderEntity.id == order_id.value)
+            .first()
+        )
+        if entity:
+            self._session.delete(entity)
+            self._session.commit()

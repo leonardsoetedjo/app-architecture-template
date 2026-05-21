@@ -3,8 +3,9 @@ from __future__ import annotations
 from decimal import Decimal
 from uuid import UUID
 
-from domain.order import Order, OrderItem
+from domain.order import Order
 from domain.order_id import OrderId
+from domain.order_item import OrderItem
 from .models import OrderEntity, OrderItemEntity
 
 
@@ -27,11 +28,12 @@ class OrderMapper:
             for it in entity.items
         ]
         return Order(
-            id=entity.id,
+            id=OrderId(entity.id),
             customer_id=entity.customer_id,
             items=items,
             status=entity.status,
             created_at=entity.created_at,
+            confirmed_at=entity.confirmed_at,
         )
 
     @staticmethod
@@ -45,7 +47,7 @@ class OrderMapper:
             for it in domain.items
         ]
         order_entity = OrderEntity(
-            id=domain.id,
+            id=domain.id.value,
             customer_id=domain.customer_id,
             status=domain.status,
             created_at=domain.created_at,

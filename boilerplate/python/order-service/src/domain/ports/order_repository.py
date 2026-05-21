@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
+from uuid import UUID
 
 from domain.order import Order
 from domain.order_id import OrderId
+
 
 class OrderRepository(ABC):
     """Repository port for Order persistence.
@@ -22,8 +24,8 @@ class OrderRepository(ABC):
         ...
 
     @abstractmethod
-    def find_by_customer_id(self, customer_id: OrderId) -> List[Order]:
-        """Find all orders for a customer by OrderId."""
+    def find_by_customer_id(self, customer_id: UUID) -> List[Order]:
+        """Find all orders for a customer by UUID."""
         ...
 
     @abstractmethod
@@ -39,4 +41,9 @@ class OrderRepository(ABC):
     @abstractmethod
     def exists(self, order_id: OrderId) -> bool:
         """Check if an order exists."""
+        ...
+
+    @abstractmethod
+    def delete_by_id(self, order_id: OrderId) -> None:
+        """Delete an order by ID."""
         ...

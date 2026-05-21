@@ -6,8 +6,8 @@ from uuid import UUID, uuid4
 class OrderId:
     """Value object wrapper for Order ID.
 
-    Frozen dataclass ensures immutability as a domain value object.
-    Validates non-null UUID on construction.
+    Frozen dataclass ensures immutability. Explicit __eq__/__hash__
+    match Java's equals()/hashCode() semantics.
     """
     value: UUID
 
@@ -27,3 +27,11 @@ class OrderId:
 
     def __str__(self) -> str:
         return str(self.value)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, OrderId):
+            return False
+        return self.value == other.value
+
+    def __hash__(self) -> int:
+        return hash(self.value)

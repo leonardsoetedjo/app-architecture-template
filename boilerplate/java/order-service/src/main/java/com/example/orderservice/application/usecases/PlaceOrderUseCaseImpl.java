@@ -3,12 +3,10 @@ package com.example.orderservice.application.usecases;
 import com.example.orderservice.application.dtos.*;
 import com.example.orderservice.domain.models.*;
 import com.example.orderservice.domain.services.OrderPlacementService;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 public class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
 
     private final OrderPlacementService orderPlacementService;

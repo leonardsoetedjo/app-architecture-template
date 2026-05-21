@@ -1,21 +1,20 @@
+"""Event publisher port for publishing domain events.
+
+ABC = zero framework dependencies.
+Infrastructure adapters (e.g., Kafka, RabbitMQ) implement this.
+"""
+
 from abc import ABC, abstractmethod
-from datetime import datetime
-from typing import Dict, Any, List
 
 
 class EventPublisher(ABC):
-    """Event publisher port for publishing domain events.
+    """Domain event publisher port.
 
-    ABC = zero framework dependencies.
-    Infrastructure adapters (e.g., Kafka, RabbitMQ) implement this.
+    Accepts raw objects so domain events can pass across the port
+    without forcing the domain to depend on serialization frameworks.
     """
 
     @abstractmethod
-    def publish(self, event: Dict[str, Any]) -> None:
-        """Publish a single event."""
-        ...
-
-    @abstractmethod
-    def publish_batch(self, events: List[Dict[str, Any]]) -> None:
-        """Publish multiple events in a batch."""
+    def publish(self, event: object) -> None:
+        """Publish a single domain event."""
         ...

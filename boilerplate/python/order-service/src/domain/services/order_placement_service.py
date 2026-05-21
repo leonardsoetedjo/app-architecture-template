@@ -5,8 +5,10 @@ from uuid import UUID
 
 from domain.exceptions import InvalidOrderException
 from domain.order import Order, OrderItem
+from domain.order_id import OrderId
 from domain.ports.event_publisher import EventPublisher
 from domain.ports.order_repository import OrderRepository
+from domain.events.order_placed import OrderPlacedEvent
 
 
 class OrderPlacementService:
@@ -38,21 +40,12 @@ class OrderPlacementService:
         order = Order.create(customer_id, items)
         saved = self._order_repository.save(order)
 
-        event_payload = {
-            "event_type": "OrderPlaced",
-            "order_id": str(saved.id),
-            "customer_id": str(saved.customer_id),
-            "items": [
-                {
-                    "product_id": str(it.product_id),
-                    "quantity": it.quantity,
-                    "unit_price": str(it.unit_price),
-                }
-                for it in saved.items
-            ],
-            "total_amount": str(saved.total_amount()),
-            "created_at": saved.created_at.isoformat(),
-        }
-        self._event_publisher.publish(event_payload)
+        event = OrderPlacedEvent(
+            order_id=saved.id.value,
+            customer_id=saved.customer_id,
+            created_at=saved.created_at,
+            total_amount=saved.total_amount(),
+        )
+        self._event_publisher.publish(event)
 
         return saved

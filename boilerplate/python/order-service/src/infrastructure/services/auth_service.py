@@ -1,13 +1,12 @@
-"""Domain-agnostic JWT service.
+"""JWT dependency injection for FastAPI endpoints.
 
-Uses python-jose for token handling. No FastAPI imports here — this is
-a plain domain service that returns/validates strings.
+Domain-agnostic auth service using python-jose.
 """
 
-from datetime import datetime, timezone, timedelta
 from typing import Any
 
 from jose import jwt, JWTError
+
 from domain.exceptions import DomainException
 
 
@@ -35,15 +34,7 @@ class AuthService:
         self._expire_minutes = access_token_expire_minutes
 
     def generate_token(self, user_id: str, claims: dict[str, Any] | None = None) -> str:
-        """Generate a JWT access token.
-
-        Args:
-            user_id: Subject identifier (sub claim)
-            claims: Optional extra claims merged into payload
-
-        Returns:
-            Encoded JWT string
-        """
+        from datetime import datetime, timezone, timedelta
         now = datetime.now(timezone.utc)
         payload: dict[str, Any] = {
             "sub": user_id,
@@ -56,17 +47,6 @@ class AuthService:
         return jwt.encode(payload, self._secret, algorithm=self._algorithm)
 
     def validate_token(self, token: str) -> dict[str, Any]:
-        """Validate a JWT token and return its payload.
-
-        Args:
-            token: JWT string (with or without "Bearer " prefix)
-
-        Returns:
-            Decoded payload dict
-
-        Raises:
-            AuthenticationError: If token is invalid, expired, or malformed
-        """
         raw = token.removeprefix("Bearer ").strip()
         try:
             payload = jwt.decode(raw, self._secret, algorithms=[self._algorithm])
@@ -74,14 +54,11 @@ class AuthService:
             raise AuthenticationError("Token has expired")
         except JWTError as exc:
             raise AuthenticationError(f"Invalid token: {exc}")
-
         if payload.get("type") != "access":
             raise AuthenticationError("Token type mismatch")
-
         return payload
 
     def extract_user_id(self, token: str) -> str:
-        """Shorthand: validate and return the subject claim."""
         payload = self.validate_token(token)
         user_id = payload.get("sub")
         if not user_id:
