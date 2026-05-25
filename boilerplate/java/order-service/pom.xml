@@ -116,6 +116,13 @@
             <version>0.29.0.RELEASE</version>
         </dependency>
 
+        <!-- Rate Limiting: Bucket4j -->
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.9.0</version>
+        </dependency>
+
         <!-- Resilience4j -->
         <dependency>
             <groupId>io.github.resilience4j</groupId>
