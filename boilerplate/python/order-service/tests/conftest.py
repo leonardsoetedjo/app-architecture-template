@@ -22,7 +22,14 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text, Engine
 from sqlalchemy.orm import sessionmaker, Session
-from testcontainers.postgresql import PostgresContainer
+
+# Optional import for integration tests - only needed when running integration tests
+try:
+    from testcontainers.postgresql import PostgresContainer
+    TESTCONTAINERS_AVAILABLE = True
+except ImportError:
+    PostgresContainer = None
+    TESTCONTAINERS_AVAILABLE = False
 
 from main import app
 from infrastructure.persistence.models import Base
@@ -48,6 +55,9 @@ def postgres_container():
             engine = create_engine(connection_url)
             # Use engine for testing
     """
+    if not TESTCONTAINERS_AVAILABLE:
+        pytest.skip("testcontainers not installed - run: pip install testcontainers[postgresql]")
+    
     with PostgresContainer("postgres:15-alpine") as postgres:
         yield postgres
 
@@ -88,7 +98,7 @@ def postgres_engine(postgres_container: PostgresContainer):
 # ============== Session Fixtures ==============
 
 @pytest.fixture
-def db_session(postgres_engine: pytest.Engine):
+def db_session(postgres_engine: Engine):
     """Per-test database session with automatic rollback.
     
     Each test gets a fresh transaction that is rolled back after the test.
@@ -198,7 +208,7 @@ def test_user_data():
 # ============== Utility Fixtures ==============
 
 @pytest.fixture
-def clean_database(postgres_engine: pytest.Engine):
+def clean_database(postgres_engine: Engine):
     """Truncate all tables between tests if needed.
     
     Use this fixture when you need to ensure clean state
