@@ -1,10 +1,30 @@
 services:
+  order-service-java:
+    image: app-architecture-java:latest
+    build:
+      context: ./boilerplate/java/order-service
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/order_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    networks:
+      - app-network
+
   order-service-python:
+    image: app-architecture-python:latest
     build:
       context: ./boilerplate/python/order-service/order-service-python
       dockerfile: Dockerfile
-    ports:
-      - "8081:8080"
     environment:
       - ORDER_SERVICE_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/order_db
       - ORDER_SERVICE_PORT=8080
@@ -19,26 +39,8 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
-
-  order-service-java:
-    build:
-      context: ./boilerplate/java/order-service
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/order_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-    depends_on:
-      - postgres
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 60s
+    networks:
+      - app-network
 
   postgres:
     image: postgres:14-alpine
@@ -46,8 +48,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=order_db
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -55,6 +55,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
 
   flyway:
     image: flyway/flyway:11-alpine
@@ -67,7 +69,19 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: migrate
+    networks:
+      - app-network
+
+  nginx:
+    image: app-architecture-frontend:latest
+    build:
+      context: ./boilerplate/frontend
+      dockerfile: Dockerfile
+    networks:
+      - app-network
+
+networks:
+  app-network:
 
 volumes:
   postgres_data:

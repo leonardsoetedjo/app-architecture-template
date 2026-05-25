@@ -1,285 +1,93 @@
-# Project Coding Guide
+# AGENTS.md — app-architecture-template
 
-> **Purpose**: This file is the developer's quick-reference and the architect's audit baseline. Every code change in this repo must be producible from, and auditable against, the verified boilerplate in [`boilerplate/`](../boilerplate/).
->
-> **Rule**: If your PR pattern is not already demonstrated in [`boilerplate/java/order-service/`](boilerplate/java/order-service/) or [`boilerplate/python/order-service/`](boilerplate/python/order-service/), add it there first, then copy it into your feature.
+## Purpose
 
-> Stack: **Spring Boot 4 (Java 17+) | FastAPI + SQLAlchemy (Python 3.11+) | React 18+ (TypeScript, Ant Design) | Apache Ignite 3 | PostgreSQL**
-> Architecture: **Clean Architecture + Domain-Driven Design**
+This is the **reference template repository** for Clean Architecture polyglot services.
+It contains verified boilerplate code for Java (Spring Boot), Python (FastAPI), and React frontend.
 
----
+All concrete projects should fork/copy from here, not work inside this repo.
 
----
+## Technology Stack
 
-## 1. Quick Reference
+| Stack | Technology |
+|-------|-----------|
+| Java Backend | Spring Boot, PostgreSQL, Maven |
+| Python Backend | FastAPI, SQLAlchemy, Poetry |
+| Frontend | React 18, TypeScript, Vite, Ant Design, Nginx |
+| Database | PostgreSQL 14+ |
+| Orchestration | Docker Compose (dual-mode overlay) |
 
-### 1.1 Golden Rules
+## Dual-Mode Deployment
 
-| Rule | Violation |
-|------|-----------|
-| Domain layer has **zero** framework imports | No Spring/JPA/Lombok in `domain/` (Java); no FastAPI/SQLAlchemy/Pydantic in `domain/` (Python) |
-| Constructor injection **only** | Never `@Autowired` on fields (Java); never global session/conn in domain (Python) |
-| DTOs at every boundary | Never pass entities to UI or DB layers |
-| Pure Java / Pure Python in domain | No `null` — use `Optional` (Java); no `None` without guard — use type hints (Python) |
-| TypeScript: **no `any`** | Every prop interface explicitly typed |
-| Financial precision | Use `BigDecimal` (Java) or `decimal.Decimal` (Python) for money |
-| Value objects immutable | Use `record` (Java ≥16) or `@dataclass(frozen=True)` (Python) |
+Three compose files provide fleet vs standalone:
 
-### 1.2 Naming
+| File | Purpose |
+|------|---------|
+| `docker-compose.yml` | Base services — no ports, no labels |
+| `docker-compose.standalone.yml` | Adds `127.0.0.1` ports + drops Traefik |
+| `docker-compose.traefik.yml` | Adds Traefik labels + `traefik-net` |
 
-| Scope | Convention | Example |
-|-------|-----------|---------|
-| Java classes | PascalCase | `OrderService` |
-| Java methods/fields | camelCase | `findById` |
-| Python modules / functions | snake_case | `place_order_use_case.py`, `find_by_id` |
-| Python classes | PascalCase | `OrderService` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| React components | PascalCase | `UserProfile.tsx` |
-| Hooks | useCamelCase | `useAuth` |
-| Domain events | Past tense | `OrderPlaced`, `PaymentConfirmed` |
-| Git branches | `feature/`, `bugfix/`, `hotfix/`, `refactor/` | `feature/order-cancellation` |
-| Migrations (Flyway) | `V{version}__{desc}.sql` | `V1__create_users_table.sql` |
-| Migrations (Alembic) | `{version}_{desc}.py` | `001_create_orders.py` |
-
-### 1.3 HTTP Codes
-
-| Code | When |
-|------|------|
-| 200 | Success |
-| 201 | Resource created |
-| 204 | Success, no body |
-| 400 | Validation / business rule failure |
-| 401 | Authentication required |
-| 403 | Insufficient permissions |
-| 404 | Resource not found |
-| 409 | Business conflict (duplicate) |
-| 422 | Semantic validation errors |
-| 500 | Unexpected server error |
-
-### 1.4 REST Resources
-
+### Fleet mode (external Traefik)
+Requires the hermes-design Traefik stack running.
+```bash
+cd /opt/data/workspace/app-architecture-template
+docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d
+curl https://hermes.piranha-broadnose.ts.net/order-java/actuator/health
+curl https://hermes.piranha-broadnose.ts.net/order-python/docs
 ```
-GET    /api/v1/orders           # List
-GET    /api/v1/orders/{id}      # Get one
-POST   /api/v1/orders           # Create
-PUT    /api/v1/orders/{id}      # Full update
-PATCH  /api/v1/orders/{id}      # Partial update
-DELETE /api/v1/orders/{id}      # Delete
+Services join `traefik-net` (external) and use Traefik labels for HTTPS routing.
+Set `TRAEFIK_HOST` via `.env` to override the default Tailscale hostname.
+
+### Standalone mode (any Docker host)
+No Traefik, no TLS. Direct port access on `127.0.0.1`.
+```bash
+cd /opt/data/workspace/app-architecture-template
+docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d
+curl http://localhost:8080/actuator/health    # Java
+curl http://localhost:8081/health            # Python
+curl http://localhost/                      # Frontend (nginx)
 ```
 
----
+## New Project Checklist (copying this template)
 
-## 2. Project Structure
+1. **Rename services** in all three compose files to match project name.
+2. **Update TLS host** — set `TRAEFIK_HOST` in `.env` to your Tailscale/MagicDNS hostname.
+3. **Update router names** in `docker-compose.traefik.yml` Traefik labels (no duplicates).
+4. **Tune port numbers** in `docker-compose.standalone.yml` if multiple projects run side-by-side.
+5. **Inject build args** for frontend if it needs a runtime API URL (e.g., `API_BASE_URL`).
+6. **Replace `nginx.conf`** proxy target with your backend service name(s).
+
+## Project Structure
 
 ```
-project-root/
-├── services/                # Microservices (Mono-repo or Poly-repo)
-│   └── service-name/
-│       ├── src/
-│       │   ├── domain/              # Entities, value objects, events, repository ports
-│       │   ├── application/         # Use cases, DTOs, service interfaces
-│       │   └── infrastructure/      # Adapters: persistence, web, external APIs
-│       ├── tests/                   # Integration and Unit tests
-│       └── migrations/              # DB versioning
-├── frontend/
-│   ├── src/
-│   │   ├── components/          # Reusable UI (Ant Design / Quasar)
-│   │   ├── pages/               # Route-level components
-│   │   ├── hooks/               # Custom React/Vue hooks
-│   │   ├── services/            # API clients
-│   │   ├── store/               # State management
-│   │   ├── types/               # TypeScript interfaces
-│   │   ├── utils/               # Pure utility functions
-│   │   └── styles/              # Global styles, theme overrides
-│   └── tests/
-├── boilerplate/               # Copy-paste templates for new services and frontend
-│   ├── java/                    # Spring Boot service boilerplate
-│   ├── python/                  # Python service boilerplate
-│   └── frontend/                # React + TypeScript + Ant Design boilerplate
-├── docs/
-│   ├── 01-agnostic/         # Platform-independent principles
-│   ├── 02-java/             # Java stack implementation guides
-│   ├── 03-python/           # Python stack implementation guides
-│   ├── 04-sops/             # Standard Operating Procedures (how-to guides)
-│   └── architecture/        # High-level diagrams
-├── docker-compose.yml
-└── AGENTS.md                    # This file
+app-architecture-template/
+├── boilerplate/
+│   ├── java/                  # Spring Boot service template
+│   ├── python/                # FastAPI service template
+│   └── frontend/              # React + TypeScript + Nginx template
+│       └── nginx.conf         # SPA serve + /api/ proxy example
+├── docs/                      # Architecture docs, ADRs, guidelines
+├── docker-compose.yml         # Base services (no ports, no labels)
+├── docker-compose.standalone.yml  # Standalone overlay
+├── docker-compose.traefik.yml      # Fleet overlay (Traefik labels + TLS)
+├── .env.example               # Required env vars template
+└── AGENTS.md                 <- This file
 ```
 
----
+## File Conventions
 
-## 3. Code Templates (from real, working boilerplate)
+- **Boilerplate only** — Do not build production features here.
+- **Copy-paste rule** — Any pattern must be verified in boilerplate first, then copied to a real project.
+- **Dual-mode infra** — All 3 compose files must exist (`base`, `standalone`, `traefik`).
+- **Zero Traefik leakage** — Base compose has no `traefik-net`, no labels. Standalone has `traefik.enable=false`.
 
-The snippets below are **excerpts from the verified boilerplate files**. Do not retype them — copy the actual files from [`boilerplate/java/order-service/`](boilerplate/java/order-service/) and [`boilerplate/frontend/`](boilerplate/frontend/).
-
-### 3.1 Domain — Aggregate Root (Java)
-
-```java
-public class Order {
-    private final OrderId id;
-    private final List<OrderLineItem> items;
-    private OrderStatus status;
-
-    public void confirm() {
-        if (status != OrderStatus.PENDING) {
-            throw new IllegalStateException("Only pending orders can be confirmed");
-        }
-        this.status = OrderStatus.CONFIRMED;
-        registerEvent(new OrderConfirmedEvent(id, LocalDateTime.now()));
-    }
-}
-```
-
-### 3.1a Domain — Value Object + Entity (Python)
-
-```python
-# domain/order_id.py
-from dataclasses import dataclass
-from uuid import UUID
-
-@dataclass(frozen=True)
-class OrderId:
-    value: UUID
-
-# domain/order.py
-from dataclasses import dataclass, field
-from datetime import datetime
-from decimal import Decimal
-from typing import List
-
-@dataclass
-class Order:
-    id: OrderId
-    customer_id: str
-    items: List[OrderItem]
-    status: str = "PENDING"
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    confirmed_at: datetime | None = None
-
-    def confirm(self) -> None:
-        if self.status != "PENDING":
-            raise IllegalStateError("Only pending orders can be confirmed")
-        self.status = "CONFIRMED"
-        self.confirmed_at = datetime.utcnow()
-```
-
-### 3.2 Application — Use Case (Java)
-
-```java
-public class PlaceOrderUseCase {
-    private final OrderRepository orderRepository;
-    private final EventPublisher eventPublisher;
-
-    public OrderResult execute(PlaceOrderCommand command) {
-        // validation, orchestration, publish domain events
-    }
-}
-```
-
-### 3.2a Application — Use Case (Python)
-
-```python
-# application/usecases/place_order_use_case_impl.py
-class PlaceOrderUseCaseImpl:
-    def __init__(self, repository: OrderRepository, publisher: EventPublisher):
-        self._repository = repository
-        self._publisher = publisher
-
-    def execute(self, command: CreateOrderCommand) -> OrderResult:
-        order = Order(
-            id=OrderId(uuid4()),
-            customer_id=command.customer_id,
-            items=[
-                OrderItem(
-                    product_id=item.product_id,
-                    quantity=item.quantity,
-                    unit_price=item.unit_price,  # Decimal — never float for money
-                )
-                for item in command.items
-            ],
-        )
-        self._repository.save(order)
-        self._publisher.publish(OrderPlacedEvent(order.id))
-        return OrderResult(order_id=order.id.value, status=order.status)
-```
-
-### 3.3 Infrastructure — Controller (Java)
-
-```java
-@RestController
-@RequestMapping("/api/v1/orders")
-public class OrderController {
-    private final PlaceOrderUseCase placeOrderUseCase;
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<OrderResponse>> create(@Valid @RequestBody CreateOrderRequest request) {
-        // Map request -> command -> use case -> response
-    }
-}
-```
-
-### 3.3a Infrastructure — Controller (Python FastAPI)
-
-```python
-# infrastructure/api/controller.py
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
-
-router = APIRouter()
-
-@router.post("/orders", status_code=status.HTTP_201_CREATED, response_model=OrderResponse)
-async def create_order(
-    request: CreateOrderRequest,
-    db: Session = Depends(get_db),
-):
-    use_case = PlaceOrderUseCaseImpl(
-        SqlalchemyOrderRepository(db),
-        OutboxEventPublisher(db),
-    )
-    result = use_case.execute(request.to_command())
-    return OrderResponse.from_result(result)
-```
-
-### 3.4 Frontend — Container + Presentational
-
-```tsx
-function OrdersPage() {
-    const { orders, loading, error } = useOrders();
-    return <OrderList orders={orders} loading={loading} error={error} />;
-}
-
-interface OrderListProps {
-    orders: Order[];
-    loading: boolean;
-    error: Error | null;
-}
-```
-
----
-
-## 4. Standards Index
+## Standards Index
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Java, Spring Boot, JPA, Batch, Ignite, REST, Events | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Writing backend code |
-| React, TypeScript, Ant Design, a11y, Performance | [`docs/01-agnostic/01-standards/01-frontend-architecture.md`](docs/01-agnostic/01-standards/01-frontend-architecture.md) | Writing frontend code |
-| Git, Docker, CI/CD, Deployment, Alerting | [`docs/01-agnostic/03-guidelines/01-deployment.md`](docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
-| DDD deep dive, Microservices, Context Maps, EDA | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](docs/01-agnostic/02-adrs/01-clean-architecture.md) | Design decisions |
-| Review checklists, Onboarding, Dependencies | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
-| **Standard Operating Procedures** | | |
-| Add a new aggregate root / entity | [`docs/04-sops/01-add-new-aggregate-root.md`](docs/04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
-| Add a new REST endpoint (backend + frontend) | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | Adding an API |
-| Add a new frontend page / feature | [`docs/04-sops/03-add-new-frontend-page.md`](docs/04-sops/03-add-new-frontend-page.md) | Adding UI |
-| Add a Flyway database migration | [`docs/04-sops/04-add-flyway-migration.md`](docs/04-sops/04-add-flyway-migration.md) | Schema changes |
-| Publish a domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
-| Configure a new external HTTP service | [`docs/04-sops/06-configure-external-service.md`](docs/04-sops/06-configure-external-service.md) | External integrations |
-| Add custom Actuator health indicator | [`boilerplate/java/order-service/infrastructure/DatabaseHealthIndicator.java`](boilerplate/java/order-service/infrastructure/DatabaseHealthIndicator.java) | Service health monitoring |
-| **Boilerplate Templates** | | |
-| New Spring Boot microservice | [`boilerplate/java/order-service/`](boilerplate/java/order-service/) | Bootstrapping a Java service |
-| New FastAPI microservice (Python) | [`boilerplate/python/order-service/`](boilerplate/python/order-service/) | Bootstrapping a Python service |
-| New React + TS + Ant Design frontend | [`boilerplate/frontend/`](boilerplate/frontend/) | Bootstrapping a frontend app |
-| Flyway migration templates | [`boilerplate/migrations/`](boilerplate/migrations/) | Creating DB migrations |
+| Clean Architecture | `docs/01-agnostic/02-adrs/01-clean-architecture.md` | All design decisions |
+| Review checklists | `docs/01-agnostic/01-standards/11-review.md` | PRs |
 
 ---
 
-*Living document. Update as project evolves.*
+*Living document — update as boilerplate evolves.*

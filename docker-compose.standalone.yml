@@ -1,0 +1,19 @@
+services:
+  order-service-java:
+    ports:
+      - "127.0.0.1:8080:8080"
+    labels:
+      - "traefik.enable=false"
+
+  order-service-python:
+    ports:
+      - "127.0.0.1:8081:8080"
+    labels:
+      - "traefik.enable=false"
+
+  nginx:
+    ports:
+      - "127.0.0.1:80:80"
+
+networks:
+  app-network:

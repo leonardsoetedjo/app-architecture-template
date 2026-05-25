@@ -1,0 +1,35 @@
+services:
+  order-service-java:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order-java.rule=Host(`${TRAEFIK_HOST:-hermes.piranha-broadnose.ts.net}`) && PathPrefix(`/order-java`)"
+      - "traefik.http.routers.order-java.entrypoints=websecure"
+      - "traefik.http.routers.order-java.tls=true"
+      - "traefik.http.services.order-java.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.order-java-strip.stripprefix.prefixes=/order-java"
+      - "traefik.http.routers.order-java.middlewares=order-java-strip"
+
+  order-service-python:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order-python.rule=Host(`${TRAEFIK_HOST:-hermes.piranha-broadnose.ts.net}`) && PathPrefix(`/order-python`)"
+      - "traefik.http.routers.order-python.entrypoints=websecure"
+      - "traefik.http.routers.order-python.tls=true"
+      - "traefik.http.services.order-python.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.order-python-strip.stripprefix.prefixes=/order-python"
+      - "traefik.http.routers.order-python.middlewares=order-python-strip"
+
+  nginx:
+    build:
+      dockerfile: Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app-template.rule=Host(`${TRAEFIK_HOST:-hermes.piranha-broadnose.ts.net}`) && PathPrefix(`/`)"
+      - "traefik.http.routers.app-template.entrypoints=websecure"
+      - "traefik.http.routers.app-template.tls=true"
+      - "traefik.http.services.app-template.loadbalancer.server.port=80"
+
+networks:
+  app-network:
+  traefik-net:
+    external: true
