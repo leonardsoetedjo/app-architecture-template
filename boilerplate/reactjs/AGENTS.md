@@ -38,43 +38,61 @@
 | Event handlers | onClick/onChange/onSubmit | `handleClick`, `handleChange` |
 | State variables | useCamelCase | `isLoading`, `isFormValid` |
 
-### 1.3 Project Structure
+### 1.3 Project Structure (FSD + MVVM)
 
 ```
 boilerplate/reactjs/
 ├── src/
-│   ├── components/          # Reusable UI components (presentational)
-│   ├── pages/               # Route-level page components (container)
-│   ├── hooks/               # Custom React hooks (data fetching, state logic)
-│   ├── services/            # API clients and external service wrappers
-│   ├── store/               # Zustand state management
-│   ├── types/               # TypeScript interfaces and types (domain models)
-│   ├── utils/               # Pure utility functions
-│   └── styles/              # Global styles, themes, CSS
+│   ├── app/                   # App-wide providers, router, root component
+│   │   ├── providers/        # Context providers (Auth, Theme, Query)
+│   │   └── router/           # React Router configuration
+│   ├── pages/                # Page components (route-level containers)
+│   │   ├── OrdersPage/
+│   │   │   ├── OrdersPage.tsx
+│   │   │   └── index.ts
+│   │   └── LoginPage/
+│   ├── features/             # Feature-sliced features (business logic)
+│   │   ├── order/           # Order feature slice
+│   │   │   ├── api/         # Feature-specific API calls
+│   │   │   ├── model/       # Feature state (Zustand stores)
+│   │   │   ├── ui/          # Feature-specific components (ViewModels)
+│   │   │   └── index.ts     # Public API
+│   │   └── auth/
+│   ├── entities/             # Domain entities (business objects)
+│   │   ├── order/
+│   │   │   ├── model.ts     # Order entity type
+│   │   │   ├── api.ts       # Order API functions
+│   │   │   └── index.ts
+│   │   └── user/
+│   ├── widgets/              # Composite UI blocks (multiple features)
+│   │   ├── OrderList/
+│   │   │   ├── OrderList.tsx
+│   │   │   └── index.ts
+│   │   └── OrderForm/
+│   ├── shared/               # Shared UI kit and utilities
+│   │   ├── ui/              # Atomic components (Button, Input, Table)
+│   │   ├── api/             # Shared API client (axios instance)
+│   │   ├── lib/             # Utility functions
+│   │   └── constants/       # App-wide constants
+│   └── types/                # Global TypeScript types
 ├── tests/                   # Unit tests (Vitest)
-├── e2e/                     # End-to-end tests (Playwright)
-├── storybook/               # Storybook configuration
 ├── .eslintrc.json
 ├── tsconfig.json
 ├── vite.config.ts
 └── package.json
 ```
 
-### 1.4 Clean Architecture Mapping
+**Import Rules (FSD):**
+- Entities can only import from Shared
+- Features can import from Entities and Shared
+- Widgets can import from Features, Entities, and Shared
+- Pages can import from Widgets, Features, Entities, and Shared
+- App can import from any layer
 
-| Architecture Layer | Frontend Directory | Description |
-|-------------------|-------------------|-------------|
-| Domain | `types/` | Pure domain interfaces, value objects, models |
-| Application | `hooks/` | Business logic, use cases, state management |
-| Infrastructure | `services/` | API clients, external integrations, side effects |
-| Presentation | `components/`, `pages/` | UI components, route handlers |
-
-**Import Rules:**
-- `types/` - Pure, no dependencies on other layers
-- `hooks/` - Can import from `types/` and `store/`, but NOT from `services/`
-- `services/` - Can import from `types/` only (no business logic)
-- `components/` - Can import from `types/`, `hooks/`, `services/` as needed
-- `pages/` - Can import from `components/`, `hooks/`, `services/`
+**MVVM Pattern:**
+- **Model**: Zustand stores in `features/*/model/`
+- **View**: React components in `features/*/ui/` and `widgets/`
+- **ViewModel**: Custom hooks exposing state + actions (e.g., `useOrderList`)
 
 ---
 
