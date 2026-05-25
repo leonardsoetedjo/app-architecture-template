@@ -64,69 +64,68 @@ Refresh Token Enabled: [ ] Yes [ ] No
 
 ---
 
-## 🎯 Step 2.5: Feature Selection
+## 🎯 Step 2.5: Technical Capabilities
 
-**Core Features (select all that apply):**
+**Select technical capabilities required (business features will be defined in PRD):**
 ```
-[ ] User Management (registration, login, profile)
-[ ] Role-Based Access Control (RBAC)
-    Roles: [_________________] (e.g., admin, user, manager)
+[ ] User authentication & session management
+[ ] Role-based access control (RBAC) infrastructure
 [ ] Multi-tenancy support
-    Tenant isolation: [ ] Database per tenant [ ] Schema per tenant [ ] Row-level]
-[ ] File upload/download
-    Storage: [ ] Local [ ] S3 [ ] Azure Blob [ ] GCS
+    Isolation level: [ ] Database per tenant [ ] Schema per tenant [ ] Row-level]
+[ ] File storage & retrieval
+    Storage type: [ ] Local filesystem [ ] S3-compatible [ ] Azure Blob [ ] GCS
     Max file size: [_______] MB
-[ ] Email notifications
-    Provider: [ ] SMTP [ ] SendGrid [ ] SES [ ] Other: _______
-[ ] SMS notifications
-    Provider: [ ] Twilio [ ] Vonage [ ] Other: _______
-[ ] Push notifications
-    Provider: [ ] Firebase [ ] APNS [ ] OneSignal]
-[ ] Real-time features (WebSockets)
-    Use cases: [_________________]
-[ ] Search functionality
-    Engine: [ ] PostgreSQL full-text [ ] Elasticsearch [ ] Algolia]
-[ ] Reporting/Analytics
-    Types: [_________________]
-[ ] Data export (CSV, PDF, Excel)
-    Formats: [_________________]
-[ ] Import functionality
-    Sources: [_________________]
-[ ] Audit trail/logging
-    Events to audit: [_________________]
-[ ] Soft delete support
-[ ] Data versioning/history
-[ ] Scheduled jobs/batch processing
-[ ] Webhook integrations
-    External systems: [_________________]
-[ ] API rate limiting per user/tenant
-[ ] GraphQL API (in addition to REST)
-[ ] Internationalization (i18n)
-    Languages: [_________________]
-[ ] Dark mode support (frontend)
-[ ] Mobile responsive design
-[ ] PWA (Progressive Web App) features
+[ ] Notification infrastructure
+    Channels: [ ] Email [ ] SMS [ ] Push [ ] Webhook]
+    Provider abstraction needed: [ ] Yes [ ] No
+[ ] Real-time communication
+    Pattern: [ ] WebSockets [ ] SSE [ ] Long-polling]
+[ ] Search infrastructure
+    Type: [ ] Full-text (PostgreSQL) [ ] Elasticsearch [ ] External service]
+[ ] Reporting & analytics infrastructure
+    Data export: [ ] CSV [ ] PDF [ ] Excel [ ] JSON]
+[ ] Data import infrastructure
+    Sources: [ ] File upload [ ] API [ ] Database sync]
+[ ] Audit logging infrastructure
+[ ] Soft delete pattern
+[ ] Data versioning/history tracking
+[ ] Background job processing
+    Queue: [ ] In-memory [ ] Redis [ ] RabbitMQ [ ] SQS]
+[ ] Scheduled tasks/cron jobs
+[ ] Webhook infrastructure (outbound)
+[ ] Rate limiting infrastructure
+    Scope: [ ] Per-user [ ] Per-tenant [ ] Per-IP [ ] Global]
+[ ] Caching layer
+    Type: [ ] In-memory [ ] Redis [ ] Distributed cache]
+[ ] Internationalization (i18n) infrastructure
+    Strategy: [ ] Database [ ] JSON files [ ] External service]
+[ ] Feature flags
+    Provider: [ ] Internal [ ] LaunchDarkly [ ] Unleash [ ] Flagsmith]
 ```
 
-### Third-Party Integrations
+### Integration Patterns (Technical)
 ```
-[ ] Payment gateway
-    Provider: [ ] Stripe [ ] PayPal [ ] Square [ ] Other: _______
-[ ] Single Sign-On (SSO)
-    Provider: [ ] Google [ ] Microsoft [ ] Okta [ ] Keycloak]
-[ ] CRM integration
-    System: [ ] Salesforce [ ] HubSpot [ ] Other: _______
-[ ] ERP integration
-    System: [_________________]
-[ ] Accounting software
-    System: [ ] QuickBooks [ ] Xero [ ] Other: _______
-[ ] Marketing automation
-    System: [ ] Mailchimp [ ] Marketo [ ] Other: _______
-[ ] Customer support
-    System: [ ] Zendesk [ ] Intercom [ ] Other: _______
-[ ] Analytics platform
-    System: [ ] Google Analytics [ ] Mixpanel [ ] Amplitude]
-[ ] Other integrations: [_________________]
+[ ] Synchronous REST APIs
+[ ] Async messaging (event-driven)
+    Broker: [ ] RabbitMQ [ ] Kafka [ ] SQS [ ] Pub/Sub]
+[ ] Event sourcing pattern
+[ ] CQRS pattern
+[ ] Saga pattern for distributed transactions
+[ ] Circuit breaker for external calls
+[ ] Retry with exponential backoff
+[ ] Bulkhead pattern for isolation
+```
+
+### External Service Integration (Categories Only - Specific services from PRD)
+```
+[ ] Payment processing (specific provider TBD from PRD)
+[ ] Identity provider / SSO (specific provider TBD from PRD)
+[ ] Email service (specific provider TBD from PRD)
+[ ] SMS service (specific provider TBD from PRD)
+[ ] Cloud storage (specific provider TBD from PRD)
+[ ] Analytics platform (specific provider TBD from PRD)
+[ ] Monitoring/APM (specific provider TBD from PRD)
+[ ] Other: [_________________] (specific service TBD from PRD)
 ```
 
 ---
@@ -148,30 +147,12 @@ Database Password: [_________________] (use secure generated password)
 [ ] Point-in-time recovery
 ```
 
-### Data Model — Main Entities
-**List your core domain entities/aggregates:**
+### Data Characteristics (for infrastructure sizing)
 ```
-Entity 1: [_________________]
-  - Key fields: [_________________]
-  - Relationships: [_________________]
-  
-Entity 2: [_________________]
-  - Key fields: [_________________]
-  - Relationships: [_________________]
-  
-Entity 3: [_________________]
-  - Key fields: [_________________]
-  - Relationships: [_________________]
-
-(Add more as needed)
-```
-
-### Data Volume Estimates
-```
-Initial data size: [_______] GB
-Expected growth: [_______] GB/month
-Peak concurrent users: [_______]
-Transactions per second: [_______]
+Expected data volume: [ ] <1GB [ ] 1-10GB [ ] 10-100GB [ ] >100GB
+Growth rate: [ ] Low (<1GB/month) [ ] Medium [ ] High (>10GB/month)
+Read/Write ratio: [ ] Read-heavy [ ] Balanced [ ] Write-heavy
+Peak concurrent connections: [_______]
 ```
 
 ---
@@ -206,57 +187,41 @@ ENABLE_MFA=[true/false]
 
 ---
 
-## 🔌 Step 4.5: API Design
+## 🔌 Step 4.5: API Architecture (Technical Patterns)
 
-### REST API Resources
-**List your main API resources:**
+### API Style & Patterns
 ```
-Resource 1: /api/v1/[_________________]
-  - GET    (list) [ ] Yes [ ] No
-  - GET    (single) [ ] Yes [ ] No
-  - POST   (create) [ ] Yes [ ] No
-  - PUT    (update) [ ] Yes [ ] No
-  - PATCH  (partial) [ ] Yes [ ] No
-  - DELETE (remove) [ ] Yes [ ] No
-  
-Resource 2: /api/v1/[_________________]
-  - GET    (list) [ ] Yes [ ] No
-  - GET    (single) [ ] Yes [ ] No
-  - POST   (create) [ ] Yes [ ] No
-  - PUT    (update) [ ] Yes [ ] No
-  - PATCH  (partial) [ ] Yes [ ] No
-  - DELETE (remove) [ ] Yes [ ] No
-
-Resource 3: /api/v1/[_________________]
-  - GET    (list) [ ] Yes [ ] No
-  - GET    (single) [ ] Yes [ ] No
-  - POST   (create) [ ] Yes [ ] No
-  - PUT    (update) [ ] Yes [ ] No
-  - PATCH  (partial) [ ] Yes [ ] No
-  - DELETE (remove) [ ] Yes [ ] No
+[ ] RESTful resources
+[ ] GraphQL endpoint
+[ ] gRPC for internal services
+[ ] WebSocket for real-time
+[ ] Server-Sent Events (SSE)
 ```
 
-### API Authentication
+### API Gateway / Edge
+```
+[ ] Rate limiting at edge
+[ ] Request/response transformation
+[ ] API versioning strategy: [ ] URL path [ ] Header [ ] Query param
+[ ] CORS policy: [ ] Public [ ] Specific origins [ ] Same-origin only
+```
+
+### Authentication & Authorization
 ```
 [ ] JWT Bearer tokens
 [ ] API keys for service-to-service
 [ ] OAuth2 for third-party apps
-[ ] Basic auth (internal only)
+[ ] mTLS for internal services
+[ ] Role-based access control (RBAC)
+[ ] Attribute-based access control (ABAC)
 ```
 
-### API Documentation
+### API Documentation & Testing
 ```
 [ ] OpenAPI/Swagger (auto-generated)
-[ ] Postman collection
-[ ] API changelog
-[ ] Versioning strategy: [_________________]
-```
-
-### Rate Limiting
-```
-Default: [_______] requests/minute per user
-Authenticated: [_______] requests/minute per user
-Anonymous: [_______] requests/minute per IP
+[ ] API contract testing
+[ ] Mock server for frontend development
+[ ] API changelog maintenance
 ```
 
 ---
@@ -275,7 +240,7 @@ Anonymous: [_______] requests/minute per IP
 
 ---
 
-## 🎨 Step 5.5: Frontend & UX (if applicable)
+## 🎨 Step 5.5: Frontend Technical Setup (if applicable)
 
 ### UI Framework Selection
 ```
@@ -286,67 +251,70 @@ Anonymous: [_______] requests/minute per IP
 [ ] Other: [_________________]
 ```
 
-### Theme & Branding
+### State Management
 ```
-Primary color: [_________________] (hex: _______)
-Secondary color: [_________________] (hex: _______)
-Logo file: [_________________]
-Favicon: [_________________]
-```
-
-### Layout Requirements
-```
-[ ] Sidebar navigation
-[ ] Top navigation bar
-[ ] Dashboard with widgets
-[ ] Data tables with sorting/filtering
-[ ] Forms with validation
-[ ] Modal dialogs
-[ ] Toast notifications
-[ ] Breadcrumbs
-[ ] Search bar (global)
-[ ] User profile dropdown
-[ ] Dark mode toggle
+[ ] Zustand (React)
+[ ] Redux Toolkit
+[ ] Pinia (Vue)
+[ ] Context API only
+[ ] Other: [_________________]
 ```
 
-### Pages/Screens
-**List your main application pages:**
+### Build & Development
 ```
-Page 1: [_________________]
-  - Route: /_________________
-  - Key components: [_________________]
-  
-Page 2: [_________________]
-  - Route: /_________________
-  - Key components: [_________________]
-  
-Page 3: [_________________]
-  - Route: /_________________
-  - Key components: [_________________]
-
-(Add more as needed)
+[ ] Vite (recommended)
+[ ] Webpack
+[ ] Create React App
+[ ] Next.js (SSR/SSG)
+[ ] Nuxt.js (SSR/SSG)
 ```
 
-### Responsive Design
+### Technical Requirements
+```
+[ ] TypeScript (strict mode)
+[ ] ESLint + Prettier
+[ ] Component testing (Vitest/React Testing Library)
+[ ] E2E testing (Playwright/Cypress)
+[ ] Storybook for component documentation
+```
+
+### Performance & Optimization
+```
+[ ] Code splitting (route-based)
+[ ] Lazy loading components
+[ ] Image optimization
+[ ] Service worker / PWA
+[ ] Bundle size monitoring
+```
+
+### Responsive Design Strategy
 ```
 Breakpoints:
-  - Mobile: [_______]px and below
-  - Tablet: [_______]px - [_______]px
-  - Desktop: [_______]px and above
+  [ ] Mobile-first approach
+  [ ] Desktop-first approach
   
-Priority:
-  [ ] Mobile-first
-  [ ] Desktop-first
-  [ ] Equal priority
+Target devices:
+  [ ] Mobile only
+  [ ] Tablet + Mobile
+  [ ] Desktop + Tablet + Mobile
 ```
 
-### Accessibility
+### Accessibility (Technical Implementation)
 ```
-[ ] WCAG 2.1 Level A compliance
-[ ] WCAG 2.1 Level AA compliance
-[ ] Screen reader support
-[ ] Keyboard navigation
-[ ] High contrast mode
+[ ] ARIA labels throughout
+[ ] Keyboard navigation support
+[ ] Focus management
+[ ] Screen reader testing
+[ ] Color contrast compliance (WCAG AA)
+[ ] Skip links
+```
+
+### Deployment
+```
+[ ] Static hosting (S3, Netlify, Vercel)
+[ ] Docker container
+[ ] CDN for assets
+[ ] Gzip/Brotli compression
 ```
 
 ---
@@ -497,64 +465,117 @@ Quality: >[_______]% test coverage
 
 ---
 
-## 📋 Feature Priority
+## 📋 Technical Priority Ranking
 
-**Rank your top 5 features by priority (1 = highest):**
+**Rank your top 5 technical priorities (1 = highest):**
+
+These will guide architecture decisions and technology choices:
 
 1. _________________________________ [Priority: ___]
+   (e.g., "High availability", "Low latency", "Security", "Scalability")
+   
 2. _________________________________ [Priority: ___]
+
 3. _________________________________ [Priority: ___]
+
 4. _________________________________ [Priority: ___]
+
 5. _________________________________ [Priority: ___]
+
+**Common technical priorities:**
+- Performance (low latency, high throughput)
+- Availability (99.9%+, fault tolerance)
+- Security (data protection, compliance)
+- Scalability (horizontal scaling)
+- Maintainability (clean code, documentation)
+- Developer experience (fast builds, good tooling)
+- Cost optimization (infrastructure costs)
+- Time-to-market (rapid iteration)
 
 ---
 
-## ✨ Completed Configuration
+## ✨ Completed Technical Configuration
 
 **Fill this in once complete:**
 
 ```yaml
-Project:
+# Project Identity
+project:
   name: ___________________
   prefix: ___________________
   repository: ___________________
 
-Stack:
+# Technical Stack
+stack:
   backend: [Java | Python | Both]
   frontend: [ReactJS | Quasar | None]
+  database: PostgreSQL [version: ___]
 
-Security:
+# Security Configuration
+security:
+  mfa_support: [true/false]
   mfa_methods: [TOTP | WebAuthn | Email | None]
-  jwt_expiry: _______ minutes
-  rate_limit: _______ req/min
+  jwt_expiry_minutes: _______
+  refresh_tokens: [true/false]
+  rate_limiting: [true/false]
+  cors_policy: [Public | Restricted | Same-origin]
 
-Database:
-  name: ___________________
-  user: ___________________
-  backups: [Daily | PITR | Both]
-
-Deployment:
-  mode: [Fleet | Standalone | Hybrid]
+# Infrastructure
+infrastructure:
+  deployment_mode: [Fleet | Standalone | Hybrid]
   traefik_host: ___________________
-  ports: {java: ___, python: ___, frontend: ___}
+  ports:
+    java: _______
+    python: _______
+    frontend: _______
+  
+  database:
+    name: ___________________
+    user: ___________________
+    backups: [Daily | PITR | Both]
+    read_replicas: [0 | ___]
+    connection_pool:
+      min: _______
+      max: _______
 
-Monitoring:
+# Observability
+monitoring:
   metrics: [Prometheus | None]
   tracing: [Jaeger | Zipkin | None]
   logging: [ELK | Loki | Cloud]
-  alerts: [Slack | PagerDuty | Email]
+  alerting: [Slack | PagerDuty | Email]
+  thresholds:
+    error_rate: _______%
+    latency_p99: _______ms
 
-Timeline:
-  setup_complete: ___________________
-  core_features: ___________________
+# Development
+development:
+  ci_platform: [GitHub Actions | GitLab CI | Jenkins]
+  environments:
+    - name: Development
+      url: ___________________
+      auto_deploy: [true/false]
+    - name: Staging
+      url: ___________________
+      auto_deploy: [true/false]
+    - name: Production
+      url: ___________________
+      auto_deploy: [true/false]
+
+# Technical Priorities (ranked)
+priorities:
+  1. ___________________
+  2. ___________________
+  3. ___________________
+  4. ___________________
+  5. ___________________
+
+# Timeline
+timeline:
+  infrastructure_setup: ___________________
+  ci_cd_pipeline: ___________________
   security_review: ___________________
-  production_deploy: ___________________
-
-Team:
-  product_owner: ___________________
-  tech_lead: ___________________
-  devops: ___________________
-  security: ___________________
+  production_ready: ___________________
 ```
 
 ---
