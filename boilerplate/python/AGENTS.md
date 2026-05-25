@@ -301,16 +301,23 @@ class OrderEntity(Base):
 
 ### 6.4 Testing
 
-```bash
-# Run pytest-archon architecture tests
-pytest tests/archunit/ -v
+**Testcontainers PostgreSQL** - Integration tests use real PostgreSQL in Docker containers.
 
+```bash
 # Run all tests
 pytest tests/ -v
 
+# Run integration tests only
+pytest tests/integration/ -v -m integration
+
 # Run with coverage
-pytest tests/ --cov=src --cov-report=html -v
+pytest tests/ --cov=src --cov-report=term-missing -v
+
+# Run architecture tests
+pytest tests/archunit/ -v
 ```
+
+**See**: [`INTEGRATION_TESTING.md`](INTEGRATION_TESTING.md) for comprehensive guide.
 
 ---
 
