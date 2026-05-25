@@ -25,7 +25,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 # Optional import for integration tests - only needed when running integration tests
 try:
-    from testcontainers.postgresql import PostgresContainer
+    from testcontainers.postgres import PostgresContainer
     TESTCONTAINERS_AVAILABLE = True
 except ImportError:
     PostgresContainer = None

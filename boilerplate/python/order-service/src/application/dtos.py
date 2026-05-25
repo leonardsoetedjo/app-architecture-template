@@ -42,3 +42,63 @@ class HealthStatus:
     """Health check response DTO (infrastructure)."""
     status: str
     components: dict
+
+
+# MFA DTOs
+
+
+@dataclass(frozen=True)
+class MfaMethod:
+    """Enumeration of MFA methods."""
+    TOTP = "totp"
+    BACKUP_CODES = "backup_codes"
+    WEBAUTHN = "webauthn"
+
+
+@dataclass(frozen=True)
+class MfaSetupRequest:
+    """Request to set up MFA."""
+    method: str
+
+
+@dataclass(frozen=True)
+class MfaVerificationRequest:
+    """Request to verify MFA code."""
+    method: str
+    code: str
+
+
+@dataclass(frozen=True)
+class MfaSetupResult:
+    """Result returned after setting up MFA."""
+    user_id: UUID
+    method: str
+    enabled: bool
+    # TOTP-specific
+    totp_secret: str | None = None
+    totp_qr_code_url: str | None = None
+    # Backup codes (only shown once during setup)
+    backup_codes: list[str] | None = None
+    # WebAuthn-specific
+    webauthn_challenge: str | None = None
+    webauthn_options: dict | None = None
+
+
+@dataclass(frozen=True)
+class MfaVerificationResult:
+    """Result returned after verifying MFA code."""
+    success: bool
+    user_id: UUID
+    method_used: str | None = None
+    remaining_backup_codes: int | None = None
+
+
+@dataclass(frozen=True)
+class MfaStatusResult:
+    """Current MFA status for a user."""
+    user_id: UUID
+    enabled: bool
+    methods_configured: list[str]
+    totp_verified: bool
+    backup_codes_remaining: int
+    webauthn_credentials_count: int

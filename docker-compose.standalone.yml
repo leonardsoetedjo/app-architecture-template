@@ -11,6 +11,12 @@ services:
     labels:
       - "traefik.enable=false"
 
+  redis:
+    ports:
+      - "127.0.0.1:6379:6379"
+    labels:
+      - "traefik.enable=false"
+
   nginx:
     ports:
       - "127.0.0.1:80:80"

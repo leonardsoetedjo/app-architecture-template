@@ -23,6 +23,17 @@ from infrastructure.events.noop_event_publisher import NoOpEventPublisher
 from infrastructure.persistence.sqlalchemy_order_repository import (
     SqlAlchemyOrderRepository,
 )
+from infrastructure.persistence.sqlalchemy_mfa_config_repository import (
+    SqlAlchemyMfaConfigRepository,
+)
+from domain.ports.mfa_config_repository import MfaConfigRepository
+from application.usecases.mfa_use_case_impl import (
+    SetupMfaUseCaseImpl,
+    VerifyMfaUseCaseImpl,
+    GetMfaStatusUseCaseImpl,
+    DisableMfaUseCaseImpl,
+)
+from infrastructure.services.webauthn_service import WebAuthnService
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/token",
@@ -74,3 +85,41 @@ def get_current_user(
             detail=exc.message,
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+def get_mfa_repository(session: Session = Depends(get_db)) -> MfaConfigRepository:
+    """Request-scoped SQLAlchemy MFA repository."""
+    return SqlAlchemyMfaConfigRepository(session=session)
+
+
+def get_setup_mfa_use_case(
+    repo: MfaConfigRepository = Depends(get_mfa_repository),
+) -> SetupMfaUseCaseImpl:
+    """Request-scoped setup MFA use case."""
+    return SetupMfaUseCaseImpl(mfa_repository=repo)
+
+
+def get_verify_mfa_use_case(
+    repo: MfaConfigRepository = Depends(get_mfa_repository),
+) -> VerifyMfaUseCaseImpl:
+    """Request-scoped verify MFA use case."""
+    return VerifyMfaUseCaseImpl(mfa_repository=repo)
+
+
+def get_mfa_status_use_case(
+    repo: MfaConfigRepository = Depends(get_mfa_repository),
+) -> GetMfaStatusUseCaseImpl:
+    """Request-scoped MFA status use case."""
+    return GetMfaStatusUseCaseImpl(mfa_repository=repo)
+
+
+def get_disable_mfa_use_case(
+    repo: MfaConfigRepository = Depends(get_mfa_repository),
+) -> DisableMfaUseCaseImpl:
+    """Request-scoped disable MFA use case."""
+    return DisableMfaUseCaseImpl(mfa_repository=repo)
+
+
+def get_webauthn_service() -> WebAuthnService:
+    """Get WebAuthn service instance."""
+    return WebAuthnService(rp_name="OrderService", rp_id="localhost")

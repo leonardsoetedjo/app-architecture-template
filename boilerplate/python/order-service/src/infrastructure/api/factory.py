@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from infrastructure.config import get_settings
 from .controller import router as orders_router
+from .mfa_controller import router as mfa_router
 from .exception_handlers import setup_exception_handlers
 from infrastructure.health.database_health_indicator import DatabaseHealthIndicator
 from infrastructure.services.auth_service import AuthService
@@ -117,6 +118,7 @@ def create_app() -> FastAPI:
         return RedirectResponse(url="/api/v1/docs")
 
     app.include_router(orders_router, prefix="/api/v1")
+    app.include_router(mfa_router, prefix="/api/v1")
 
     app.post("/api/v1/auth/token", response_model=TokenResponse)(_token_handler)
 
