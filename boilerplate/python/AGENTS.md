@@ -270,3 +270,136 @@ pytest tests/ --cov=src --cov-report=html -v
 ---
 
 *Python boilerplate specific Living document. Update as Python service evolves.*
+
+---
+
+## 8. AI Agent Tooling (Python)
+
+### Serena MCP for Python
+
+```bash
+# Find Python classes/functions
+find_symbol(query: "OrderRepository", kind: "class")
+
+# Find all usages
+find_referencing_symbols(symbol: "OrderRepository")
+
+# Find implementations
+find_implementations(symbol: "PlaceOrderUseCase")
+
+# Get module structure overview
+get_symbols_overview(file: "src/domain/order.py")
+
+# Safe rename (updates all references)
+rename_symbol(symbol: "old_function", newName: "new_function")
+```
+
+### Context-Mode for Python Patterns
+
+```python
+# Find Python architecture patterns
+ctx_search(queries: ["Python repository pattern"], source: "python-boilerplate")
+ctx_search(queries: ["FastAPI dependency injection"])
+ctx_search(queries: ["SQLAlchemy async session"])
+ctx_search(queries: ["pytest-archon architecture tests"])
+```
+
+### Sequential-Thinking for Python Architecture
+
+```python
+# Before adding new domain entity
+mcp_sequential_thinking_think(
+  thread_purpose="Adding new aggregate root",
+  thought="Determining if this is an aggregate root or value object",
+  thought_index=1,
+  tool_recommendation="ctx_search(queries: ['existing aggregate roots Python'])",
+  left_to_be_done="1. Check ADR-01, 2. Find similar Python patterns, 3. Determine layer"
+)
+```
+
+### Superpowers Skills for Python Development
+
+| Task | Skill | Command |
+|------|-------|---------|
+| Plan Python feature | `writing-plans` | "Let's plan this Order feature" |
+| Write Python tests | `test-driven-development` | "Write tests for OrderService" |
+| Debug failing test | `systematic-debugging` | "pytest is failing" |
+| Before commit | `verification-before-completion` | "Ready to commit" |
+| Code review | `requesting-code-review` | "Review this controller" |
+
+### Python Pre-Commit Checklist (AI Agents)
+
+**MANDATORY - Run before claiming Python tasks complete:**
+
+```bash
+# 1. Run architecture tests
+pytest tests/archunit/ -v
+
+# 2. Check for forbidden imports in domain layer
+grep -r "fastapi\|sqlalchemy\|pydantic" src/domain/ && exit 1
+
+# 3. Run all tests with coverage
+pytest --cov=src --cov-report=term-missing
+
+# 4. Type checking
+mypy src/
+
+# 5. Linting
+flake8 src/ tests/
+```
+
+**AI Agent Responsibility:** Use Superpowers `verification-before-completion` to enforce this checklist.
+
+---
+
+## 9. Architecture Audit Checklist (Python)
+
+**MANDATORY for EVERY Python PR:**
+
+### Domain Layer (Zero Violations Allowed)
+
+- [ ] No `fastapi.*` imports
+- [ ] No `sqlalchemy.*` imports
+- [ ] No `pydantic.*` imports (except DTOs in application layer)
+- [ ] Pure Python classes/dataclasses only
+- [ ] Using `@dataclass(frozen=True)` for value objects
+- [ ] No `None` without type hints and guards
+
+### Application Layer
+
+- [ ] No FastAPI/SQLAlchemy imports
+- [ ] Use case interfaces separate from implementations
+- [ ] DTOs as Pydantic models (in application layer only)
+- [ ] Constructor injection only (no globals)
+
+### Infrastructure Layer
+
+- [ ] Implements domain repository interfaces
+- [ ] SQLAlchemy models separate from domain models
+- [ ] FastAPI routers thin (no business logic)
+- [ ] Dependency injection via FastAPI Depends()
+
+### Testing
+
+- [ ] TDD followed (tests written first)
+- [ ] Domain tests: 100% coverage
+- [ ] Using Testcontainers (NOT SQLite)
+- [ ] Architecture tests pass (pytest-archon)
+
+### Pre-Commit Commands
+
+```bash
+# Run architecture tests
+pytest tests/archunit/ -v
+
+# Check domain imports
+grep -r "fastapi\|sqlalchemy" src/domain/ && exit 1
+
+# Run all tests
+pytest --cov=src
+
+# Type check
+mypy src/
+```
+
+**VIOLATION = REJECT**: Fix before committing.

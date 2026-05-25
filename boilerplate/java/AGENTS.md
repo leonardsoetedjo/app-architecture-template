@@ -5,6 +5,8 @@
 > **Rule**: If your PR pattern is not already demonstrated in the Java boilerplate, add it there first, then copy it into your feature.
 >
 > **Note**: For full project guidance including Python and frontend, see the main [`AGENTS.md`](../AGENTS.md) in the repository root.
+>
+> **AI Agents**: This guide includes Serena MCP, Context-Mode, and Superpowers integration. See Section 8 for AI tooling.
 
 ---
 
@@ -240,3 +242,133 @@ public class OrderEntity {
 ---
 
 *Living document. Update as project evolves.*
+
+---
+
+## 8. AI Agent Tooling (Java)
+
+### Serena MCP for Java
+
+```bash
+# Find Java classes/interfaces
+find_symbol(query: "OrderRepository", kind: "interface")
+
+# Find use case implementations
+find_implementations(symbol: "PlaceOrderUseCase")
+
+# Find all usages of a class
+find_referencing_symbols(symbol: "Order")
+
+# Get class structure overview
+get_symbols_overview(file: "src/main/java/.../OrderService.java")
+
+# Safe rename (updates imports, references)
+rename_symbol(symbol: "oldMethodName", newName: "newMethodName")
+```
+
+### Context-Mode for Java Patterns
+
+```python
+# Find Java architecture patterns
+ctx_search(queries: ["Java repository pattern"], source: "java-boilerplate")
+ctx_search(queries: ["Spring Boot use case implementation"])
+ctx_search(queries: ["ArchUnit layer rules"])
+ctx_search(queries: ["Testcontainers PostgreSQL tests"])
+```
+
+### Sequential-Thinking for Java Architecture
+
+```python
+# Before adding new domain entity
+mcp_sequential_thinking_think(
+  thread_purpose="Adding new aggregate root",
+  thought="Determining if this is an aggregate root or value object",
+  thought_index=1,
+  tool_recommendation="ctx_search(queries: ['existing aggregate roots Java'])",
+  left_to_be_done="1. Check ADR-01, 2. Find similar Java patterns, 3. Determine layer"
+)
+```
+
+### Superpowers Skills for Java Development
+
+| Task | Skill | Command |
+|------|-------|---------|
+| Plan Java feature | `writing-plans` | "Let's plan this Order feature" |
+| Write Java tests | `test-driven-development` | "Write tests for OrderService" |
+| Debug failing test | `systematic-debugging` | "ArchUnit test is failing" |
+| Before commit | `verification-before-completion` | "Ready to commit" |
+| Code review | `requesting-code-review` | "Review this controller" |
+
+### Java Pre-Commit Checklist (AI Agents)
+
+**MANDATORY - Run before claiming Java tasks complete:**
+
+```bash
+# 1. Run ArchUnit architecture tests
+mvn test -pl boilerplate/java/order-service -Dtest=CleanArchitectureLayersTest
+
+# 2. Check for forbidden imports in domain layer
+grep -r "org.springframework\|javax.persistence\|lombok" \
+  boilerplate/java/order-service/src/main/java/domain/ && exit 1
+
+# 3. Run all tests
+mvn test -pl boilerplate/java/order-service
+
+# 4. Verify no Lombok in domain/application
+find boilerplate/java/order-service/src/main/java/domain \
+     boilerplate/java/order-service/src/main/java/application \
+  -name "*.java" -exec grep -l "lombok" {} \; && exit 1
+```
+
+**AI Agent Responsibility:** Use Superpowers `verification-before-completion` to enforce this checklist.
+
+---
+
+## 9. Architecture Audit Checklist (Java)
+
+**MANDATORY for EVERY Java PR:**
+
+### Domain Layer (Zero Violations Allowed)
+
+- [ ] No `org.springframework.*` imports
+- [ ] No `javax.persistence.*` imports
+- [ ] No `@Entity`, `@Repository`, `@Service` annotations
+- [ ] No Lombok (`@Data`, `@Builder`, etc.)
+- [ ] Pure Java records/classes only
+- [ ] No `null` — using `Optional`
+
+### Application Layer
+
+- [ ] No `@RestController` imports
+- [ ] Use case interfaces separate from implementations
+- [ ] DTOs as records (no Lombok)
+- [ ] Constructor injection only (no field injection)
+
+### Infrastructure Layer
+
+- [ ] Implements domain repository interfaces
+- [ ] JPA entities separate from domain models
+- [ ] Controllers thin (no business logic)
+- [ ] Lombok OK here only
+
+### Testing
+
+- [ ] TDD followed (tests written first)
+- [ ] Domain tests: 100% coverage
+- [ ] Using Testcontainers (NOT H2)
+- [ ] ArchUnit tests pass
+
+### Pre-Commit Commands
+
+```bash
+# Run ArchUnit
+mvn test -Dtest=CleanArchitectureLayersTest
+
+# Check domain imports
+grep -r "org.springframework" src/main/java/domain/ && exit 1
+
+# Run all tests
+mvn test
+```
+
+**VIOLATION = REJECT**: Fix before committing.

@@ -294,3 +294,166 @@ npm run test:coverage  # Run tests with coverage
 ---
 
 *Living document. Update as frontend patterns evolve.*
+
+---
+
+## 6. AI Agent Tooling (Frontend)
+
+### Serena MCP for TypeScript/React
+
+```bash
+# Find React components
+find_symbol(query: "OrderList", kind: "function")
+
+# Find custom hooks
+find_symbol(query: "useOrders", kind: "function")
+
+# Find all usages of a component
+find_referencing_symbols(symbol: "OrderList")
+
+# Find type/interface definitions
+find_symbol(query: "Order", kind: "interface")
+
+# Get file structure overview
+get_symbols_overview(file: "src/components/OrderList.tsx")
+
+# Safe rename (updates imports and JSX usage)
+rename_symbol(symbol: "OldComponent", newName: "NewComponent")
+```
+
+### Context-Mode for Frontend Patterns
+
+```python
+# Find frontend architecture patterns
+ctx_search(queries: ["feature-sliced design"], source: "frontend-boilerplate")
+ctx_search(queries: ["React Query useQuery pattern"])
+ctx_search(queries: ["Zustand state management"])
+ctx_search(queries: ["Ant Design table examples"])
+ctx_search(queries: ["TypeScript strict mode rules"])
+```
+
+### Sequential-Thinking for Frontend Architecture
+
+```python
+# Before creating new feature
+mcp_sequential_thinking_think(
+  thread_purpose="Adding new Order feature",
+  thought="Determining if this needs new feature slice or existing",
+  thought_index=1,
+  tool_recommendation="ctx_search(queries: ['feature-sliced design rules'])",
+  left_to_be_done="1. Check existing features, 2. Determine component structure, 3. Plan state management"
+)
+
+mcp_sequential_thinking_think(
+  thought="Deciding between Zustand vs local state",
+  thought_index=2,
+  tool_recommendation="ctx_search(queries: ['Zustand vs useState pattern'])"
+)
+```
+
+### Superpowers Skills for Frontend Development
+
+| Task | Skill | Command |
+|------|-------|---------|
+| Plan frontend feature | `writing-plans` | "Let's plan this OrderList feature" |
+| Write React tests | `test-driven-development` | "Write tests for OrderList component" |
+| Debug TypeScript error | `systematic-debugging` | "TypeScript type error" |
+| Before commit | `verification-before-completion` | "Ready to commit" |
+| Code review | `requesting-code-review` | "Review this component" |
+
+### Frontend Pre-Commit Checklist (AI Agents)
+
+**MANDATORY - Run before claiming frontend tasks complete:**
+
+```bash
+# 1. Run dependency cruiser (architecture validation)
+npm run depcruise
+
+# 2. Type checking
+npm run type-check
+
+# 3. Run unit tests
+npm test
+
+# 4. Run E2E tests (if pages changed)
+npm run test:e2e
+
+# 5. Linting
+npm run lint
+
+# 6. Check for 'any' types
+grep -r ": any" src/ && exit 1
+```
+
+**AI Agent Responsibility:** Use Superpowers `verification-before-completion` to enforce this checklist.
+
+---
+
+## 7. Architecture Audit Checklist (Frontend)
+
+**MANDATORY for EVERY Frontend PR:**
+
+### Type Safety
+
+- [ ] No `any` types anywhere (strict TypeScript)
+- [ ] All props have explicit interfaces
+- [ ] All function return types declared
+- [ ] Using TypeScript utility types (`Partial`, `Pick`, `Omit`)
+
+### Component Patterns
+
+- [ ] All components are functional (no class components)
+- [ ] Using hooks for state and effects
+- [ ] Custom hooks follow `use*` naming convention
+- [ ] Components have single responsibility
+
+### State Management
+
+- [ ] Global state in `store/` (Zustand)
+- [ ] Local state in components (`useState`)
+- [ ] No business logic in components (moved to hooks)
+- [ ] Immutable state updates
+
+### Layer Dependencies
+
+- [ ] `types/` - Pure, no dependencies
+- [ ] `hooks/` - Can import from `types/` and `store/`
+- [ ] `services/` - Can import from `types/` only
+- [ ] `components/` - Can import from `types/`, `hooks/`, `services/`
+- [ ] No circular dependencies
+
+### UI/UX
+
+- [ ] Using Ant Design components (not custom CSS)
+- [ ] Responsive design considered
+- [ ] Accessibility (ARIA labels, keyboard navigation)
+- [ ] Loading states and error handling
+
+### Testing
+
+- [ ] TDD followed (tests written first)
+- [ ] Unit tests for components (Vitest)
+- [ ] Unit tests for hooks
+- [ ] E2E tests for pages (Playwright)
+- [ ] Storybook stories for new components
+
+### Pre-Commit Commands
+
+```bash
+# Run dependency cruiser
+npm run depcruise
+
+# Type check
+npm run type-check
+
+# Run tests
+npm test
+
+# Lint
+npm run lint
+
+# Check for any types
+grep -r ": any" src/ && exit 1
+```
+
+**VIOLATION = REJECT**: Fix before committing.
