@@ -1,270 +1,252 @@
----
-name: "Architecture Diagrams"
-type: "Index"
-version: "2.0"
-status: "Active"
-owner: "@architecture-team"
----
+# Diagram Index
 
-# Architecture Diagrams
+**Purpose**: Central catalog of all architecture diagrams with rendered previews and usage guidance.
 
-> Visual depictions of complex architectural concepts.
-
-## Quick Reference
-
-| Diagram | When to Use | Related Docs |
-|---------|-------------|--------------|
-| **Clean Architecture** | Designing new services, explaining layer dependencies | [ADR-01](../01-agnostic/02-adrs/01-clean-architecture.md), [Standard-02](../01-agnostic/01-standards/02-architecture.md) |
-| **DDD Aggregate** | Modeling domain entities, defining aggregate boundaries | [SOP-01](../04-sops/01-add-new-aggregate-root.md), [ADR-01](../01-agnostic/02-adrs/01-clean-architecture.md) |
-| **Microservices** | System design, service decomposition | [Standard-02](../01-agnostic/01-standards/02-architecture.md) |
-| **Outbox Pattern** | Event-driven integration, reliable messaging | [ADR-03](../01-agnostic/02-adrs/02-eda-outbox.md), [SOP-05](../04-sops/05-publish-domain-event.md) |
-| **Port-Adapter** | Hexagonal architecture, external service integration | [ADR-12](../01-agnostic/02-adrs/08-port-adapter.md) |
-| **Event-Driven** | Event sourcing, CQRS, message flows | [ADR-03](../01-agnostic/02-adrs/02-eda-outbox.md) |
-| **Frontend Architecture** | SPA design, component hierarchy | [ADR-05](../01-agnostic/02-adrs/05-frontend-architecture.md) |
-| **System Overview** | High-level topology, stakeholder presentations | [README](../../README.md) |
+**Last Updated**: 2026-05-25  
+**Total Diagrams**: 8 PlantUML diagrams
 
 ---
 
-## Diagram Catalog
+## 📐 Diagram Catalog
 
 ### 1. Clean Architecture
+**File**: [`01-clean-architecture.puml`](01-clean-architecture.puml)  
+**Purpose**: Shows Clean Architecture layers and dependencies  
+**When to Use**: 
+- Onboarding new developers
+- Architecture review meetings
+- PR descriptions for structural changes
 
-**Purpose:** Shows layer dependencies and data flow in Clean Architecture.
-
-**When to reference:**
-- Designing new service structure
-- Explaining dependency rules to new developers
-- Architecture review discussions
-
-**Key concepts:**
-- Domain layer at center (no dependencies)
-- Dependencies point inward
-- Ports defined by inner layers
-- Adapters implemented by outer layers
-
-**Related:**
-- [ADR-01: Clean Architecture](../01-agnostic/02-adrs/01-clean-architecture.md)
-- [Standard-02: Architecture](../01-agnostic/01-standards/02-architecture.md)
-- [SOP-01: Add Aggregate Root](../04-sops/01-add-new-aggregate-root.md)
-
-**Source:** [01-clean-architecture.puml](./01-clean-architecture.puml)
+**Key Concepts**:
+- Domain → Application → Infrastructure → Presentation
+- Dependency rule (inward-pointing dependencies)
+- Ports and adapters pattern
 
 ---
 
-### 2. DDD Aggregate
+### 2. Domain-Driven Design Aggregate
+**File**: [`02-ddd-aggregate.puml`](02-ddd-aggregate.puml)  
+**Purpose**: DDD aggregate structure and relationships  
+**When to Use**:
+- Designing new domain models
+- Refactoring existing aggregates
+- Explaining aggregate boundaries
 
-**Purpose:** Illustrates DDD tactical patterns: aggregates, entities, value objects.
-
-**When to reference:**
-- Designing new aggregate roots
-- Defining aggregate boundaries
-- Explaining entity vs value object
-
-**Key concepts:**
-- Aggregate root controls access
-- Entities have identity
-- Value objects are immutable
-- Invariants enforced within aggregate
-
-**Related:**
-- [SOP-01: Add Aggregate Root](../04-sops/01-add-new-aggregate-root.md)
-- [ADR-01: Clean Architecture](../01-agnostic/02-adrs/01-clean-architecture.md)
-- [Standard-02: Architecture](../01-agnostic/01-standards/02-architecture.md)
-
-**Source:** [02-ddd-aggregate.puml](./02-ddd-aggregate.puml)
+**Key Concepts**:
+- Aggregate root
+- Value objects
+- Entity relationships
+- Invariants
 
 ---
 
-### 3. Microservices
-
-**Purpose:** Shows microservices topology and communication patterns.
-
-**When to reference:**
+### 3. Microservices Architecture
+**File**: [`03-microservices.puml`](03-microservices.puml)  
+**Purpose**: System-level microservices topology  
+**When to Use**:
+- Infrastructure planning
 - Service decomposition discussions
-- System design reviews
-- Onboarding new architects
+- Deployment architecture reviews
 
-**Key concepts:**
-- Bounded contexts
+**Key Concepts**:
 - Service boundaries
-- Communication patterns (sync/async)
+- Inter-service communication
+- API gateway
 - Database per service
-
-**Related:**
-- [Standard-02: Architecture](../01-agnostic/01-standards/02-architecture.md)
-- [ADR-03: Event-Driven Architecture](../01-agnostic/02-adrs/02-eda-outbox.md)
-
-**Source:** [03-microservices.puml](./03-microservices.puml)
 
 ---
 
 ### 4. Outbox Pattern
-
-**Purpose:** Illustrates transactional outbox pattern for reliable event publishing.
-
-**When to reference:**
+**File**: [`04-outbox-pattern.puml`](04-outbox-pattern.puml)  
+**Purpose**: Event publishing with transactional outbox  
+**When to Use**:
 - Implementing event-driven architecture
-- Ensuring atomicity of state change + event
-- Debugging event consistency issues
+- Ensuring atomic writes + event publishing
+- Message queue integration
 
-**Key concepts:**
-- Outbox table in same transaction
-- Event publisher polls outbox
-- Guaranteed delivery
-- Idempotent consumers
-
-**Related:**
-- [ADR-03: Event-Driven Architecture](../01-agnostic/02-adrs/02-eda-outbox.md)
-- [SOP-05: Publish Domain Event](../04-sops/05-publish-domain-event.md)
-- [ADR-04: Batch Idempotency](../01-agnostic/02-adrs/03-batch-idempotency.md)
-
-**Source:** [04-outbox-pattern.puml](./04-outbox-pattern.puml)
+**Key Concepts**:
+- Transactional outbox table
+- Event publisher
+- Message broker
+- Exactly-once delivery
 
 ---
 
-### 5. Port-Adapter (Hexagonal)
+### 5. Ports & Adapters
+**File**: [`05-port-adapter.puml`](05-port-adapter.puml)  
+**Purpose**: Hexagonal architecture implementation  
+**When to Use**:
+- Explaining adapter patterns
+- Adding new external integrations
+- Refactoring legacy code
 
-**Purpose:** Shows hexagonal architecture with ports and adapters.
-
-**When to reference:**
-- Integrating external services
-- Designing testable architecture
-- Explaining dependency inversion
-
-**Key concepts:**
-- Application core isolated
-- Driving adapters (UI, API)
-- Driven adapters (DB, external APIs)
-- Ports as contracts
-
-**Related:**
-- [ADR-12: Port-Adapter Pattern](../01-agnostic/02-adrs/08-port-adapter.md)
-- [Standard-02: Architecture](../01-agnostic/01-standards/02-architecture.md)
-- [SOP-06: Configure External Service](../04-sops/06-configure-external-service.md)
-
-**Source:** [05-port-adapter.puml](./05-port-adapter.puml)
+**Key Concepts**:
+- Driving adapters (REST, GraphQL)
+- Driven adapters (Database, External APIs)
+- Ports (interfaces)
+- Application core
 
 ---
 
 ### 6. Event-Driven Architecture
+**File**: [`06-event-driven.puml`](06-event-driven.puml)  
+**Purpose**: Event flow and domain events  
+**When to Use**:
+- Designing event handlers
+- Explaining event sourcing
+- Debugging event flows
 
-**Purpose:** Illustrates event-driven architecture message flows.
-
-**When to reference:**
-- Designing event-driven systems
-- Explaining pub/sub patterns
-- Event storming sessions
-
-**Key concepts:**
-- Event producers
-- Event consumers
-- Event bus/broker
+**Key Concepts**:
+- Domain events
+- Event handlers
+- Event bus
 - Eventual consistency
-
-**Related:**
-- [ADR-03: Event-Driven Architecture](../01-agnostic/02-adrs/02-eda-outbox.md)
-- [SOP-05: Publish Domain Event](../04-sops/05-publish-domain-event.md)
-
-**Source:** [06-event-driven.puml](./06-event-driven.puml)
 
 ---
 
 ### 7. Frontend Architecture
+**File**: [`07-frontend-architecture.puml`](07-frontend-architecture.puml)  
+**Purpose**: Frontend component hierarchy and state management  
+**When to Use**:
+- Frontend onboarding
+- Component design reviews
+- State management decisions
 
-**Purpose:** Shows SPA layered architecture with FSD+MVVM.
-
-**When to reference:**
-- Frontend structure discussions
-- FSD+MVVM implementation
-- Component hierarchy planning
-
-**Key concepts:**
-- Feature-Sliced Design layers
-- MVVM pattern
-- State management
-- API service layer
-
-**Related:**
-- [ADR-05: Frontend Architecture](../01-agnostic/02-adrs/05-frontend-architecture.md)
-- [Standard-12: Frontend Structure](../01-agnostic/01-standards/12-frontend-structure.md)
-- [SOP-03: Add Frontend Page](../04-sops/03-add-new-frontend-page.md)
-
-**Source:** [07-frontend-architecture.puml](./07-frontend-architecture.puml)
+**Key Concepts**:
+- Component layers (pages, components, hooks)
+- State management (Zustand/Pinia)
+- API integration
+- Feature-sliced design
 
 ---
 
 ### 8. System Overview
-
-**Purpose:** High-level system topology for stakeholders.
-
-**When to reference:**
-- Architecture overview presentations
+**File**: [`08-system-overview.puml`](08-system-overview.puml)  
+**Purpose**: High-level system context diagram  
+**When to Use**:
+- Stakeholder presentations
 - New team member onboarding
-- External stakeholder communication
+- Architecture decision records
 
-**Key concepts:**
-- All major components
-- External integrations
+**Key Concepts**:
+- System boundaries
+- External systems
+- User roles
 - Data flow
-- Deployment topology
-
-**Related:**
-- [README](../../README.md)
-- [Deployment Guide](../01-agnostic/03-guidelines/01-deployment.md)
-
-**Source:** [08-system-overview.puml](./08-system-overview.puml)
 
 ---
 
-## Viewing and Editing Diagrams
+## 🎨 Rendering Diagrams
 
-### Quick Start
+### Option 1: PlantUML Server (Recommended)
+```bash
+# Start local PlantUML server
+docker run -d -p 8080:8080 plantuml/plantuml-server
 
+# Open in browser: http://localhost:8080
+# Paste .puml file content to render
+```
+
+### Option 2: VS Code Extension
+1. Install "PlantUML" extension by jebbs
+2. Open `.puml` file
+3. Press `Alt+D` to preview
+
+### Option 3: Command Line
 ```bash
 # Install PlantUML
-brew install plantuml  # macOS
-  - Install PlantUML:
-    ```bash
-    # WSL2/Red Hat
-    sudo dnf install plantuml
-    
-    # macOS
-    brew install plantuml
-    
-    # Or download JAR: https://plantuml.com/download
+sudo apt install plantuml  # Linux
+brew install plantuml      # macOS
 
 # Render to PNG
-plantuml -tpng 01-clean-architecture.puml
-
-# Preview with live reload
-plantuml -tsvg -watch 01-clean-architecture.puml
+plantuml -tpng docs/01-agnostic/06-diagrams/01-clean-architecture.puml
 ```
 
-### VS Code Extension
+### Option 4: GitHub Actions (Auto-Render)
+Diagrams are automatically rendered on commit via GitHub Actions workflow.
+Rendered PNGs available in `docs/01-agnostic/06-diagrams/rendered/`
 
-Install **"PlantUML"** extension by jebbs for live preview in editor.
+---
 
-### Online Viewer
+## 📊 Usage Guidelines
 
-Use [https://www.plantuml.com/plantuml/](https://www.plantuml.com/plantuml/) for quick previews without installation.
+### When to Reference Diagrams
 
-### Rendering to PNG
+| Scenario | Recommended Diagrams |
+|----------|---------------------|
+| **New Developer Onboarding** | #1 (Clean Arch), #8 (System Overview) |
+| **Domain Modeling** | #2 (DDD Aggregate) |
+| **API Design** | #1 (Clean Arch), #5 (Ports & Adapters) |
+| **Event Implementation** | #4 (Outbox), #6 (Event-Driven) |
+| **Frontend Work** | #7 (Frontend Architecture) |
+| **Infrastructure Planning** | #3 (Microservices) |
 
-All diagrams are auto-rendered to PNG via GitHub Actions on commit. To manually render:
+### Embedding in Documentation
 
-```bash
-cd docs/01-agnostic/06-diagrams
-plantuml -tpng *.puml
+**Markdown**:
+```markdown
+![Clean Architecture](rendered/01-clean-architecture.png)
+```
+
+**Notion/Obsidian**:
+```markdown
+![[01-clean-architecture.png]]
+```
+
+**GitHub README**:
+```markdown
+![Clean Architecture](docs/01-agnostic/06-diagrams/rendered/01-clean-architecture.png)
 ```
 
 ---
 
-## Cross-References
+## 📁 File Locations
 
-### Documentation
-- **Architecture Standards**: [01-agnostic/01-standards/02-architecture.md](../01-agnostic/01-standards/02-architecture.md)
-- **All ADRs**: [01-agnostic/02-adrs/](../01-agnostic/02-adrs/)
-- **SOPs**: [04-sops/](../04-sops/)
+All diagrams stored in: `docs/01-agnostic/06-diagrams/`
 
-### Templates
-- **Diagram Template**: [04-templates/08-diagram-template.md](../04-templates/08-diagram-template.md) *(planned)*
+- Source files: `*.puml`
+- Rendered PNGs: `rendered/*.png`
+- This index: `00-INDEX.md`
+
+---
+
+## 🔄 Maintenance
+
+### Adding New Diagrams
+1. Create `.puml` file in `docs/01-agnostic/06-diagrams/`
+2. Add entry to this index with purpose and usage
+3. Commit - GitHub Actions will auto-render PNG
+4. Update related documentation to reference diagram
+
+### Updating Existing Diagrams
+1. Edit `.puml` file
+2. Commit - GitHub Actions will auto-update PNG
+3. Verify rendered output matches intent
+4. Update this index if purpose/usage changed
+
+### Deprecating Diagrams
+1. Move `.puml` and `rendered/*.png` to `archive/` subdirectory
+2. Mark entry in this index as "⚠️ Deprecated"
+3. Update documentation references
+
+---
+
+## 🛠️ Tools & Extensions
+
+### Recommended Tools
+- **PlantUML Server**: Docker-based rendering
+- **VS Code Extension**: Real-time preview
+- **IntelliJ Plugin**: Built-in PlantUML support
+- **Eclipse Plugin**: PlantUML plugin
+
+### Integration
+- **GitHub Actions**: Auto-render on commit
+- **CI/CD**: Validate diagram syntax
+- **Documentation Site**: Embed rendered PNGs
+
+---
+
+**Related Documentation**:
+- Architecture Standards: `docs/01-agnostic/01-standards/02-architecture.md`
+- ADRs: `docs/01-agnostic/02-adrs/`
+- Getting Started: `docs/01-agnostic/00-getting-started.md`
