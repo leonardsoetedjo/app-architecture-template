@@ -1,3 +1,11 @@
+---
+name: "SOP: Add Flyway Migration"
+type: "SOP"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # SOP: Add Flyway Migration
 
 ## Trigger

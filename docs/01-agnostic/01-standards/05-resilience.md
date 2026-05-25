@@ -1,3 +1,11 @@
+---
+name: "Resilience & Observability Standards"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Resilience & Observability Standards
 
 ## 1. Observability

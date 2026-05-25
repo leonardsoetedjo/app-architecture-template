@@ -1,3 +1,11 @@
+---
+name: "Backend Architecture Fidelity — Implementation Summary"
+type: "Audit"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Backend Architecture Fidelity — Implementation Summary
 
 **Date:** 2026-05-25  

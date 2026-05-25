@@ -1,3 +1,11 @@
+---
+name: "ADR 10: Secret Management (Python/Quasar)"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # ADR 10: Secret Management (Python/Quasar)
 
 **Status**: Accepted

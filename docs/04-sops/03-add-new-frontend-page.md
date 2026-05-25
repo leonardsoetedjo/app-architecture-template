@@ -1,3 +1,11 @@
+---
+name: "SOP: Add New Frontend Page"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # SOP: Add New Frontend Page
 
 ## Trigger

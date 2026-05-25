@@ -1,3 +1,11 @@
+---
+name: "Frontend Boilerplate Coding Guide"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Frontend Boilerplate Coding Guide
 
 > **Purpose**: This file is the developer's quick-reference for the React + TypeScript frontend boilerplate. Every code change must be producible from and auditable against this verified frontend boilerplate.

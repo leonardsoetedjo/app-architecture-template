@@ -1,3 +1,11 @@
+---
+name: "MDC Logging Boilerplate Reduction"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # MDC Logging Boilerplate Reduction
 
 To avoid manual injection of correlation IDs (TraceId, UserId, TenantId) into every log statement, the system mandates a **Centralized Context Injection** pattern.

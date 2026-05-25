@@ -1,3 +1,11 @@
+---
+name: "AGENTS.md — app-architecture-template"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # AGENTS.md — app-architecture-template
 
 ## Purpose

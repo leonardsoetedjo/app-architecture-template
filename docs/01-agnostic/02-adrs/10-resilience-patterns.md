@@ -1,3 +1,11 @@
+---
+name: "ADR 14: Resilience Patterns with Resilience4j"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 14: Resilience Patterns with Resilience4j
 
 **Status**: Accepted

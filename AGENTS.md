@@ -170,80 +170,23 @@ npm run depcruise
 ### 🎯 Principle
 
 **GitHub is the single source of truth.** The repository should only contain permanent, production-ready files.
-
 ---
 
 ## AI Agent Tooling
 
-This project supports AI agents through integrated tooling. **ALL AI agents MUST use these tools** to maintain architecture compliance.
+**📍 AI tooling documentation moved to:** [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
 
-### Serena MCP (Codebase Navigation)
+That file contains comprehensive guides for:
+- **Serena MCP** — Code navigation and refactoring
+- **Context-Mode** — Documentation search and retrieval
+- **Sequential-Thinking** — Complex architecture decisions
+- **Superpowers Skills** — Workflow enforcement (TDD, debugging, verification)
 
-**Use for:** Symbol navigation, finding references, safe refactoring
-
-```bash
-# Find symbol definitions
-find_symbol(query: "OrderRepository", kind: "interface")
-
-# Find all usages
-find_referencing_symbols(symbol: "OrderRepository")
-
-# Get file structure overview
-get_symbols_overview(file: "src/main/java/.../OrderService.java")
-
-# Safe rename (updates all references)
-rename_symbol(symbol: "oldName", newName: "newMethodName")
-```
-
-**When to use:** Before modifying classes, before deleting code, when finding patterns, when refactoring
-
-### Context-Mode (Documentation Search)
-
-**Use for:** Querying architecture docs, ADRs, standards, boilerplate patterns
-
-```python
-# Query architecture rules
-ctx_search(queries: ["Clean Architecture layer dependencies"])
-
-# Find patterns in specific boilerplate
-ctx_search(queries: ["repository pattern"], source: "java-boilerplate")
-ctx_search(queries: ["FastAPI dependency injection"], source: "python-boilerplate")
-
-# Check testing standards
-ctx_search(queries: ["testing requirements domain layer"])
-```
-
-**When to use:** Before starting tasks, when unsure about patterns, before committing, when debugging
-
-### Sequential-Thinking (Complex Reasoning)
-
-**Use for:** Multi-step architecture decisions
-
-```python
-mcp_sequential_thinking_think(
-  thread_purpose="Adding new aggregate root",
-  thought="Understanding requirements",
-  thought_index=1,
-  tool_recommendation="ctx_search(queries: ['existing aggregate roots'])",
-  left_to_be_done="1. Check ADR-01, 2. Find patterns, 3. Determine layers"
-)
-```
-
-**When to use:** Adding aggregates, changing layer boundaries, modifying cross-cutting concerns
-
-### Superpowers Skills (Workflow Enforcement)
-
-**Auto-trigger based on conversation:**
-
-| You Say | Skill Activates |
-|---------|-----------------|
-| "Let's plan this" | `writing-plans` |
-| "How should I test" | `test-driven-development` |
-| "Something's broken" | `systematic-debugging` |
-| "Ready to commit" | `verification-before-completion` |
-| "Help me review" | `requesting-code-review` |
-
-**Explicit triggers:** `/superpowers:skill-name`
+**Language-specific AI tooling:**
+- Java: [`docs/01-agnostic/01-standards/14-agents-java.md`](docs/01-agnostic/01-standards/14-agents-java.md)
+- Python: [`docs/01-agnostic/01-standards/15-agents-python.md`](docs/01-agnostic/01-standards/15-agents-python.md)
+- ReactJS: [`docs/01-agnostic/01-standards/16-agents-reactjs.md`](docs/01-agnostic/01-standards/16-agents-reactjs.md)
+- Quasar: [`docs/01-agnostic/01-standards/17-agents-quasar.md`](docs/01-agnostic/01-standards/17-agents-quasar.md)
 
 ---
 
@@ -273,6 +216,30 @@ mcp_sequential_thinking_think(
 - **Copy-paste rule** — Any pattern must be verified in boilerplate first, then copied to real project
 - **Dual-mode infra** — All 3 compose files must exist (`base`, `standalone`, `traefik`)
 - **Zero Traefik leakage** — Base compose has no `traefik-net`, no labels. Standalone has `traefik.enable=false`
+
+---
+
+## Related Documentation
+
+### Core Principles (Language-Agnostic)
+- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+
+### Language-Specific Guides
+- **Java**: [`docs/02-java/`](docs/02-java/) | [`boilerplate/java/AGENTS.md`](boilerplate/java/AGENTS.md)
+- **Python**: [`docs/03-python/`](docs/03-python/) | [`boilerplate/python/AGENTS.md`](boilerplate/python/AGENTS.md)
+- **ReactJS**: [`boilerplate/reactjs/AGENTS.md`](boilerplate/reactjs/AGENTS.md)
+- **Quasar**: [`boilerplate/quasar/AGENTS.md`](boilerplate/quasar/AGENTS.md)
+
+### Standard Operating Procedures
+- **SOP Index**: [`docs/04-sops/00-INDEX.md`](docs/04-sops/00-INDEX.md)
+- **All SOPs**: [`docs/04-sops/`](docs/04-sops/)
+
+### Templates
+- **Documentation Templates**: [`docs/04-templates/`](docs/04-templates/)
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
 
 ---
 

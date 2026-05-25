@@ -1,3 +1,11 @@
+---
+name: "Configuration Guidelines"
+type: "Guideline"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Configuration Guidelines
 
 This document provides guidelines on where to store different types of configuration and constants within the application.

@@ -1,3 +1,11 @@
+---
+name: "ADR 15: Factory Pattern for Use Case Creation"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 15: Factory Pattern for Use Case Creation
 
 **Status**: Accepted

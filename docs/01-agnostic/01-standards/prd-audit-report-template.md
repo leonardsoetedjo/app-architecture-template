@@ -1,3 +1,11 @@
+---
+name: "PRD Architecture Audit Report"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # PRD Architecture Audit Report
 
 **Template for documenting findings from PRD review**

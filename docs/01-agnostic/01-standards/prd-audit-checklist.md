@@ -1,3 +1,11 @@
+---
+name: "Business Requirements (PRD) Audit Checklist"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Business Requirements (PRD) Audit Checklist
 
 **Purpose:** Enable architects to systematically review Product Requirements Documents (PRDs) for completeness, clarity, feasibility, and alignment with architecture standards.

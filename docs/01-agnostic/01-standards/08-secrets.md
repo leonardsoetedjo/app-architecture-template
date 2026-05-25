@@ -1,3 +1,11 @@
+---
+name: "Secrets Management Standard"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Secrets Management Standard
 
 **Status**: Accepted  

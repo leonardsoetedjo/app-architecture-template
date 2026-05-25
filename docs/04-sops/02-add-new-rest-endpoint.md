@@ -1,3 +1,11 @@
+---
+name: "SOP: Add New REST Endpoint"
+type: "ADR"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # SOP: Add New REST Endpoint
 
 ## Trigger

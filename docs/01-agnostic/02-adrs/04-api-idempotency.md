@@ -1,3 +1,11 @@
+---
+name: "ADR 05: API Idempotency (Idempotency Keys)"
+type: "SOP"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 05: API Idempotency (Idempotency Keys)
 
 **Status**: Accepted

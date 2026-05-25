@@ -1,3 +1,11 @@
+---
+name: "PRD Architecture Audit Toolkit — Delivery Summary"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # PRD Architecture Audit Toolkit — Delivery Summary
 
 **Date:** 2026-05-25  

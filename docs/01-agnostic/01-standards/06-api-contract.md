@@ -1,3 +1,11 @@
+---
+name: "API Contract Governance (Code-First)"
+type: "Template"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # API Contract Governance (Code-First)
 
 This standard defines the governance of API contracts. To ensure agility and maintainability, this project adopts a **Code-First** approach for API documentation.

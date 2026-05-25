@@ -1,3 +1,11 @@
+---
+name: "ADR 02: Technology Stack Selection (Python/Quasar Platform)"
+type: "Standard"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # ADR 02: Technology Stack Selection (Python/Quasar Platform)
 
 **Status**: Accepted

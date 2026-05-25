@@ -1,3 +1,11 @@
+---
+name: "ADR 01: Clean Architecture and Domain-Driven Design (DDD)"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 01: Clean Architecture and Domain-Driven Design (DDD)
 
 **Status**: Accepted

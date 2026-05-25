@@ -1,3 +1,11 @@
+---
+name: "Database Standards (Python/Quasar)"
+type: "ADR"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Database Standards (Python/Quasar)
 
 ## 1. PostgreSQL Implementation

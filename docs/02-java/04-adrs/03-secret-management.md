@@ -1,3 +1,11 @@
+---
+name: "ADR 10: Secret Management Strategy"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # ADR 10: Secret Management Strategy
 
 **Status**: Accepted

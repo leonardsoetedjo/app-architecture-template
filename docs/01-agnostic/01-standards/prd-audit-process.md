@@ -1,3 +1,11 @@
+---
+name: "PRD Architecture Audit Process"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # PRD Architecture Audit Process
 
 **Ensure business requirements are complete, clear, and feasible before development begins**

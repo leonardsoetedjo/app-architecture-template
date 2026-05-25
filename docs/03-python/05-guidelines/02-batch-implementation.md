@@ -1,3 +1,11 @@
+---
+name: "Batch Processing Guidelines (Python/Quasar)"
+type: "ADR"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Batch Processing Guidelines (Python/Quasar)
 
 ## 1. Strategy

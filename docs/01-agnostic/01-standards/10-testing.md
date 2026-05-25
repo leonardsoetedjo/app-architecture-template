@@ -1,3 +1,11 @@
+---
+name: "Testing Standards & Test Case Design"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Testing Standards & Test Case Design
 
 This document defines the mandatory structure and directives for creating test cases across all platforms. The goal is to ensure that tests are deterministic, traceable, and easily interpretable by both human developers and AI agents.

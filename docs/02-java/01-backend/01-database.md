@@ -1,3 +1,11 @@
+---
+name: "Database Standards (PostgreSQL)"
+type: "Standard"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Database Standards (PostgreSQL)
 
 ## 1. Microservices Architecture Patterns

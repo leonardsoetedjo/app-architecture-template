@@ -1,14 +1,12 @@
 # Python Boilerplate Coding Guide
 
-> **Purpose**: This file is the Python developer's quick-reference and the architect's audit baseline for the Python boilerplate. Every code change in this Python service must be producible from, and auditable against, this verified boilerplate.
->
-> **Rule**: If your PR pattern is not already demonstrated in this Python boilerplate (`boilerplate/python/order-service/`), add it there first, then copy it into your feature.
->
-> **Note**: For Java or frontend patterns, refer to the main [`AGENTS.md`](../AGENTS.md) or `docs/01-agnostic/01-standards/14-agents-java.md` and `16-agents-frontend.md`.
->
+> **Purpose**: This file is the Python developer's quick-reference and the architect's audit baseline for the **Python/FastAPI** boilerplate. Every code change in Python services must be producible from, and auditable against, the verified boilerplate in [`boilerplate/python/order-service/`](boilerplate/python/order-service/).
+
+> **Rule**: If your PR pattern is not already demonstrated in the Python boilerplate, add it there first, then copy it into your feature.
+
 > **Note**: This guide is maintained in `docs/01-agnostic/01-standards/15-agents-python.md`. The boilerplate copy is for convenience.
 
-> **Stack**: FastAPI + SQLAlchemy (Python 3.11+) | PostgreSQL | Testcontainers  
+> **Stack**: FastAPI 0.111+ (Python 3.11+) | PostgreSQL | Testcontainers | pytest-archon
 > **Architecture**: Clean Architecture + Domain-Driven Design
 
 ---
@@ -25,9 +23,10 @@
 | Pure Python in domain | No `None` without guard — use type hints |
 | Financial precision | Use `decimal.Decimal` for money |
 | Value objects immutable | Use `@dataclass(frozen=True)` |
-| Domain models use `@dataclass(frozen=True)` for value objects | |
+| Domain models use dataclasses | No frameworks in domain |
+| Testcontainers: No SQLite | Use PostgreSQL in tests |
 
-### 1.2 Naming
+### 1.2 Naming Conventions
 
 | Scope | Convention | Example |
 |-------|-----------|---------|
@@ -39,7 +38,7 @@
 | Git branches | `feature/`, `bugfix/`, `hotfix/`, `refactor/` | `feature/order-cancellation` |
 | Migrations (Alembic) | `{version}_{desc}.py` | `001_create_orders.py` |
 
-### 1.3 HTTP Codes
+### 1.3 HTTP Status Codes
 
 | Code | When |
 |------|------|
@@ -98,29 +97,24 @@ order-service/
 
 ---
 
-## 3. Code Templates (from real, working boilerplate)
+## 3. Golden Rules
 
-The snippets below are **excerpts from the verified boilerplate files**.
+| Rule | Violation | Rationale |
+|------|-----------|-----------|
+| Domain layer has **zero** framework imports | No FastAPI/SQLAlchemy/Pydantic in `domain/` | Pure business logic, testable without FastAPI |
+| Constructor injection **only** | Never global session/conn | Immutability, easier testing |
+| DTOs at every boundary | Never expose entities | Encapsulation, API versioning |
+| Pure Python in domain | No `None` without guard | Prevent AttributeError |
+| Financial precision | Use `decimal.Decimal` | Avoid floating-point errors |
+| Value objects immutable | Use `@dataclass(frozen=True)` | Thread-safety, simplicity |
+| Domain models use dataclasses | No frameworks in domain | Transparency, debugging |
+| Testcontainers: No SQLite | Use PostgreSQL in tests | Test realism, avoid SQLite quirks |
 
-### 3.1 Domain — Value Object (Python)
+---
 
-```python
-# domain/order_id.py
-from dataclasses import dataclass
-from uuid import UUID, uuid4
+## 4. Code Templates
 
-
-@dataclass(frozen=True)
-class OrderId:
-    """Value object wrapper for Order ID."""
-    value: UUID
-
-    @staticmethod
-    def generate() -> "OrderId":
-        return OrderId(uuid4())
-```
-
-### 3.2 Domain — Aggregate Root (Python)
+### 4.1 Domain — Aggregate Root (Python Dataclass)
 
 ```python
 # domain/order.py
@@ -148,10 +142,51 @@ class Order:
         self.status = "CONFIRMED"
 ```
 
-### 3.3 Application — Use Case (Python)
+### 4.2 Domain — Value Object (Python Frozen Dataclass)
+
+```python
+# domain/order_id.py
+from dataclasses import dataclass
+from uuid import UUID, uuid4
+
+
+@dataclass(frozen=True)
+class OrderId:
+    """Value object wrapper for Order ID."""
+    value: UUID
+
+    @staticmethod
+    def generate() -> "OrderId":
+        return OrderId(uuid4())
+```
+
+### 4.3 Application — Use Case Interface
+
+```python
+# application/usecases/place_order_use_case.py
+from abc import ABC, abstractmethod
+from .dtos import CreateOrderCommand, OrderResult
+
+
+class PlaceOrderUseCase(ABC):
+    @abstractmethod
+    def execute(self, command: CreateOrderCommand) -> OrderResult:
+        pass
+```
+
+### 4.4 Application — Use Case Implementation (Constructor Injection Only)
 
 ```python
 # application/usecases/place_order_use_case_impl.py
+from uuid import uuid4
+from .place_order_use_case import PlaceOrderUseCase
+from domain.order import Order
+from domain.order_id import OrderId
+from domain.order_item import OrderItem
+from domain.ports.repository import OrderRepository
+from domain.ports.publisher import EventPublisher
+
+
 class PlaceOrderUseCaseImpl:
     def __init__(self, repository: OrderRepository, publisher: EventPublisher):
         self._repository = repository
@@ -159,21 +194,32 @@ class PlaceOrderUseCaseImpl:
 
     def execute(self, command: CreateOrderCommand) -> OrderResult:
         order = Order(
-            id=OrderId(uuid4()),
+            id=OrderId.generate(),
             customer_id=command.customer_id,
-            items=[...],
+            items=[
+                OrderItem(
+                    product_id=item.product_id,
+                    quantity=item.quantity,
+                    unit_price=item.unit_price
+                )
+                for item in command.items
+            ],
         )
         self._repository.save(order)
-        self._publisher.publish(OrderPlacedEvent(order.id))
         return OrderResult(order_id=order.id.value, status=order.status)
 ```
 
-### 3.4 Infrastructure — Controller (Python FastAPI)
+### 4.5 Infrastructure — Controller (FastAPI)
 
 ```python
 # infrastructure/api/controller.py
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
+from application.usecases.place_order_use_case import PlaceOrderUseCase
+from application.usecases.place_order_use_case_impl import PlaceOrderUseCaseImpl
+from infrastructure.persistence.sqlalchemy_repository import SqlalchemyOrderRepository
+from infrastructure.persistence.db import get_db
+
 
 router = APIRouter()
 
@@ -190,92 +236,85 @@ async def create_order(
     return OrderResponse.from_result(result)
 ```
 
+### 4.6 Infrastructure — SQLAlchemy Model
+
+```python
+# infrastructure/persistence/models/order_entity.py
+from sqlalchemy import Column, String, DateTime, Enum as SQLEnum
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
+import uuid
+from datetime import datetime, timezone
+
+
+class OrderEntity(Base):
+    __tablename__ = "orders"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    customer_id = Column(UUID(as_uuid=True), nullable=False)
+    items = relationship("OrderItemEntity", back_populates="order")
+    status = Column(SQLEnum("PENDING", "CONFIRMED", "CANCELLED"), default="PENDING")
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+```
+
 ---
 
-## 4. Standards & Documentation Index
+## 5. Standards Index
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Clean Architecture & DDD principles | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../docs/01-agnostic/02-adrs/01-clean-architecture.md) | Design decisions |
-| General API standards | [`docs/01-agnostic/01-standards/02-architecture.md`](../docs/01-agnostic/01-standards/02-architecture.md) | Writing backend code |
-| Git, Docker, CI/CD, Deployment | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
-| DDD deep dive | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../docs/01-agnostic/02-adrs/01-clean-architecture.md) | Domain model design |
-| Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](../docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
+| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
+| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
+| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
 
 ### Standard Operating Procedures
 
-| SOP | Document | When to Read |
-|-----|----------|--------------|
-| Add a new aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](../docs/04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
-| Add a new REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](../docs/04-sops/02-add-new-rest-endpoint.md) | Adding an API |
-| Add an Alembic migration | [`docs/04-sops/04-add-alembic-migration.md`](../docs/04-sops/04-add-alembic-migration.md) | Schema changes |
-| Publish a domain event | [`docs/04-sops/05-publish-domain-event.md`](../docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
-
-### Boilerplate Templates
-
-| Template | Location | When to Use |
-|----------|----------|--------------|
-| New FastAPI microservice | This `boilerplate/python/order-service/` | Bootstrapping a Python service |
-| Main coding guide | [`../AGENTS.md`](../AGENTS.md) | All stacks (Java, Python, Frontend) |
+| SOP | Document | When to Use |
+|-----|----------|-------------|
+| Add aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](docs/04-sops/01-add-new-aggregate-root.md) | New domain feature |
+| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | New API |
+| Add Alembic migration | [`docs/04-sops/04-add-alembic-migration.md`](docs/04-sops/04-add-alembic-migration.md) | Schema changes |
+| Publish domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
 
 ---
 
-## 5. Python-Specific Guidelines
+## 6. Language-Specific Guidelines
 
-### 5.1 Domain Layer
-
+### 6.1 Domain Layer
 - **No imports** from FastAPI, SQLAlchemy, Pydantic, or any framework
-- **Use `@dataclass(frozen=True)`** for value objects
+- **Use `@dataclass(frozen=True)`** for immutable value objects
 - **Use `@dataclass`** (non-frozen) for aggregate roots that need state transitions
 - **Pure business logic only** — no database, no HTTP, no external dependencies
+- **Validate invariants** in `__post_init__`
 
-### 5.2 Application Layer
-
+### 6.2 Application Layer
 - **Use cases** orchestrate domain operations
-- **DTOs** for external communication
+- **DTOs** as Pydantic models for external communication
 - **Repository interfaces** define contract, implementations live in infrastructure
+- **Constructor injection only** — no globals
 
-### 5.3 Infrastructure Layer
+### 6.3 Infrastructure Layer
+- **FastAPI** for dependency injection and REST
+- **SQLAlchemy** for persistence
+- **Pydantic OK here** — for request/response validation
+- **Thin routers** — delegate to use cases, no business logic
 
-- **FastAPI controllers** handle HTTP requests/responses
-- **SQLAlchemy models** map to database tables
-- **Adapters** translate between frameworks and domain
-- **Testcontainers** for integration tests with真实 database
-
-### 5.4 Testing
+### 6.4 Testing
 
 ```bash
+# Run pytest-archon architecture tests
+pytest tests/archunit/ -v
+
 # Run all tests
 pytest tests/ -v
-
-# Run architecture tests specifically
-pytest tests/archunit/ -v
 
 # Run with coverage
 pytest tests/ --cov=src --cov-report=html -v
 ```
 
-### 5.5 Dependencies
-
-**Core (pyproject.toml):**
-- fastapi ≥ 0.111.0
-- sqlalchemy ≥ 2.0.30
-- pydantic ≥ 2.7.0
-- alembic ≥ 1.13.0
-- psycopg2-binary ≥ 2.9.9
-
-**Dev (pyproject.toml):**
-- pytest ≥ 8.0.0
-- httpx ≥ 0.27.0
-- **pytest-archon** ≥ 0.0.7 (for architecture tests)
-
 ---
 
-*Python boilerplate specific Living document. Update as Python service evolves.*
-
----
-
-## 8. AI Agent Tooling (Python)
+## 7. AI Agent Tooling
 
 ### Serena MCP for Python
 
@@ -354,7 +393,7 @@ flake8 src/ tests/
 
 ---
 
-## 9. Architecture Audit Checklist (Python)
+## 8. Architecture Audit Checklist
 
 **MANDATORY for EVERY Python PR:**
 
@@ -405,3 +444,28 @@ mypy src/
 ```
 
 **VIOLATION = REJECT**: Fix before committing.
+
+---
+
+## 9. Related Documentation
+
+### Core Principles (Language-Agnostic)
+- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+
+### Other Language Boilerplates
+- **Java**: [`/boilerplate/java/AGENTS.md`](../java/AGENTS.md)
+- **ReactJS**: [`/boilerplate/reactjs/AGENTS.md`](../reactjs/AGENTS.md)
+- **Quasar**: [`/boilerplate/quasar/AGENTS.md`](../quasar/AGENTS.md)
+
+### Templates
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
+
+---
+
+*Living document. Update as boilerplate evolves.*
+
+**Last Updated**: 2026-05-25
+**Maintained By**: @architecture-team

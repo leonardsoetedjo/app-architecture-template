@@ -1,3 +1,11 @@
+---
+name: "PRD Architecture Audit — Quick Reference Guide"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # PRD Architecture Audit — Quick Reference Guide
 
 **One-page guide for architects reviewing Product Requirements Documents**

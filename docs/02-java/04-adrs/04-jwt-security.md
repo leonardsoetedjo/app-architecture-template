@@ -1,3 +1,11 @@
+---
+name: "ADR 11: Secure JWT Storage & Transmission"
+type: "SOP"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # ADR 11: Secure JWT Storage & Transmission
 
 **Status**: Accepted

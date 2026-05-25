@@ -1,3 +1,11 @@
+---
+name: "SOP: Configure External HTTP Service"
+type: "SOP"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # SOP: Configure External HTTP Service
 
 ## Trigger

@@ -1,3 +1,11 @@
+---
+name: "Backend API Testing Guidelines (Bruno)"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Backend API Testing Guidelines (Bruno)
 
 ## 1. Strategy

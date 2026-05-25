@@ -1,3 +1,11 @@
+---
+name: "ADR 08: File Storage in Database (Python/Quasar)"
+type: "ADR"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # ADR 08: File Storage in Database (Python/Quasar)
 
 **Status**: Accepted

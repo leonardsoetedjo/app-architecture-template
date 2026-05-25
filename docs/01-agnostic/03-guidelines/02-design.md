@@ -1,3 +1,11 @@
+---
+name: "Software Design Best Practices"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Software Design Best Practices
 
 This document outlines the architectural principles and design patterns required to ensure the system meets key quality attributes.

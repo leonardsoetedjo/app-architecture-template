@@ -1,3 +1,11 @@
+---
+name: "ADR 09: Structured Logging for Observability (NDJSON & MDC)"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 09: Structured Logging for Observability (NDJSON & MDC)
 
 **Status**: Accepted

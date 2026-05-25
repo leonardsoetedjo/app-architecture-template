@@ -1,3 +1,11 @@
+---
+name: "SOP: Publish Domain Event"
+type: "SOP"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # SOP: Publish Domain Event
 
 ## Trigger

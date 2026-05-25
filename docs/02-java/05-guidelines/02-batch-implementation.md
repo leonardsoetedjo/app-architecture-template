@@ -1,3 +1,11 @@
+---
+name: "Batch Processing Standards (Quartz & Spring Batch)"
+type: "ADR"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Batch Processing Standards (Quartz & Spring Batch)
 
 ## 1. When to Use

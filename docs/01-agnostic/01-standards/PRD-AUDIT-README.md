@@ -1,3 +1,11 @@
+---
+name: "PRD Architecture Audit — Complete Documentation Suite"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # PRD Architecture Audit — Complete Documentation Suite
 
 **Comprehensive toolkit for architects to review and improve business requirements**

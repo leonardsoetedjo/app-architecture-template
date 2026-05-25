@@ -1,3 +1,11 @@
+---
+name: "Frontend Standards (Quasar/Vue)"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@frontend-team"
+---
+
 # Frontend Standards (Quasar/Vue)
 
 ## 1. General Vue/Quasar Style

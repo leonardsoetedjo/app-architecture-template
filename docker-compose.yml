@@ -43,7 +43,7 @@ services:
       - app-network
 
   postgres:
-    image: postgres:14-alpine
+    image: postgres:14
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -59,7 +59,7 @@ services:
       - app-network
 
   flyway:
-    image: flyway/flyway:11-alpine
+    image: flyway/flyway:11
     volumes:
       - ./boilerplate/java/order-service/src/main/resources/db/migration:/flyway/sql
     environment:

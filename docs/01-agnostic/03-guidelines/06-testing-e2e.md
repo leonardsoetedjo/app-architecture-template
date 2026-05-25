@@ -1,3 +1,11 @@
+---
+name: "E2E Frontend Testing Guidelines (Playwright)"
+type: "Template"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # E2E Frontend Testing Guidelines (Playwright)
 
 ## 1. Strategy

@@ -1,3 +1,11 @@
+---
+name: "Database Persistence Best Practices (JPA & Hibernate)"
+type: "Guideline"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Database Persistence Best Practices (JPA & Hibernate)
 
 This document summarizes critical best practices for database persistence, specifically when using JPA and Hibernate, to avoid common performance pitfalls, concurrency issues, and architectural leakage.

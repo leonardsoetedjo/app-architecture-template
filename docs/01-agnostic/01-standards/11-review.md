@@ -1,3 +1,11 @@
+---
+name: "Review & Onboarding Standards"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Review & Onboarding Standards
 
 ## 1. Review Checklist

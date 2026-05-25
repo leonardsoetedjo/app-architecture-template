@@ -1,3 +1,11 @@
+---
+name: "DevOps Standards"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@devops-team"
+---
+
 # DevOps Standards
 
 ## 1. Git Workflow
@@ -38,7 +46,7 @@ Closes #42
 - Use Docker for both backend and frontend.
 - Multi-stage builds to minimize image size.
 - Base images:
-  - Java: `eclipse-temurin:17-jre-alpine`
+  - Java: `registry.access.redhat.com/ubi9/openjdk-21-runtime:latest`
 - Run containers as **non-root user**.
 - Pin image tags. Never use `latest`.
 - Use `.dockerignore`.

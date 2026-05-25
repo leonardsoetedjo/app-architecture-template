@@ -1,3 +1,11 @@
+---
+name: "Frontend Design Deep-Dive: Implementation Patterns"
+type: "Guideline"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Frontend Design Deep-Dive: Implementation Patterns
 
 This document expands on the [Frontend Architecture Standards](../01-standards/01-frontend-architecture.md) by providing concrete implementation patterns, decision matrices, and technical workflows.

@@ -1,3 +1,11 @@
+---
+name: "SOP: Add New Aggregate Root"
+type: "SOP"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # SOP: Add New Aggregate Root
 
 ## Trigger

@@ -1,3 +1,11 @@
+---
+name: "Python Batch Job Framework Boilerplate"
+type: "Standard"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Python Batch Job Framework Boilerplate
 
 This document provides a standardized implementation pattern for Python batch jobs (using Celery/Airflow) to ensure adherence to `docs/01-agnostic/01-standards/resilience.md` and `ADR-004`.

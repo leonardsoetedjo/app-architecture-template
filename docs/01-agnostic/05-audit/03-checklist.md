@@ -1,3 +1,11 @@
+---
+name: "Architecture & Implementation Audit Checklist"
+type: "Guideline"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Architecture & Implementation Audit Checklist
 
 This checklist is the **audit instrument** used by software architects to evaluate pull requests from junior developers. It is derived from, and must stay in sync with, the verified boilerplate in [`boilerplate/`](../boilerplate/) and the standards in [`docs/01-agnostic/01-standards/`](../01-standards/).

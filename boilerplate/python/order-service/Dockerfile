@@ -1,10 +1,11 @@
 # Build stage
-FROM python:3.12-slim AS builder
+FROM registry.access.redhat.com/ubi9/python-312:latest AS builder
 
 WORKDIR /build
 
-# Install build dependencies
-RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends gcc libpq-dev &amp;&amp; rm -rf /var/lib/apt/lists/*
+# Install build dependencies (UBI uses microdnf)
+RUN microdnf install -y gcc postgresql-devel && \
+    microdnf clean all
 
 # Install Python dependencies
 COPY requirements.txt .
@@ -13,12 +14,13 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # ──────────────────────────────────────────────
 # Runtime stage
 # ──────────────────────────────────────────────
-FROM python:3.12-slim AS runtime
+FROM registry.access.redhat.com/ubi9/python-312:latest
 
 WORKDIR /app
 
 # Runtime libpq for psycopg2-binary
-RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends libpq5 &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN microdnf install -y postgresql-libs && \
+    microdnf clean all
 
 # Copy installed dependencies from builder
 COPY --from=builder /root/.local /app/.local
@@ -30,7 +32,7 @@ COPY alembic.ini ./
 COPY requirements.txt pyproject.toml Makefile ./
 
 # Non-root user
-RUN groupadd --system appgroup &amp;&amp; useradd --system --gid appgroup appuser
+RUN groupadd --system appgroup && useradd --system --gid appgroup appuser
 USER appuser
 
 ENV PATH=/app/.local/bin:$PATH

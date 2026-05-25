@@ -1,3 +1,11 @@
+---
+name: "Common API Schemas"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Common API Schemas
 
 ## Overview

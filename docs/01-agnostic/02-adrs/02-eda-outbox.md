@@ -1,3 +1,11 @@
+---
+name: "ADR 03: Event-Driven Architecture and Outbox Pattern"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 03: Event-Driven Architecture and Outbox Pattern
 
 **Status**: Accepted

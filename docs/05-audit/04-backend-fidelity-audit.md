@@ -1,3 +1,11 @@
+---
+name: "Backend Architecture Fidelity Audit"
+type: "SOP"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Backend Architecture Fidelity Audit
 
 **Date:** 2026-05-25  

@@ -1,3 +1,11 @@
+---
+name: "SOLID Software Principles Standard"
+type: "SOP"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # SOLID Software Principles Standard
 
 This document defines how the five SOLID principles are applied across all microservices in this project. Adherence to these principles is mandatory for all new features and refactors to ensure long-term maintainability and deterministic AI-assisted development.

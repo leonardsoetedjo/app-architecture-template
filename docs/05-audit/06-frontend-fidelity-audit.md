@@ -1,3 +1,11 @@
+---
+name: "Frontend Architecture Fidelity Audit"
+type: "Audit"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Frontend Architecture Fidelity Audit
 
 **Date:** 2026-05-26  

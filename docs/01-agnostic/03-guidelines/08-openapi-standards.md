@@ -1,3 +1,11 @@
+---
+name: "OpenAPI Annotation Standards"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # OpenAPI Annotation Standards
 
 This document defines how to document OpenAPI specifications for both Java (Spring Boot) and Python (FastAPI) services.

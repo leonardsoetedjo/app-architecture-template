@@ -1,3 +1,11 @@
+---
+name: "Coding Patterns: Bad vs. Good"
+type: "Guideline"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Coding Patterns: Bad vs. Good
 
 This document provides concrete examples of the project's standards in action. Use these examples to guide your implementation and PR reviews.

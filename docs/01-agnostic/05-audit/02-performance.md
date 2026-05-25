@@ -1,3 +1,11 @@
+---
+name: "Performance Audit Checklist"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Performance Audit Checklist
 
 This document provides a set of criteria for auditing code to identify common performance bottlenecks and anti-patterns.

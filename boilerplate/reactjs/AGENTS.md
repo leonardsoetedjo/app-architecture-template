@@ -1,29 +1,29 @@
-# Frontend Boilerplate Coding Guide
+# ReactJS Boilerplate Coding Guide
 
-> **Purpose**: This file is the developer's quick-reference for the React + TypeScript frontend boilerplate. Every code change must be producible from and auditable against this verified frontend boilerplate.
+> **Purpose**: This file is the React developer's quick-reference and the architect's audit baseline for the **React/TypeScript** boilerplate. Every code change must be producible from and auditable against this verified frontend boilerplate.
 
 > **Rule**: If your PR pattern is not already demonstrated here, add it to the boilerplate first, then copy it into your feature.
 
-> **Note**: For backend API specifications and shared architecture principles, see the main [`AGENTS.md`](../../AGENTS.md) at the project root or `docs/01-agnostic/01-standards/13-agents.md`.
->
 > **Note**: This guide is maintained in `docs/01-agnostic/01-standards/16-agents-reactjs.md`. The boilerplate copy is for convenience.
 
-> Stack: **React 18 + TypeScript + Ant Design 5 + Vite + Zustand**
-> Architecture: **Clean Architecture + Domain-Driven Design**
+> **Stack**: React 18 + TypeScript + Ant Design 5 + Vite + Zustand
+> **Architecture**: Clean Architecture + Domain-Driven Design
 
 ---
 
-## 1. Frontend Quick Reference
+## 1. Quick Reference
 
 ### 1.1 Golden Rules
 
-- **No `any` type anywhere** - Every prop, function parameter, and variable must have an explicit type
-- **Functional components with hooks only** - No class components
-- **Zone of control** - Each component should have a clear responsibility boundary
-- **Ant Design > Custom CSS** - Prefer Ant Design components over custom CSS whenever possible
-- **State management via Zustand** - Use `zustand` for global state, local `useState` for component-local state
-- **No side effects in render** - All side effects (API calls, subscriptions) should be in hooks or effects
-- **Immutable state updates** - Never mutate state directly; always return new references
+| Rule | Violation |
+|------|-----------|
+| No `any` type anywhere | Every prop, function, variable must have explicit type |
+| Functional components with hooks only | No class components |
+| Zone of control | Each component has clear responsibility boundary |
+| Ant Design > Custom CSS | Prefer Ant Design components over custom CSS |
+| State management via Zustand | Global state in Zustand, local in `useState` |
+| No side effects in render | All side effects in hooks or effects |
+| Immutable state updates | Never mutate state directly |
 
 ### 1.2 Naming Conventions
 
@@ -62,8 +62,6 @@ boilerplate/reactjs/
 
 ### 1.4 Clean Architecture Mapping
 
-The frontend follows Clean Architecture principles with these layer mappings:
-
 | Architecture Layer | Frontend Directory | Description |
 |-------------------|-------------------|-------------|
 | Domain | `types/` | Pure domain interfaces, value objects, models |
@@ -73,44 +71,66 @@ The frontend follows Clean Architecture principles with these layer mappings:
 
 **Import Rules:**
 - `types/` - Pure, no dependencies on other layers
-- `hooks/` - Can import from `types/` and `store/`, but NOT from `services/` or `infrastructure/`
+- `hooks/` - Can import from `types/` and `store/`, but NOT from `services/`
 - `services/` - Can import from `types/` only (no business logic)
 - `components/` - Can import from `types/`, `hooks/`, `services/` as needed
 - `pages/` - Can import from `components/`, `hooks/`, `services/`
 
-### 1.5 State Management Pattern
+---
 
-Use Zustand for global state with type-safe selectors:
+## 2. Project Structure
 
-```typescript
-// store/useStore.ts
-interface AppState {
-  user: User | null;
-  loading: boolean;
-  setUser: (user: User | null) => void;
-  fetchUser: () => Promise<void>;
-}
-
-const useStore = create<AppState>()((set) => ({
-  user: null,
-  loading: false,
-  setUser: (user) => set({ user }),
-  fetchUser: async () => {
-    set({ loading: true });
-    const user = await apiClient.get('/user');
-    set({ user, loading: false });
-  },
-}));
-```
+See section 1.3 for complete directory tree with descriptions.
 
 ---
 
-## 2. Code Templates
+## 3. Golden Rules
 
-### 2.1 Clean Architecture Hook Pattern
+| Rule | Violation | Rationale |
+|------|-----------|-----------|
+| No `any` type anywhere | Every prop must have explicit type | Type safety, IDE support |
+| Functional components with hooks only | No class components | Modern React, simpler |
+| Zone of control | Each component has clear responsibility | Maintainability |
+| Ant Design > Custom CSS | Prefer Ant Design components | Consistency, speed |
+| State management via Zustand | Global state in Zustand | Predictable state |
+| No side effects in render | All side effects in hooks/effects | Pure render functions |
+| Immutable state updates | Never mutate state directly | React re-render detection |
+
+---
+
+## 4. Code Templates
+
+### 4.1 Domain — Type Definitions (TypeScript Interfaces)
 
 ```typescript
-// hooks/use Orders.ts
+// types/Order.ts
+export interface OrderItem {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  totalAmount: number;
+}
+
+export interface Order {
+  id: string;
+  customerId: string;
+  items: OrderItem[];
+  totalAmount: number;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateOrderCommand {
+  customerId: string;
+  items: OrderItem[];
+}
+```
+
+### 4.2 Application — Custom Hook (Clean Architecture Pattern)
+
+```typescript
+// hooks/useOrders.ts
 import { useState, useCallback } from 'react';
 import apiClient from '@src/services/apiClient';
 import { Order } from '@src/types/Order';
@@ -146,7 +166,7 @@ const useOrders = (): UseOrdersReturn => {
 export default useOrders;
 ```
 
-### 2.2 Presentational Component
+### 4.3 Presentation — Component (Presentational)
 
 ```typescript
 // components/OrderList.tsx
@@ -177,7 +197,7 @@ const OrderList: React.FC<OrderListProps> = ({ orders, loading, error }) => {
 export default OrderList;
 ```
 
-### 2.3 Container Page Component
+### 4.4 Presentation — Page Component (Container)
 
 ```typescript
 // pages/OrdersPage.tsx
@@ -201,68 +221,7 @@ const OrdersPage: React.FC = () => {
 export default OrdersPage;
 ```
 
-### 2.4 TypeScript Type Definitions
-
-```typescript
-// types/Order.ts
-export interface OrderItem {
-  productId: string;
-  quantity: number;
-  unitPrice: number;
-  totalAmount: number;
-}
-
-export interface Order {
-  id: string;
-  customerId: string;
-  items: OrderItem[];
-  totalAmount: number;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
-  createdAt: string;
-  updatedAt?: string;
-}
-
-export interface CreateOrderCommand {
-  customerId: string;
-  items: OrderItem[];
-}
-```
-
----
-
-## 3. Architecture Audit Checklist
-
-Before merging a PR, verify:
-
-- [ ] **No `any` types** - All TypeScript files pass `strict` mode
-- [ ] **Component patterns** - All components are functional with hooks
-- [ ] **State management** - Global state in `store/`, local in components
-- [ ] **Layer dependencies** - Import paths follow Clean Architecture
-- [ ] **Type safety** - All props have explicit interfaces
-- [ ] **Ant Design** - Using Ant Design components instead of custom styling
-- [ ] **Hooks naming** - Custom hooks follow `use*` convention
-- [ ] **API services** - All network calls in `services/`, not in components/hooks
-- [ ] **Tests** - Unit tests pass, E2E tests pass
-- [ ] **Documentation** - Storybook stories added for new components
-
----
-
-## 4. Standards Index
-
-| Topic | Document | When to Read |
-|-------|----------|--------------|
-| Frontend Architecture | This file | Developing frontend features |
-| Backend API Standards | `../../AGENTS.md` | Integrating with backend |
-| Git Workflow | Project docs | Creating PRs |
-| Deployment | Project docs | Releasing |
-
----
-
-## 5. Project-Specific Notes
-
-### 5.1 API Integration
-
-All API calls go through the `apiClient` in `services/`:
+### 4.5 Infrastructure — API Client
 
 ```typescript
 // services/apiClient.ts
@@ -273,33 +232,103 @@ const apiClient = axios.create({
   timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
 });
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default apiClient;
 ```
 
-### 5.2 Environment Variables
+### 4.6 Infrastructure — Zustand Store
 
-Create `.env.local` for development:
+```typescript
+// store/useStore.ts
+import { create } from 'zustand';
+import { User } from '@src/types/User';
 
-```env
-VITE_API_BASE_URL=http://localhost:8080/api/v1
+interface AppState {
+  user: User | null;
+  loading: boolean;
+  setUser: (user: User | null) => void;
+  fetchUser: () => Promise<void>;
+}
+
+const useStore = create<AppState>()((set) => ({
+  user: null,
+  loading: false,
+  setUser: (user) => set({ user }),
+  fetchUser: async () => {
+    set({ loading: true });
+    const user = await apiClient.get('/user');
+    set({ user, loading: false });
+  },
+}));
+
+export default useStore;
 ```
 
-### 5.3 Building
+---
+
+## 5. Standards Index
+
+| Topic | Document | When to Read |
+|-------|----------|--------------|
+| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
+| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
+| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
+
+### Standard Operating Procedures
+
+| SOP | Document | When to Use |
+|-----|----------|-------------|
+| Add frontend page | [`docs/04-sops/03-add-new-frontend-page.md`](docs/04-sops/03-add-new-frontend-page.md) | New page/route |
+| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | Backend API integration |
+
+---
+
+## 6. Language-Specific Guidelines
+
+### 6.1 Domain Layer (types/)
+- **Pure TypeScript interfaces** — no dependencies
+- **No business logic** — type definitions only
+- **Use TypeScript utility types** — `Partial`, `Pick`, `Omit`
+
+### 6.2 Application Layer (hooks/)
+- **Custom hooks** orchestrate data fetching and state
+- **No direct API calls in components** — use hooks
+- **Type-safe return types** — explicit interface for hook return
+
+### 6.3 Infrastructure Layer (services/, store/)
+- **API clients** handle HTTP, authentication, errors
+- **Zustand stores** for global state
+- **Thin wrappers** — delegate to domain types
+
+### 6.4 Presentation Layer (components/, pages/)
+- **Presentational components** — receive props, render UI
+- **Container components** — connect hooks to presentational
+- **Ant Design first** — use AntD components over custom
+
+### 6.5 Testing
 
 ```bash
-npm run build          # Build for production
-npm run preview        # Preview production build
-npm run lint           # Run ESLint
-npm run test           # Run unit tests
-npm run test:coverage  # Run tests with coverage
+# Run unit tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run E2E tests
+npm run test:e2e
 ```
 
 ---
 
-*Living document. Update as frontend patterns evolve.*
-
----
-
-## 6. AI Agent Tooling (Frontend)
+## 7. AI Agent Tooling
 
 ### Serena MCP for TypeScript/React
 
@@ -363,7 +392,7 @@ mcp_sequential_thinking_think(
 | Before commit | `verification-before-completion` | "Ready to commit" |
 | Code review | `requesting-code-review` | "Review this component" |
 
-### Frontend Pre-Commit Checklist (AI Agents)
+### ReactJS Pre-Commit Checklist (AI Agents)
 
 **MANDATORY - Run before claiming frontend tasks complete:**
 
@@ -391,9 +420,9 @@ grep -r ": any" src/ && exit 1
 
 ---
 
-## 7. Architecture Audit Checklist (Frontend)
+## 8. Architecture Audit Checklist
 
-**MANDATORY for EVERY Frontend PR:**
+**MANDATORY for EVERY ReactJS PR:**
 
 ### Type Safety
 
@@ -459,3 +488,28 @@ grep -r ": any" src/ && exit 1
 ```
 
 **VIOLATION = REJECT**: Fix before committing.
+
+---
+
+## 9. Related Documentation
+
+### Core Principles (Language-Agnostic)
+- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+
+### Other Language Boilerplates
+- **Java**: [`/boilerplate/java/AGENTS.md`](../java/AGENTS.md)
+- **Python**: [`/boilerplate/python/AGENTS.md`](../python/AGENTS.md)
+- **Quasar**: [`/boilerplate/quasar/AGENTS.md`](../quasar/AGENTS.md)
+
+### Templates
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
+
+---
+
+*Living document. Update as boilerplate evolves.*
+
+**Last Updated**: 2026-05-25
+**Maintained By**: @architecture-team

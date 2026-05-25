@@ -1,3 +1,11 @@
+---
+name: "ADR 11: JWT Security (Python/Quasar)"
+type: "SOP"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # ADR 11: JWT Security (Python/Quasar)
 
 **Status**: Accepted

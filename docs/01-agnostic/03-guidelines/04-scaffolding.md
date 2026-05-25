@@ -1,3 +1,11 @@
+---
+name: "Microservices Scaffolding & Implementation Guide"
+type: "SOP"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Microservices Scaffolding & Implementation Guide
 
 This guide provides the deterministic process for implementing new features within the microservices architecture. It is designed to be followed by both developers and AI agents to ensure architectural consistency.

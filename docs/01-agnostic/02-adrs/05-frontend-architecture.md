@@ -1,3 +1,11 @@
+---
+name: "ADR 06: Frontend Architecture (Container/Presentational)"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 06: Frontend Architecture (Container/Presentational)
 
 **Status**: Accepted

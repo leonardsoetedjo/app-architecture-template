@@ -1,3 +1,11 @@
+---
+name: "Frontend FSD+MVVM Restructuring - Implementation Status"
+type: "Audit"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Frontend FSD+MVVM Restructuring - Implementation Status
 
 **Date:** 2026-05-26  

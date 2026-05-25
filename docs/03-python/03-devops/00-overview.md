@@ -1,3 +1,11 @@
+---
+name: "DevOps Standards (Python/Quasar)"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@devops-team"
+---
+
 # DevOps Standards (Python/Quasar)
 
 ## 1. Containerization

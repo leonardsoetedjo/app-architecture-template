@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JpaOrderRepositoryTestcontainersTest {
 
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("testdb")
             .withUsername("test")
             .withPassword("test");

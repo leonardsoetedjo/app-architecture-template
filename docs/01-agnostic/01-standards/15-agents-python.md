@@ -1,3 +1,11 @@
+---
+name: "Python Boilerplate Coding Guide"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Python Boilerplate Coding Guide
 
 > **Purpose**: This file is the Python developer's quick-reference and the architect's audit baseline for the Python boilerplate. Every code change in this Python service must be producible from, and auditable against, this verified boilerplate.

@@ -1,3 +1,11 @@
+---
+name: "ADR 04: Batch Idempotency Framework"
+type: "Guideline"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 04: Batch Idempotency Framework
 
 **Status**: Accepted

@@ -1,3 +1,11 @@
+---
+name: "Python MDC Logging Boilerplate"
+type: "Standard"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Python MDC Logging Boilerplate
 
 This guide provides concrete implementation patterns for using `contextvars` and `loguru` to ensure all logs contain the required correlation information (`traceId`, `userId`, `tenantId`).

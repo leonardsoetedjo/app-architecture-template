@@ -1,3 +1,11 @@
+---
+name: "MDC Logging Boilerplate"
+type: "ADR"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # MDC Logging Boilerplate
 
 This guide provides concrete implementation patterns for using Mapped Diagnostic Context (MDC) to ensure all logs contain the required correlation information (`traceId`, `spanId`, `userId`, `tenantId`).

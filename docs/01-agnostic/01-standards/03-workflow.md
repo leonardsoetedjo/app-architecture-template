@@ -1,3 +1,11 @@
+---
+name: "Engineering Workflow: Requirement-to-Deployment"
+type: "Guideline"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Engineering Workflow: Requirement-to-Deployment
 
 This document defines the mandatory lifecycle for every requirement, from the moment it is received until it is successfully deployed in production. The goal is to eliminate ambiguity early, prevent wasted effort, and ensure high-quality releases.

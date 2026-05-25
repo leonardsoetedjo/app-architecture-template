@@ -1,3 +1,11 @@
+---
+name: "Batch Job Framework Boilerplate"
+type: "Standard"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Batch Job Framework Boilerplate
 
 This document provides a standardized implementation pattern for batch jobs to reduce manual coding and ensure adherence to `docs/01-agnostic/01-standards/batch.md` and `ADR-004`.

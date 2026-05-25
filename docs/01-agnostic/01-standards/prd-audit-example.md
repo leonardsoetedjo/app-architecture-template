@@ -1,3 +1,11 @@
+---
+name: "PRD Audit Example: Order Status Notification Feature"
+type: "Audit"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # PRD Audit Example: Order Status Notification Feature
 
 **This is a worked example demonstrating how to use the PRD Audit Checklist and Report Template**

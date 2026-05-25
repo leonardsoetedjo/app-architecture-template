@@ -1,3 +1,11 @@
+---
+name: "Backend Standards (Python)"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@backend-team"
+---
+
 # Backend Standards (Python)
 
 ## 1. Python Conventions

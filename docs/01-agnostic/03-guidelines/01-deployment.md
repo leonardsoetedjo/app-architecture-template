@@ -1,3 +1,11 @@
+---
+name: "Deployment Guidelines (Docker Compose & Traefik)"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Deployment Guidelines (Docker Compose & Traefik)
 
 ## 1. Architecture

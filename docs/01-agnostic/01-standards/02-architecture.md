@@ -1,3 +1,11 @@
+---
+name: "Architecture Standards"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Architecture Standards
 
 ## 1. Clean Architecture Principles

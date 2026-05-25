@@ -1,25 +1,71 @@
 # Java Boilerplate Coding Guide
 
 > **Purpose**: This file is the Java developer's quick-reference and the architect's audit baseline for the **Java/Spring Boot** boilerplate. Every code change in Java services must be producible from, and auditable against, the verified boilerplate in [`boilerplate/java/order-service/`](boilerplate/java/order-service/).
->
+
 > **Rule**: If your PR pattern is not already demonstrated in the Java boilerplate, add it there first, then copy it into your feature.
->
-> **Note**: This guide is maintained in `docs/01-agnostic/01-standards/14-agents-java.md`.
-> The boilerplate copy is for convenience.
->
-> For full project guidance including Python and frontend, see the main [`AGENTS.md`](../../AGENTS.md) in the repository root or [`docs/01-agnostic/01-standards/13-agents.md`](../../docs/01-agnostic/01-standards/13-agents.md).
->
-> **AI Agents**: This guide includes Serena MCP, Context-Mode, Sequential-Thinking, and Superpowers integration.
+
+> **Note**: This guide is maintained in `docs/01-agnostic/01-standards/14-agents-java.md`. The boilerplate copy is for convenience.
+
+> **Stack**: Spring Boot 3.4.4 (Java 21 LTS) | PostgreSQL | Testcontainers | ArchUnit
+> **Architecture**: Clean Architecture + Domain-Driven Design
 
 ---
 
-## Stack
+## 1. Quick Reference
 
-> **Spring Boot 3.4.4 (Java 21 LTS)** | **PostgreSQL** | **Testcontainers** | **ArchUnit**
+### 1.1 Golden Rules
+
+| Rule | Violation |
+|------|-----------|
+| Domain layer has **zero** framework imports | No Spring/JPA/Lombok in `domain/` |
+| Constructor injection **only** | Never `@Autowired` on fields |
+| DTOs at every boundary | Never pass entities to UI or DB layers |
+| Pure Java in domain | No `null` — use `Optional` |
+| Financial precision | Use `BigDecimal` for money |
+| Value objects immutable | Use `record` (Java ≥16) |
+| Lombok: Infrastructure only | No Lombok in domain/DTOs |
+| Testcontainers: No H2 | Use PostgreSQL in tests |
+
+### 1.2 Naming Conventions
+
+| Scope | Convention | Example |
+|-------|-----------|---------|
+| Java classes | PascalCase | `OrderService` |
+| Java methods/fields | camelCase | `findById` |
+| Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
+| Domain events | Past tense | `OrderPlaced`, `PaymentConfirmed` |
+| Git branches | `feature/`, `bugfix/`, `hotfix/`, `refactor/` | `feature/order-cancellation` |
+| Migrations (Flyway) | `V{version}__{desc}.sql` | `V1__create_orders_table.sql` |
+
+### 1.3 HTTP Status Codes
+
+| Code | When |
+|------|------|
+| 200 | Success |
+| 201 | Resource created |
+| 204 | Success, no body |
+| 400 | Validation / business rule failure |
+| 401 | Authentication required |
+| 403 | Insufficient permissions |
+| 404 | Resource not found |
+| 409 | Business conflict (duplicate) |
+| 422 | Semantic validation errors |
+| 500 | Unexpected server error |
+
+### 1.4 REST Resources
+
+```
+GET    /api/v1/orders           # List
+GET    /api/v1/orders/{id}      # Get one
+POST   /api/v1/orders           # Create
+PUT    /api/v1/orders/{id}      # Full update
+PATCH  /api/v1/orders/{id}      # Partial update
+DELETE /api/v1/orders/{id}      # Delete
+```
 
 ---
 
-## 1. Project Structure
+## 2. Project Structure
 
 ```
 order-service/
@@ -54,67 +100,24 @@ order-service/
 
 ---
 
-## 2. Golden Rules
+## 3. Golden Rules
 
-| Rule | Violation |
-|------|-----------|
-| Domain layer has **zero** framework imports | No Spring/JPA/Lombok in `domain/` |
-| Constructor injection **only** | Never `@Autowired` on fields |
-| DTOs at every boundary | Never pass entities to UI or DB layers |
-| Pure Java in domain | No `null` — use `Optional` |
-| Financial precision | Use `BigDecimal` for money |
-| Value objects immutable | Use `record` (Java ≥16) |
-| Lombok: Infrastructure only | No Lombok in domain/DTOs |
-| Testcontainers: No H2 | Use PostgreSQL in tests |
-
----
-
-## 3. Naming Conventions
-
-| Scope | Convention | Example |
-|-------|-----------|---------|
-| Java classes | PascalCase | `OrderService` |
-| Java methods/fields | camelCase | `findById` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
-| Domain events | Past tense | `OrderPlaced`, `PaymentConfirmed` |
-| Git branches | `feature/`, `bugfix/`, `hotfix/`, `refactor/` | `feature/order-cancellation` |
-| Migrations (Flyway) | `V{version}__{desc}.sql` | `V1__create_orders_table.sql` |
+| Rule | Violation | Rationale |
+|------|-----------|-----------|
+| Domain layer has **zero** framework imports | No Spring/JPA/Lombok in `domain/` | Pure business logic, testable without Spring |
+| Constructor injection **only** | Never `@Autowired` fields | Immutability, easier testing |
+| DTOs at every boundary | Never expose entities | Encapsulation, API versioning |
+| Pure Java in domain | No `null` — use `Optional` | Prevent NPEs |
+| Financial precision | Use `BigDecimal` for money | Avoid floating-point errors |
+| Value objects immutable | Use `record` (Java ≥16) | Thread-safety, simplicity |
+| Lombok: Infrastructure only | No Lombok in domain/DTOs | Transparency, debugging |
+| Testcontainers: No H2 | Use PostgreSQL in tests | Test realism, avoid H2 quirks |
 
 ---
 
-## 4. HTTP Status Codes
+## 4. Code Templates
 
-| Code | When |
-|------|------|
-| 200 | Success |
-| 201 | Resource created |
-| 204 | Success, no body |
-| 400 | Validation / business rule failure |
-| 401 | Authentication required |
-| 403 | Insufficient permissions |
-| 404 | Resource not found |
-| 409 | Business conflict (duplicate) |
-| 422 | Semantic validation errors |
-| 500 | Unexpected server error |
-
----
-
-## 5. REST Resources
-
-```
-GET    /api/v1/orders           # List
-GET    /api/v1/orders/{id}      # Get one
-POST   /api/v1/orders           # Create
-PUT    /api/v1/orders/{id}      # Full update
-PATCH  /api/v1/orders/{id}      # Partial update
-DELETE /api/v1/orders/{id}      # Delete
-```
-
----
-
-## 6. Code Templates (from real, working boilerplate)
-
-### 6.1 Domain — Aggregate Root (Java Record — no Lombok)
+### 4.1 Domain — Aggregate Root (Java Record — no Lombok)
 
 ```java
 public record Order(OrderId id, List<OrderItem> items, OrderStatus status) {
@@ -127,7 +130,7 @@ public record Order(OrderId id, List<OrderItem> items, OrderStatus status) {
 }
 ```
 
-### 6.2 Domain — Value Object (Java Record — no Lombok, no frameworks)
+### 4.2 Domain — Value Object (Java Record — no Lombok, no frameworks)
 
 ```java
 @ValueObject
@@ -140,7 +143,7 @@ public record OrderId(String value) {
 }
 ```
 
-### 6.3 Application — Use Case Interface (No Lombok, No Framework Imports)
+### 4.3 Application — Use Case Interface (No Lombok, No Framework Imports)
 
 ```java
 public interface PlaceOrderUseCase {
@@ -148,7 +151,7 @@ public interface PlaceOrderUseCase {
 }
 ```
 
-### 6.4 Application — Use Case Implementation (Constructor Injection Only)
+### 4.4 Application — Use Case Implementation (Constructor Injection Only)
 
 ```java
 @Service
@@ -174,7 +177,7 @@ public class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
 }
 ```
 
-### 6.5 Infrastructure — Controller (Lombok OK)
+### 4.5 Infrastructure — Controller (Lombok OK)
 
 ```java
 @RestController
@@ -194,7 +197,7 @@ public class OrderController {
 }
 ```
 
-### 6.6 Infrastructure — Entity with Lombok (Lombok OK in infrastructure)
+### 4.6 Infrastructure — Entity with Lombok (Lombok OK in infrastructure)
 
 ```java
 @Entity
@@ -220,35 +223,61 @@ public class OrderEntity {
 
 ---
 
-## 7. Standards Index
+## 5. Standards Index
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](../docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
-| Git, Docker, CI/CD | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
-| Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](../docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
-| **Add aggregate root / entity** | [`docs/04-sops/01-add-new-aggregate-root.md`](../docs/04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
-| **Add REST endpoint** | [`docs/04-sops/02-add-new-rest-endpoint.md`](../docs/04-sops/02-add-new-rest-endpoint.md) | Adding an API |
-| **Add Flyway migration** | [`docs/04-sops/04-add-flyway-migration.md`](../docs/04-sops/04-add-flyway-migration.md) | Schema changes |
-| **Publish domain event** | [`docs/04-sops/05-publish-domain-event.md`](../docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
-| **Configure external service** | [`docs/04-sops/06-configure-external-service.md`](../docs/04-sops/06-configure-external-service.md) | External integrations |
+| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
+| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
+| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
+
+### Standard Operating Procedures
+
+| SOP | Document | When to Use |
+|-----|----------|-------------|
+| Add aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](docs/04-sops/01-add-new-aggregate-root.md) | New domain feature |
+| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | New API |
+| Add Flyway migration | [`docs/04-sops/04-add-flyway-migration.md`](docs/04-sops/04-add-flyway-migration.md) | Schema changes |
+| Publish domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
 
 ---
 
-### Java-Specific Boilerplate Files
+## 6. Language-Specific Guidelines
 
-| Template | Location |
-|----------|----------|
-| New Spring Boot microservice | [`boilerplate/java/order-service/`](boilerplate/java/order-service/) |
-| Database health indicator | [`infrastructure/health/DatabaseHealthIndicator.java`](boilerplate/java/order-service/src/main/java/com/example/orderservice/infrastructure/health/DatabaseHealthIndicator.java) |
+### 6.1 Domain Layer
+- **No imports** from Spring, JPA, Lombok, or any framework
+- **Use `record`** for immutable value objects and aggregate roots
+- **Pure business logic only** — no database, no HTTP, no external dependencies
+- **Validate invariants** in constructor/canonical constructor
+
+### 6.2 Application Layer
+- **Use cases** orchestrate domain operations
+- **DTOs** as records for external communication
+- **Repository interfaces** define contract, implementations live in infrastructure
+- **Constructor injection only** — no field injection
+
+### 6.3 Infrastructure Layer
+- **Spring Boot** for dependency injection and REST
+- **JPA/Hibernate** for persistence
+- **Lombok OK here only** — reduces boilerplate in entities/controllers
+- **Thin controllers** — delegate to use cases, no business logic
+
+### 6.4 Testing
+
+```bash
+# Run ArchUnit architecture tests
+mvn test -Dtest=CleanArchitectureLayersTest
+
+# Run all tests
+mvn test
+
+# Run with coverage
+mvn test jacoco:report
+```
 
 ---
 
-*Living document. Update as project evolves.*
-
----
-
-## 8. AI Agent Tooling (Java)
+## 7. AI Agent Tooling
 
 ### Serena MCP for Java
 
@@ -327,7 +356,7 @@ find boilerplate/java/order-service/src/main/java/domain \
 
 ---
 
-## 9. Architecture Audit Checklist (Java)
+## 8. Architecture Audit Checklist
 
 **MANDATORY for EVERY Java PR:**
 
@@ -375,3 +404,28 @@ mvn test
 ```
 
 **VIOLATION = REJECT**: Fix before committing.
+
+---
+
+## 9. Related Documentation
+
+### Core Principles (Language-Agnostic)
+- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+
+### Other Language Boilerplates
+- **Python**: [`/boilerplate/python/AGENTS.md`](../python/AGENTS.md)
+- **ReactJS**: [`/boilerplate/reactjs/AGENTS.md`](../reactjs/AGENTS.md)
+- **Quasar**: [`/boilerplate/quasar/AGENTS.md`](../quasar/AGENTS.md)
+
+### Templates
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
+
+---
+
+*Living document. Update as boilerplate evolves.*
+
+**Last Updated**: 2026-05-25
+**Maintained By**: @architecture-team

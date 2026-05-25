@@ -1,14 +1,12 @@
 # Quasar Boilerplate Coding Guide
 
-> **Purpose**: This file is the developer's quick-reference and the architect's audit baseline for the Quasar Framework boilerplate. Every code change in this Quasar service must be producible from, and auditable against, this verified boilerplate.
->
-> **Rule**: If your PR pattern is not already demonstrated in this Quasar boilerplate (`boilerplate/quasar/`), add it there first, then copy it into your feature.
->
-> **Note**: For Java, Python, or ReactJS patterns, refer to the main [`AGENTS.md`](../AGENTS.md) or `docs/01-agnostic/01-standards/14-agents-java.md`, `15-agents-python.md`, and `16-agents-reactjs.md`.
->
+> **Purpose**: This file is the Quasar developer's quick-reference and the architect's audit baseline for the **Quasar/Vue 3** boilerplate. Every code change must be producible from and auditable against this verified frontend boilerplate.
+
+> **Rule**: If your PR pattern is not already demonstrated here, add it to the boilerplate first, then copy it into your feature.
+
 > **Note**: This guide is maintained in `docs/01-agnostic/01-standards/17-agents-quasar.md`. The boilerplate copy is for convenience.
 
-> **Stack**: Quasar Framework 2 + Vue 3 + TypeScript + Pinia + Vite  
+> **Stack**: Quasar Framework 2 + Vue 3 + TypeScript + Pinia + Vite
 > **Architecture**: Clean Architecture + Domain-Driven Design
 
 ---
@@ -17,13 +15,15 @@
 
 ### 1.1 Golden Rules
 
-- **No `any` type anywhere** - Every prop, function parameter, and variable must have an explicit type
-- **Composition API with `<script setup>`** - Use Vue 3 Composition API, avoid Options API
-- **Quasar components > Custom UI** - Prefer Quasar components over custom implementations
-- **Pinia for state management** - Use Pinia stores for global state, `ref`/`reactive` for local state
-- **No side effects in render** - All side effects (API calls, subscriptions) in `onMounted` or composables
-- **Immutable state updates** - Never mutate Pinia state directly; use actions
-- **Type-safe composables** - All composables must have explicit return types
+| Rule | Violation |
+|------|-----------|
+| No `any` type anywhere | Every prop, function, variable must have explicit type |
+| Composition API with `<script setup>` | Use Vue 3 Composition API, avoid Options API |
+| Quasar components > Custom UI | Prefer Quasar components over custom implementations |
+| Pinia for state management | Global state in Pinia, local in `ref`/`reactive` |
+| No side effects in render | All side effects in `onMounted` or composables |
+| Immutable state updates | Never mutate Pinia state directly; use actions |
+| Type-safe composables | All composables must have explicit return types |
 
 ### 1.2 Naming Conventions
 
@@ -66,8 +66,6 @@ boilerplate/quasar/
 
 ### 1.4 Clean Architecture Mapping
 
-The Quasar frontend follows Clean Architecture principles with these layer mappings:
-
 | Architecture Layer | Quasar Directory | Description |
 |-------------------|------------------|-------------|
 | Domain | `types/` | Pure domain interfaces, value objects, models |
@@ -83,56 +81,63 @@ The Quasar frontend follows Clean Architecture principles with these layer mappi
 - `components/` - Can import from `types/`, `composables/`, `stores/`, `services/` as needed
 - `pages/` - Can import from `components/`, `composables/`, `stores/`
 
-### 1.5 State Management Pattern
+---
 
-Use Pinia for global state with type-safe stores:
+## 2. Project Structure
 
-```typescript
-// stores/useAuthStore.ts
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { User } from 'src/types/User';
-import { authService } from 'src/services/authService';
-
-export const useAuthStore = defineStore('auth', () => {
-  // State
-  const user = ref<User | null>(null);
-  const loading = ref<boolean>(false);
-
-  // Getters
-  const isAuthenticated = computed(() => !!user.value);
-  const userName = computed(() => user.value?.name ?? 'Guest');
-
-  // Actions
-  const setUser = (newUser: User | null) => {
-    user.value = newUser;
-  };
-
-  const login = async (credentials: { email: string; password: string }) => {
-    loading.value = true;
-    try {
-      const response = await authService.login(credentials);
-      setUser(response.user);
-      return response;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const logout = async () => {
-    await authService.logout();
-    setUser(null);
-  };
-
-  return { user, loading, isAuthenticated, userName, setUser, login, logout };
-});
-```
+See section 1.3 for complete directory tree with descriptions.
 
 ---
 
-## 2. Code Templates
+## 3. Golden Rules
 
-### 2.1 Clean Architecture Composable Pattern
+| Rule | Violation | Rationale |
+|------|-----------|-----------|
+| No `any` type anywhere | Every prop must have explicit type | Type safety, IDE support |
+| Composition API with `<script setup>` | Use Vue 3 Composition API | Modern Vue, simpler |
+| Quasar components > Custom UI | Prefer Quasar components | Consistency, speed |
+| Pinia for state management | Global state in Pinia stores | Predictable state |
+| No side effects in render | All side effects in `onMounted` or composables | Pure render functions |
+| Immutable state updates | Never mutate Pinia state directly | Vue reactivity system |
+| Type-safe composables | All composables have explicit return types | Type safety |
+
+---
+
+## 4. Code Templates
+
+### 4.1 Domain — Type Definitions (TypeScript Interfaces)
+
+```typescript
+// types/Order.ts
+export interface OrderItem {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  totalAmount: number;
+}
+
+export interface Order {
+  id: string;
+  customerId: string;
+  items: OrderItem[];
+  totalAmount: number;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CreateOrderCommand {
+  customerId: string;
+  items: OrderItem[];
+}
+
+export interface UpdateOrderStatusCommand {
+  orderId: string;
+  status: Order['status'];
+}
+```
+
+### 4.2 Application — Composable (Clean Architecture Pattern)
 
 ```typescript
 // composables/useOrders.ts
@@ -180,7 +185,7 @@ export const useOrders = (): UseOrdersReturn => {
 };
 ```
 
-### 2.2 Presentational Component
+### 4.3 Presentation — Component (Presentational)
 
 ```vue
 <!-- components/OrderList.vue -->
@@ -230,7 +235,7 @@ defineProps({
 </template>
 ```
 
-### 2.3 Container Page Component
+### 4.4 Presentation — Page Component (Container)
 
 ```vue
 <!-- pages/OrdersPage.vue -->
@@ -275,39 +280,50 @@ const handleRefresh = () => {
 </template>
 ```
 
-### 2.4 TypeScript Type Definitions
+### 4.5 Infrastructure — Pinia Store
 
 ```typescript
-// types/Order.ts
-export interface OrderItem {
-  productId: string;
-  quantity: number;
-  unitPrice: number;
-  totalAmount: number;
-}
+// stores/useAuthStore.ts
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import { User } from 'src/types/User';
+import { authService } from 'src/services/authService';
 
-export interface Order {
-  id: string;
-  customerId: string;
-  items: OrderItem[];
-  totalAmount: number;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
-  createdAt: string;
-  updatedAt?: string;
-}
+export const useAuthStore = defineStore('auth', () => {
+  // State
+  const user = ref<User | null>(null);
+  const loading = ref<boolean>(false);
 
-export interface CreateOrderCommand {
-  customerId: string;
-  items: OrderItem[];
-}
+  // Getters
+  const isAuthenticated = computed(() => !!user.value);
+  const userName = computed(() => user.value?.name ?? 'Guest');
 
-export interface UpdateOrderStatusCommand {
-  orderId: string;
-  status: Order['status'];
-}
+  // Actions
+  const setUser = (newUser: User | null) => {
+    user.value = newUser;
+  };
+
+  const login = async (credentials: { email: string; password: string }) => {
+    loading.value = true;
+    try {
+      const response = await authService.login(credentials);
+      setUser(response.user);
+      return response;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const logout = async () => {
+    await authService.logout();
+    setUser(null);
+  };
+
+  return { user, loading, isAuthenticated, userName, setUser, login, logout };
+});
 ```
 
-### 2.5 Quasar Boot File
+### 4.6 Infrastructure — API Client (Boot File)
 
 ```typescript
 // boot/axios.ts
@@ -347,37 +363,62 @@ export { api };
 
 ---
 
-## 3. Architecture Audit Checklist
-
-Before merging a PR, verify:
-
-- [ ] **No `any` types** - All TypeScript files pass `strict` mode
-- [ ] **Composition API** - Using `<script setup>` and Composition API
-- [ ] **Component patterns** - Presentational vs Container separation
-- [ ] **State management** - Global state in Pinia stores, local in components
-- [ ] **Layer dependencies** - Import paths follow Clean Architecture
-- [ ] **Type safety** - All props have explicit types
-- [ ] **Quasar components** - Using Quasar components instead of custom UI
-- [ ] **Composables naming** - Custom composables follow `use*` convention
-- [ ] **API services** - All network calls in `services/`, not in components/composables
-- [ ] **Tests** - Unit tests pass, E2E tests pass
-- [ ] **Quasar conventions** - Following Quasar best practices
-
----
-
-## 4. Standards Index
+## 5. Standards Index
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Clean Architecture | `docs/01-agnostic/01-standards/02-architecture.md` | ALL design decisions |
-| Architecture Standards | `docs/01-agnostic/01-standards/02-architecture.md` | Writing code |
-| Review Checklists | `docs/01-agnostic/01-standards/11-review.md` | Preparing/reviewing PRs |
-| AI Agent Tooling | `docs/01-agnostic/01-standards/13-agents.md` | Using AI agents |
-| Quasar-Specific Guide | `docs/01-agnostic/01-standards/17-agents-quasar.md` | Working in Quasar |
+| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
+| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
+| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
+
+### Standard Operating Procedures
+
+| SOP | Document | When to Use |
+|-----|----------|-------------|
+| Add frontend page | [`docs/04-sops/03-add-new-frontend-page.md`](docs/04-sops/03-add-new-frontend-page.md) | New page/route |
+| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | Backend API integration |
 
 ---
 
-## 5. AI Agent Tooling (Quasar)
+## 6. Language-Specific Guidelines
+
+### 6.1 Domain Layer (types/)
+- **Pure TypeScript interfaces** — no dependencies
+- **No business logic** — type definitions only
+- **Use TypeScript utility types** — `Partial`, `Pick`, `Omit`
+
+### 6.2 Application Layer (composables/, stores/)
+- **Composables** orchestrate data fetching and state
+- **Pinia stores** for global state with actions
+- **No direct API calls in components** — use composables
+- **Type-safe return types** — explicit interface for composable return
+
+### 6.3 Infrastructure Layer (services/, boot/)
+- **API clients** handle HTTP, authentication, errors
+- **Boot files** for Vue/Quasar initialization
+- **Thin wrappers** — delegate to domain types
+
+### 6.4 Presentation Layer (components/, pages/, layouts/)
+- **Presentational components** — receive props, render UI
+- **Container components** — connect composables to presentational
+- **Quasar first** — use Quasar components over custom
+
+### 6.5 Testing
+
+```bash
+# Run unit tests
+npm run test
+
+# Run with coverage
+npm run test:coverage
+
+# Run E2E tests
+npm run test:e2e
+```
+
+---
+
+## 7. AI Agent Tooling
 
 ### Serena MCP for Quasar/Vue
 
@@ -472,7 +513,7 @@ grep -r ": any" src/ && exit 1
 
 ---
 
-## 6. Architecture Audit Checklist (Quasar)
+## 8. Architecture Audit Checklist
 
 **MANDATORY for EVERY Quasar PR:**
 
@@ -498,7 +539,6 @@ grep -r ": any" src/ && exit 1
 - [ ] Local state in components (`ref`/`reactive`)
 - [ ] No business logic in components (moved to composables)
 - [ ] Immutable state updates (via Pinia actions)
-- [ ] Stores are type-safe
 
 ### Layer Dependencies
 
@@ -509,20 +549,18 @@ grep -r ": any" src/ && exit 1
 - [ ] `components/` - Can import from `types/`, `composables/`, `stores/`, `services/`
 - [ ] No circular dependencies
 
-### Quasar Conventions
+### UI/UX
 
-- [ ] Using Quasar components (QBtn, QTable, QForm, etc.)
-- [ ] Following Quasar directory structure
-- [ ] Using Quasar utilities (`useQuasar`, `$q`)
-- [ ] Boot files for initialization
-- [ ] Responsive design with Quasar breakpoints
+- [ ] Using Quasar components (not custom UI)
+- [ ] Responsive design considered
+- [ ] Accessibility (ARIA labels, keyboard navigation)
+- [ ] Loading states and error handling
 
 ### Testing
 
 - [ ] TDD followed (tests written first)
-- [ ] Unit tests for components (Vitest + @vue/test-utils)
+- [ ] Unit tests for components (Vitest)
 - [ ] Unit tests for composables
-- [ ] Unit tests for Pinia stores
 - [ ] E2E tests for pages (Playwright)
 
 ### Pre-Commit Commands
@@ -537,9 +575,6 @@ npx vue-tsc --noEmit
 # Run tests
 npm run test
 
-# Format
-npm run prettier
-
 # Check for any types
 grep -r ": any" src/ && exit 1
 ```
@@ -548,8 +583,25 @@ grep -r ": any" src/ && exit 1
 
 ---
 
-*Living document. Update as Quasar patterns evolve.*
+## 9. Related Documentation
 
-**Last Updated:** 2026-05-25  
-**Location:** `docs/01-agnostic/01-standards/17-agents-quasar.md`  
-**Owner:** Architecture Team
+### Core Principles (Language-Agnostic)
+- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+
+### Other Language Boilerplates
+- **Java**: [`/boilerplate/java/AGENTS.md`](../java/AGENTS.md)
+- **Python**: [`/boilerplate/python/AGENTS.md`](../python/AGENTS.md)
+- **ReactJS**: [`/boilerplate/reactjs/AGENTS.md`](../reactjs/AGENTS.md)
+
+### Templates
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
+
+---
+
+*Living document. Update as boilerplate evolves.*
+
+**Last Updated**: 2026-05-25
+**Maintained By**: @architecture-team

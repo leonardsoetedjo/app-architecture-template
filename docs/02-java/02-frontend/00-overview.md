@@ -1,3 +1,11 @@
+---
+name: "Frontend Standards"
+type: "Guideline"
+version: "1.0"
+status: "Active"
+owner: "@frontend-team"
+---
+
 # Frontend Standards
 
 ## 1. General React Style

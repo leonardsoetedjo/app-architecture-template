@@ -1,3 +1,11 @@
+---
+name: "Frontend FSD + MVVM Restructuring Plan"
+type: "Audit"
+version: "1.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Frontend FSD + MVVM Restructuring Plan
 
 **Date:** 2026-05-26  

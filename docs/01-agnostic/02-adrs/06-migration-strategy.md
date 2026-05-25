@@ -1,3 +1,11 @@
+---
+name: "ADR 07: Database Migration Strategy (Expand-Contract)"
+type: "Template"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 07: Database Migration Strategy (Expand-Contract)
 
 **Status**: Accepted

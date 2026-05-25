@@ -1,3 +1,11 @@
+---
+name: "ADR 12: Port and Adapter Pattern for External Service Integration"
+type: "ADR"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # ADR 12: Port and Adapter Pattern for External Service Integration
 
 **Status**: Accepted

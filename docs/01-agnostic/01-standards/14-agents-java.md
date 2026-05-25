@@ -1,3 +1,11 @@
+---
+name: "Java Boilerplate Coding Guide"
+type: "Standard"
+version: "2.0"
+status: "Active"
+owner: "@architecture-team"
+---
+
 # Java Boilerplate Coding Guide
 
 > **Purpose**: This file is the Java developer's quick-reference and the architect's audit baseline for the **Java/Spring Boot** boilerplate. Every code change in Java services must be producible from, and auditable against, the verified boilerplate in [`boilerplate/java/order-service/`](boilerplate/java/order-service/).
