@@ -34,3 +34,18 @@ __pycache__/
 
 # Misc
 .serena/
+
+# Temporary working files (AI agent sessions, reports, drafts)
+*_REPORT.md
+*_SUMMARY.md
+*_STATUS.md
+*_TEMPLATE.md
+*_INSTRUCTIONS.md
+CHECKLIST_*.md
+WORKSPACE_*.md
+IMPLEMENTATION_*.md
+ISSUES_*.md
+ACTIVATION_*.md
+state_handoff.md
+*.bak
+*.tmp
