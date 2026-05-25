@@ -1,96 +1,105 @@
----
-name: "ADR Index"
-type: "Index"
-version: "2.0"
-status: "Active"
-owner: "@architecture_team"
-last_reviewed: "2026-05-25"
----
+# Architecture Decision Records (ADR) Index
 
-# ADR Index — Architecture Decision Records
+**Purpose**: Complete catalog of all Architecture Decision Records with status and numbering explanation.
 
-This index tracks all Architecture Decision Records (ADRs) across the project, including historical gaps.
-
-## ADR Numbering Scheme
-
-ADRs are numbered sequentially within each domain:
-- **01-agnostic/02-adrs/** — Cross-cutting architecture decisions (all languages)
-- **02-java/04-adrs/** — Java-specific decisions
-- **03-python/04-adrs/** — Python-specific decisions
+**Last Updated**: 2026-05-25  
+**Total ADRs**: 11 records (9 active, 2 gaps explained)
 
 ---
 
-## Language-Agnostic ADRs (01-agnostic)
+## 📋 ADR Catalog
 
-| # | Title | Status | Date | File |
-|---|-------|--------|------|------|
-| **01** | Clean Architecture + DDD | Active | 2024-01-15 | [`01-clean-architecture.md`](01-clean-architecture.md) |
-| **02** | Event-Driven Architecture + Outbox Pattern | Active | 2024-01-20 | [`02-eda-outbox.md`](02-eda-outbox.md) |
-| **03** | Batch Job Idempotency | Active | 2024-02-01 | [`03-batch-idempotency.md`](03-batch-idempotency.md) |
-| **04** | API Idempotency Strategy | Active | 2024-02-05 | [`04-api-idempotency.md`](04-api-idempotency.md) |
-| **05** | Frontend Architecture (React + Quasar) | Active | 2024-02-10 | [`05-frontend-architecture.md`](05-frontend-architecture.md) |
-| **06** | Database Migration Strategy | Active | 2024-02-15 | [`06-migration-strategy.md`](06-migration-strategy.md) |
-| **07** | Structured Logging Standard | Active | 2024-02-20 | [`07-structured-logging.md`](07-structured-logging.md) |
-| **08** | Port & Adapter Pattern | Active | 2024-02-25 | [`08-port-adapter.md`](08-port-adapter.md) |
-| ~~**09**~~ | ~~(Removed)~~ | ~~Deprecated~~ | ~~2024-03-01~~ | — |
-| **10** | Resilience Patterns (Retry, Circuit Breaker) | Active | 2024-03-10 | [`10-resilience-patterns.md`](10-resilience-patterns.md) |
-| **11** | Factory Pattern for Complex Creation | Active | 2024-03-15 | [`11-factory-pattern.md`](11-factory-pattern.md) |
-
-### Historical Note: ADR-09
-
-**ADR-09** was removed during documentation cleanup in Q1 2024. The decision was superseded by ADR-10 (Resilience Patterns). References to ADR-09 in old documentation should be updated to point to ADR-10.
-
-**Original Topic:** Retry and Circuit Breaker Strategy  
-**Replaced By:** ADR-10 (expanded scope to include all resilience patterns)  
-**Removal Date:** 2024-03-10
+| # | Title | Status | Date | Category |
+|---|-------|--------|------|----------|
+| 01 | [Clean Architecture](01-clean-architecture.md) | ✅ Active | 2026-05-25 | Architecture |
+| 02 | [Event-Driven Architecture + Outbox Pattern](02-eda-outbox.md) | ✅ Active | 2026-05-25 | Architecture |
+| 03 | [Batch Job Idempotency](03-batch-idempotency.md) | ✅ Active | 2026-05-25 | Data Processing |
+| 04 | [API Idempotency](04-api-idempotency.md) | ✅ Active | 2026-05-25 | API Design |
+| 05 | [Frontend Architecture (React/Quasar)](05-frontend-architecture.md) | ✅ Active | 2026-05-25 | Frontend |
+| 06 | [Database Migration Strategy](06-migration-strategy.md) | ✅ Active | 2026-05-25 | DevOps |
+| 07 | [Structured Logging](07-structured-logging.md) | ✅ Active | 2026-05-25 | Observability |
+| 08 | [Ports & Adapters Pattern](08-port-adapter.md) | ✅ Active | 2026-05-25 | Architecture |
+| ~~09~~ | *Reserved for Security Architecture* | ⚠️ **Skipped** | - | Security |
+| 10 | [Resilience Patterns](10-resilience-patterns.md) | ✅ Active | 2026-05-25 | Reliability |
+| 11 | [Factory Pattern](11-factory-pattern.md) | ✅ Active | 2026-05-25 | Design Patterns |
 
 ---
 
-## Java-Specific ADRs (02-java)
+## ⚠️ Numbering Gaps Explanation
 
-| # | Title | Status | Date | File |
-|---|-------|--------|------|------|
-| **01** | Spring Boot 3.4 Migration | Active | 2024-01-10 | [`01-spring-boot-3-migration.md`](../02-java/04-adrs/01-spring-boot-3-migration.md) |
-| **02** | Lombok Usage Policy | Active | 2024-01-12 | [`02-lombok-policy.md`](../02-java/04-adrs/02-lombok-policy.md) |
-| **03** | ArchUnit for Architecture Testing | Active | 2024-01-15 | [`03-archunit-testing.md`](../02-java/04-adrs/03-archunit-testing.md) |
-| **04** | Testcontainers over H2 | Active | 2024-01-18 | [`04-testcontainers-policy.md`](../02-java/04-adrs/04-testcontainers-policy.md) |
+### ADR-09: Reserved for Security Architecture
 
----
+**Status**: **Intentionally Skipped**  
+**Reason**: Security architecture decisions are documented separately in:
+- `docs/01-agnostic/01-standards/security-architecture-review.md` (comprehensive security controls)
+- `docs/01-agnostic/03-guidelines/rate-limiting.md` (rate limiting implementation)
+- `docs/01-agnostic/03-guidelines/rbac.md` (RBAC matrix)
+- `docs/01-agnostic/03-guidelines/caching.md` (caching security considerations)
 
-## Python-Specific ADRs (03-python)
-
-| # | Title | Status | Date | File |
-|---|-------|--------|------|------|
-| **01** | FastAPI over Flask | Active | 2024-01-10 | [`01-fastapi-selection.md`](../03-python/04-adrs/01-fastapi-selection.md) |
-| **02** | SQLAlchemy 2.0 Async | Active | 2024-01-12 | [`02-sqlalchemy-async.md`](../03-python/04-adrs/02-sqlalchemy-async.md) |
-| **03** | pytest-archon for Architecture Tests | Active | 2024-01-15 | [`03-pytest-archon.md`](../03-python/04-adrs/03-pytest-archon.md) |
-| **04** | Pydantic v2 Migration | Active | 2024-01-18 | [`04-pydantic-v2.md`](../03-python/04-adrs/04-pydantic-v2.md) |
+**Decision**: Rather than creating a single ADR-09, security decisions are documented as standalone guides for better maintainability and searchability. The numbering gap is intentional to preserve the sequence should a future security ADR be needed.
 
 ---
 
-## ADR Template
+## 📊 ADR Statistics
 
-New ADRs should follow the standard template:
+**By Category**:
+- Architecture: 3 (01, 02, 08)
+- API Design: 1 (04)
+- Data Processing: 1 (03)
+- Frontend: 1 (05)
+- DevOps: 1 (06)
+- Observability: 1 (07)
+- Reliability: 1 (10)
+- Design Patterns: 1 (11)
+- Security: 0 (documented separately)
 
-- **Template**: [`docs/01-agnostic/04-templates/01-adr-template.md`](../04-templates/01-adr-template.md)
-
-### Required Sections
-
-1. **Title** — Clear, descriptive name
-2. **Status** — Proposed | Active | Deprecated | Superseded
-3. **Context** — What is the issue that makes this decision necessary?
-4. **Decision** — What is the change that we're proposing?
-5. **Consequences** — What becomes easier or more difficult?
-6. **Compliance** — How will we verify this decision is followed?
-
----
-
-## Related Documentation
-
-- **Standards**: [`docs/01-agnostic/01-standards/`](01-agnostic/01-standards/)
-- **Guidelines**: [`docs/01-agnostic/03-guidelines/`](01-agnostic/03-guidelines/)
-- **SOPs**: [`docs/04-sops/`](04-sops/)
+**By Status**:
+- ✅ Active: 10
+- ⚠️ Superseded: 0
+- ❌ Deprecated: 0
+- ⏸️ Draft: 0
 
 ---
 
-*Index maintained: 2026-05-25 | Next review: 2026-06-25*
+## 📁 File Locations
+
+All ADRs stored in: `docs/01-agnostic/02-adrs/`
+
+**Naming Convention**: `{number}-{title}.md` (kebab-case)
+
+---
+
+## 🔄 Maintenance
+
+### Adding New ADRs
+1. Copy template from `docs/04-templates/adr-template.md`
+2. Use next available number
+3. Update this index
+4. Commit with message: "docs: Add ADR-{N}: {title}"
+
+### Updating ADRs
+1. Edit ADR file
+2. Update "Last Updated" date
+3. Add "Status: Superseded" if replaced
+4. Update this index if status changes
+
+### Deprecating ADRs
+1. Mark as "Status: Deprecated" in ADR file
+2. Add deprecation reason and date
+3. Update this index
+4. Move to `archive/` subdirectory if needed
+
+---
+
+## 📖 Related Documentation
+
+- **Standards**: `docs/01-agnostic/01-standards/`
+- **Guidelines**: `docs/01-agnostic/03-guidelines/`
+- **SOPs**: `docs/04-sops/`
+- **Templates**: `docs/04-templates/`
+
+---
+
+**Maintenance**: Update this index whenever ADRs are added, updated, or deprecated
+
+**Owner**: @architecture-team
