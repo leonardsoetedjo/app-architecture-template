@@ -1,0 +1,67 @@
+{
+  "name": "example-quasar",
+  "version": "1.0.0",
+  "description": "Example Quasar Application implementing Clean Architecture with Quasar Framework, TypeScript, and Pinia",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "lint": "eslint 'src/**/*.{ts,tsx,vue}' --max-warnings=0",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx,vue}' --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prettier": "prettier --write 'src/**/*.{ts,tsx,vue,css,json}'",
+    "prettier:check": "prettier --check 'src/**/*.{ts,tsx,vue,css,json}'",
+    "format": "quasar format",
+    "generate-client": "openapi-typescript http://localhost:8080/api/v1/docs -o src/generated/api.ts"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.9",
+    "axios": "^1.6.2",
+    "pinia": "^2.1.7",
+    "quasar": "^2.14.2",
+    "vue": "^3.4.0",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@quasar/app-vite": "^1.7.3",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/vue": "^7.0.0",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/test-utils": "^2.4.3",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.55.0",
+    "eslint-plugin-vue": "^9.19.2",
+    "jsdom": "^23.0.1",
+    "msw": "^2.14.6",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0",
+    "openapi-typescript": "^7.0.0",
+    "openapi-typescript-fetch": "^2.2.1",
+    "dependency-cruiser": "^16.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0",
+    "yarn": ">=1.22.0"
+  },
+  "browserslist": [
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions"
+  ]
+}

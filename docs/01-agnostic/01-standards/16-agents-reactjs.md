@@ -4,9 +4,7 @@
 
 > **Rule**: If your PR pattern is not already demonstrated here, add it to the boilerplate first, then copy it into your feature.
 
-> **Note**: For backend API specifications and shared architecture principles, see the main [`AGENTS.md`](../../AGENTS.md) at the project root or `docs/01-agnostic/01-standards/13-agents.md`.
->
-> **Note**: This guide is maintained in `docs/01-agnostic/01-standards/16-agents-frontend.md`. The boilerplate copy is for convenience.
+> **Note**: For backend API specifications and shared architecture principles, see the main [`AGENTS.md`](../../AGENTS.md) at the project root.
 
 > Stack: **React 18 + TypeScript + Ant Design 5 + Vite + Zustand**
 > Architecture: **Clean Architecture + Domain-Driven Design**
@@ -41,7 +39,7 @@
 ### 1.3 Project Structure
 
 ```
-boilerplate/frontend/
+boilerplate/reactjs/
 ├── src/
 │   ├── components/          # Reusable UI components (presentational)
 │   ├── pages/               # Route-level page components (container)

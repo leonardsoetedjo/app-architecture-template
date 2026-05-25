@@ -42,7 +42,8 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 || 13 | [agents.md](01-standards/13-agents.md) | AI Agent tooling and workflows (root) |
 || 14 | [agents-java.md](01-standards/14-agents-java.md) | AI Agent guide for Java boilerplate |
 || 15 | [agents-python.md](01-standards/15-agents-python.md) | AI Agent guide for Python boilerplate |
-|| 16 | [agents-frontend.md](01-standards/16-agents-frontend.md) | AI Agent guide for Frontend boilerplate |
+|| 16 | [agents-reactjs.md](01-standards/16-agents-reactjs.md) | AI Agent guide for ReactJS boilerplate |
+|| 17 | [agents-quasar.md](01-standards/17-agents-quasar.md) | AI Agent guide for Quasar boilerplate |
 
 ## 20 — ADRs
 

@@ -77,7 +77,7 @@ app-architecture-template/
 ├── boilerplate/
 │   ├── java/              # Spring Boot service template (see boilerplate/java/AGENTS.md)
 │   ├── python/            # FastAPI service template (see boilerplate/python/AGENTS.md)
-│   └── frontend/          # React + TypeScript + Nginx template (see boilerplate/frontend/AGENTS.md)
+│   └── frontend/          # React + TypeScript + Nginx template (see boilerplate/reactjs/AGENTS.md)
 ├── docs/                  # Architecture docs, ADRs, guidelines
 │   ├── 01-agnostic/       # Language-agnostic standards
 │   ├── 02-java/           # Java-specific guides
@@ -100,7 +100,7 @@ Each boilerplate has its own detailed AGENTS.md with language-specific patterns,
 |-------------|-------------------|------------|
 | **Java** | [`boilerplate/java/AGENTS.md`](boilerplate/java/AGENTS.md) | Spring Boot, ArchUnit, Lombok rules, Testcontainers |
 | **Python** | [`boilerplate/python/AGENTS.md`](boilerplate/python/AGENTS.md) | FastAPI, pytest, SQLAlchemy, dependency injection |
-| **Frontend** | [`boilerplate/frontend/AGENTS.md`](boilerplate/frontend/AGENTS.md) | React, TypeScript, feature-sliced design, Zustand |
+| **Frontend** | [`boilerplate/reactjs/AGENTS.md`](boilerplate/reactjs/AGENTS.md) | React, TypeScript, feature-sliced design, Zustand |
 
 **When working in a specific boilerplate directory, ALWAYS read that directory's AGENTS.md first.**
 

@@ -4,7 +4,7 @@
 > The root copy is for convenience. Language-specific guides are in:
 > - Java: `docs/01-agnostic/01-standards/14-agents-java.md`
 > - Python: `docs/01-agnostic/01-standards/15-agents-python.md`
-> - Frontend: `docs/01-agnostic/01-standards/16-agents-frontend.md`
+> - Frontend: `docs/01-agnostic/01-standards/16-agents-reactjs.md`
 
 ---
 
@@ -23,7 +23,8 @@ It contains verified boilerplate code for Java (Spring Boot), Python (FastAPI), 
 |-------|-----------|
 | Java Backend | Spring Boot 3.4+, PostgreSQL, Maven, ArchUnit |
 | Python Backend | FastAPI, SQLAlchemy, Poetry, pytest |
-| Frontend | React 18, TypeScript, Vite, Ant Design, Nginx |
+| ReactJS Frontend | React 18, TypeScript, Ant Design 5, Vite, Zustand |
+| Quasar Frontend | Quasar 2, Vue 3, TypeScript, Pinia, Vite |
 | Database | PostgreSQL 14+ |
 | Orchestration | Docker Compose (dual-mode overlay) |
 
@@ -85,7 +86,7 @@ app-architecture-template/
 ├── boilerplate/
 │   ├── java/              # Spring Boot service template (see boilerplate/java/AGENTS.md)
 │   ├── python/            # FastAPI service template (see boilerplate/python/AGENTS.md)
-│   └── frontend/          # React + TypeScript + Nginx template (see boilerplate/frontend/AGENTS.md)
+│   └── frontend/          # React + TypeScript + Nginx template (see boilerplate/reactjs/AGENTS.md)
 ├── docs/                  # Architecture docs, ADRs, guidelines
 │   ├── 01-agnostic/       # Language-agnostic standards
 │   ├── 02-java/           # Java-specific guides
@@ -108,7 +109,8 @@ Each boilerplate has its own detailed AGENTS.md with language-specific patterns,
 |-------------|-------------------|------------|
 | **Java** | [`boilerplate/java/AGENTS.md`](boilerplate/java/AGENTS.md) | Spring Boot, ArchUnit, Lombok rules, Testcontainers |
 | **Python** | [`boilerplate/python/AGENTS.md`](boilerplate/python/AGENTS.md) | FastAPI, pytest, SQLAlchemy, dependency injection |
-| **Frontend** | [`boilerplate/frontend/AGENTS.md`](boilerplate/frontend/AGENTS.md) | React, TypeScript, feature-sliced design, Zustand |
+| **ReactJS** | [`boilerplate/reactjs/AGENTS.md`](boilerplate/reactjs/AGENTS.md) | React 18, TypeScript, Ant Design 5, Zustand, hooks |
+| **Quasar** | [`boilerplate/quasar/AGENTS.md`](boilerplate/quasar/AGENTS.md) | Quasar 2, Vue 3, TypeScript, Pinia, composables |
 
 **When working in a specific boilerplate directory, ALWAYS read that directory's AGENTS.md first.**
 
