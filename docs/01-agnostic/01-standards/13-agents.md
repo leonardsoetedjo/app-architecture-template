@@ -1,13 +1,5 @@
 # AGENTS.md — app-architecture-template
 
-> **📍 Documentation Moved**: This file is maintained in `docs/01-agnostic/01-standards/13-agents.md`. 
-> The root copy is for convenience. Language-specific guides are in:
-> - Java: `docs/01-agnostic/01-standards/14-agents-java.md`
-> - Python: `docs/01-agnostic/01-standards/15-agents-python.md`
-> - Frontend: `docs/01-agnostic/01-standards/16-agents-frontend.md`
-
----
-
 ## Purpose
 
 This is the **reference template repository** for Clean Architecture polyglot services.

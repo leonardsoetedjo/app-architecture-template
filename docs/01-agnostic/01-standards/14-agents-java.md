@@ -4,12 +4,9 @@
 >
 > **Rule**: If your PR pattern is not already demonstrated in the Java boilerplate, add it there first, then copy it into your feature.
 >
-> **Note**: This guide is maintained in `docs/01-agnostic/01-standards/14-agents-java.md`.
-> The boilerplate copy is for convenience.
+> **Note**: For full project guidance including Python and frontend, see the main [`AGENTS.md`](../AGENTS.md) in the repository root.
 >
-> For full project guidance including Python and frontend, see the main [`AGENTS.md`](../../AGENTS.md) in the repository root or [`docs/01-agnostic/01-standards/13-agents.md`](../../docs/01-agnostic/01-standards/13-agents.md).
->
-> **AI Agents**: This guide includes Serena MCP, Context-Mode, Sequential-Thinking, and Superpowers integration.
+> **AI Agents**: This guide includes Serena MCP, Context-Mode, and Superpowers integration. See Section 8 for AI tooling.
 
 ---
 

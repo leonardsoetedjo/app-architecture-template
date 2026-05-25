@@ -4,9 +4,7 @@
 >
 > **Rule**: If your PR pattern is not already demonstrated in this Python boilerplate (`boilerplate/python/order-service/`), add it there first, then copy it into your feature.
 >
-> **Note**: For Java or frontend patterns, refer to the main [`AGENTS.md`](../AGENTS.md) or `docs/01-agnostic/01-standards/14-agents-java.md` and `16-agents-frontend.md`.
->
-> **Note**: This guide is maintained in `docs/01-agnostic/01-standards/15-agents-python.md`. The boilerplate copy is for convenience.
+> **Note**: For Java or frontend patterns, refer to the main [`AGENTS.md`](../AGENTS.md).
 
 > **Stack**: FastAPI + SQLAlchemy (Python 3.11+) | PostgreSQL | Testcontainers  
 > **Architecture**: Clean Architecture + Domain-Driven Design

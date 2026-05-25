@@ -36,9 +36,13 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 | 07 | [common-schemas.md](01-standards/07-common-schemas.md) | Shared API data structures |
 | 08 | [secrets.md](01-standards/08-secrets.md) | Secrets Management |
 | 09 | [mdc-logging.md](01-standards/09-mdc-logging.md) | Multi-Dimensional Correlation Logging |
-| 10 | [testing.md](01-standards/10-testing.md) | Testing standards and coverage rules |
-| 11 | [review.md](01-standards/11-review.md) | PR Review and onboarding process |
-| 12 | [frontend-structure.md](01-standards/12-frontend-structure.md) | Frontend directory structure (FSD + MVVM) |
+|| 10 | [testing.md](01-standards/10-testing.md) | Testing standards and coverage rules |
+|| 11 | [review.md](01-standards/11-review.md) | PR Review and onboarding process |
+|| 12 | [frontend-structure.md](01-standards/12-frontend-structure.md) | Frontend directory structure (FSD + MVVM) |
+|| 13 | [agents.md](01-standards/13-agents.md) | AI Agent tooling and workflows (root) |
+|| 14 | [agents-java.md](01-standards/14-agents-java.md) | AI Agent guide for Java boilerplate |
+|| 15 | [agents-python.md](01-standards/15-agents-python.md) | AI Agent guide for Python boilerplate |
+|| 16 | [agents-frontend.md](01-standards/16-agents-frontend.md) | AI Agent guide for Frontend boilerplate |
 
 ## 20 — ADRs
 
