@@ -64,6 +64,73 @@ Refresh Token Enabled: [ ] Yes [ ] No
 
 ---
 
+## 🎯 Step 2.5: Feature Selection
+
+**Core Features (select all that apply):**
+```
+[ ] User Management (registration, login, profile)
+[ ] Role-Based Access Control (RBAC)
+    Roles: [_________________] (e.g., admin, user, manager)
+[ ] Multi-tenancy support
+    Tenant isolation: [ ] Database per tenant [ ] Schema per tenant [ ] Row-level]
+[ ] File upload/download
+    Storage: [ ] Local [ ] S3 [ ] Azure Blob [ ] GCS
+    Max file size: [_______] MB
+[ ] Email notifications
+    Provider: [ ] SMTP [ ] SendGrid [ ] SES [ ] Other: _______
+[ ] SMS notifications
+    Provider: [ ] Twilio [ ] Vonage [ ] Other: _______
+[ ] Push notifications
+    Provider: [ ] Firebase [ ] APNS [ ] OneSignal]
+[ ] Real-time features (WebSockets)
+    Use cases: [_________________]
+[ ] Search functionality
+    Engine: [ ] PostgreSQL full-text [ ] Elasticsearch [ ] Algolia]
+[ ] Reporting/Analytics
+    Types: [_________________]
+[ ] Data export (CSV, PDF, Excel)
+    Formats: [_________________]
+[ ] Import functionality
+    Sources: [_________________]
+[ ] Audit trail/logging
+    Events to audit: [_________________]
+[ ] Soft delete support
+[ ] Data versioning/history
+[ ] Scheduled jobs/batch processing
+[ ] Webhook integrations
+    External systems: [_________________]
+[ ] API rate limiting per user/tenant
+[ ] GraphQL API (in addition to REST)
+[ ] Internationalization (i18n)
+    Languages: [_________________]
+[ ] Dark mode support (frontend)
+[ ] Mobile responsive design
+[ ] PWA (Progressive Web App) features
+```
+
+### Third-Party Integrations
+```
+[ ] Payment gateway
+    Provider: [ ] Stripe [ ] PayPal [ ] Square [ ] Other: _______
+[ ] Single Sign-On (SSO)
+    Provider: [ ] Google [ ] Microsoft [ ] Okta [ ] Keycloak]
+[ ] CRM integration
+    System: [ ] Salesforce [ ] HubSpot [ ] Other: _______
+[ ] ERP integration
+    System: [_________________]
+[ ] Accounting software
+    System: [ ] QuickBooks [ ] Xero [ ] Other: _______
+[ ] Marketing automation
+    System: [ ] Mailchimp [ ] Marketo [ ] Other: _______
+[ ] Customer support
+    System: [ ] Zendesk [ ] Intercom [ ] Other: _______
+[ ] Analytics platform
+    System: [ ] Google Analytics [ ] Mixpanel [ ] Amplitude]
+[ ] Other integrations: [_________________]
+```
+
+---
+
 ## 🗄️ Step 3: Database
 
 ### Database configuration:
@@ -79,6 +146,32 @@ Database Password: [_________________] (use secure generated password)
 [ ] Connection pooling (min: ____, max: ____)
 [ ] Automated daily backups
 [ ] Point-in-time recovery
+```
+
+### Data Model — Main Entities
+**List your core domain entities/aggregates:**
+```
+Entity 1: [_________________]
+  - Key fields: [_________________]
+  - Relationships: [_________________]
+  
+Entity 2: [_________________]
+  - Key fields: [_________________]
+  - Relationships: [_________________]
+  
+Entity 3: [_________________]
+  - Key fields: [_________________]
+  - Relationships: [_________________]
+
+(Add more as needed)
+```
+
+### Data Volume Estimates
+```
+Initial data size: [_______] GB
+Expected growth: [_______] GB/month
+Peak concurrent users: [_______]
+Transactions per second: [_______]
 ```
 
 ---
@@ -113,6 +206,61 @@ ENABLE_MFA=[true/false]
 
 ---
 
+## 🔌 Step 4.5: API Design
+
+### REST API Resources
+**List your main API resources:**
+```
+Resource 1: /api/v1/[_________________]
+  - GET    (list) [ ] Yes [ ] No
+  - GET    (single) [ ] Yes [ ] No
+  - POST   (create) [ ] Yes [ ] No
+  - PUT    (update) [ ] Yes [ ] No
+  - PATCH  (partial) [ ] Yes [ ] No
+  - DELETE (remove) [ ] Yes [ ] No
+  
+Resource 2: /api/v1/[_________________]
+  - GET    (list) [ ] Yes [ ] No
+  - GET    (single) [ ] Yes [ ] No
+  - POST   (create) [ ] Yes [ ] No
+  - PUT    (update) [ ] Yes [ ] No
+  - PATCH  (partial) [ ] Yes [ ] No
+  - DELETE (remove) [ ] Yes [ ] No
+
+Resource 3: /api/v1/[_________________]
+  - GET    (list) [ ] Yes [ ] No
+  - GET    (single) [ ] Yes [ ] No
+  - POST   (create) [ ] Yes [ ] No
+  - PUT    (update) [ ] Yes [ ] No
+  - PATCH  (partial) [ ] Yes [ ] No
+  - DELETE (remove) [ ] Yes [ ] No
+```
+
+### API Authentication
+```
+[ ] JWT Bearer tokens
+[ ] API keys for service-to-service
+[ ] OAuth2 for third-party apps
+[ ] Basic auth (internal only)
+```
+
+### API Documentation
+```
+[ ] OpenAPI/Swagger (auto-generated)
+[ ] Postman collection
+[ ] API changelog
+[ ] Versioning strategy: [_________________]
+```
+
+### Rate Limiting
+```
+Default: [_______] requests/minute per user
+Authenticated: [_______] requests/minute per user
+Anonymous: [_______] requests/minute per IP
+```
+
+---
+
 ## 📊 Step 5: Monitoring
 
 ### Observability requirements:
@@ -123,6 +271,82 @@ ENABLE_MFA=[true/false]
 [ ] Alerting (channel: _________________)
     - Error rate threshold: [_______]%
     - Latency P99 threshold: [_______]ms
+```
+
+---
+
+## 🎨 Step 5.5: Frontend & UX (if applicable)
+
+### UI Framework Selection
+```
+[ ] Ant Design 5 (React)
+[ ] Quasar Framework (Vue 3)
+[ ] Material UI
+[ ] Tailwind CSS (custom)
+[ ] Other: [_________________]
+```
+
+### Theme & Branding
+```
+Primary color: [_________________] (hex: _______)
+Secondary color: [_________________] (hex: _______)
+Logo file: [_________________]
+Favicon: [_________________]
+```
+
+### Layout Requirements
+```
+[ ] Sidebar navigation
+[ ] Top navigation bar
+[ ] Dashboard with widgets
+[ ] Data tables with sorting/filtering
+[ ] Forms with validation
+[ ] Modal dialogs
+[ ] Toast notifications
+[ ] Breadcrumbs
+[ ] Search bar (global)
+[ ] User profile dropdown
+[ ] Dark mode toggle
+```
+
+### Pages/Screens
+**List your main application pages:**
+```
+Page 1: [_________________]
+  - Route: /_________________
+  - Key components: [_________________]
+  
+Page 2: [_________________]
+  - Route: /_________________
+  - Key components: [_________________]
+  
+Page 3: [_________________]
+  - Route: /_________________
+  - Key components: [_________________]
+
+(Add more as needed)
+```
+
+### Responsive Design
+```
+Breakpoints:
+  - Mobile: [_______]px and below
+  - Tablet: [_______]px - [_______]px
+  - Desktop: [_______]px and above
+  
+Priority:
+  [ ] Mobile-first
+  [ ] Desktop-first
+  [ ] Equal priority
+```
+
+### Accessibility
+```
+[ ] WCAG 2.1 Level A compliance
+[ ] WCAG 2.1 Level AA compliance
+[ ] Screen reader support
+[ ] Keyboard navigation
+[ ] High contrast mode
 ```
 
 ---
@@ -142,6 +366,93 @@ Infrastructure:    [_______]% (recommended: 60)
 [ ] End-to-end tests (if frontend)
 [ ] Performance/load testing (concurrent users: _______)
 [ ] Security scanning (SAST/DAST)
+```
+
+---
+
+## 🛠️ Step 6.5: Development Workflow
+
+### Version Control
+```
+Git repository: [_________________] (URL)
+Main branch: [main/master]
+Feature branch prefix: [feature/]
+Release branch prefix: [release/]
+Hotfix branch prefix: [hotfix/]
+```
+
+### Code Quality
+```
+[ ] ESLint/Prettier (frontend)
+[ ] Black/Flake8 (Python)
+[ ] Checkstyle/Spotless (Java)
+[ ] SonarQube integration
+[ ] Pre-commit hooks
+```
+
+### Code Review Process
+```
+Required reviewers: [_______] (minimum)
+Approval required from: [Tech Lead / Security Team]
+CI must pass: [ ] Yes [ ] No
+Manual testing required: [ ] Yes [ ] No
+```
+
+### Branch Protection Rules
+```
+[ ] Require pull request reviews
+[ ] Require status checks to pass
+[ ] Require branches to be up-to-date
+[ ] Require linear history (no merge commits)
+[ ] Allow force pushes: [ ] Never [ ] Admins only
+```
+
+---
+
+## 🚀 Step 6.6: CI/CD Pipeline
+
+### Continuous Integration
+```
+[ ] Run tests on every push
+[ ] Run architecture tests
+[ ] Run security scans
+[ ] Build Docker images
+[ ] Push to container registry
+[ ] Deploy to staging environment
+```
+
+### Continuous Deployment
+```
+[ ] Auto-deploy to staging on merge to main
+[ ] Manual approval for production
+[ ] Blue-green deployment
+[ ] Canary releases
+[ ] Rollback automation
+```
+
+### CI/CD Platform
+```
+[ ] GitHub Actions
+[ ] GitLab CI
+[ ] Jenkins
+[ ] CircleCI
+[ ] Azure DevOps
+[ ] Other: [_________________]
+```
+
+### Deployment Environments
+```
+Environment 1: [Development]
+  - URL: [_________________]
+  - Auto-deploy: [ ] Yes [ ] No
+  
+Environment 2: [Staging/QA]
+  - URL: [_________________]
+  - Auto-deploy: [ ] Yes [ ] No
+  
+Environment 3: [Production]
+  - URL: [_________________]
+  - Auto-deploy: [ ] Yes [ ] No
 ```
 
 ---
