@@ -70,12 +70,25 @@ curl http://localhost/                      # Frontend (nginx)
 
 ## New Project Checklist (Copying This Template)
 
-1. **Rename services** in all three compose files to match project name
-2. **Update TLS host** — set `TRAEFIK_HOST` in `.env` to your Tailscale/MagicDNS hostname
-3. **Update router names** in `docker-compose.traefik.yml` Traefik labels (no duplicates)
-4. **Tune port numbers** in `docker-compose.standalone.yml` if multiple projects run side-by-side
-5. **Inject build args** for frontend if it needs a runtime API URL (e.g., `API_BASE_URL`)
-6. **Replace `nginx.conf`** proxy target with your backend service name(s)
+**📋 Start here when forking this template:**
+
+1. **Complete the setup checklist**: [`docs/04-templates/02-quick-setup-checklist.md`](docs/04-templates/02-quick-setup-checklist.md)
+   - Interactive checklist with fill-in-the-blank sections
+   - Covers project identity, stack selection, security, deployment, monitoring
+   - Includes completed configuration template
+
+2. **For comprehensive planning**: [`docs/04-templates/01-new-project-checklist.md`](docs/04-templates/01-new-project-checklist.md)
+   - Detailed checklist with feature prioritization
+   - Timeline and success criteria definition
+   - Team contact information
+
+3. **Technical setup**:
+   - Rename services in all three compose files to match project name
+   - Update TLS host — set `TRAEFIK_HOST` in `.env` to your Tailscale/MagicDNS hostname
+   - Update router names in `docker-compose.traefik.yml` Traefik labels (no duplicates)
+   - Tune port numbers in `docker-compose.standalone.yml` if multiple projects run side-by-side
+   - Inject build args for frontend if it needs a runtime API URL (e.g., `API_BASE_URL`)
+   - Replace `nginx.conf` proxy target with your backend service name(s)
 
 ---
 
@@ -239,6 +252,9 @@ That file contains comprehensive guides for:
 
 ### Templates
 - **Documentation Templates**: [`docs/04-templates/`](docs/04-templates/)
+- **New Project Checklists**:
+  - Quick Setup: [`docs/04-templates/02-quick-setup-checklist.md`](docs/04-templates/02-quick-setup-checklist.md)
+  - Comprehensive: [`docs/04-templates/01-new-project-checklist.md`](docs/04-templates/01-new-project-checklist.md)
 - **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
 
 ---
