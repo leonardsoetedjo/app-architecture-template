@@ -154,60 +154,22 @@ npm run depcruise
 
 ---
 
-## AI Agent Rules: NO Temporary Files in Repo
+## AI Agent Rules: Temporary Files
 
-**CRITICAL:** AI agents MUST NOT create temporary working files in the repository.
+**CRITICAL:** Keep the repository clean. Temporary working files must NOT be committed.
 
-### ❌ Forbidden: Creating These Files in Repo
+### ✅ Temporary Files Checklist
 
-- `*_REPORT.md` (activation reports, implementation reports)
-- `*_SUMMARY.md` (workspace summaries, issues summaries)
-- `*_STATUS.md` (status reports)
-- `*_TEMPLATE.md` (issue templates)
-- `*_INSTRUCTIONS.md` (working instructions)
-- `CHECKLIST_*.md` (validation checklists)
-- `WORKSPACE_*.md` (workspace analysis)
-- `IMPLEMENTATION_*.md` (implementation status)
-- `ISSUES_*.md` (issue tracking)
-- `ACTIVATION_*.md` (session activation)
-- `state_handoff.md` (session handoffs)
-- `*.bak`, `*.tmp` (backup/temp files)
+**Before completing ANY task, AI agents MUST:**
 
-### ✅ Allowed: Where to Put Temporary Files
-
-1. **Use `/tmp/` directory** (outside repo):
-   ```bash
-   echo "notes" > /tmp/my-task-notes.md
-   ```
-
-2. **Use GitHub directly** (single source of truth):
-   - Issues for tracking work
-   - Projects for sprint planning
-   - Wiki for documentation
-   - PR descriptions for context
-
-3. **Use in-memory processing**:
-   - Process data without writing to disk
-   - Use tool outputs directly
-   - Delete immediately after use
-
-### ✅ Pre-Commit Check
-
-Before committing, AI agents MUST:
-```bash
-# Check what will be committed
-git status
-
-# Verify no temporary files
-git status | grep -E '_REPORT|_SUMMARY|_STATUS|_TEMPLATE|CHECKLIST|WORKSPACE|IMPLEMENTATION|ISSUES|ACTIVATION'
-
-# If found, delete them immediately
-rm filename.md
-```
+- [ ] **Store temporary files ONLY in `/tmp/`** (outside the repository)
+- [ ] **Delete all temporary files** before marking task complete
+- [ ] **Run `git status`** and verify no untracked files in repo
+- [ ] **Use GitHub** (Issues, Projects, Wiki) for tracking instead of markdown files
 
 ### 🎯 Principle
 
-**GitHub is the single source of truth.** No duplicate markdown status files in the repo.
+**GitHub is the single source of truth.** The repository should only contain permanent, production-ready files.
 
 ---
 
