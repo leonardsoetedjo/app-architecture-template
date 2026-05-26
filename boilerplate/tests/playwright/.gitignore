@@ -1,0 +1,12 @@
+# Playwright
+playwright-report/
+test-results/
+test-playwright/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db

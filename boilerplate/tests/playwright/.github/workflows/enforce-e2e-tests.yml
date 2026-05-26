@@ -1,0 +1,173 @@
+name: Enforce E2E Tests on PR
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
+      - '**/*.vue'
+      - '**/*.java'
+      - '**/*.py'
+
+jobs:
+  # Job 1: Check if E2E tests exist for changed files
+  check-test-coverage:
+    runs-on: ubuntu-latest
+    name: Check E2E Test Coverage
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            **/*.ts
+            **/*.tsx
+            **/*.js
+            **/*.jsx
+            **/*.vue
+      
+      - name: Check for test files
+        id: check-tests
+        run: |
+          CHANGED_COUNT=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | wc -w)
+          TEST_COUNT=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | grep -E 'e2e/.*\.spec\.ts$' | wc -l)
+          
+          echo "Changed source files: $CHANGED_COUNT"
+          echo "Changed test files: $TEST_COUNT"
+          
+          if [ "$CHANGED_COUNT" -gt 0 ] && [ "$TEST_COUNT" -eq 0 ]; then
+            echo "⚠️ WARNING: Code changes detected but no E2E tests modified"
+            echo "Please add or update E2E tests for your changes"
+            # Uncomment to make it fail:
+            # exit 1
+          else
+            echo "✅ Test coverage check passed"
+          fi
+      
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const testCount = '${{ steps.check-tests.outputs.test_count }}';
+            const changedCount = '${{ steps.changed-files.outputs.all_changed_files_count }}';
+            
+            let message = '## E2E Test Coverage Check\n\n';
+            
+            if (changedCount > 0 && testCount == 0) {
+              message += '⚠️ **Warning**: Code changes detected but no E2E tests were modified.\n\n';
+              message += 'Please ensure you have:\n';
+              message += '- [ ] Added E2E tests for new features\n';
+              message += '- [ ] Updated existing tests for modified behavior\n';
+              message += '- [ ] Verified all tests pass locally\n\n';
+              message += '📚 See [WORKFLOW.md](boilerplate/tests/playwright/WORKFLOW.md) for guidance.';
+            } else {
+              message += '✅ E2E tests included with code changes';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+
+  # Job 2: Run E2E tests
+  e2e-tests:
+    runs-on: ubuntu-latest
+    name: Run E2E Tests
+    needs: check-test-coverage
+    if: always() && needs.check-test-coverage.result == 'success'
+    
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Build frontend
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: http://localhost:8080
+      
+      - name: Start services
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d
+          sleep 30
+      
+      - name: Run E2E tests
+        run: npm run e2e
+        env:
+          FRONTEND_URL: http://localhost:8080
+          API_BASE_URL: http://localhost:8080
+          CI: true
+      
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 7
+
+  # Job 3: Block merge if tests fail
+  enforce-tests:
+    runs-on: ubuntu-latest
+    name: Enforce Test Requirements
+    needs: [check-test-coverage, e2e-tests]
+    if: always()
+    
+    steps:
+      - name: Check if all required jobs passed
+        run: |
+          COVERAGE_RESULT="${{ needs.check-test-coverage.result }}"
+          E2E_RESULT="${{ needs.e2e-tests.result }}"
+          
+          if [ "$COVERAGE_RESULT" != "success" ] || [ "$E2E_RESULT" != "success" ]; then
+            echo "❌ E2E test requirements not met"
+            echo "Coverage check: $COVERAGE_RESULT"
+            echo "E2E tests: $E2E_RESULT"
+            exit 1
+          else
+            echo "✅ All E2E test requirements passed"
+          fi
