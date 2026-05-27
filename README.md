@@ -8,13 +8,43 @@ Clean Architecture polyglot service template with verified boilerplate for Java,
 
 ## 🚀 Quick Start
 
-| For | Go To |
-|-----|-------|
-| **New to this template** | [Setup Checklist](docs/04-templates/02-quick-setup-checklist.md) |
-| **Java developer** | [Java Boilerplate Guide](boilerplate/java/AGENTS.md) |
-| **Python developer** | [Python Boilerplate Guide](boilerplate/python/AGENTS.md) |
-| **Frontend developer** | [React Boilerplate Guide](boilerplate/reactjs/AGENTS.md) |
-| **AI Agent** | [AI Tooling Guide](docs/01-agnostic/01-standards/13-agents.md) |
+### For New Projects
+
+**Interactive Setup Wizard:**
+```bash
+cd app-architecture-template
+./scripts/new-project.sh
+```
+
+This wizard will:
+- Ask about your project requirements (backend, frontend, security, deployment)
+- Copy only the boilerplates you need
+- Generate a customized `.env` file
+- Rename services in Docker Compose files
+- Initialize a Git repository
+- Create a project-specific setup guide
+
+**Manual Setup:**
+```bash
+# 1. Clone/fork this template
+git clone https://github.com/leonardsoetedjo/app-architecture-template.git my-project
+cd my-project
+
+# 2. Remove what you don't need
+rm -rf boilerplate/python    # If using Java only
+rm -rf boilerplate/java      # If using Python only
+rm -rf boilerplate/reactjs   # If no frontend
+
+# 3. Configure
+cp .env.example .env
+# Edit .env with your values
+
+# 4. Rename services in docker-compose files
+# Replace 'order-' with your service prefix
+
+# 5. Start
+docker compose up -d
+```
 
 ---
 
