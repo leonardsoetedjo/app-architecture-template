@@ -1,0 +1,111 @@
+# Architecture Team Review Requirements
+# Any changes to domain/application layers require architecture team approval
+# This prevents unauthorized architecture changes
+
+# Reference: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ===========================================================================
+# JAVA BOILERPLATE - Clean Architecture Critical Paths
+# ===========================================================================
+
+# Domain layer - Pure business logic, no frameworks
+/boilerplate/java/**/src/main/java/**/domain/**/@architecture-team
+/boilerplate/java/**/src/main/java/**/domain/**/
+/boilerplate/java/**/domain/**/
+
+# Application layer - Use cases, business rules
+/boilerplate/java/**/src/main/java/**/application/**/@architecture-team
+/boilerplate/java/**/src/main/java/**/application/**/
+/boilerplate/java/**/application/**/
+
+# Architecture tests - ArchUnit compliance
+/boilerplate/java/**/src/test/java/**/archunit/**/@architecture-team
+/boilerplate/java/**/src/test/java/**/archunit/**/
+
+# ===========================================================================
+# PYTHON BOILERPLATE - Clean Architecture Critical Paths
+# ===========================================================================
+
+# Domain layer - Pure business logic, no frameworks
+/boilerplate/python/**/src/domain/**/@architecture-team
+/boilerplate/python/**/domain/**/
+
+# Application layer - Use cases, business rules
+/boilerplate/python/**/src/application/**/@architecture-team
+/boilerplate/python/**/application/**/
+
+# Architecture tests
+/boilerplate/python/**/tests/archunit/**/@architecture-team
+/boilerplate/python/**/tests/architecture/**/@architecture-team
+
+# ===========================================================================
+# FRONTEND BOILERPLATE - Feature-Sliced Design Critical Paths
+# ===========================================================================
+
+# Domain layer - Business entities, no UI frameworks
+/boilerplate/frontend/**/src/domain/**/@architecture-team
+/boilerplate/frontend/**/domain/**/
+/boilerplate/quasar/**/src/domain/**/@architecture-team
+
+# Application layer - Use cases, state management
+/boilerplate/frontend/**/src/application/**/@architecture-team
+/boilerplate/frontend/**/application/**/
+/boilerplate/quasar/**/src/application/**/@architecture-team
+
+# Architecture validation
+/boilerplate/frontend/**/.dependency-cruiser.js
+/boilerplate/frontend/**/depcruise.config.js
+
+# ===========================================================================
+# ARCHITECTURE DOCUMENTATION
+# ===========================================================================
+
+# Core architecture docs
+/docs/01-agnostic/02-adrs/**/@architecture-team
+/docs/01-agnostic/01-standards/02-architecture.md
+/AGENTS.md
+
+# Standard Operating Procedures
+/docs/04-sops/**/@architecture-team
+
+# AI Agent standards
+/docs/01-agnostic/01-standards/13-agents.md
+/docs/01-agnostic/01-standards/14-agents-java.md
+/docs/01-agnostic/01-standards/15-agents-python.md
+/docs/01-agnostic/01-standards/16-agents-reactjs.md
+
+# ===========================================================================
+# INFRASTRUCTURE & DEPLOYMENT
+# ===========================================================================
+
+# Docker Compose - Dual-mode configuration
+/docker-compose.yml
+/docker-compose.standalone.yml
+/docker-compose.traefik.yml
+
+# Architecture guardrails scripts
+/scripts/architecture-pre-commit.sh
+/scripts/validate-commit-message.sh
+/scripts/check_python_architecture.py
+
+# GitHub Actions - Architecture gates
+/.github/workflows/architecture-gate.yml
+/.github/workflows/commit-validation.yml
+
+# ===========================================================================
+# NOTES
+# ===========================================================================
+#
+# To approve PRs touching these paths, you must be in @architecture-team
+# 
+# Adding members to @architecture-team:
+# 1. Go to repository Settings → Collaborators and teams
+# 2. Create or edit @architecture-team
+# 3. Add team members
+#
+# Bypassing this file:
+# - Changes to these paths REQUIRE approval from architecture team
+# - This is enforced by GitHub, cannot be bypassed
+# - Even repository administrators are subject to this (if configured)
+#
+# Related: Issue #82 (Make pre-commit unbypassable)

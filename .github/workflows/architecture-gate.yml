@@ -1,0 +1,116 @@
+name: Architecture Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  architecture-check:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        stack: [java, python, frontend]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Java setup and test
+      - name: Setup Java
+        if: matrix.stack == 'java'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Run ArchUnit tests (Java)
+        if: matrix.stack == 'java'
+        working-directory: boilerplate/java/order-service
+        run: mvn test -Dtest="*ArchUnit*,*LayersTest,*RulesTest" -q
+      
+      # Python setup and test
+      - name: Setup Python
+        if: matrix.stack == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install Python dependencies
+        if: matrix.stack == 'python'
+        working-directory: boilerplate/python/order-service
+        run: |
+          pip install poetry
+          poetry install
+      
+      - name: Run architecture tests (Python)
+        if: matrix.stack == 'python'
+        working-directory: boilerplate/python/order-service
+        run: poetry run pytest tests/archunit/ -v
+      
+      # Frontend setup and test
+      - name: Setup Node.js
+        if: matrix.stack == 'frontend'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: boilerplate/frontend/reactjs/package-lock.json
+      
+      - name: Install Frontend dependencies
+        if: matrix.stack == 'frontend'
+        working-directory: boilerplate/frontend/reactjs
+        run: npm ci
+      
+      - name: Run dependency-cruiser (Frontend)
+        if: matrix.stack == 'frontend'
+        working-directory: boilerplate/frontend/reactjs
+        run: npm run depcruise -- --validate
+      
+      # Explicit failure handling
+      - name: Block on architecture violations
+        if: failure()
+        run: |
+          echo "::error::Architecture violations detected. PR cannot merge."
+          echo "::error::Fix violations and push new commit to re-run checks."
+          echo ""
+          echo "Common violations:"
+          echo "  - Domain layer imports framework (Spring, JPA, FastAPI)"
+          echo "  - Application layer imports infrastructure"
+          echo "  - Missing architecture compliance evidence in commit"
+          echo ""
+          echo "To fix:"
+          echo "  1. Review the failed check above for specific violations"
+          echo "  2. Fix the violating imports or code structure"
+          echo "  3. Run: ./scripts/architecture-pre-commit.sh locally"
+          echo "  4. Commit with architecture evidence in message"
+          echo "  5. Push new commit to re-run checks"
+          exit 1
+      
+      # Upload architecture reports
+      - name: Upload Java ArchUnit report
+        if: matrix.stack == 'java' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arch-report-java
+          path: |
+            boilerplate/java/order-service/target/surefire-reports/
+            boilerplate/java/order-service/target/site/
+      
+      - name: Upload Python pytest report
+        if: matrix.stack == 'python' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arch-report-python
+          path: |
+            boilerplate/python/order-service/htmlcov/
+            boilerplate/python/order-service/.pytest_cache/
+      
+      - name: Upload Frontend dependency report
+        if: matrix.stack == 'frontend' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arch-report-frontend
+          path: |
+            boilerplate/frontend/reactjs/dependency-cruiser-output/

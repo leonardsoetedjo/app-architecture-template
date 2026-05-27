@@ -1,0 +1,63 @@
+name: Commit Message Validation
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate-commits:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Get all commits
+      
+      - name: Check architecture compliance evidence
+        run: |
+          #!/usr/bin/env bash
+          set -e
+          
+          echo "🔍 Validating commit messages for architecture compliance evidence..."
+          echo ""
+          
+          # Get all commits in PR
+          COMMITS=$(git log origin/${{ github.base_ref }}..HEAD --pretty=format:"%H|%s|%b" --no-merges)
+          
+          if [ -z "$COMMITS" ]; then
+            echo "✅ No commits to validate (PR may be empty or all merged)"
+            exit 0
+          fi
+          
+          FAILED=0
+          COMMIT_COUNT=0
+          
+          echo "$COMMITS" | while IFS='|' read -r sha subject body; do
+            COMMIT_COUNT=$((COMMIT_COUNT + 1))
+            
+            # Combine subject and body for full message
+            FULL_MSG="$subject"$'\n'"$body"
+            
+            # Check for architecture compliance evidence
+            if ! echo "$FULL_MSG" | grep -qi "Architecture:"; then
+              echo "::error::Commit #$COMMIT_COUNT missing architecture compliance evidence:"
+              echo "::error::  SHA: $sha"
+              echo "::error::  Subject: $subject"
+              echo "::error::"
+              echo "::error::Required format in commit message body:"
+              echo "::error::  Architecture: ./scripts/architecture-pre-commit.sh PASSED"
+              echo "::error::    - Duration: <5000ms"
+              echo "::error::    - Java architecture: OK"
+              echo "::error::    - Python architecture: OK"
+              echo "::error::    - Frontend architecture: OK"
+              echo "::error::    - E2E tests: OK"
+              echo ""
+              echo "To fix:"
+              echo "  git rebase -i ${sha}^"
+              echo "  # Mark commit for 'reword'"
+              echo "  # Add 'Architecture: PASSED' block to message"
+              exit 1
+            fi
+          done
+          
+          echo "✅ All commits include architecture compliance evidence"

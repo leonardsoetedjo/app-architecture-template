@@ -285,6 +285,193 @@ That file contains comprehensive guides for:
 
 ---
 
+## Mandatory Architecture Compliance (Phase 2.1)
+
+**CRITICAL:** Architecture compliance is now **MANDATORY**, not advisory. AI agents cannot skip compliance checks.
+
+### 🛡️ Enforcement Layers
+
+| Layer | Mechanism | Bypassable? | When |
+|-------|-----------|-------------|------|
+| **Pre-commit hook** | `./scripts/architecture-pre-commit.sh` | ❌ No (blocked) | Before every commit |
+| **Commit message** | Must include "Architecture: PASSED" | ❌ No (blocked) | Before every commit |
+| **CI/CD** | GitHub Actions validation | ❌ No (PR blocked) | On every PR |
+| **Skill enforcement** | `verification-before-completion` | ❌ No (core requirement) | Before claiming complete |
+
+### ✅ Required Workflow
+
+**BEFORE any commit:**
+
+```bash
+# 1. Run architecture pre-commit check
+./scripts/architecture-pre-commit.sh
+
+# Expected output (MUST appear in commit message):
+# Architecture: ./scripts/architecture-pre-commit.sh PASSED
+#   - Duration: <5000ms
+#   - Java architecture: OK
+#   - Python architecture: OK
+#   - Frontend architecture: OK
+#   - E2E tests: OK
+
+# 2. Commit with architecture evidence in message
+git commit -m "feat: add order validation (#123)" -m "
+- Added OrderValidator in domain layer
+- Created validation use case
+- Architecture: ./scripts/architecture-pre-commit.sh PASSED
+  - Duration: 2340ms
+  - Java architecture: OK
+  - Python architecture: OK
+  - Frontend architecture: OK
+  - E2E tests: OK
+"
+```
+
+### 📋 Commit Message Format
+
+**Required format:**
+
+```
+feat: add order validation (#123)
+
+- Added OrderValidator in domain layer
+- Created validation use case in application layer
+- Added tests with 95% coverage
+
+Architecture: ./scripts/architecture-pre-commit.sh PASSED
+  - Duration: 2340ms
+  - Java architecture: OK
+  - Python architecture: OK
+  - Frontend architecture: OK
+  - E2E tests: OK
+```
+
+**What happens if you skip this:**
+- ❌ Pre-commit hook blocks commit
+- ❌ Commit-msg hook blocks commit
+- ❌ CI/CD fails on PR
+- ❌ Task marked as incomplete
+
+### 🔧 Skills Integration
+
+**Modified skills:**
+
+- `verification-before-completion` - Now requires architecture evidence table
+- `architecture-compliance-check` - Must be loaded before ANY code change
+- `test-driven-development` - Architecture checks part of RED-GREEN cycle
+
+**Skill enforcement:**
+
+```markdown
+From verification-before-completion skill:
+
+| Evidence Type | Required Command | When Required |
+|---------------|------------------|---------------|
+| Architecture compliance | `./scripts/architecture-pre-commit.sh` | BEFORE any commit |
+| Tests passing | `pytest tests/ -q` or `mvn test` | Before claiming tests pass |
+| Linter clean | `eslint .` or `mvn checkstyle:check` | Before claiming code quality |
+
+Missing any required evidence = task NOT complete
+```
+
+### 🚨 Violation Consequences
+
+**If architecture compliance is skipped:**
+
+1. **Immediate block** - Commit/PR rejected
+2. **Auto-created issue** - GitHub issue created for violation
+3. **Escalation** - Repeat violations trigger architecture review
+4. **Task incomplete** - Cannot mark task complete without evidence
+
+### 📊 Success Metrics
+
+| Metric | Target |
+|--------|--------|
+| Architecture compliance rate | 100% (mandatory) |
+| Evidence in commits | 100% (enforced) |
+| Violations per week | 0 (blocked) |
+| Time to detect violations | <5 seconds (pre-commit) |
+
+---
+
+## GitHub Issues Workflow
+
+**CRITICAL:** AI agents MUST use GitHub Issues for task tracking. This is the single source of truth for project work.
+
+### At Project Start
+
+**When cloning a new project or starting work:**
+
+1. **List open issues** immediately:
+   ```bash
+   gh issue list --state open --json number,title,labels,assignee,milestone
+   ```
+
+2. **Review issue details** for context:
+   ```bash
+   gh issue view <issue-number>
+   ```
+
+3. **Assign yourself** to an issue before starting:
+   ```bash
+   gh issue edit <issue-number> --add-assignee <your-username>
+   ```
+
+4. **Comment to indicate work started**:
+   ```bash
+   gh issue comment <issue-number> --body "Starting work on this now."
+   ```
+
+### During Implementation
+
+- **Reference the issue** in commit messages: `feat: add order validation (#123)`
+- **Update progress** with comments for multi-day tasks
+- **Link PRs** automatically using `gh pr create --issue <issue-number>`
+
+### After Task Completion
+
+**MANDATORY before marking task complete:**
+
+1. **Verify all acceptance criteria** from the issue are met
+2. **Comment with summary** of changes:
+   ```bash
+   gh issue comment <issue-number> --body "
+   ## Implementation Summary
+   - Added OrderValidator in domain layer
+   - Created validation use case in application layer
+   - Added tests with 95% coverage
+   - Updated AGENTS.md with validation patterns
+   
+   PR: #124
+   "
+   ```
+
+3. **Close the issue**:
+   ```bash
+   gh issue close <issue-number>
+   ```
+
+4. **Optional: Link to PR** if not auto-closed:
+   ```bash
+   gh issue edit <issue-number> --milestone "v1.0"
+   ```
+
+### Automation Keywords
+
+Use these keywords in PR descriptions to auto-close issues:
+- `Closes #123`
+- `Fixes #123`
+- `Resolves #123`
+
+### Never Do This
+
+- ❌ Create markdown files in repo for task tracking
+- ❌ Work on untracked features without an issue
+- ❌ Close issues without verification
+- ❌ Leave issues assigned after abandoning work
+
+---
+
 ## Serena + Context-Mode Integration
 
 This workspace has Serena MCP and Context-Mode activated for enhanced AI agent support:
