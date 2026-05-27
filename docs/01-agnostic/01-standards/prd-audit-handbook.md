@@ -1,3 +1,12 @@
+---
+name: "PRD Audit Handbook"
+type: "guideline"
+audience: ["human", "ai-agent"]
+related: ["prd-audit-process", "prd-audit-checklist", "prd-audit-report-template"]
+tags: ["prd", "audit", "requirements", "checklist", "review"]
+last_verified: "2026-05-27"
+---
+
 # PRD Audit Handbook
 
 **Purpose**: Single source of truth for PRD (Product Requirements Document) audits.

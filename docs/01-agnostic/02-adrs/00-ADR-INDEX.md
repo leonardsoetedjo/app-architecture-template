@@ -1,3 +1,12 @@
+---
+name: "Architecture Decision Records (ADR) Index"
+type: "index"
+audience: ["human", "ai-agent"]
+related: ["adr-01", "adr-02", "adr-03", "adr-04", "adr-05", "adr-06", "adr-07", "adr-08", "adr-10", "adr-11"]
+tags: ["adr", "index", "catalog", "decisions", "architecture"]
+last_verified: "2026-05-27"
+---
+
 # Architecture Decision Records (ADR) Index
 
 **Purpose**: Complete catalog of all Architecture Decision Records with status and numbering explanation.

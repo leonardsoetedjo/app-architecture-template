@@ -1,3 +1,12 @@
+---
+name: "Real-time Architecture Monitoring"
+type: "sop"
+audience: ["human", "ai-agent"]
+related: ["sop-01", "sop-02", "architecture-monitor", "check-file-architecture"]
+tags: ["monitoring", "real-time", "architecture", "auto-revert", "violations"]
+last_verified: "2026-05-27"
+---
+
 # Real-time Architecture Monitoring
 
 **Purpose:** Catch architecture violations as AI agents write code, before commit.

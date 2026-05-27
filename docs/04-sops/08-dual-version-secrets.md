@@ -1,3 +1,12 @@
+---
+name: "Dual-Version Secret Management - Implementation Examples"
+type: "sop"
+audience: ["human", "ai-agent"]
+related: ["sop-08", "rotate-secret", "secret-rotation-workflow"]
+tags: ["secrets", "rotation", "dual-version", "jwt", "security", "zero-downtime"]
+last_verified: "2026-05-27"
+---
+
 # Dual-Version Secret Management - Implementation Examples
 
 **Purpose:** Provide reference implementations for dual-version secret management with zero-downtime rotation.

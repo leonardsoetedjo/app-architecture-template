@@ -1,3 +1,12 @@
+---
+name: "GitHub Branch Protection Configuration Guide"
+type: "sop"
+audience: ["human", "ai-agent"]
+related: ["sop-04", "codeowners", "architecture-gate"]
+tags: ["github", "branch-protection", "enforcement", "codeowners", "ci-cd"]
+last_verified: "2026-05-27"
+---
+
 # GitHub Branch Protection Configuration Guide
 
 **Purpose:** Configure server-side enforcement that cannot be bypassed, even with `git commit --no-verify`.
