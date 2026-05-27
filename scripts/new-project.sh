@@ -5,12 +5,20 @@
 # Interactive script to create a new project from this template.
 # Copies selected boilerplates, generates .env, and configures Docker Compose.
 #
-# Usage: ./scripts/new-project.sh
+# Usage: ./scripts/new-project.sh [OPTIONS]
+#
+# Options:
+#   --help, -h          Show this help message and exit
+#   --dry-run           Show what would be created without creating anything
+#   --config FILE       Load configuration from JSON file
+#   --save-config FILE  Save configuration to JSON file after completion
+#   --no-color          Disable colored output
+#   --yes, -y           Accept defaults without prompting (requires --config)
 #
 # Requirements:
 #   - Bash 4.0+
-#   - Standard Unix tools (cp, sed, mkdir, openssl)
-#   - Interactive terminal (not designed for piped input)
+#   - Standard Unix tools (cp, sed, mkdir, openssl, jq for config files)
+#   - Interactive terminal (unless using --config with --yes)
 #
 # What it does:
 #   1. Asks ~15 questions about your project requirements
@@ -24,24 +32,105 @@
 #   Creates a new project directory in the parent folder:
 #   ../<project-name>/
 #
-# Example:
+# Examples:
+#   # Interactive mode (default)
 #   $ ./scripts/new-project.sh
-#   Project name: order-service
-#   Service prefix: order
-#   Backend: 1 (Java)
-#   Frontend: 1 (ReactJS)
-#   ... (continues interactively)
-#   ✅ Project created: ../order-service
+#
+#   # Show help
+#   $ ./scripts/new-project.sh --help
+#
+#   # Dry run (preview only)
+#   $ ./scripts/new-project.sh --dry-run
+#
+#   # Load from config file
+#   $ ./scripts/new-project.sh --config my-project.json
+#
+#   # Save config after completion
+#   $ ./scripts/new-project.sh --save-config my-project.json
+#
+#   # Non-interactive with config
+#   $ ./scripts/new-project.sh --config my-project.json --yes
+#
+# Config File Format (JSON):
+# {
+#   "project_name": "order-service",
+#   "service_prefix": "order",
+#   "repo_url": "https://github.com/org/order-service",
+#   "backend_stack": "java",
+#   "frontend_stack": "reactjs",
+#   "enable_mfa": true,
+#   "mfa_methods": "totp",
+#   "jwt_expiry": 60,
+#   "enable_rate_limit": false,
+#   "db_name": "order_db",
+#   "db_user": "app_user",
+#   "generate_password": true,
+#   "deploy_mode": "standalone",
+#   "traefik_host": "order.example.com",
+#   "enable_metrics": true,
+#   "enable_tracing": false
+# }
 #
 
 set -e
 
+# Default values
+DRY_RUN=false
+CONFIG_FILE=""
+SAVE_CONFIG_FILE=""
+NO_COLOR=false
+YES_MODE=false
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help|-h)
+            # Extract and display help from file header
+            sed -n '2,/^$/p' "$0" | sed 's/^# \?//'
+            exit 0
+            ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        --config)
+            CONFIG_FILE="$2"
+            shift 2
+            ;;
+        --save-config)
+            SAVE_CONFIG_FILE="$2"
+            shift 2
+            ;;
+        --no-color)
+            NO_COLOR=true
+            shift
+            ;;
+        --yes|-y)
+            YES_MODE=true
+            shift
+            ;;
+        *)
+            echo "Error: Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
 # Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+if [ "$NO_COLOR" = true ]; then
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    NC=''
+else
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'
+    NC='\033[0m'
+fi
 
 # Helper functions
 print_header() {
@@ -62,74 +151,200 @@ print_info() {
     echo -e "${YELLOW}ℹ${NC} $1"
 }
 
+print_warning() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
 # Get script directory (works from any location)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Check if running in non-interactive mode (piped input)
-if [ ! -t 0 ]; then
+# Load configuration from file if provided
+if [ -n "$CONFIG_FILE" ]; then
+    if [ ! -f "$CONFIG_FILE" ]; then
+        print_error "Config file not found: $CONFIG_FILE"
+        exit 1
+    fi
+    
+    # Check if jq is available
+    if ! command -v jq &> /dev/null; then
+        print_error "jq is required for config file support. Install with: apt install jq"
+        exit 1
+    fi
+    
+    print_info "Loading configuration from: $CONFIG_FILE"
+    
+    # Load values from JSON config
+    PROJECT_NAME=$(jq -r '.project_name // empty' "$CONFIG_FILE")
+    SERVICE_PREFIX=$(jq -r '.service_prefix // empty' "$CONFIG_FILE")
+    REPO_URL=$(jq -r '.repo_url // empty' "$CONFIG_FILE")
+    BACKEND_STACK=$(jq -r '.backend_stack // empty' "$CONFIG_FILE")
+    FRONTEND_STACK=$(jq -r '.frontend_stack // empty' "$CONFIG_FILE")
+    ENABLE_MFA=$(jq -r '.enable_mfa // false' "$CONFIG_FILE")
+    MFA_METHODS=$(jq -r '.mfa_methods // "totp"' "$CONFIG_FILE")
+    JWT_EXPIRY=$(jq -r '.jwt_expiry // 60' "$CONFIG_FILE")
+    ENABLE_RATE_LIMIT=$(jq -r '.enable_rate_limit // false' "$CONFIG_FILE")
+    DB_NAME=$(jq -r '.db_name // empty' "$CONFIG_FILE")
+    DB_USER=$(jq -r '.db_user // "app_user"' "$CONFIG_FILE")
+    GENERATE_PASSWORD=$(jq -r '.generate_password // true' "$CONFIG_FILE")
+    DEPLOY_MODE_NAME=$(jq -r '.deploy_mode // "standalone"' "$CONFIG_FILE")
+    TRAEFIK_HOST=$(jq -r '.traefik_host // empty' "$CONFIG_FILE")
+    ENABLE_METRICS=$(jq -r '.enable_metrics // true' "$CONFIG_FILE")
+    ENABLE_TRACING=$(jq -r '.enable_tracing // false' "$CONFIG_FILE")
+    TRACING_ENDPOINT=$(jq -r '.tracing_endpoint // empty' "$CONFIG_FILE")
+    
+    # Convert string values to menu selections
+    case $BACKEND_STACK in
+        java) BACKEND_CHOICE=1 ;;
+        python) BACKEND_CHOICE=2 ;;
+        both) BACKEND_CHOICE=3 ;;
+        *) BACKEND_CHOICE="" ;;
+    esac
+    
+    case $FRONTEND_STACK in
+        reactjs) FRONTEND_CHOICE=1 ;;
+        quasar) FRONTEND_CHOICE=2 ;;
+        none) FRONTEND_CHOICE=3 ;;
+        *) FRONTEND_CHOICE="" ;;
+    esac
+    
+    case $DEPLOY_MODE_NAME in
+        fleet) DEPLOY_MODE=1 ;;
+        standalone) DEPLOY_MODE=2 ;;
+        hybrid) DEPLOY_MODE=3 ;;
+        *) DEPLOY_MODE="" ;;
+    esac
+    
+    # Convert boolean strings
+    [ "$ENABLE_MFA" = "true" ] && ENABLE_MFA_INPUT="y" || ENABLE_MFA_INPUT="n"
+    [ "$ENABLE_RATE_LIMIT" = "true" ] && RATE_LIMIT_INPUT="y" || RATE_LIMIT_INPUT="n"
+    [ "$GENERATE_PASSWORD" = "true" ] && GEN_PASS_INPUT="y" || GEN_PASS_INPUT="n"
+    [ "$ENABLE_METRICS" = "true" ] && METRICS_INPUT="y" || METRICS_INPUT="n"
+    [ "$ENABLE_TRACING" = "true" ] && TRACING_INPUT="y" || TRACING_INPUT="n"
+    
+    print_step "Configuration loaded successfully"
+fi
+
+# Check if running in non-interactive mode
+if [ "$YES_MODE" = true ] && [ -z "$CONFIG_FILE" ]; then
+    print_error "--yes mode requires --config FILE"
+    exit 1
+fi
+
+if [ "$YES_MODE" = true ]; then
+    NON_INTERACTIVE=true
+elif [ ! -t 0 ]; then
     NON_INTERACTIVE=true
 else
     NON_INTERACTIVE=false
 fi
 
-print_header "🚀 New Project Setup Wizard"
-echo ""
-echo "This wizard will help you create a new project from the template."
-echo "Answer the questions below to configure your project."
-echo ""
+# Validate required config values when using --yes
+if [ "$YES_MODE" = true ]; then
+    missing_vars=()
+    [ -z "$PROJECT_NAME" ] && missing_vars+=("project_name")
+    [ -z "$SERVICE_PREFIX" ] && missing_vars+=("service_prefix")
+    [ -z "$BACKEND_CHOICE" ] && missing_vars+=("backend_stack")
+    [ -z "$FRONTEND_CHOICE" ] && missing_vars+=("frontend_stack")
+    
+    if [ ${#missing_vars[@]} -gt 0 ]; then
+        print_error "Missing required config values: ${missing_vars[*]}"
+        exit 1
+    fi
+fi
+
+# Show header unless in dry-run mode
+if [ "$DRY_RUN" = false ]; then
+    print_header "🚀 New Project Setup Wizard"
+    echo ""
+    echo "This wizard will help you create a new project from the template."
+    if [ "$NON_INTERACTIVE" = true ]; then
+        echo "Running in non-interactive mode with configuration."
+    else
+        echo "Answer the questions below to configure your project."
+    fi
+    echo ""
+fi
 
 # =============================================================================
 # Step 1: Project Identity
 # =============================================================================
-print_header "Step 1: Project Identity"
-echo ""
+if [ "$DRY_RUN" = false ]; then
+    print_header "Step 1: Project Identity"
+    echo ""
+fi
 
-read -p "Project name (e.g., order-service, inventory-management): " PROJECT_NAME
+if [ -z "$PROJECT_NAME" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        print_error "PROJECT_NAME not set in config"
+        exit 1
+    fi
+    read -p "Project name (e.g., order-service, inventory-management): " PROJECT_NAME
+fi
+
 if [ -z "$PROJECT_NAME" ]; then
     print_error "Project name is required"
     exit 1
 fi
 
-read -p "Service prefix (e.g., order, inventory, user): " SERVICE_PREFIX
+if [ -z "$SERVICE_PREFIX" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        print_error "SERVICE_PREFIX not set in config"
+        exit 1
+    fi
+    read -p "Service prefix (e.g., order, inventory, user): " SERVICE_PREFIX
+fi
+
 if [ -z "$SERVICE_PREFIX" ]; then
     print_error "Service prefix is required"
     exit 1
 fi
 
-read -p "Repository URL (optional, e.g., https://github.com/your-org/$PROJECT_NAME): " REPO_URL
+if [ -z "$REPO_URL" ] && [ "$NON_INTERACTIVE" = false ]; then
+    read -p "Repository URL (optional, e.g., https://github.com/your-org/$PROJECT_NAME): " REPO_URL
+fi
 
-print_step "Project: $PROJECT_NAME (prefix: $SERVICE_PREFIX)"
+if [ "$DRY_RUN" = false ]; then
+    print_step "Project: $PROJECT_NAME (prefix: $SERVICE_PREFIX)"
+fi
 
 # =============================================================================
 # Step 2: Backend Stack Selection
 # =============================================================================
-echo ""
-print_header "Step 2: Backend Stack"
-echo ""
-echo "Select your backend technology:"
-echo "  [1] Java (Spring Boot 3.4+ with PostgreSQL, Maven, ArchUnit)"
-echo "  [2] Python (FastAPI with PostgreSQL, Poetry, pytest)"
-echo "  [3] Both (Polyglot architecture)"
-echo ""
+if [ "$DRY_RUN" = false ]; then
+    echo ""
+    print_header "Step 2: Backend Stack"
+    echo ""
+fi
 
-read -p "Select [1-3]: " BACKEND_CHOICE
+if [ -z "$BACKEND_CHOICE" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        print_error "BACKEND_STACK not set in config"
+        exit 1
+    fi
+    echo "Select your backend technology:"
+    echo "  [1] Java (Spring Boot 3.4+ with PostgreSQL, Maven, ArchUnit)"
+    echo "  [2] Python (FastAPI with PostgreSQL, Poetry, pytest)"
+    echo "  [3] Both (Polyglot architecture)"
+    echo ""
+    read -p "Select [1-3]: " BACKEND_CHOICE
+fi
 
 case $BACKEND_CHOICE in
     1)
         BACKEND_STACK="java"
-        print_step "Backend: Java (Spring Boot)"
+        [ "$DRY_RUN" = false ] && print_step "Backend: Java (Spring Boot)"
         ;;
     2)
         BACKEND_STACK="python"
-        print_step "Backend: Python (FastAPI)"
+        [ "$DRY_RUN" = false ] && print_step "Backend: Python (FastAPI)"
         ;;
     3)
         BACKEND_STACK="both"
-        print_step "Backend: Both (Java + Python)"
+        [ "$DRY_RUN" = false ] && print_step "Backend: Both (Java + Python)"
         ;;
     *)
-        print_error "Invalid selection. Must be 1, 2, or 3."
+        print_error "Invalid backend selection. Must be 1, 2, or 3."
         exit 1
         ;;
 esac
@@ -137,32 +352,40 @@ esac
 # =============================================================================
 # Step 3: Frontend Stack Selection
 # =============================================================================
-echo ""
-print_header "Step 3: Frontend Stack"
-echo ""
-echo "Select your frontend technology:"
-echo "  [1] ReactJS (React 18, TypeScript, Ant Design 5, Zustand, Vite)"
-echo "  [2] Quasar (Vue 3, TypeScript, Quasar 2, Pinia, Vite)"
-echo "  [3] None (API only)"
-echo ""
+if [ "$DRY_RUN" = false ]; then
+    echo ""
+    print_header "Step 3: Frontend Stack"
+    echo ""
+fi
 
-read -p "Select [1-3]: " FRONTEND_CHOICE
+if [ -z "$FRONTEND_CHOICE" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        print_error "FRONTEND_STACK not set in config"
+        exit 1
+    fi
+    echo "Select your frontend technology:"
+    echo "  [1] ReactJS (React 18, TypeScript, Ant Design 5, Zustand, Vite)"
+    echo "  [2] Quasar (Vue 3, TypeScript, Quasar 2, Pinia, Vite)"
+    echo "  [3] None (API only)"
+    echo ""
+    read -p "Select [1-3]: " FRONTEND_CHOICE
+fi
 
 case $FRONTEND_CHOICE in
     1)
         FRONTEND_STACK="reactjs"
-        print_step "Frontend: ReactJS"
+        [ "$DRY_RUN" = false ] && print_step "Frontend: ReactJS"
         ;;
     2)
         FRONTEND_STACK="quasar"
-        print_step "Frontend: Quasar"
+        [ "$DRY_RUN" = false ] && print_step "Frontend: Quasar"
         ;;
     3)
         FRONTEND_STACK="none"
-        print_step "Frontend: None (API only)"
+        [ "$DRY_RUN" = false ] && print_step "Frontend: None (API only)"
         ;;
     *)
-        print_error "Invalid selection. Must be 1, 2, or 3."
+        print_error "Invalid frontend selection. Must be 1, 2, or 3."
         exit 1
         ;;
 esac
@@ -170,94 +393,170 @@ esac
 # =============================================================================
 # Step 4: Security Configuration
 # =============================================================================
-echo ""
-print_header "Step 4: Security Configuration"
-echo ""
-
-read -p "Enable MFA/2FA? [y/N]: " ENABLE_MFA_INPUT
-ENABLE_MFA=$([ "$ENABLE_MFA_INPUT" = "y" ] || [ "$ENABLE_MFA_INPUT" = "Y" ] && echo "true" || echo "false")
-
-if [ "$ENABLE_MFA" = "true" ]; then
+if [ "$DRY_RUN" = false ]; then
     echo ""
-    echo "Select MFA methods:"
-    echo "  [1] TOTP (Google Authenticator, Authy)"
-    echo "  [2] WebAuthn (Hardware keys, biometrics)"
-    echo "  [3] Both"
+    print_header "Step 4: Security Configuration"
     echo ""
-    read -p "Select [1-3]: " MFA_CHOICE
-    
-    case $MFA_CHOICE in
-        1) MFA_METHODS="totp" ;;
-        2) MFA_METHODS="webauthn" ;;
-        3) MFA_METHODS="totp,webauthn" ;;
-        *) MFA_METHODS="totp" ;;
-    esac
-    print_step "MFA: $MFA_METHODS"
-else
+fi
+
+if [ -z "$ENABLE_MFA_INPUT" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        ENABLE_MFA_INPUT="n"
+    else
+        read -p "Enable MFA/2FA? [y/N]: " ENABLE_MFA_INPUT
+    fi
+fi
+
+if [ -z "$ENABLE_MFA" ]; then
+    ENABLE_MFA=$([ "$ENABLE_MFA_INPUT" = "y" ] || [ "$ENABLE_MFA_INPUT" = "Y" ] && echo "true" || echo "false")
+fi
+
+if [ "$ENABLE_MFA" = "true" ] && [ -z "$MFA_METHODS" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        MFA_METHODS="totp"
+    else
+        echo ""
+        echo "Select MFA methods:"
+        echo "  [1] TOTP (Google Authenticator, Authy)"
+        echo "  [2] WebAuthn (Hardware keys, biometrics)"
+        echo "  [3] Both"
+        echo ""
+        read -p "Select [1-3]: " MFA_CHOICE
+        
+        case $MFA_CHOICE in
+            1) MFA_METHODS="totp" ;;
+            2) MFA_METHODS="webauthn" ;;
+            3) MFA_METHODS="totp,webauthn" ;;
+            *) MFA_METHODS="totp" ;;
+        esac
+    fi
+    [ "$DRY_RUN" = false ] && print_step "MFA: $MFA_METHODS"
+elif [ "$DRY_RUN" = false ]; then
     MFA_METHODS="none"
     print_step "MFA: Disabled"
 fi
 
-read -p "JWT expiry minutes [60]: " JWT_EXPIRY
-JWT_EXPIRY=${JWT_EXPIRY:-60}
+if [ -z "$JWT_EXPIRY" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        JWT_EXPIRY=60
+    else
+        read -p "JWT expiry minutes [60]: " JWT_EXPIRY
+        JWT_EXPIRY=${JWT_EXPIRY:-60}
+    fi
+fi
 
-read -p "Rate limiting enabled? [y/N]: " RATE_LIMIT_INPUT
-ENABLE_RATE_LIMIT=$([ "$RATE_LIMIT_INPUT" = "y" ] || [ "$RATE_LIMIT_INPUT" = "Y" ] && echo "true" || echo "false")
+if [ -z "$RATE_LIMIT_INPUT" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        RATE_LIMIT_INPUT="n"
+    else
+        read -p "Rate limiting enabled? [y/N]: " RATE_LIMIT_INPUT
+    fi
+fi
+
+if [ -z "$ENABLE_RATE_LIMIT" ]; then
+    ENABLE_RATE_LIMIT=$([ "$RATE_LIMIT_INPUT" = "y" ] || [ "$RATE_LIMIT_INPUT" = "Y" ] && echo "true" || echo "false")
+fi
 
 # =============================================================================
 # Step 5: Database Configuration
 # =============================================================================
-echo ""
-print_header "Step 5: Database Configuration"
-echo ""
-
-read -p "Database name [${SERVICE_PREFIX}_db]: " DB_NAME
-DB_NAME=${DB_NAME:-${SERVICE_PREFIX}_db}
-
-read -p "Database user [app_user]: " DB_USER
-DB_USER=${DB_USER:-app_user}
-
-# Generate secure password if not provided
-read -p "Generate secure database password? [Y/n]: " GEN_PASS_INPUT
-if [ "$GEN_PASS_INPUT" = "n" ] || [ "$GEN_PASS_INPUT" = "N" ]; then
-    read -sp "Database password: " DB_PASSWORD
+if [ "$DRY_RUN" = false ]; then
     echo ""
-else
-    DB_PASSWORD=$(openssl rand -base64 32)
-    print_step "Generated secure database password"
+    print_header "Step 5: Database Configuration"
+    echo ""
+fi
+
+if [ -z "$DB_NAME" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        DB_NAME="${SERVICE_PREFIX}_db"
+    else
+        read -p "Database name [${SERVICE_PREFIX}_db]: " DB_NAME
+        DB_NAME=${DB_NAME:-${SERVICE_PREFIX}_db}
+    fi
+fi
+
+if [ -z "$DB_USER" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        DB_USER="app_user"
+    else
+        read -p "Database user [app_user]: " DB_USER
+        DB_USER=${DB_USER:-app_user}
+    fi
+fi
+
+if [ -z "$GEN_PASS_INPUT" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        GEN_PASS_INPUT="y"
+    else
+        read -p "Generate secure database password? [Y/n]: " GEN_PASS_INPUT
+    fi
+fi
+
+if [ -z "$DB_PASSWORD" ]; then
+    if [ "$GEN_PASS_INPUT" = "n" ] || [ "$GEN_PASS_INPUT" = "N" ]; then
+        if [ "$NON_INTERACTIVE" = true ]; then
+            print_error "Manual password entry not supported in non-interactive mode. Set generate_password=true in config."
+            exit 1
+        fi
+        read -sp "Database password: " DB_PASSWORD
+        echo ""
+    else
+        DB_PASSWORD=$(openssl rand -base64 32)
+        [ "$DRY_RUN" = false ] && print_step "Generated secure database password"
+    fi
 fi
 
 # =============================================================================
 # Step 6: Deployment Configuration
 # =============================================================================
-echo ""
-print_header "Step 6: Deployment Mode"
-echo ""
-echo "Select deployment strategy:"
-echo "  [1] Fleet Mode (Traefik + TLS + Tailscale)"
-echo "  [2] Standalone Mode (direct localhost ports)"
-echo "  [3] Hybrid (Fleet for prod, Standalone for dev)"
-echo ""
+if [ "$DRY_RUN" = false ]; then
+    echo ""
+    print_header "Step 6: Deployment Mode"
+    echo ""
+fi
 
-read -p "Select [1-3]: " DEPLOY_MODE
+if [ -z "$DEPLOY_MODE" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        DEPLOY_MODE=2  # Default to standalone
+    else
+        echo "Select deployment strategy:"
+        echo "  [1] Fleet Mode (Traefik + TLS + Tailscale)"
+        echo "  [2] Standalone Mode (direct localhost ports)"
+        echo "  [3] Hybrid (Fleet for prod, Standalone for dev)"
+        echo ""
+        read -p "Select [1-3]: " DEPLOY_MODE
+    fi
+fi
 
 case $DEPLOY_MODE in
     1)
         DEPLOY_MODE_NAME="fleet"
-        read -p "Tailscale hostname (e.g., $SERVICE_PREFIX.piranha-broadnose.ts.net): " TRAEFIK_HOST
-        print_step "Deployment: Fleet (Traefik + TLS)"
+        if [ -z "$TRAEFIK_HOST" ]; then
+            if [ "$NON_INTERACTIVE" = true ]; then
+                print_error "TRAEFIK_HOST required for fleet mode in config"
+                exit 1
+            fi
+            read -p "Tailscale hostname (e.g., $SERVICE_PREFIX.piranha-broadnose.ts.net): " TRAEFIK_HOST
+        fi
+        [ "$DRY_RUN" = false ] && print_step "Deployment: Fleet (Traefik + TLS)"
         ;;
     2)
         DEPLOY_MODE_NAME="standalone"
-        print_step "Deployment: Standalone (localhost)"
+        [ "$DRY_RUN" = false ] && print_step "Deployment: Standalone (localhost)"
         ;;
     3)
         DEPLOY_MODE_NAME="hybrid"
-        read -p "Tailscale hostname for production: " TRAEFIK_HOST
-        print_step "Deployment: Hybrid"
+        if [ -z "$TRAEFIK_HOST" ]; then
+            if [ "$NON_INTERACTIVE" = true ]; then
+                print_error "TRAEFIK_HOST required for hybrid mode in config"
+                exit 1
+            fi
+            read -p "Tailscale hostname for production: " TRAEFIK_HOST
+        fi
+        [ "$DRY_RUN" = false ] && print_step "Deployment: Hybrid"
         ;;
     *)
-        print_error "Invalid selection. Must be 1, 2, or 3."
+        print_error "Invalid deployment selection. Must be 1, 2, or 3."
         exit 1
         ;;
 esac
@@ -265,18 +564,99 @@ esac
 # =============================================================================
 # Step 7: Monitoring Configuration
 # =============================================================================
-echo ""
-print_header "Step 7: Monitoring & Observability"
-echo ""
+if [ "$DRY_RUN" = false ]; then
+    echo ""
+    print_header "Step 7: Monitoring & Observability"
+    echo ""
+fi
 
-read -p "Enable Prometheus metrics? [Y/n]: " METRICS_INPUT
-ENABLE_METRICS=$([ "$METRICS_INPUT" = "n" ] || [ "$METRICS_INPUT" = "N" ] && echo "false" || echo "true")
+if [ -z "$METRICS_INPUT" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        METRICS_INPUT="y"
+    else
+        read -p "Enable Prometheus metrics? [Y/n]: " METRICS_INPUT
+    fi
+fi
 
-read -p "Enable distributed tracing? [y/N]: " TRACING_INPUT
-ENABLE_TRACING=$([ "$TRACING_INPUT" = "y" ] || [ "$TRACING_INPUT" = "Y" ] && echo "true" || echo "false")
+if [ -z "$ENABLE_METRICS" ]; then
+    ENABLE_METRICS=$([ "$METRICS_INPUT" = "n" ] || [ "$METRICS_INPUT" = "N" ] && echo "false" || echo "true")
+fi
 
-if [ "$ENABLE_TRACING" = "true" ]; then
+if [ -z "$TRACING_INPUT" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        TRACING_INPUT="n"
+    else
+        read -p "Enable distributed tracing? [y/N]: " TRACING_INPUT
+    fi
+fi
+
+if [ -z "$ENABLE_TRACING" ]; then
+    ENABLE_TRACING=$([ "$TRACING_INPUT" = "y" ] || [ "$TRACING_INPUT" = "Y" ] && echo "true" || echo "false")
+fi
+
+if [ "$ENABLE_TRACING" = "true" ] && [ -z "$TRACING_ENDPOINT" ]; then
+    if [ "$NON_INTERACTIVE" = true ]; then
+        print_error "TRACING_ENDPOINT required when tracing is enabled in config"
+        exit 1
+    fi
     read -p "Jaeger/Zipkin endpoint: " TRACING_ENDPOINT
+fi
+
+# =============================================================================
+# Dry Run Summary
+# =============================================================================
+if [ "$DRY_RUN" = true ]; then
+    echo ""
+    print_header "🔍 Dry Run Summary"
+    echo ""
+    echo "The following would be created:"
+    echo ""
+    echo "Project Directory: ../$PROJECT_NAME/"
+    echo ""
+    echo "Boilerplates to copy:"
+    [ "$BACKEND_STACK" = "java" ] || [ "$BACKEND_STACK" = "both" ] && echo "  ✓ Java (Spring Boot)"
+    [ "$BACKEND_STACK" = "python" ] || [ "$BACKEND_STACK" = "both" ] && echo "  ✓ Python (FastAPI)"
+    [ "$FRONTEND_STACK" = "reactjs" ] && echo "  ✓ ReactJS"
+    [ "$FRONTEND_STACK" = "quasar" ] && echo "  ✓ Quasar"
+    [ "$FRONTEND_STACK" = "none" ] && echo "  ✓ None (API only)"
+    echo ""
+    echo "Core files:"
+    echo "  ✓ docker-compose.yml"
+    echo "  ✓ docker-compose.standalone.yml"
+    echo "  ✓ docker-compose.traefik.yml"
+    echo "  ✓ README.md"
+    echo "  ✓ docs/ (all documentation)"
+    echo "  ✓ scripts/ (including this wizard)"
+    echo ""
+    echo "Configuration:"
+    echo "  • Project: $PROJECT_NAME"
+    echo "  • Service prefix: $SERVICE_PREFIX"
+    echo "  • Backend: $BACKEND_STACK"
+    echo "  • Frontend: $FRONTEND_STACK"
+    echo "  • MFA: $ENABLE_MFA ($MFA_METHODS)"
+    echo "  • JWT expiry: $JWT_EXPIRY minutes"
+    echo "  • Rate limiting: $ENABLE_RATE_LIMIT"
+    echo "  • Database: $DB_NAME (user: $DB_USER)"
+    echo "  • Deployment: $DEPLOY_MODE_NAME"
+    [ -n "$TRAEFIK_HOST" ] && echo "  • Traefik host: $TRAEFIK_HOST"
+    echo "  • Metrics: $ENABLE_METRICS"
+    echo "  • Tracing: $ENABLE_TRACING"
+    echo ""
+    echo "Actions:"
+    echo "  ✓ Create directory: ../$PROJECT_NAME/"
+    echo "  ✓ Copy selected boilerplates"
+    echo "  ✓ Generate .env file with secure passwords"
+    echo "  ✓ Rename services in docker-compose files"
+    echo "  ✓ Create PROJECT_SETUP.md"
+    echo "  ✓ Initialize Git repository"
+    echo ""
+    if [ -n "$SAVE_CONFIG_FILE" ]; then
+        echo "  ✓ Save configuration to: $SAVE_CONFIG_FILE"
+    fi
+    echo ""
+    print_info "This was a dry run. No files were created."
+    print_info "Run without --dry-run to create the project."
+    exit 0
 fi
 
 # =============================================================================
@@ -293,6 +673,10 @@ PROJECT_DIR="$PARENT_DIR/$PROJECT_NAME"
 # Check if directory already exists
 if [ -d "$PROJECT_DIR" ]; then
     print_error "Directory already exists: $PROJECT_DIR"
+    if [ "$NON_INTERACTIVE" = true ]; then
+        print_error "Use --yes with caution - would overwrite existing directory"
+        exit 1
+    fi
     read -p "Overwrite? [y/N]: " OVERWRITE
     if [ "$OVERWRITE" = "y" ] || [ "$OVERWRITE" = "Y" ]; then
         rm -rf "$PROJECT_DIR"
@@ -417,7 +801,6 @@ print_info "Configuring Docker Compose files..."
 # Replace service names with project-specific prefix
 for compose_file in "$PROJECT_DIR"/docker-compose*.yml; do
     if [ -f "$compose_file" ]; then
-        # Replace generic service names with project-specific ones
         sed -i.bak "s/order-${SERVICE_PREFIX}/${SERVICE_PREFIX}/g" "$compose_file"
         sed -i.bak "s/order-service/${SERVICE_PREFIX}-service/g" "$compose_file"
         sed -i.bak "s/order-java/${SERVICE_PREFIX}-java/g" "$compose_file"
@@ -533,6 +916,35 @@ EOF
 
 print_step "Created: PROJECT_SETUP.md"
 
+# Save configuration if requested
+if [ -n "$SAVE_CONFIG_FILE" ]; then
+    echo ""
+    print_info "Saving configuration to: $SAVE_CONFIG_FILE"
+    
+    cat > "$SAVE_CONFIG_FILE" <<EOF
+{
+  "project_name": "$PROJECT_NAME",
+  "service_prefix": "$SERVICE_PREFIX",
+  "repo_url": "$REPO_URL",
+  "backend_stack": "$BACKEND_STACK",
+  "frontend_stack": "$FRONTEND_STACK",
+  "enable_mfa": $ENABLE_MFA,
+  "mfa_methods": "$MFA_METHODS",
+  "jwt_expiry": $JWT_EXPIRY,
+  "enable_rate_limit": $ENABLE_RATE_LIMIT,
+  "db_name": "$DB_NAME",
+  "db_user": "$DB_USER",
+  "generate_password": true,
+  "deploy_mode": "$DEPLOY_MODE_NAME",
+  "traefik_host": "$TRAEFIK_HOST",
+  "enable_metrics": $ENABLE_METRICS,
+  "enable_tracing": $ENABLE_TRACING
+}
+EOF
+    
+    print_step "Configuration saved"
+fi
+
 # Initialize Git repository
 echo ""
 print_info "Initializing Git repository..."
@@ -580,3 +992,5 @@ fi
 echo ""
 print_info "Happy coding! 🚀"
 echo ""
+
+exit 0
