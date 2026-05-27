@@ -228,16 +228,234 @@ That file contains comprehensive guides for:
 - ReactJS: [`docs/01-agnostic/01-standards/16-agents-reactjs.md`](docs/01-agnostic/01-standards/16-agents-reactjs.md)
 - Quasar: [`docs/01-agnostic/01-standards/17-agents-quasar.md`](docs/01-agnostic/01-standards/17-agents-quasar.md)
 
-**Quick Start for AI Agents:**
+---
+
+## ⚠️ IMPERATIVE: Use Serena & Context-Mode
+
+**CRITICAL RULE:** AI agents MUST use Serena MCP and Context-Mode whenever possible. This is not optional.
+
+### Why This Matters
+
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| **Serena MCP** | Code navigation, symbol lookup, refactoring | ANY code modification, architecture audit, dependency check |
+| **Context-Mode** | Documentation search, retrieval, indexing | ANY research, SOP lookup, pattern discovery, query about standards |
+
+### What NOT to Do
+
+❌ **DON'T** search files manually with `search_files` or `read_file` when Serena can find symbols  
+❌ **DON'T** guess architecture patterns when Context-Mode can retrieve documented standards  
+❌ **DON'T** browse docs/ directory manually when `ctx_search` can find relevant sections  
+❌ **DON'T** make assumptions about code structure without using Serena to verify  
+
+### What TO Do
+
+✅ **DO** use `mcp_serena_find_symbol` to locate classes, methods, use cases  
+✅ **DO** use `mcp_serena_find_referencing_symbols` to find dependencies  
+✅ **DO** use `ctx_search` to query architecture standards, SOPs, ADRs  
+✅ **DO** use `ctx_fetch_and_index` to load external docs before research  
+✅ **DO** verify architecture compliance with Serena before commits  
+
+---
+
+### Quick Start for AI Agents
+
+**Before starting ANY work:**
+
 ```python
-# Before starting work
+# 1. Load required skills
 skill_view(name='architecture-compliance-check')
 skill_view(name='test-driven-development')
 skill_view(name='verification-before-completion')
 
-# Query patterns
+# 2. Query Context-Mode for relevant standards
 ctx_search(queries: ["<your task>"], source: "<stack>-boilerplate")
+
+# 3. Use Serena to understand code structure
+mcp_serena_find_symbol(name_path_pattern="<symbol>", relative_path="<file>")
 ```
+
+**Example workflow:**
+
+```python
+# Task: Add new use case for order validation
+
+# Step 1: Query Context-Mode for SOP
+ctx_search(queries: ["add new use case SOP"], source: "architecture-docs")
+
+# Step 2: Use Serena to find existing use cases
+mcp_serena_find_symbol(
+  name_path_pattern=".*UseCase",
+  relative_path="boilerplate/java/order-service/src/main/java"
+)
+
+# Step 3: Find the domain layer structure
+mcp_serena_get_symbols_overview(
+  relative_path="boilerplate/java/order-service/src/main/java/domain"
+)
+
+# Step 4: Implement following retrieved patterns
+# ... implementation ...
+
+# Step 5: Verify with Serena
+mcp_serena_find_implementations(
+  name_path="OrderValidationUseCase",
+  relative_path="boilerplate/java/order-service/src/main/java"
+)
+```
+
+---
+
+### Indexed Sources (Context-Mode)
+
+**Available sources for `ctx_search`:**
+
+| Source | Content | Example Query |
+|--------|---------|---------------|
+| `architecture-docs` | All docs/ (ADRs, standards, SOPs) | "forbidden imports domain layer" |
+| `java-boilerplate` | Java AGENTS.md + key files | "use case implementation" |
+| `python-boilerplate` | Python AGENTS.md + key files | "repository pattern SQLAlchemy" |
+| `frontend-boilerplate` | React AGENTS.md + key files | "feature-sliced design" |
+| `compliance-scripts-full` | All Phase 2 scripts | "pre-commit validation" |
+| `github-workflows` | All GitHub Actions workflows | "architecture gate CI" |
+| `github-codeowners` | CODEOWNERS file | "who reviews Java code" |
+| `root-agents-md-updated` | This file | "AI agent checklist" |
+| `docker-compose-*` | All 3 compose files | "Traefik labels fleet mode" |
+
+**Query examples:**
+
+```python
+# Find architecture rules
+ctx_search(queries: ["Clean Architecture forbidden imports"])
+
+# Find SOP for adding endpoint
+ctx_search(queries: ["add REST endpoint SOP"], source: "architecture-docs")
+
+# Find Java patterns
+ctx_search(queries: ["use case implementation"], source: "java-boilerplate")
+
+# Find Python patterns  
+ctx_search(queries: ["repository pattern SQLAlchemy"], source: "python-boilerplate")
+
+# Find compliance scripts
+ctx_search(queries: ["pre-commit validation"], source: "compliance-scripts-full")
+
+# Find workflows
+ctx_search(queries: ["dashboard generation"], source: "github-workflows")
+
+# Timeline view (across all sessions)
+ctx_search(queries: ["what did we decide about caching"], sort: "timeline")
+```
+
+---
+
+### Serena MCP Commands
+
+**Essential Serena commands:**
+
+```python
+# Find symbol declaration
+mcp_serena_find_symbol(
+  name_path_pattern="OrderValidator",
+  relative_path="boilerplate/java/order-service"
+)
+
+# Find all implementations of an interface
+mcp_serena_find_implementations(
+  name_path="OrderValidationUseCase",
+  relative_path="boilerplate/java/order-service"
+)
+
+# Find all references to a symbol
+mcp_serena_find_referencing_symbols(
+  name_path="Order",
+  relative_path="boilerplate/java/order-service"
+)
+
+# Get symbols overview of a file
+mcp_serena_get_symbols_overview(
+  relative_path="boilerplate/java/order-service/src/main/java/domain"
+)
+
+# Find declaration by regex
+mcp_serena_find_declaration(
+  regex="class (OrderValidator)",
+  relative_path="boilerplate/java/order-service/src/main/java/domain/usecases"
+)
+
+# Search for pattern across files
+mcp_serena_search_for_pattern(
+  substring_pattern="@RestController",
+  paths_include_glob="**/infrastructure/**"
+)
+```
+
+---
+
+### Skill Integration
+
+**Mandatory skills to load:**
+
+| Skill | When to Load | Purpose |
+|-------|--------------|---------|
+| `architecture-compliance-check` | BEFORE any code change | Verify layer rules |
+| `test-driven-development` | Starting feature work | Enforce TDD cycle |
+| `verification-before-completion` | Before claiming complete | Final validation |
+| `superpowers-using-superpowers` | Starting any conversation | Workflow setup |
+| `writing-plans` | Planning phase | Structure tasks |
+| `superpowers-executing-plans` | Implementation phase | Follow plan |
+
+**Load skills BEFORE work:**
+
+```python
+# At conversation start
+skill_view(name='architecture-compliance-check')
+skill_view(name='test-driven-development')
+skill_view(name='verification-before-completion')
+skill_view(name='superpowers-using-superpowers')
+```
+
+---
+
+### Consequences of Not Using Tools
+
+**If you don't use Serena/Context-Mode:**
+
+1. ❌ **Architecture violations** - You'll miss forbidden imports
+2. ❌ **Outdated patterns** - You'll use old conventions
+3. ❌ **Wasted time** - Manual searching takes 10x longer
+4. ❌ **Incomplete work** - You'll miss critical steps in SOPs
+5. ❌ **Failed verification** - `verification-before-completion` will fail
+
+**Example failure:**
+
+```
+❌ BAD: Manual file search
+- Reads 10 files to find use case pattern
+- Misses updated SOP in docs/
+- Uses wrong layer structure
+- Architecture check fails
+
+✅ GOOD: Serena + Context-Mode
+- ctx_search finds SOP in 1 query
+- mcp_serena_find_symbol locates existing use cases
+- Follows documented pattern
+- Architecture check passes
+```
+
+---
+
+### Tool Preference Hierarchy
+
+**Always use tools in this order:**
+
+1. **Context-Mode** (`ctx_search`) — First choice for any research/query
+2. **Serena** (`mcp_serena_*`) — First choice for any code navigation
+3. **Skills** (`skill_view`) — Load relevant skills before work
+4. **Session search** (`session_search`) — Recall past decisions
+5. **Terminal/File tools** — LAST resort, only when above can't help
+
+**Never skip to #5 without trying #1-4 first.**
 
 ---
 
