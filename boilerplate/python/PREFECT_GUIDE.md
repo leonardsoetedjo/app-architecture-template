@@ -51,6 +51,128 @@ poetry add prefect prefect-sqlalchemy
 poetry add --group dev pytest-prefect
 ```
 
+### 1.5. ⚠️ CRITICAL: Parameter Externalization
+
+**IMPORTANT**: Externalize ALL configuration parameters to maximize flexibility and reduce code changes.
+
+**DO NOT hardcode these values in flow/task code:**
+
+| Parameter | Externalize To | Example |
+|-----------|---------------|---------|
+| Cron expressions | `prefect.yaml` or env | `PREFECT_SCHEDULE_CRON="0 0 * * *"` |
+| Chunk sizes | Flow parameters | `chunk_size: int = Parameter("chunk_size", default=100)` |
+| File paths | Environment variables | `os.getenv("INPUT_PATH", "/data/input")` |
+| Database connections | Prefect Blocks | Use `SqlAlchemyConnector` Block |
+| API URLs | Environment variables | `os.getenv("API_BASE_URL")` |
+| Retry counts | Task/Flow parameters | `retries: int = Parameter("retries", default=3)` |
+| Batch sizes | Flow parameters | `batch_size: int = Parameter("batch_size", default=1000)` |
+| Timeout values | Flow parameters | `timeout_seconds: int = Parameter("timeout", default=3600)` |
+
+**Recommended Flow Pattern with Parameters:**
+
+```python
+from prefect import flow, Parameter
+from prefect.logging import get_run_logger
+import os
+
+@flow(name="sample-etl-flow", version="1.0.0")
+def sample_etl_flow(
+    # Externalized parameters with defaults
+    source_url: str = Parameter(
+        "source_url",
+        default_factory=lambda: os.getenv("SOURCE_URL", "https://api.example.com/data")
+    ),
+    destination: str = Parameter(
+        "destination",
+        default_factory=lambda: os.getenv("DESTINATION", "postgresql://localhost/order_db")
+    ),
+    chunk_size: int = Parameter("chunk_size", default=100),
+    retry_count: int = Parameter("retry_count", default=3),
+) -> dict:
+    """Sample ETL flow with externalized parameters."""
+    logger = get_run_logger()
+    logger.info(f"Running with chunk_size={chunk_size}, retries={retry_count}")
+    
+    # Use parameters throughout flow
+    data = extract_data(source_url, chunk_size)
+    transformed = transform_data(data)
+    result = load_data(transformed, destination)
+    
+    return result
+```
+
+**Task with Externalized Parameters:**
+
+```python
+from prefect import task, Parameter
+
+@task(
+    name="extract-data",
+    retries=Parameter("task_retries", default=3),
+    retry_delay_seconds=Parameter("retry_delay", default=30),
+)
+def extract_data(
+    source_url: str = None,
+    chunk_size: int = None,
+    timeout: int = None,
+):
+    # Use parameters or fall back to environment variables
+    actual_source = source_url or os.getenv("SOURCE_URL")
+    actual_chunk_size = chunk_size or int(os.getenv("CHUNK_SIZE", "100"))
+    actual_timeout = timeout or int(os.getenv("EXTRACT_TIMEOUT", "300"))
+    
+    logger = get_run_logger()
+    logger.info(f"Extracting from {actual_source} with chunk_size={actual_chunk_size}")
+    
+    return data
+```
+
+**Environment-Specific Overrides:**
+
+```bash
+# .env.dev
+CHUNK_SIZE=10
+BATCH_SIZE=100
+PREFECT_SCHEDULE_CRON="0 */2 * * *"  # Every 2 hours in dev
+
+# .env.staging
+CHUNK_SIZE=50
+BATCH_SIZE=500
+PREFECT_SCHEDULE_CRON="0 0 * * *"  # Hourly in staging
+
+# .env.prod
+CHUNK_SIZE=200
+BATCH_SIZE=2000
+PREFECT_SCHEDULE_CRON="0 0 0 * *"  # Daily at midnight in prod
+```
+
+**Using Prefect Blocks for Secrets:**
+
+```python
+from prefect import flow
+from prefect_sqlalchemy import SqlAlchemyConnector, ConnectionComponents
+
+@flow
+def flow_with_blocks():
+    # Load database connection from Prefect Block (configured via UI/CLI)
+    database = SqlAlchemyConnector.load("my-database-connection")
+    
+    # Load API credentials from Block
+    api_credentials = Secret.load("my-api-credentials")
+    
+    # Use in tasks
+    data = query_database(database, api_credentials.get())
+    return data
+```
+
+**Benefits:**
+1. ✅ No code changes for parameter tuning
+2. ✅ Environment-specific configuration (dev/staging/prod)
+3. ✅ Runtime adjustments via deployment updates
+4. ✅ Security: Secrets in Prefect Blocks or environment variables
+5. ✅ Audit trail: Deployment changes tracked in version control
+6. ✅ Reusability: Same flow, different parameters per environment
+
 ### 2. Create Domain Layer
 
 **File**: `domain/models/workflows/workflow_execution.py`

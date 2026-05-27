@@ -38,6 +38,119 @@ Add to `pom.xml`:
 </dependency>
 ```
 
+### 1.5. ⚠️ CRITICAL: Parameter Externalization
+
+**IMPORTANT**: Externalize ALL configuration parameters to maximize flexibility and reduce code changes.
+
+**DO NOT hardcode these values:**
+
+| Parameter | Externalize To | Example |
+|-----------|---------------|---------|
+| Cron expressions | `application-quartz.yml` | `quartz.job.cron.sample=0 0 0 * * ?` |
+| Job names | `application-quartz.yml` | `quartz.job.name.sample=SampleJob` |
+| Job groups | `application-quartz.yml` | `quartz.job.group.sample=DEFAULT` |
+| Thread pool size | `application-quartz.yml` | `quartz.thread.pool.size=10` |
+| Retry counts | `application-quartz.yml` | `quartz.retry.count=3` |
+| Misfire instructions | `application-quartz.yml` | `quartz.misfire.policy=DO_NOTHING` |
+| Job data map values | `application-quartz.yml` | `quartz.job.data.key=value` |
+| Cluster settings | `application-quartz.yml` | `quartz.clustered=true` |
+
+**Recommended Configuration Pattern:**
+
+```yaml
+# application-quartz.yml
+quartz:
+  jobs:
+    sample-job:
+      name: SampleQuartzJob
+      group: DEFAULT
+      cron: "0 0 0 * * ?"
+      description: "Daily batch processing job"
+      enabled: true
+      data:
+        inputFile: ${INPUT_PATH:/data/input}
+        outputFile: ${OUTPUT_PATH:/data/output}
+        batchSize: ${BATCH_SIZE:1000}
+  thread-pool:
+    size: 10
+    priority: 5
+  job-store:
+    type: jdbc  # or 'memory' for dev
+    clustered: false
+    misfire-threshold: 60000  # 1 minute
+  retry:
+    count: 3
+    delay-ms: 5000
+```
+
+**Java Config with Externalized Parameters:**
+
+```java
+@Value("${quartz.jobs.sample-job.cron}")
+private String cronExpression;
+
+@Value("${quartz.jobs.sample-job.data.batchSize:1000}")
+private int batchSize;
+
+@Value("${quartz.jobs.sample-job.data.inputPath:/data/input}")
+private String inputPath;
+
+@Bean
+public JobDetail sampleJobDetail() {
+    return JobBuilder.newJob(SampleQuartzJob.class)
+        .withIdentity(jobName, jobGroup)  // Externalized
+        .usingJobData("batchSize", batchSize)  // Externalized
+        .usingJobData("inputPath", inputPath)  // Externalized
+        .storeDurably()
+        .build();
+}
+
+@Bean
+public Trigger sampleTrigger(JobDetail sampleJobDetail) {
+    return TriggerBuilder.newTrigger()
+        .forJob(sampleJobDetail)
+        .withSchedule(
+            CronScheduleBuilder.cronSchedule(cronExpression)  // Externalized
+                .withMisfireHandlingInstructionDoNothing()
+        )
+        .build();
+}
+```
+
+**Environment-Specific Overrides:**
+
+```yaml
+# application-dev.yml
+quartz:
+  jobs:
+    sample-job:
+      cron: "0 */2 * * * ?"  # Every 2 hours in dev
+      data:
+        batchSize: 10  # Small batches for testing
+  thread-pool:
+    size: 2  # Minimal threads in dev
+
+# application-prod.yml
+quartz:
+  jobs:
+    sample-job:
+      cron: "0 0 0 * * ?"  # Daily at midnight in prod
+      data:
+        batchSize: 5000  # Large batches for prod
+  thread-pool:
+    size: 20  # Max threads for prod
+  job-store:
+    clustered: true  # HA in prod
+```
+
+**Benefits:**
+1. ✅ No code changes for schedule adjustments
+2. ✅ Environment-specific configuration (dev/staging/prod)
+3. ✅ Runtime adjustments via config refresh
+4. ✅ Security: Secrets in environment variables
+5. ✅ Audit trail: Schedule changes tracked in config
+6. ✅ Flexibility: Easy to add/modify jobs
+
 ### 2. Create Domain Layer
 
 **File**: `domain/models/scheduler/ScheduledJob.java`

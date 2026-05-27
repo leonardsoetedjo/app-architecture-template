@@ -36,6 +36,88 @@ Already added to `pom.xml`:
 </dependency>
 ```
 
+### 1.5. ⚠️ CRITICAL: Parameter Externalization
+
+**IMPORTANT**: Externalize ALL configuration parameters to maximize flexibility and reduce code changes.
+
+**DO NOT hardcode these values:**
+
+| Parameter | Externalize To | Example |
+|-----------|---------------|---------|
+| Cron expressions | `application-batch.yml` | `batch.job.cron.daily=0 0 0 * * ?` |
+| Chunk sizes | `application-batch.yml` | `batch.chunk.size=100` |
+| File paths | `application-batch.yml` + env vars | `batch.input.path=${INPUT_PATH:/data/input}` |
+| Database connections | `application-batch.yml` | Use Spring profiles |
+| Retry counts | `application-batch.yml` | `batch.retry.count=3` |
+| Skip limits | `application-batch.yml` | `batch.skip.limit=10` |
+| Job names | Java config with `${}` | `@Value("${batch.job.name}")` |
+| Thread pool size | `application-batch.yml` | `batch.thread.pool.size=10` |
+
+**Recommended Configuration Pattern:**
+
+```yaml
+# application-batch.yml
+batch:
+  jobs:
+    sample-etl:
+      enabled: true
+      cron: "0 0 0 * * ?"
+      chunk-size: 100
+      retry-count: 3
+      skip-limit: 10
+  input:
+    path: ${INPUT_PATH:/data/input}
+    pattern: "*.csv"
+  output:
+    path: ${OUTPUT_PATH:/data/output}
+  thread-pool:
+    size: 10
+    queue-capacity: 100
+```
+
+**Java Config with Externalized Parameters:**
+
+```java
+@Value("${batch.jobs.sample-etl.chunk-size:100}")
+private int chunkSize;
+
+@Value("${batch.input.path:/data/input}")
+private String inputPath;
+
+@Bean
+public Step sampleChunkStep() {
+    return jobRepository.getStep("sampleChunkStep")
+        .<Order, Order>chunk(chunkSize, jobRepository)  // Externalized
+        .reader(sampleItemReader())
+        .processor(sampleItemProcessor())
+        .writer(sampleItemWriter())
+        .build();
+}
+```
+
+**Environment-Specific Overrides:**
+
+```yaml
+# application-dev.yml
+batch:
+  chunk-size: 10  # Smaller chunks for dev
+  thread-pool:
+    size: 2
+
+# application-prod.yml
+batch:
+  chunk-size: 500  # Larger chunks for prod
+  thread-pool:
+    size: 20
+```
+
+**Benefits:**
+1. ✅ No code changes for parameter tuning
+2. ✅ Environment-specific configuration (dev/staging/prod)
+3. ✅ Runtime adjustments via Config Server
+4. ✅ Security: Secrets in environment variables
+5. ✅ Audit trail: Configuration changes tracked separately
+
 ### 2. Create Domain Layer
 
 **File**: `domain/models/batch/BatchJob.java`
