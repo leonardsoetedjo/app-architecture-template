@@ -194,9 +194,9 @@ npm run depcruise
 
 ---
 
-## AI Agent Rules: Temporary Files
+## AI Agent Rules: Temporary Files & Reports
 
-**CRITICAL:** Keep the repository clean. Temporary working files must NOT be committed.
+**CRITICAL:** Keep the repository clean. Temporary files and reports must NOT be committed.
 
 ### ✅ Temporary Files Checklist
 
@@ -205,11 +205,142 @@ npm run depcruise
 - [ ] **Store temporary files ONLY in `/tmp/`** (outside the repository)
 - [ ] **Delete all temporary files** before marking task complete
 - [ ] **Run `git status`** and verify no untracked files in repo
-- [ ] **Use GitHub** (Issues, Projects, Wiki) for tracking instead of markdown files
+- [ ] **Use GitHub Issues** for tracking instead of markdown files
+
+### 🚨 IMPERATIVE: NO Markdown Reports in Repository
+
+**CRITICAL RULE:** AI agents MUST NOT create markdown reports, summaries, or tracking documents in the repository. This includes:
+
+❌ **NEVER create:**
+- `REPORT.md`, `AUDIT.md`, `SUMMARY.md`, `FINDINGS.md`
+- `task-tracking.md`, `progress-report.md`, `status-update.md`
+- `architecture-audit-report.md`, `compliance-report.md`
+- Any markdown file intended as a report, summary, or tracking document
+
+✅ **INSTEAD, use GitHub Issues:**
+- Create issues for findings: `gh issue create --title "Audit: <topic>" --body "<findings>"`
+- Comment on existing issues: `gh issue comment <number> --body "<update>"`
+- Use issue labels for categorization: `audit`, `findings`, `architecture`, `compliance`
+- Close issues when resolved: `gh issue close <number>`
+
+### 📋 When to Use GitHub Issues
+
+| Scenario | Action | Example |
+|----------|--------|---------|
+| **Architecture audit findings** | Create issue per finding | `gh issue create --title "Architecture: Forbidden import in OrderService" --body "## Violation..."` |
+| **Compliance report** | Create single issue with checklist | `gh issue create --title "Compliance Report: Q2 2026" --body "## Checklist..."` |
+| **Task tracking** | Use existing issue or create new | `gh issue create --title "Feature: Add order validation" --body "## Acceptance Criteria..."` |
+| **Progress updates** | Comment on issue | `gh issue comment 123 --body "## Progress Update..."` |
+| **Meeting notes** | Wiki page or issue comment | GitHub Wiki or issue comment |
+| **Decision records** | ADR in docs/ (permanent) | `docs/01-agnostic/02-adrs/001-decision.md` |
 
 ### 🎯 Principle
 
-**GitHub is the single source of truth.** The repository should only contain permanent, production-ready files.
+**GitHub is the single source of truth.** The repository should only contain:
+- ✅ Permanent, production-ready code
+- ✅ Permanent documentation (AGENTS.md, SOPs, ADRs, guides)
+- ✅ Configuration files (docker-compose, .env.example)
+- ✅ Scripts for automation
+
+**The repository should NOT contain:**
+- ❌ Temporary working files
+- ❌ Progress reports
+- ❌ Meeting notes
+- ❌ Task tracking documents
+- ❌ Audit summaries (use GitHub Issues instead)
+- ❌ Any markdown file that will be stale in 7 days
+
+### 📝 Example Workflow
+
+**❌ BAD: Creating markdown report**
+```bash
+# DON'T do this
+cat > architecture-audit-report.md << 'EOF'
+# Architecture Audit Report
+## Findings
+1. Forbidden import in OrderService
+2. Missing tests in domain layer
+EOF
+git add architecture-audit-report.md
+```
+
+**✅ GOOD: Using GitHub Issues**
+```bash
+# DO this instead
+# Create issue for each finding
+gh issue create --title "Architecture: Forbidden import in OrderService" --body "
+## Violation
+- File: OrderService.java
+- Layer: Domain
+- Forbidden import: org.springframework.stereotype.Service
+- Required fix: Move to infrastructure layer
+
+## Severity
+High
+
+## Recommended Fix
+1. Remove @Service annotation
+2. Create OrderService interface in domain/ports/
+3. Implement in infrastructure/services/
+"
+
+# Create compliance tracking issue
+gh issue create --title "Compliance Check: Q2 2026 Architecture Audit" --body "
+## Audit Checklist
+- [ ] Review domain layer imports
+- [ ] Verify use case patterns
+- [ ] Check test coverage
+- [ ] Validate docker-compose files
+
+## Findings
+- #124: Forbidden import in OrderService
+- #125: Missing tests in domain layer
+
+## Status
+In Progress
+"
+```
+
+### 🔧 GitHub Issues CLI Quick Reference
+
+```bash
+# List open issues
+gh issue list --state open
+
+# Create issue
+gh issue create --title "<title>" --body "<body>"
+
+# View issue
+gh issue view <number>
+
+# Comment on issue
+gh issue comment <number> --body "<comment>"
+
+# Assign issue
+gh issue edit <number> --add-assignee <username>
+
+# Add labels
+gh issue edit <number> --add-label "<label>"
+
+# Close issue
+gh issue close <number>
+
+# Create issue from file
+gh issue create --title "<title>" --body-file <file.md>
+```
+
+### 📊 Issue Labels for Reports
+
+Use these labels to categorize report-related issues:
+
+| Label | Purpose | Example |
+|-------|---------|---------|
+| `audit` | Architecture/compliance audits | "Q2 2026 Architecture Audit" |
+| `findings` | Specific violations/issues found | "Forbidden import in OrderService" |
+| `compliance` | Compliance tracking | "GDPR Compliance Check" |
+| `report` | Summary/overview issues | "Sprint 23 Progress Report" |
+| `tracking` | Multi-issue tracking | "Phase 2 Implementation Tracking" |
+
 ---
 
 ## AI Agent Tooling
