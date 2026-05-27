@@ -214,7 +214,7 @@ npm run depcruise
 
 ## AI Agent Tooling
 
-**📍 AI tooling documentation moved to:** [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+**📍 AI tooling documentation is centralized:** [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
 
 That file contains comprehensive guides for:
 - **Serena MCP** — Code navigation and refactoring
@@ -227,6 +227,17 @@ That file contains comprehensive guides for:
 - Python: [`docs/01-agnostic/01-standards/15-agents-python.md`](docs/01-agnostic/01-standards/15-agents-python.md)
 - ReactJS: [`docs/01-agnostic/01-standards/16-agents-reactjs.md`](docs/01-agnostic/01-standards/16-agents-reactjs.md)
 - Quasar: [`docs/01-agnostic/01-standards/17-agents-quasar.md`](docs/01-agnostic/01-standards/17-agents-quasar.md)
+
+**Quick Start for AI Agents:**
+```python
+# Before starting work
+skill_view(name='architecture-compliance-check')
+skill_view(name='test-driven-development')
+skill_view(name='verification-before-completion')
+
+# Query patterns
+ctx_search(queries: ["<your task>"], source: "<stack>-boilerplate")
+```
 
 ---
 
@@ -520,11 +531,43 @@ ctx_search(queries: ["repository pattern SQLAlchemy"], source: "python-boilerpla
 
 # Find Frontend patterns
 ctx_search(queries: ["feature-sliced design"], source: "frontend-boilerplate")
+
+# Find compliance scripts
+ctx_search(queries: ["pre-commit validation"], source: "compliance-scripts-full")
+
+# Find workflows
+ctx_search(queries: ["dashboard generation"], source: "github-workflows")
 ```
+
+**Indexed Sources:**
+- `architecture-docs` — All docs/ (ADRs, standards, SOPs, guidelines)
+- `java-boilerplate` — Java AGENTS.md + key files
+- `python-boilerplate` — Python AGENTS.md + key files
+- `frontend-boilerplate` — React AGENTS.md + key files
+- `compliance-scripts-full` — All Phase 2 scripts
+- `github-workflows` — All GitHub Actions workflows
+- `github-codeowners` — CODEOWNERS file
+- `root-agents-md-updated` — This file with Phase 2 updates
+- `docker-compose-*` — Base, standalone, and Traefik compose files
 
 ---
 
 *Living document — update as boilerplate evolves.*
 
-**Last Updated:** 2026-05-25  
+**Last Updated:** 2026-05-27  
 **Issues:** [#38](https://github.com/leonardsoetedjo/app-architecture-template/issues/38), [#41](https://github.com/leonardsoetedjo/app-architecture-template/issues/41)
+
+---
+
+## 📝 Document History
+
+| Date | Change | Issue |
+|------|--------|-------|
+| 2026-05-27 | Added Key Insight section clarifying template repository purpose | #89 |
+| 2026-05-27 | Added Quick Start for AI Agents section | #89 |
+| 2026-05-27 | Expanded Serena + Context-Mode integration with indexed sources | #89 |
+| 2026-05-27 | Added Document History section | #89 |
+| 2026-05-25 | Phase 2.1: Mandatory architecture compliance enforcement | #80 |
+| 2026-05-25 | GitHub Issues workflow for AI agents | #79 |
+
+---
