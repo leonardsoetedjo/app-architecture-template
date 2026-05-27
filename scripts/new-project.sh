@@ -7,6 +7,32 @@
 #
 # Usage: ./scripts/new-project.sh
 #
+# Requirements:
+#   - Bash 4.0+
+#   - Standard Unix tools (cp, sed, mkdir, openssl)
+#   - Interactive terminal (not designed for piped input)
+#
+# What it does:
+#   1. Asks ~15 questions about your project requirements
+#   2. Copies only the boilerplates you select (Java/Python/React/Quasar)
+#   3. Generates a customized .env file with secure passwords
+#   4. Renames services in Docker Compose files
+#   5. Initializes a Git repository with first commit
+#   6. Creates PROJECT_SETUP.md with project-specific instructions
+#
+# Output:
+#   Creates a new project directory in the parent folder:
+#   ../<project-name>/
+#
+# Example:
+#   $ ./scripts/new-project.sh
+#   Project name: order-service
+#   Service prefix: order
+#   Backend: 1 (Java)
+#   Frontend: 1 (ReactJS)
+#   ... (continues interactively)
+#   ✅ Project created: ../order-service
+#
 
 set -e
 
@@ -39,6 +65,13 @@ print_info() {
 # Get script directory (works from any location)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE_DIR="$(dirname "$SCRIPT_DIR")"
+
+# Check if running in non-interactive mode (piped input)
+if [ ! -t 0 ]; then
+    NON_INTERACTIVE=true
+else
+    NON_INTERACTIVE=false
+fi
 
 print_header "🚀 New Project Setup Wizard"
 echo ""
