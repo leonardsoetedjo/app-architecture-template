@@ -4,6 +4,12 @@
 
 This guide provides Clean Architecture-compliant patterns for implementing cron-based job scheduling using Quartz Scheduler in the Java boilerplate.
 
+**⚠️ IMPORTANT:** Before implementing scheduled jobs, read the [Batch Job Status Architecture](../../../docs/01-agnostic/01-standards/batch-job-status-architecture.md) to understand the critical distinction between:
+- **Business batch statuses** (Domain layer) - COMPLETED, FAILED, PARTIALLY_COMPLETED, etc.
+- **Scheduler technical statuses** (Infrastructure layer) - Quartz TriggerState (NORMAL, PAUSED, ERROR, etc.)
+
+**Never mix these concerns!** Business statuses track what happened to the data; scheduler statuses track technical execution.
+
 ## Architecture
 
 ### Layer Responsibilities

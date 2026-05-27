@@ -4,6 +4,12 @@
 
 This guide provides Clean Architecture-compliant patterns for implementing batch processing and workflow orchestration using Prefect in the Python boilerplate.
 
+**⚠️ IMPORTANT:** Before implementing workflows, read the [Batch Job Status Architecture](../../../docs/01-agnostic/01-standards/batch-job-status-architecture.md) to understand the critical distinction between:
+- **Business workflow statuses** (Domain layer) - COMPLETED, FAILED, PARTIALLY_COMPLETED, etc.
+- **Prefect flow run states** (Infrastructure layer) - Completed, Failed, Running, etc.
+
+**Never mix these concerns!** Business statuses track what happened to the data; Prefect states track technical execution.
+
 ## Architecture
 
 ### Layer Responsibilities
