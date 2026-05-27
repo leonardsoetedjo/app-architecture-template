@@ -123,11 +123,12 @@
             <version>8.9.0</version>
         </dependency>
 
-        <!-- Resilience4j -->
+        $1
+
+        <!-- Spring Batch -->
         <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-spring-boot3</artifactId>
-            <version>${resilience4j.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
         </dependency>
 
         <!-- AspectJ -->
