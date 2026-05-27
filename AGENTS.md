@@ -194,6 +194,269 @@ npm run depcruise
 
 ---
 
+## 🚨 IMPERATIVES FOR AI AGENTS
+
+**CRITICAL:** The following rules are MANDATORY, not optional. Violations will result in blocked commits, failed CI/CD, or incomplete task status.
+
+---
+
+### ⚠️ IMPERATIVE #1: Use Serena & Context-Mode
+
+**CRITICAL RULE:** AI agents MUST use Serena MCP and Context-Mode whenever possible. This is not optional.
+
+#### What NOT to Do
+
+❌ **DON'T** search files manually with `search_files` or `read_file` when Serena can find symbols  
+❌ **DON'T** guess architecture patterns when Context-Mode can retrieve documented standards  
+❌ **DON'T** browse docs/ directory manually when `ctx_search` can find relevant sections  
+❌ **DON'T** make assumptions about code structure without using Serena to verify  
+
+#### What TO Do
+
+✅ **DO** use `mcp_serena_find_symbol` to locate classes, methods, use cases  
+✅ **DO** use `mcp_serena_find_referencing_symbols` to find dependencies  
+✅ **DO** use `ctx_search` to query architecture standards, SOPs, ADRs  
+✅ **DO** use `ctx_fetch_and_index` to load external docs before research  
+✅ **DO** verify architecture compliance with Serena before commits  
+
+#### Tool Preference Hierarchy
+
+**Always use tools in this order:**
+
+1. **Context-Mode** (`ctx_search`) — First choice for any research/query
+2. **Serena** (`mcp_serena_*`) — First choice for any code navigation
+3. **Skills** (`skill_view`) — Load relevant skills before work
+4. **Session search** (`session_search`) — Recall past decisions
+5. **Terminal/File tools** — LAST resort, only when above can't help
+
+**Never skip to #5 without trying #1-4 first.**
+
+#### Quick Start
+
+```python
+# Before starting ANY work
+skill_view(name='architecture-compliance-check')
+skill_view(name='test-driven-development')
+skill_view(name='verification-before-completion')
+
+# Query Context-Mode
+ctx_search(queries: ["<your task>"], source: "<stack>-boilerplate")
+
+# Use Serena
+mcp_serena_find_symbol(name_path_pattern="<symbol>", relative_path="<file>")
+```
+
+#### Consequences of Violation
+
+1. ❌ Architecture violations (missed forbidden imports)
+2. ❌ Outdated patterns (using old conventions)
+3. ❌ Wasted time (10x slower manual searching)
+4. ❌ Incomplete work (missed critical SOP steps)
+5. ❌ Failed verification (`verification-before-completion` fails)
+
+---
+
+### ⚠️ IMPERATIVE #2: NO Markdown Reports in Repository
+
+**CRITICAL RULE:** AI agents MUST NOT create markdown reports, summaries, or tracking documents in the repository. Use GitHub Issues instead.
+
+#### What's Forbidden
+
+❌ **NEVER create:**
+- `REPORT.md`, `AUDIT.md`, `SUMMARY.md`, `FINDINGS.md`
+- `task-tracking.md`, `progress-report.md`, `status-update.md`
+- `architecture-audit-report.md`, `compliance-report.md`
+- Any markdown file intended as a report, summary, or tracking document
+
+#### What to Use Instead
+
+✅ **GitHub Issues for everything:**
+
+| Scenario | Action |
+|----------|--------|
+| **Architecture audit findings** | `gh issue create --title "Architecture: <violation>" --body "## Details..."` |
+| **Compliance report** | `gh issue create --title "Compliance: <period>" --body "## Checklist..."` |
+| **Task tracking** | `gh issue create --title "Feature: <name>" --body "## Criteria..."` |
+| **Progress updates** | `gh issue comment <number> --body "## Update..."` |
+| **Meeting notes** | GitHub Wiki or issue comment |
+| **Decision records** | ADR in `docs/01-agnostic/02-adrs/` (permanent only) |
+
+#### Example: BAD vs GOOD
+
+**❌ BAD: Markdown report**
+```bash
+cat > audit-report.md << 'EOF'
+# Audit Report
+## Findings
+1. Forbidden import in OrderService
+EOF
+git add audit-report.md  # BLOCKED
+```
+
+**✅ GOOD: GitHub Issues**
+```bash
+gh issue create --title "Architecture: Forbidden import in OrderService" --body "
+## Violation
+- File: OrderService.java
+- Layer: Domain
+- Import: org.springframework.stereotype.Service
+"
+```
+
+#### Repository Contents Policy
+
+**✅ ALLOWED:**
+- Permanent production code
+- Permanent documentation (AGENTS.md, SOPs, ADRs, guides)
+- Configuration files
+- Automation scripts
+
+**❌ FORBIDDEN:**
+- Temporary working files
+- Progress reports
+- Meeting notes
+- Task tracking documents
+- Audit summaries
+- Any markdown stale in <7 days
+
+#### GitHub CLI Quick Reference
+
+```bash
+gh issue list --state open
+gh issue create --title "<title>" --body "<body>"
+gh issue comment <number> --body "<comment>"
+gh issue edit <number> --add-label "<label>"
+gh issue close <number>
+```
+
+---
+
+### ⚠️ IMPERATIVE #3: Temporary Files Must Be Outside Repo
+
+**CRITICAL RULE:** All temporary working files must be stored in `/tmp/` and deleted before task completion.
+
+#### Checklist (MANDATORY before marking complete)
+
+- [ ] Store temporary files ONLY in `/tmp/` (outside repository)
+- [ ] Delete all temporary files before marking task complete
+- [ ] Run `git status` and verify no untracked files
+- [ ] Use GitHub Issues for tracking (not markdown files)
+
+#### Example
+
+```bash
+# ✅ GOOD
+/tmp/temp-analysis.json
+/tmp/work-in-progress.md
+/tmp/debug-output.log
+
+# ❌ BAD
+./temp-analysis.json          # In repo root
+./scripts/wip.md              # In scripts/
+./debug-output.log            # Anywhere in repo
+```
+
+---
+
+### ⚠️ IMPERATIVE #4: Mandatory Architecture Compliance
+
+**CRITICAL RULE:** Architecture compliance is MANDATORY before ANY commit. AI agents cannot skip compliance checks.
+
+#### Required Workflow
+
+**BEFORE any commit:**
+
+```bash
+# 1. Run architecture pre-commit check
+./scripts/architecture-pre-commit.sh
+
+# 2. Commit with architecture evidence in message
+git commit -m "feat: add order validation (#123)" -m "
+- Added OrderValidator in domain layer
+- Architecture: ./scripts/architecture-pre-commit.sh PASSED
+  - Duration: 2340ms
+  - Java architecture: OK
+  - Python architecture: OK
+  - Frontend architecture: OK
+"
+```
+
+#### Commit Message Format (REQUIRED)
+
+```
+feat: add order validation (#123)
+
+- Added OrderValidator in domain layer
+- Created validation use case in application layer
+
+Architecture: ./scripts/architecture-pre-commit.sh PASSED
+  - Duration: 2340ms
+  - Java architecture: OK
+  - Python architecture: OK
+  - Frontend architecture: OK
+  - E2E tests: OK
+```
+
+#### Consequences of Skipping
+
+1. ❌ Pre-commit hook blocks commit
+2. ❌ Commit-msg hook blocks commit
+3. ❌ CI/CD fails on PR
+4. ❌ Task marked as incomplete
+
+---
+
+### ⚠️ IMPERATIVE #5: GitHub Issues for Task Tracking
+
+**CRITICAL RULE:** AI agents MUST use GitHub Issues for ALL task tracking. This is the single source of truth.
+
+#### Required Workflow
+
+**At project start:**
+```bash
+gh issue list --state open --json number,title,labels,assignee
+```
+
+**Before starting work:**
+```bash
+gh issue edit <number> --add-assignee <username>
+gh issue comment <number> --body "Starting work on this now."
+```
+
+**After completion:**
+```bash
+gh issue comment <number> --body "
+## Implementation Summary
+- Added X in domain layer
+- Created Y use case
+- Tests: 95% coverage
+
+PR: #124
+"
+gh issue close <number>
+```
+
+#### Never Do This
+
+❌ Create markdown files in repo for task tracking  
+❌ Work on untracked features without an issue  
+❌ Close issues without verification  
+❌ Leave issues assigned after abandoning work  
+
+---
+
+## 📋 Summary of All Imperatives
+
+| # | Imperative | When | Consequence if Skipped |
+|---|------------|------|------------------------|
+| 1 | Use Serena & Context-Mode | ALWAYS (first choice) | Architecture violations, wasted time |
+| 2 | NO markdown reports | ALWAYS (repository hygiene) | Blocked commits, stale files |
+| 3 | Temporary files in /tmp | ALWAYS (before completion) | Git status fails, dirty repo |
+| 4 | Architecture compliance | BEFORE every commit | Commit blocked, CI/CD fails |
+| 5 | GitHub Issues tracking | ALWAYS (task management) | Task incomplete, no tracking |
+
+---
+
 ## AI Agent Rules: Temporary Files & Reports
 
 **CRITICAL:** Keep the repository clean. Temporary files and reports must NOT be committed.
