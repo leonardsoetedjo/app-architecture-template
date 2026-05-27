@@ -17,6 +17,33 @@ It contains verified boilerplate code for Java (Spring Boot), Python (FastAPI), 
 
 ---
 
+## 🔑 Key Insight: This Is a Template Repository
+
+**This is a template repository, not a product repo.** Documentation structure optimizes for:
+
+1. **Template maintainers** — Updating boilerplates across all stacks
+2. **Downstream projects** — Copied boilerplate + standalone AGENTS.md
+
+### What This Means
+
+| Audience | Use This File | Then Go To |
+|----------|--------------|------------|
+| **Template maintainer** | ✅ This root AGENTS.md | `boilerplate/*/` directories |
+| **Java developer** | ❌ Skip to | [`boilerplate/java/AGENTS.md`](boilerplate/java/AGENTS.md) |
+| **Python developer** | ❌ Skip to | [`boilerplate/python/AGENTS.md`](boilerplate/python/AGENTS.md) |
+| **Frontend developer** | ❌ Skip to | [`boilerplate/reactjs/AGENTS.md`](boilerplate/reactjs/AGENTS.md) |
+| **AI Agent (template work)** | ✅ This root AGENTS.md | Context-mode queries |
+| **AI Agent (feature work)** | ❌ Skip to | Language-specific boilerplate AGENTS.md |
+
+### Documentation Separation
+
+- **Root AGENTS.md** (this file): Template maintenance, cross-language patterns, repository structure
+- **Boilerplate AGENTS.md**: Language-specific code patterns, copied to downstream projects
+
+**Do not consolidate** — each boilerplate's AGENTS.md becomes standalone documentation when copied to a new project.
+
+---
+
 ## Technology Stack
 
 | Stack | Technology |
