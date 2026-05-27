@@ -1,89 +1,197 @@
-# App Architecture Template
+# app-architecture-template
 
-> **Purpose**: This repository is the **single source of truth** for correct Clean Architecture + DDD implementation across all services.
->
-> It serves two audiences:
-> 1. **Junior developers** — who copy its boilerplate and follow its SOPs to avoid architectural mistakes.
-> 2. **Software architects** — who audit every pull request against the standards, structures, and tests laid out here.
->
-> If your code deviates from this baseline, the PR does not merge.
+Clean Architecture polyglot service template with verified boilerplate for Java, Python, and React.
+
+**📍 This is a template repository** — fork/copy the boilerplate directories to start new projects. Do not build production features here.
 
 ---
 
-## What this repo provides
+## 🚀 Quick Start
 
-### 1. Working Boilerplate (copy-paste ready, **compiles out of the box**)
+| For | Go To |
+|-----|-------|
+| **New to this template** | [Setup Checklist](docs/04-templates/02-quick-setup-checklist.md) |
+| **Java developer** | [Java Boilerplate Guide](boilerplate/java/AGENTS.md) |
+| **Python developer** | [Python Boilerplate Guide](boilerplate/python/AGENTS.md) |
+| **Frontend developer** | [React Boilerplate Guide](boilerplate/reactjs/AGENTS.md) |
+| **AI Agent** | [AI Tooling Guide](docs/01-agnostic/01-standards/13-agents.md) |
 
-The boilerplate is **not pseudo-code**. Every file is real, compilable, runnable code.
-Copy it into your service, rename packages, adjust business logic — it works immediately.
+---
 
-| Stack | Path | What you get |
-|---|---|---|
-| **Java Backend** | [`boilerplate/java/common/`](./boilerplate/java/common/) + [`order-service/`](./boilerplate/java/order-service/) | Compiling, testable Spring Boot modules with zero-Lombok, domain/infrastructure separation, and a common shared module |
-| **React Frontend** | [`boilerplate/frontend/`](./boilerplate/frontend/) | Vite + React 18 + TypeScript + Ant Design, with Vitest unit tests and Playwright E2E scaffold |
-| **Migrations** | [`boilerplate/migrations/`](./boilerplate/migrations/) | Flyway template with naming convention `V{version}__{desc}.sql` |
-| **API Tests** | [`boilerplate/tests/bruno/`](./boilerplate/tests/bruno/) + [`frontend/e2e/`](./boilerplate/frontend/e2e/) | Bruno collection and Playwright spec for health + create-order endpoints |
+## 📚 Documentation
 
-**Verified on every commit:**
-```bash
-# Java backend — must compile clean
-cd boilerplate/java/common && mvn clean compile   # BUILD SUCCESS
-cd boilerplate/java/order-service && mvn clean compile  # BUILD SUCCESS
+### Core Principles (Language-Agnostic)
+- **[Standards](docs/01-agnostic/01-standards/)** — Architecture rules, Clean Architecture, DDD
+- **[ADRs](docs/01-agnostic/02-adrs/)** — Why we made these choices
+- **[Guidelines](docs/01-agnostic/03-guidelines/)** — How-to guides and patterns
+- **[SOPs](docs/04-sops/)** — Copy-paste procedures for common tasks
 
-# Frontend — must build clean
-cd boilerplate/frontend && npm run build   # dist/ generated
+### Technology Stacks
+| Stack | Technologies | Boilerplate |
+|-------|-------------|-------------|
+| **Java** | Spring Boot 3.4+, PostgreSQL, Maven, ArchUnit | [`boilerplate/java/`](boilerplate/java/) |
+| **Python** | FastAPI, SQLAlchemy, Poetry, pytest | [`boilerplate/python/`](boilerplate/python/) |
+| **Frontend** | React 18, TypeScript, Ant Design 5, Vite, Zustand | [`boilerplate/reactjs/`](boilerplate/reactjs/) |
+| **Quasar** | Quasar 2, Vue 3, TypeScript, Pinia, Vite | [`boilerplate/quasar/`](boilerplate/quasar/) |
 
-# Frontend tests — must pass
-cd boilerplate/frontend && npx vitest run   # 4 passed
+### Deployment
+- **Dual-mode Docker Compose** — Fleet (Traefik) or Standalone
+- **Base**: `docker-compose.yml` (no ports, no labels)
+- **Standalone**: `docker-compose.standalone.yml` (localhost access)
+- **Fleet**: `docker-compose.traefik.yml` (HTTPS via external Traefik)
 
-# Docker — must start healthy
-docker compose up   # db, backend, frontend all healthy
+---
+
+## 🤖 For AI Agents
+
+This template has **Context-Mode** and **Serena MCP** configured for enhanced AI agent support.
+
+### Query Examples
+```python
+# Find architecture rules
+ctx_search(queries: ["Clean Architecture forbidden imports"])
+
+# Find Java patterns
+ctx_search(queries: ["use case implementation"], source: "java-boilerplate")
+
+# Find Python patterns  
+ctx_search(queries: ["repository pattern SQLAlchemy"], source: "python-boilerplate")
+
+# Find Frontend patterns
+ctx_search(queries: ["feature-sliced design"], source: "frontend-boilerplate")
+
+# Find compliance scripts
+ctx_search(queries: ["pre-commit validation"], source: "compliance-scripts-full")
 ```
 
-If any of the above commands fail, the boilerplate is broken and the PR that broke it reverts.
+### Indexed Sources
+- **architecture-docs** — All ADRs, standards, guidelines, SOPs
+- **java-boilerplate** — Java AGENTS.md and patterns
+- **python-boilerplate** — Python AGENTS.md and patterns
+- **frontend-boilerplate** — React AGENTS.md and patterns
+- **compliance-scripts-full** — All architecture enforcement scripts
+- **github-workflows** — All GitHub Actions workflows
 
-### 2. Architecture Audit Baseline
+### Mandatory Compliance
+Before claiming ANY task complete, AI agents MUST:
+1. Run `./scripts/architecture-pre-commit.sh`
+2. Include "Architecture: PASSED" evidence in commit message
+3. Verify no temporary files in repository
+4. Use GitHub Issues for task tracking (not markdown files)
 
-The [`docs/01-agnostic/05-audit/03-checklist.md`](./docs/01-agnostic/05-audit/03-checklist.md) is the **audit instrument** architects use to evaluate developer pull requests.
-
-Before approving any PR, the architect checks:
-- [ ] Domain layer has zero framework imports (no Spring, no JPA, no Lombok)
-- [ ] Constructor injection only; no `@Autowired` fields
-- [ ] DTOs at every boundary; entities never leak to controllers
-- [ ] TypeScript: no `any`; every prop explicitly typed
-- [ ] Tests exist (Vitest for frontend, JUnit for backend, Bruno for API)
-- [ ] Flyway migrations follow `V{version}__{desc}.sql`
-
-### 3. Decision Records & Standards
-
-| Section | Purpose | Start Here |
-|---|---|---|
-| [`docs/01-agnostic/01-standards/`](./docs/01-agnostic/01-standards/) | Golden rules (naming, HTTP codes, structure) | [`02-architecture.md`](./docs/01-agnostic/01-standards/02-architecture.md) |
-| [`docs/01-agnostic/02-adrs/`](./docs/01-agnostic/02-adrs/) | Why we chose Clean Architecture, Outbox, etc. | [`01-clean-architecture.md`](./docs/01-agnostic/02-adrs/01-clean-architecture.md) |
-| [`docs/04-sops/`](./docs/04-sops/) | Step-by-step how-to guides | [`02-add-new-rest-endpoint.md`](./docs/04-sops/02-add-new-rest-endpoint.md) |
-| [`docs/01-agnostic/05-audit/`](./docs/01-agnostic/05-audit/) | Audit reports and checklists | [`03-checklist.md`](./docs/01-agnostic/05-audit/03-checklist.md) |
+See [AGENTS.md](AGENTS.md) for complete AI agent workflow.
 
 ---
 
-## Developer Onboarding (5 minutes)
+## 🏗️ Project Structure
 
-```bash
-# 1. Start the stack
-make up          # docker compose up db backend frontend
-
-# 2. Verify everything is healthy
-curl http://localhost:8080/actuator/health
-curl http://localhost:80/
-
-# 3. Run all tests
-make test        # mvn test (Java) + npm run test (frontend) + bru run (API)
-
-# 4. Start a new service using the boilerplate
-make new-service name=inventory
+```
+app-architecture-template/
+├── boilerplate/
+│   ├── java/              # Spring Boot service template
+│   ├── python/            # FastAPI service template
+│   └── frontend/          # React + TypeScript + Nginx template
+├── docs/                  # Architecture docs, ADRs, guidelines, SOPs
+├── docker-compose.yml         # Base services (no ports, no labels)
+├── docker-compose.standalone.yml  # Standalone overlay (localhost)
+├── docker-compose.traefik.yml     # Fleet overlay (Traefik + TLS)
+├── .env.example               # Required env vars template
+├── AGENTS.md                  # Template maintainer guide
+└── README.md                  # This file - repository overview
 ```
 
-See the full `AGENTS.md` for coding conventions and `docs/01-agnostic/00-INDEX.md` for documentation navigation.
+---
+
+## 📋 New Project Checklist
+
+When forking this template for a new project:
+
+1. **Complete setup checklist**: [`docs/04-templates/02-quick-setup-checklist.md`](docs/04-templates/02-quick-setup-checklist.md)
+2. **Copy boilerplate** — Select Java, Python, and/or Frontend
+3. **Rename services** in all three compose files
+4. **Update TLS host** — Set `TRAEFIK_HOST` in `.env`
+5. **Update router names** in Traefik labels (no duplicates)
+6. **Tune port numbers** in standalone compose (if running multiple projects)
+7. **Replace nginx.conf** proxy target with your backend service name(s)
 
 ---
 
-*Maintained by the architecture team. Update the checklist first, then the boilerplate, then the SOPs. Never the reverse.*
+## 🛡️ Architecture Compliance
+
+This template enforces **Clean Architecture** with mandatory compliance checks:
+
+| Layer | Mechanism | Bypassable? |
+|-------|-----------|-------------|
+| Pre-commit hook | `./scripts/architecture-pre-commit.sh` | ❌ No |
+| Commit message | Must include "Architecture: PASSED" | ❌ No |
+| CI/CD | GitHub Actions validation | ❌ No |
+| Skill enforcement | `verification-before-completion` | ❌ No |
+
+**Forbidden imports by layer:**
+- **Domain**: Zero framework imports (no Spring, JPA, FastAPI, SQLAlchemy)
+- **Application**: No REST controllers or HTTP frameworks
+- **Infrastructure**: Can import all inner layers
+
+See [AGENTS.md](AGENTS.md) for complete architecture compliance requirements.
+
+---
+
+## 🔧 Template Maintenance
+
+For maintainers updating this template:
+
+1. **Update boilerplate code** in `boilerplate/*/` directories
+2. **Run architecture validation** for each stack:
+   ```bash
+   # Java
+   mvn test -pl boilerplate/java/order-service -Dtest=CleanArchitectureLayersTest
+   
+   # Python
+   pytest tests/archunit/ -v
+   
+   # Frontend
+   npm run depcruise
+   ```
+3. **Update documentation** if patterns change
+4. **Test dual-mode deployment** (fleet + standalone)
+5. **Commit with architecture evidence** in message
+
+---
+
+## 📊 Repository Stats
+
+| Metric | Value |
+|--------|-------|
+| Documentation files | 110+ markdown files |
+| Total documentation | 24,000+ lines |
+| Languages supported | Java, Python, TypeScript |
+| Architecture patterns | Clean Architecture, DDD, Microservices |
+| Deployment modes | Fleet (Traefik), Standalone |
+
+---
+
+## 🤝 Contributing
+
+**For template improvements:**
+1. Create GitHub Issue describing the enhancement
+2. Implement in relevant boilerplate directory
+3. Update documentation if patterns change
+4. Run architecture validation
+5. Submit PR with architecture compliance evidence
+
+**For project-specific work:**
+- Use GitHub Issues for task tracking
+- Reference SOPs for common tasks
+- Follow language-specific AGENTS.md guides
+
+---
+
+## 📄 License
+
+This template is maintained as an internal reference for Clean Architecture polyglot services.
+
+---
+
+**Last Updated:** 2026-05-27  
+**Active Issues:** [#87-#91](https://github.com/leonardsoetedjo/app-architecture-template/issues) (Documentation enhancements)  
+**Template Version:** Clean Architecture v2.0 with Phase 2 Ironclad Guardrails
