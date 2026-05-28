@@ -2,7 +2,7 @@ name: Architecture Gate
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 # Note: GitHub email notifications on failure are controlled by user settings.
 # To disable: Settings > Notifications > uncheck "Participating" or customize per-repo.
