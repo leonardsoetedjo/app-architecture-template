@@ -48,6 +48,135 @@ docker compose up -d
 
 ---
 
+## ✨ Key Features
+
+This template provides **40+ verified features** across the entire SDLC:
+
+### 📋 Planning & Design
+- Interactive project setup checklists
+- Architecture Decision Records (ADRs) templates
+- New service generator script
+- PRD architecture audit toolkit
+
+### 💻 Development
+- Clean Architecture boilerplate (Domain, Application, Infrastructure, Interface)
+- Forbidden import enforcement via pre-commit hooks
+- TDD enforcement with RED-GREEN-REFACTOR workflows
+- AI agent tooling (Serena MCP, Context-Mode, Superpowers)
+- ArchUnit tests (Java) / pytest architecture tests (Python)
+- Dependency Cruiser validation (Frontend)
+
+### 🧪 Testing & Quality
+- Architecture Gate CI/CD (blocks PRs with violations)
+- Multi-stack test matrix (Java, Python, Frontend)
+- Testcontainers integration for integration testing
+- Coverage reporting with HTML artifacts
+- Commit message validation (requires architecture evidence)
+
+### 🔒 Security & Compliance
+- Dual-version secret rotation (zero-downtime)
+- Architecture violation logging and escalation
+- Security architecture review checklist
+- Fine-grained PAT enforcement
+
+### 🚀 Deployment & Infrastructure
+- **Dual-mode deployment**: Fleet (Traefik + HTTPS) OR Standalone (direct ports)
+- Zero Traefik leakage (clean compose separation)
+- Nginx reverse proxy configuration
+- Docker build automation (Makefile)
+- Health checks for all services
+
+### 📊 Monitoring & Observability
+- Architecture compliance dashboard (auto-generated HTML)
+- Weekly architecture reports with notifications
+- Automated metrics collection
+- Slack notifications for violations
+- Dozzle log viewer integration
+
+### 🔄 Governance
+- Architecture monitor daemon
+- Auto-fix scripts for common violations
+- Documentation linting
+- GitHub Issues workflow enforcement
+- CODEOWNERS automatic reviewer assignment
+
+---
+
+## 🛡️ Phase Gate Guardrails
+
+**This template enforces mandatory compliance checks between every SDLC stage.** Code cannot progress without passing each gate:
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  PLANNING   │ ──▶ │ DEVELOPMENT │ ──▶ │   TESTING   │ ──▶ │ DEPLOYMENT  │
+└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+       │                   │                   │                   │
+       ▼                   ▼                   ▼                   ▼
+  ✓ Project           ✓ Pre-commit        ✓ Architecture      ✓ Secret
+    checklist           hook blocks         Gate blocks         rotation
+    completed           violations          merging             verified
+  ✓ ADR created       ✓ TDD tests         ✓ Coverage          ✓ Health
+    & reviewed          written first       threshold met       checks pass
+  ✓ Security          ✓ Architecture      ✓ Integration       ✓ Compliance
+    requirements        evidence in         tests pass          dashboard
+    defined             commit msg                              generated
+```
+
+### Gate Details
+
+| Stage Transition | Guardrail | Enforcement | Bypassable? |
+|-----------------|-----------|-------------|-------------|
+| **Planning → Development** | Project checklist completion | Manual (SOP) | ❌ No — required for new projects |
+| **Development → Testing** | Pre-commit architecture hook | Git hook (automatic) | ❌ No — commit blocked |
+| **Development → Testing** | Commit message with architecture evidence | Commit-msg hook | ❌ No — commit rejected |
+| **Testing → Deployment** | Architecture Gate CI/CD | GitHub Actions | ❌ No — PR cannot merge |
+| **Testing → Deployment** | Test coverage threshold | CI workflow | ❌ No — artifact required |
+| **Deployment → Production** | Dual-version secret rotation | Automated script | ❌ No — zero-downtime required |
+| **Production → Monitoring** | Compliance dashboard generation | Scheduled workflow | ⚠️ Auto-generated daily |
+| **Any Stage** | Violation logging & escalation | Automated scripts | ❌ No — all attempts logged |
+
+### What Happens If You Try to Bypass?
+
+1. **Pre-commit hook blocks** the commit with specific violation details
+2. **Commit-msg hook rejects** commits without "Architecture: PASSED" evidence
+3. **CI/CD pipeline fails** — PR cannot merge until Architecture Gate passes
+4. **Violation is logged** to `logs/architecture-violations.log`
+5. **Escalation triggered** if repeated bypass attempts detected
+6. **Dashboard reflects** the violation in compliance metrics
+
+### Example: Blocked Commit
+
+```bash
+$ git commit -m "feat: add order validation"
+🛡️  Architecture Guardrails Pre-Commit Check
+
+  [1/4] Checking Java architecture...
+  ❌ FAIL: Domain layer has framework imports
+    - File: src/main/java/com/example/domain/Order.java
+    - Import: import org.springframework.stereotype.Component
+
+Commit blocked. Fix violations and re-run:
+  ./scripts/architecture-pre-commit.sh
+```
+
+### Example: Successful Commit
+
+```bash
+$ git commit -m "feat: add order validation (#123)" -m "
+- Added OrderValidator in domain layer
+- Created validation use case in application layer
+
+Architecture: ./scripts/architecture-pre-commit.sh PASSED
+  - Duration: 2340ms
+  - Java architecture: OK
+  - Python architecture: OK
+  - Frontend architecture: OK
+"
+✅ Commit accepted. Proceeding to CI/CD...
+```
+
+---
+
 ## 📚 Documentation
 
 ### Core Principles (Language-Agnostic)
