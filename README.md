@@ -106,20 +106,71 @@ This template provides **40+ verified features** across the entire SDLC:
 
 **This template enforces mandatory compliance checks between every SDLC stage.** Code cannot progress without passing each gate:
 
+```plantuml
+@startuml
+skinparam backgroundColor white
+skinparam sequenceMessageAlign center
+skinparam participantStyle rectangle
+skinparam arrowColor Black
+skinparam actorStyle awesome
+
+rectangle "PLANNING" as Planning #LightBlue
+rectangle "DEVELOPMENT" as Development #LightGreen
+rectangle "TESTING" as Testing #LightYellow
+rectangle "DEPLOYMENT" as Deployment #LightCoral
+
+Planning -[hidden]right-> Development
+Development -[hidden]right-> Testing
+Testing -[hidden]right-> Deployment
+
+note bottom of Planning
+  ✓ Project checklist completed
+  ✓ ADR created & reviewed
+  ✓ Security requirements defined
+end note
+
+note bottom of Development
+  ✓ Pre-commit hook blocks violations
+  ✓ TDD tests written first
+  ✓ Architecture evidence in commit msg
+end note
+
+note bottom of Testing
+  ✓ Architecture Gate blocks merging
+  ✓ Coverage threshold met
+  ✓ Integration tests pass
+end note
+
+note bottom of Deployment
+  ✓ Secret rotation verified
+  ✓ Health checks pass
+  ✓ Compliance dashboard generated
+end note
+
+Planning -> Development : Gate 1\nProject Setup
+Development -> Testing : Gate 2\nPre-commit Hook
+Testing -> Deployment : Gate 3\nCI/CD Pipeline
+@enduml
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  PLANNING   │ ──▶ │ DEVELOPMENT │ ──▶ │   TESTING   │ ──▶ │ DEPLOYMENT  │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-       │                   │                   │                   │
-       ▼                   ▼                   ▼                   ▼
-  ✓ Project           ✓ Pre-commit        ✓ Architecture      ✓ Secret
-    checklist           hook blocks         Gate blocks         rotation
-    completed           violations          merging             verified
-  ✓ ADR created       ✓ TDD tests         ✓ Coverage          ✓ Health
-    & reviewed          written first       threshold met       checks pass
-  ✓ Security          ✓ Architecture      ✓ Integration       ✓ Compliance
-    requirements        evidence in         tests pass          dashboard
-    defined             commit msg                              generated
+
+### How to Render
+
+**Option 1: VS Code Extension**
+```bash
+# Install PlantUML extension, then open README.md
+# Click preview button or press Alt+D (Windows) / Option+D (Mac)
+```
+
+**Option 2: Online Renderer**
+```bash
+# Copy the @startuml...@enduml block to:
+# https://www.plantuml.com/plantuml/
+```
+
+**Option 3: CLI Tool**
+```bash
+# Install: brew install plantuml (Mac) or apt-get install plantuml (Linux)
+plantuml -tpng README.md  # Generates PNG from diagram
 ```
 
 ### Gate Details
