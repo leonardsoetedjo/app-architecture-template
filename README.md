@@ -2,39 +2,37 @@
 
 **Production-ready Clean Architecture template for polyglot microservices.**
 
-This is a **template repository** that provides verified boilerplate code, architecture enforcement, and development workflows for building maintainable microservices. Fork this repo to start new projects with best practices baked in.
+This is a **template repository** that provides complete, working boilerplate so developers can focus on business logic instead of infrastructure. Fork this repo, run a generator, and start implementing features immediately.
 
 ---
 
 ## 🎯 Project Goal
 
-**Solve:** New microservice projects start from scratch, repeating the same architecture mistakes, missing critical guardrails, and taking weeks to set up properly.
+**Problem:** Developers waste days/weeks setting up infrastructure (auth, database, caching, API scaffolding, CI/CD, deployment) before they can write a single line of business logic.
 
-**Solution:** A ready-to-use template with:
-- ✅ **Verified boilerplate** for Java (Spring Boot), Python (FastAPI), and React/Quasar frontends
-- ✅ **Mandatory architecture enforcement** via pre-commit hooks, CI/CD gates, and commit validation
-- ✅ **40+ production features** including caching, rate limiting, observability, health checks
-- ✅ **Dual-mode deployment** (fleet with Traefik or standalone)
-- ✅ **AI agent integration** (Serena MCP, Context-Mode, Superpowers)
+**Solution:** A complete, working application with:
+- ✅ **Pre-built infrastructure** — Auth, database, caching, messaging, observability (all configured)
+- ✅ **Feature generators** — Run one command, get working endpoints with tests
+- ✅ **Invisible boilerplate** — Developers never touch config files, Docker setup, or CI/CD
+- ✅ **Business logic focus** — Start implementing features in minutes, not weeks
 
-**Outcome:** Teams launch new services in **hours instead of weeks**, with consistent architecture, built-in compliance, and proven patterns.
+**Outcome:** Developers write **only business logic**. Everything else is already done.
 
 ---
 
 ## 📌 Who Should Use This
 
-| Audience | Use This Template For |
-|----------|----------------------|
-| **Tech Leads** | Standardizing architecture across multiple teams/services |
-| **Developers** | Starting a new microservice with best practices from day one |
-| **Architects** | Enforcing Clean Architecture rules and layer boundaries |
-| **DevOps** | Dual-mode deployment (fleet or standalone) with minimal config |
-| **AI Agents** | Structured codebase with Serena/Context-Mode integration |
+| Audience | What They Get |
+|----------|---------------|
+| **Developers** | Run generator → implement business logic → done. No infrastructure headaches. |
+| **Tech Leads** | Team ships features faster. No time wasted on setup. |
+| **Architects** | Clean Architecture enforced automatically by generators. |
+| **DevOps** | Pre-configured deployment (fleet or standalone). Zero config needed. |
 
-**Do NOT use this for:**
-- ❌ Building production features directly in this repo (it's a template, not a product)
-- ❌ Monolithic applications (designed for microservices)
-- ❌ Projects that don't need architecture enforcement (this template is opinionated)
+**This is NOT for:**
+- ❌ Learning Clean Architecture theory (use the docs for that)
+- ❌ Building monoliths (designed for microservices)
+- ❌ Projects that enjoy configuring infrastructure manually
 
 ---
 
