@@ -28,11 +28,81 @@ This is a **template repository** that provides complete, working boilerplate so
 | **Tech Leads** | Team ships features faster. No time wasted on setup. |
 | **Architects** | Clean Architecture enforced automatically by generators. |
 | **DevOps** | Pre-configured deployment (fleet or standalone). Zero config needed. |
+| **Auditors** | Reference baseline for architecture compliance checks on existing projects. |
+
+**Common Use Cases:**
+
+1. **Start New Project:** Fork this repo, run generator, implement business logic
+2. **Audit Existing Project:** Compare against this template to find architecture violations
+3. **Onboard New Team:** Give developers a working example of Clean Architecture patterns
+4. **Standardize Across Teams:** All teams use same templates, generators, and enforcement
 
 **This is NOT for:**
 - ❌ Learning Clean Architecture theory (use the docs for that)
 - ❌ Building monoliths (designed for microservices)
 - ❌ Projects that enjoy configuring infrastructure manually
+
+---
+
+## 🔍 Architecture Audit Reference
+
+This template serves as the **ground truth** for architecture compliance audits:
+
+### How to Audit Against This Template
+
+**Option 1: Manual Comparison**
+```bash
+# Clone both repositories side-by-side
+git clone https://github.com/leonardsoetedjo/app-architecture-template.git reference
+git clone https://github.com/your-org/your-project.git target
+
+# Compare layer structure
+diff -r reference/boilerplate/java/order-service/src/main/java/com/example/domain \
+         target/src/main/java/com/yourcompany/domain
+
+# Check for forbidden imports
+grep -r "import org.springframework" target/src/main/java/**/domain/
+```
+
+**Option 2: Automated Audit Scripts**
+```bash
+# Run architecture audit on existing project
+cd your-project
+curl -s https://raw.githubusercontent.com/leonardsoetedjo/app-architecture-template/main/scripts/architecture-pre-commit.sh | bash
+
+# Generate compliance report
+python scripts/collect-architecture-metrics.py > audit-report.json
+```
+
+**Option 3: AI-Powered Audit**
+```python
+# Use Serena + Context-Mode to query architecture rules
+ctx_search(queries: ["Clean Architecture forbidden imports"])
+
+# Compare against your project structure
+mcp_serena_find_symbol(name_path_pattern="*/domain/*", relative_path="your-project/")
+```
+
+### What Gets Audited
+
+| Aspect | Reference | Audit Check |
+|--------|-----------|-------------|
+| **Layer Structure** | `boilerplate/java/order-service/src/main/java/**/` | Does your project have same folder structure? |
+| **Forbidden Imports** | Domain has zero Spring/JPA imports | Does your domain layer import frameworks? |
+| **Use Case Pattern** | `application/usecases/*UseCase.java` | Do you use use case pattern or anemic services? |
+| **DTOs at Boundaries** | Separate DTOs for requests/responses | Are entities exposed to API layer? |
+| **Test Structure** | `src/test/java/**/archunit/` | Do you have architecture tests? |
+| **Dependency Injection** | Constructor injection only | Field injection with `@Autowired`? |
+| **Database Access** | Repository pattern with interfaces | Direct JPA repository usage in services? |
+
+### Audit Report Template
+
+See: [`docs/05-audit/`](docs/05-audit/) for audit report templates and checklists.
+
+**Audit Frequency:**
+- **New projects:** Audit at end of sprint 1, then monthly
+- **Existing projects:** Audit quarterly or before major releases
+- **After refactoring:** Audit immediately to verify no regressions
 
 ---
 
