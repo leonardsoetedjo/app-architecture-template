@@ -1,8 +1,40 @@
 # app-architecture-template
 
-Clean Architecture polyglot service template with verified boilerplate for Java, Python, and React.
+**Production-ready Clean Architecture template for polyglot microservices.**
 
-**📍 This is a template repository** — fork/copy the boilerplate directories to start new projects. Do not build production features here.
+This is a **template repository** that provides verified boilerplate code, architecture enforcement, and development workflows for building maintainable microservices. Fork this repo to start new projects with best practices baked in.
+
+---
+
+## 🎯 Project Goal
+
+**Solve:** New microservice projects start from scratch, repeating the same architecture mistakes, missing critical guardrails, and taking weeks to set up properly.
+
+**Solution:** A ready-to-use template with:
+- ✅ **Verified boilerplate** for Java (Spring Boot), Python (FastAPI), and React/Quasar frontends
+- ✅ **Mandatory architecture enforcement** via pre-commit hooks, CI/CD gates, and commit validation
+- ✅ **40+ production features** including caching, rate limiting, observability, health checks
+- ✅ **Dual-mode deployment** (fleet with Traefik or standalone)
+- ✅ **AI agent integration** (Serena MCP, Context-Mode, Superpowers)
+
+**Outcome:** Teams launch new services in **hours instead of weeks**, with consistent architecture, built-in compliance, and proven patterns.
+
+---
+
+## 📌 Who Should Use This
+
+| Audience | Use This Template For |
+|----------|----------------------|
+| **Tech Leads** | Standardizing architecture across multiple teams/services |
+| **Developers** | Starting a new microservice with best practices from day one |
+| **Architects** | Enforcing Clean Architecture rules and layer boundaries |
+| **DevOps** | Dual-mode deployment (fleet or standalone) with minimal config |
+| **AI Agents** | Structured codebase with Serena/Context-Mode integration |
+
+**Do NOT use this for:**
+- ❌ Building production features directly in this repo (it's a template, not a product)
+- ❌ Monolithic applications (designed for microservices)
+- ❌ Projects that don't need architecture enforcement (this template is opinionated)
 
 ---
 
