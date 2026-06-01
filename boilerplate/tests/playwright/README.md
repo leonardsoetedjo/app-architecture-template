@@ -11,13 +11,13 @@
 ## 📚 Documentation by Audience
 
 **For Human Developers:**
-- 🚀 [5-Minute Quick Start](QUICK_START.md) - Get started in 5 minutes
-- 📘 [Developer Guide](DEVELOPER_GUIDE.md) - Detailed instructions and edge cases
-- 📋 [Cheatsheet](CHEATSHEET.md) - Quick command reference
-- 💻 [Code Examples](EXAMPLES.md) - Copy-paste ready test patterns
+- 🚀 [5-Minute Quick Start](quick_start.md) - Get started in 5 minutes
+- 📘 [Developer Guide](developer_guide.md) - Detailed instructions and edge cases
+- 📋 [Cheatsheet](cheatsheet.md) - Quick command reference
+- 💻 [Code Examples](examples.md) - Copy-paste ready test patterns
 
 **For AI Agents:**
-- 🤖 [AI Agent Guide](AI_AGENT_GUIDE.md) - Mandatory test-first workflow
+- 🤖 [AI Agent Guide](ai_agent_guide.md) - Mandatory test-first workflow
 - 🔧 [Enforcement Skill](enforce-e2e-tests-on-code-changes) - Auto-triggered skill
 
 **For Everyone:**
@@ -32,11 +32,11 @@
 
 | Goal | Go To | Time |
 |------|-------|------|
-| Get started fast | [QUICK_START.md](QUICK_START.md) | 5 min |
-| Find a command | [CHEATSHEET.md](CHEATSHEET.md) | 30 sec |
-| See code examples | [EXAMPLES.md](EXAMPLES.md) | 2 min |
-| Understand edge cases | [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) | 10 min |
-| Learn full workflow | [WORKFLOW.md](WORKFLOW.md) | 5 min |
+| Get started fast | [quick_start.md](quick_start.md) | 5 min |
+| Find a command | [cheatsheet.md](cheatsheet.md) | 30 sec |
+| See code examples | [examples.md](examples.md) | 2 min |
+| Understand edge cases | [developer_guide.md](developer_guide.md) | 10 min |
+| Learn full workflow | [workflow.md](workflow.md) | 5 min |
 
 ---
 
@@ -65,7 +65,7 @@ npm run e2e:debug        # Debug mode
 npm run e2e:report       # HTML report
 ```
 
-See [CHEATSHEET.md](CHEATSHEET.md) for full command reference.
+See [cheatsheet.md](cheatsheet.md) for full command reference.
 
 ---
 
@@ -74,11 +74,11 @@ See [CHEATSHEET.md](CHEATSHEET.md) for full command reference.
 ```
 playwright/
 ├── README.md                    # This file
-├── QUICK_START.md               # 5-minute guide (NEW)
-├── CHEATSHEET.md                # Quick reference (NEW)
-├── DEVELOPER_GUIDE.md           # Detailed guide
-├── AI_AGENT_GUIDE.md            # AI agent workflow
-├── EXAMPLES.md                  # Code examples (NEW)
+├── quick_start.md               # 5-minute guide (NEW)
+├── cheatsheet.md                # Quick reference (NEW)
+├── developer_guide.md           # Detailed guide
+├── ai_agent_guide.md            # AI agent workflow
+├── examples.md                  # Code examples (NEW)
 ├── playwright.config.ts         # Configuration
 ├── e2e/                         # Test specs
 │   ├── smoke.spec.ts
@@ -93,13 +93,13 @@ playwright/
 
 ## 4. Documentation Overview
 
-### QUICK_START.md (5 minutes)
+### quick_start.md (5 minutes)
 - The basic rule: Code change = Tests required
 - Simple 4-step workflow
 - Decision tree for "Do I need tests?"
 - Common commands and file locations
 
-### DEVELOPER_GUIDE.md (10 minutes)
+### developer_guide.md (10 minutes)
 - Your responsibilities as a developer
 - Test patterns cheat sheet
 - Common scenarios and how to handle them
@@ -107,13 +107,13 @@ playwright/
 - Pre-commit hook setup
 - CI/CD pipeline overview
 
-### CHEATSHEET.md (30 seconds)
+### cheatsheet.md (30 seconds)
 - All commands in one place
 - File locations
 - Commit message format
 - Quick links to other docs
 
-### EXAMPLES.md (copy-paste)
+### examples.md (copy-paste)
 - New feature test file (complete example)
 - Bug fix regression test
 - UI component selector updates
@@ -121,7 +121,7 @@ playwright/
 - API testing examples
 - Handling loading states and network requests
 
-### AI_AGENT_GUIDE.md (AI agents only)
+### ai_agent_guide.md (AI agents only)
 - Canonical example (read first)
 - Non-negotiable rules
 - 8-step workflow
@@ -227,12 +227,12 @@ See [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) for workflow details.
 
 | Resource | When to Use |
 |----------|-------------|
-| [QUICK_START.md](QUICK_START.md) | Just getting started |
-| [CHEATSHEET.md](CHEATSHEET.md) | Need a command fast |
-| [EXAMPLES.md](EXAMPLES.md) | Need code to copy |
-| [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) | Hit an edge case |
-| [WORKFLOW.md](WORKFLOW.md) | Want full workflow |
-| [AI_AGENT_GUIDE.md](AI_AGENT_GUIDE.md) | AI agent workflow |
+| [quick_start.md](quick_start.md) | Just getting started |
+| [cheatsheet.md](cheatsheet.md) | Need a command fast |
+| [examples.md](examples.md) | Need code to copy |
+| [developer_guide.md](developer_guide.md) | Hit an edge case |
+| [workflow.md](workflow.md) | Want full workflow |
+| [ai_agent_guide.md](ai_agent_guide.md) | AI agent workflow |
 | https://playwright.dev | Official docs |
 
 ---

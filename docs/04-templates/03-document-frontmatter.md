@@ -45,7 +45,7 @@ Document category. Must be one of:
 | `ADR` | Architectural Decision Record | Technology choices, pattern adoption |
 | `SOP` | Standard Operating Procedure | Step-by-step guides |
 | `Guideline` | Best practices and recommendations | Testing guidelines, deployment guide |
-| `Index` | Navigation and discovery | `00-INDEX.md` files |
+| `Index` | Navigation and discovery | `00-index.md` files |
 | `Audit` | Audit reports and checklists | Architecture audit, performance audit |
 | `Diagram` | Visual diagrams | PlantUML diagrams |
 

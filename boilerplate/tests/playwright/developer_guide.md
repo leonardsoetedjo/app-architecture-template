@@ -56,7 +56,7 @@ git commit -m "feat: add discount field to orders (#74)
 
 **UI change:** Use `getByRole()` instead of CSS selectors like `.btn-primary`
 
-**Full examples:** See [EXAMPLES.md](./EXAMPLES.md)
+**Full examples:** See [examples.md](./examples.md)
 
 ---
 
@@ -139,7 +139,7 @@ test('stable test', async ({ page }) => {
 **Resources:**
 1. Check existing tests: `e2e/*.spec.ts`
 2. Review Page Object examples: `fixtures/pages/`
-3. Read full examples: [EXAMPLES.md](./EXAMPLES.md)
+3. Read full examples: [examples.md](./examples.md)
 4. Playwright docs: https://playwright.dev
 
 **Start simple:**
@@ -255,15 +255,15 @@ CI=false
 
 ## Quick Reference
 
-See [CHEATSHEET.md](./CHEATSHEET.md) for commands and [EXAMPLES.md](./EXAMPLES.md) for code.
+See [cheatsheet.md](./cheatsheet.md) for commands and [examples.md](./examples.md) for code.
 
 ---
 
 ## Need Help?
 
-- **5-Minute Start:** [QUICK_START.md](./QUICK_START.md)
-- **Code Examples:** [EXAMPLES.md](./EXAMPLES.md)
-- **Cheatsheet:** [CHEATSHEET.md](./CHEATSHEET.md)
+- **5-Minute Start:** [quick_start.md](./quick_start.md)
+- **Code Examples:** [examples.md](./examples.md)
+- **Cheatsheet:** [cheatsheet.md](./cheatsheet.md)
 - **Playwright Docs:** https://playwright.dev
 - **Team Slack:** #e2e-testing
 

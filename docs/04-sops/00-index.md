@@ -91,8 +91,8 @@ The following SOPs are planned for future development (see Issue #51):
 ### Related Documentation
 - **Architecture Standards**: [01-agnostic/01-standards/02-architecture.md](../01-agnostic/01-standards/02-architecture.md)
 - **Review Checklist**: [01-agnostic/01-standards/11-review.md](../01-agnostic/01-standards/11-review.md)
-- **Java Backend**: [02-java/00-INDEX.md](../02-java/00-INDEX.md)
-- **Python Backend**: [03-python/00-INDEX.md](../03-python/00-INDEX.md)
+- **Java Backend**: [02-java/00-index.md](../02-java/00-index.md)
+- **Python Backend**: [03-python/00-index.md](../03-python/00-index.md)
 
 ### Templates
 - **SOP Template**: [04-templates/01-sop-template.md](../04-templates/01-sop-template.md) *(planned)*

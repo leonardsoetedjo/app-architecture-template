@@ -67,7 +67,7 @@ jobs:
               message += '- [ ] Added E2E tests for new features\n';
               message += '- [ ] Updated existing tests for modified behavior\n';
               message += '- [ ] Verified all tests pass locally\n\n';
-              message += '📚 See [WORKFLOW.md](boilerplate/tests/playwright/WORKFLOW.md) for guidance.';
+              message += '📚 See [workflow.md](boilerplate/tests/playwright/workflow.md) for guidance.';
             } else {
               message += '✅ E2E tests included with code changes';
             }

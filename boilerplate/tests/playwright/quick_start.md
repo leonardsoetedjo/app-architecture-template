@@ -79,10 +79,10 @@ your-project/
 
 | Resource | When to Read |
 |----------|--------------|
-| **[CHEATSHEET.md](./CHEATSHEET.md)** | Quick command reference |
-| **[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)** | Edge cases, detailed workflows |
-| **[EXAMPLES.md](./EXAMPLES.md)** | Copy-paste code examples |
-| **[AI_AGENT_GUIDE.md](./AI_AGENT_GUIDE.md)** | For AI agents only |
+| **[cheatsheet.md](./cheatsheet.md)** | Quick command reference |
+| **[developer_guide.md](./developer_guide.md)** | Edge cases, detailed workflows |
+| **[examples.md](./examples.md)** | Copy-paste code examples |
+| **[ai_agent_guide.md](./ai_agent_guide.md)** | For AI agents only |
 
 ---
 

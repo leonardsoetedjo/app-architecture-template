@@ -56,7 +56,7 @@ Testing -> Deployment : Gate 3\nCI/CD Pipeline
 **Render Options:**
 - **VS Code:** Install PlantUML extension, press `Alt+D` (Windows) / `Option+D` (Mac)
 - **Online:** Copy diagram to https://www.plantuml.com/plantuml/
-- **CLI:** `plantuml -tpng GOVERNANCE.md`
+- **CLI:** `plantuml -tpng governance.md`
 
 ---
 
@@ -204,7 +204,7 @@ python scripts/generate-dashboard.py metrics.json dashboard/index.html
 
 ## Related Documentation
 
-- [Features Overview](FEATURES.md) — Complete list of 40+ template features
+- [Features Overview](features.md) — Complete list of 40+ template features
 - [Architecture Standards](01-standards/02-architecture.md) — Clean Architecture rules
 - [Pre-Commit Hook Source](../scripts/architecture-pre-commit.sh) — Hook implementation
 - [Architecture Gate Workflow](../.github/workflows/architecture-gate.yml) — CI/CD configuration

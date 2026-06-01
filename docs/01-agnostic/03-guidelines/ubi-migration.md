@@ -169,7 +169,7 @@ brew install plantuml
 # Or download JAR: https://plantuml.com/download
 ```
 
-**File**: `docs/01-agnostic/06-diagrams/00-INDEX.md`
+**File**: `docs/01-agnostic/06-diagrams/00-index.md`
 
 ---
 

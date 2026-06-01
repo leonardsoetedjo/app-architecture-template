@@ -243,7 +243,7 @@ These issues directly implement capabilities from the **Technical Capabilities**
 ## 🔗 Related Documentation
 
 - **Technical Checklist**: `docs/04-templates/02-quick-setup-checklist.md` (Step 2.5)
-- **Integration Testing**: `boilerplate/python/INTEGRATION_TESTING.md`
+- **Integration Testing**: `boilerplate/python/integration_testing.md`
 - **Python AGENTS.md**: `boilerplate/python/AGENTS.md`
 - **Java AGENTS.md**: `boilerplate/java/AGENTS.md`
 

@@ -35,8 +35,8 @@ A comprehensive PRD (Product Requirements Document) Architecture Audit toolkit h
 | 3 | **Report Template** | Standardized findings documentation | 280 | `docs/01-agnostic/01-standards/prd-audit-report-template.md` |
 | 4 | **Worked Example** | Realistic sample audit with scoring | 400 | `docs/01-agnostic/01-standards/prd-audit-example.md` |
 | 5 | **Quick Reference** | One-page cheat sheet | 220 | `docs/01-agnostic/01-standards/prd-audit-quick-reference.md` |
-| 6 | **README Index** | Documentation suite overview | 300 | `docs/01-agnostic/01-standards/PRD-AUDIT-README.md` |
-| 7 | **This Summary** | Delivery overview | 200 | `docs/01-agnostic/01-standards/PRD-AUDIT-DELIVERY-SUMMARY.md` |
+| 6 | **README Index** | Documentation suite overview | 300 | `docs/01-agnostic/01-standards/prd-audit-readme.md` |
+| 7 | **This Summary** | Delivery overview | 200 | `docs/01-agnostic/01-standards/prd-audit-delivery-summary.md` |
 
 **Total Documentation:** ~2,400 lines, ~60KB
 
@@ -123,7 +123,7 @@ A comprehensive PRD (Product Requirements Document) Architecture Audit toolkit h
 
 ---
 
-### 6. README Index (`PRD-AUDIT-README.md`)
+### 6. README Index (`prd-audit-readme.md`)
 **The Navigation**
 
 - Documentation suite overview
@@ -371,8 +371,8 @@ All documents are in:
 - `prd-audit-report-template.md` — Report template
 - `prd-audit-example.md` — Worked example
 - `prd-audit-quick-reference.md` — Quick reference
-- `PRD-AUDIT-README.md` — Documentation index
-- `PRD-AUDIT-DELIVERY-SUMMARY.md` — This file
+- `prd-audit-readme.md` — Documentation index
+- `prd-audit-delivery-summary.md` — This file
 
 ---
 
@@ -414,4 +414,4 @@ This toolkit is successful when:
 
 ---
 
-**Questions?** → See [PRD-AUDIT-README.md](./PRD-AUDIT-README.md) for navigation and support information.
+**Questions?** → See [prd-audit-readme.md](./prd-audit-readme.md) for navigation and support information.

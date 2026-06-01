@@ -2,7 +2,7 @@
 
 > **Purpose**: Standard template for architecture audit checklists across all boilerplates (Java, Python, ReactJS, Quasar).
 
-> **Usage**: Copy this template to `boilerplate/{lang}/ARCHITECTURE_AUDIT.md` and customize for language-specific rules.
+> **Usage**: Copy this template to `boilerplate/{lang}/architecture_audit.md` and customize for language-specific rules.
 
 ---
 

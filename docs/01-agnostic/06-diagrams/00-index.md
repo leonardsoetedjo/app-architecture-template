@@ -206,7 +206,7 @@ All diagrams stored in: `docs/01-agnostic/06-diagrams/`
 
 - Source files: `*.puml`
 - Rendered PNGs: `rendered/*.png`
-- This index: `00-INDEX.md`
+- This index: `00-index.md`
 
 ---
 

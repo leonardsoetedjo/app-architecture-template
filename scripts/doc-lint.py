@@ -145,7 +145,7 @@ def main():
         filename = file.relative_to(docs_dir)
 
         # Skip index and known files
-        if 'INDEX.md' in str(filename):
+        if 'index.md' in str(filename):
             continue
 
         # 1. Frontmatter Check

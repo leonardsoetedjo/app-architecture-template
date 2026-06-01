@@ -317,7 +317,7 @@ pytest tests/ --cov=src --cov-report=term-missing -v
 pytest tests/archunit/ -v
 ```
 
-**See**: [`INTEGRATION_TESTING.md`](INTEGRATION_TESTING.md) for comprehensive guide.
+**See**: [`integration_testing.md`](integration_testing.md) for comprehensive guide.
 
 ---
 

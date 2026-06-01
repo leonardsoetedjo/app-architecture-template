@@ -26,7 +26,7 @@
 #   3. Generates a customized .env file with secure passwords
 #   4. Renames services in Docker Compose files
 #   5. Initializes a Git repository with first commit
-#   6. Creates PROJECT_SETUP.md with project-specific instructions
+#   6. Creates project_setup.md with project-specific instructions
 #
 # Output:
 #   Creates a new project directory in the parent folder:
@@ -647,7 +647,7 @@ if [ "$DRY_RUN" = true ]; then
     echo "  ✓ Copy selected boilerplates"
     echo "  ✓ Generate .env file with secure passwords"
     echo "  ✓ Rename services in docker-compose files"
-    echo "  ✓ Create PROJECT_SETUP.md"
+    echo "  ✓ Create project_setup.md"
     echo "  ✓ Initialize Git repository"
     echo ""
     if [ -n "$SAVE_CONFIG_FILE" ]; then
@@ -815,7 +815,7 @@ done
 print_step "Updated service names in docker-compose files"
 
 # Create project-specific README
-cat > "$PROJECT_DIR/PROJECT_SETUP.md" <<EOF
+cat > "$PROJECT_DIR/project_setup.md" <<EOF
 # $PROJECT_NAME - Project Setup
 
 **Generated:** $(date -u +"%Y-%m-%dT%H:%M:%SZ")  
@@ -914,7 +914,7 @@ docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d
 **Need help?** See [docs/quick-start/01-developer-onboarding.md](docs/quick-start/01-developer-onboarding.md)
 EOF
 
-print_step "Created: PROJECT_SETUP.md"
+print_step "Created: project_setup.md"
 
 # Save configuration if requested
 if [ -n "$SAVE_CONFIG_FILE" ]; then
@@ -974,7 +974,7 @@ echo "Next steps:"
 echo "  1. cd $PROJECT_DIR"
 echo "  2. Review .env file (especially database password)"
 echo "  3. docker compose up -d"
-echo "  4. Open PROJECT_SETUP.md for detailed instructions"
+echo "  4. Open project_setup.md for detailed instructions"
 echo ""
 
 if [ "$DEPLOY_MODE_NAME" = "fleet" ] || [ "$DEPLOY_MODE_NAME" = "hybrid" ]; then

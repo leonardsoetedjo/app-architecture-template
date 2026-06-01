@@ -238,7 +238,7 @@ docs/01-agnostic/01-standards/
 ├── prd-audit-report-template.md   # Report template
 ├── prd-audit-example.md           # Worked example
 ├── prd-audit-quick-reference.md   # Quick reference
-└── PRD-AUDIT-README.md            # This file (index)
+└── prd-audit-readme.md            # This file (index)
 ```
 
 ---

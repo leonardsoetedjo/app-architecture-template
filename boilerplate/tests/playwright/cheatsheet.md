@@ -60,10 +60,10 @@ Closes #74
 
 ## Quick Links
 
-- **5-Minute Start:** [QUICK_START.md](./QUICK_START.md)
-- **Developer Guide:** [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
-- **Code Examples:** [EXAMPLES.md](./EXAMPLES.md)
-- **AI Agent Guide:** [AI_AGENT_GUIDE.md](./AI_AGENT_GUIDE.md)
+- **5-Minute Start:** [quick_start.md](./quick_start.md)
+- **Developer Guide:** [developer_guide.md](./developer_guide.md)
+- **Code Examples:** [examples.md](./examples.md)
+- **AI Agent Guide:** [ai_agent_guide.md](./ai_agent_guide.md)
 - **Playwright Docs:** https://playwright.dev
 
 ---
