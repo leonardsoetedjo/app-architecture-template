@@ -30,6 +30,9 @@ owner: "@architecture-team"
 |-----|------|-------------|
 | [SOP-01](01-add-new-aggregate-root.md) | Add new aggregate root | New domain entity with business logic |
 | [SOP-05](05-publish-domain-event.md) | Publish domain event | Event-driven communication between aggregates |
+| [SOP-10](10-initialize-environment.md) | Initialize environment (agent) | Agent session start — setup harness |
+| [SOP-11](11-implement-feature.md) | Implement feature (agent) | Agent feature work — single feature per session |
+| [SOP-12](12-session-handoff.md) | Session handoff (agent) | Agent session end — hand off to next agent |
 
 ### Application Layer SOPs
 | SOP | Task | When to Use |

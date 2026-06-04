@@ -15,6 +15,7 @@ This document defines the mandatory lifecycle for every requirement, from the mo
 1. **Qualification Phase**: Before writing any code, you must analyze the issue and post a comment in the GitHub issue to clarify any ambiguities, identify edge cases, and agree on the Acceptance Criteria (AC) with the user.
 2. **Explicit Alignment**: Do not proceed to the Planning or Implementation phases until the user has explicitly confirmed your understanding and the defined AC.
 3. **Workflow Reference**: Always reference `docs/01-agnostic/01-standards/03-workflow.md` in your issue comments when initiating the qualification process.
+4. **Multi-Session Work**: If the feature spans multiple agent sessions (multiple LLM context windows), follow the **Agent Session Harness** standard (`docs/01-agnostic/01-standards/18-agent-session-harness.md`) and use `feature-list.json` + `agent-progress.md` + `init.sh` artifacts.
 
 ## 1. Qualification & Refinement (The "Doubts" Phase)
 **No work may begin on a task until it is fully qualified.** This phase is designed to identify gaps and "unknown unknowns" before they become blockers during implementation.

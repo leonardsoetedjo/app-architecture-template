@@ -12,6 +12,38 @@ echo ""
 # Track if any check fails
 FAILED=0
 
+# Function to check agent session harness
+check_agent_session_harness() {
+  echo "  [0/5] Checking agent session harness..."
+  
+  # Check for agent harness artifacts if they exist
+  if [ -f "feature-list.json" ] || [ -f "agent-progress.md" ] || [ -f "init.sh" ]; then
+    echo "      Agent harness artifacts detected"
+    
+    # Verify feature-list.json is valid JSON
+    if [ -f "feature-list.json" ]; then
+      if ! python3 -c "import json; json.load(open('feature-list.json'))" 2>/dev/null; then
+        echo "      ❌ FAIL: feature-list.json is not valid JSON"
+        return 1
+      fi
+    fi
+    
+    # Verify agent-progress.md exists and has entries
+    if [ -f "agent-progress.md" ]; then
+      if ! grep -q "## Session " agent-progress.md 2>/dev/null; then
+        echo "      ⚠️  WARNING: agent-progress.md has no session entries"
+        # Non-blocking: just warn
+      fi
+    fi
+    
+    echo "      ✅ Agent harness OK"
+  else
+    echo "      Skipping (no agent harness artifacts)"
+  fi
+  
+  return 0
+}
+
 # Function to check Java architecture
 check_java_architecture() {
   echo "  [1/4] Checking Java architecture..."
@@ -163,6 +195,9 @@ check_e2e_tests() {
 START_TIME=$(date +%s%N)
 
 # Run all checks
+check_agent_session_harness || FAILED=1
+echo ""
+
 check_java_architecture || FAILED=1
 echo ""
 
@@ -185,6 +220,7 @@ if [ $FAILED -eq 0 ]; then
   echo ""
   echo "Architecture: ./scripts/architecture-pre-commit.sh PASSED"
   echo "  - Duration: ${DURATION_MS}ms"
+  echo "  - Agent harness: OK"
   echo "  - Java architecture: OK"
   echo "  - Python architecture: OK"
   echo "  - Frontend architecture: OK"

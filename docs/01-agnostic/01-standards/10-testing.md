@@ -54,6 +54,16 @@ When generating test cases or automation code, AI agents **MUST** adhere to the 
 
 To ensure high confidence and maintainability, apply these patterns:
 
+### 🟢 Agent Session Verification
+When working in a multi-session agent harness (see `docs/01-agnostic/01-standards/18-agent-session-harness.md`), every session must verify the following before ending:
+
+- **Smoke test**: Run `./init.sh --verify` to confirm the environment is consistent.
+- **Unit tests**: All new and existing unit tests pass.
+- **Integration tests**: All new and existing integration tests pass.
+- **Architecture check**: Run `./scripts/architecture-pre-commit.sh` and document results in the commit message.
+
+This ensures the next agent can start work immediately without reverse-engineering the state.
+
 ### 🟢 BDD Formatting
 Use the **Given-When-Then** approach within the "Steps" and "Expected Result" sections:
 - **Given**: The initial state (Preconditions).

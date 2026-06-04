@@ -232,6 +232,7 @@ mcp_sequential_thinking_think(
 |-------|----------|--------------|
 | Clean Architecture | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](docs/01-agnostic/02-adrs/01-clean-architecture.md) | ALL design decisions |
 | Architecture Standards | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Writing code |
+| Agent Session Harness | [`docs/01-agnostic/01-standards/18-agent-session-harness.md`](docs/01-agnostic/01-standards/18-agent-session-harness.md) | Multi-session agent work |
 | Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
 | Deployment Guide | [`docs/01-agnostic/03-guidelines/01-deployment.md`](docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
 
@@ -243,6 +244,9 @@ mcp_sequential_thinking_think(
 | Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | New API |
 | Add Flyway/Alembic migration | [`docs/04-sops/04-add-flyway-migration.md`](docs/04-sops/04-add-flyway-migration.md) | Schema changes |
 | Publish domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
+| Initialize environment (agent) | [`docs/04-sops/10-initialize-environment.md`](docs/04-sops/10-initialize-environment.md) | Agent session start |
+| Implement feature (agent) | [`docs/04-sops/11-implement-feature.md`](docs/04-sops/11-implement-feature.md) | Agent feature work |
+| Session handoff (agent) | [`docs/04-sops/12-session-handoff.md`](docs/04-sops/12-session-handoff.md) | Agent session end |
 
 ---
 

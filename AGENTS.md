@@ -454,6 +454,39 @@ gh issue close <number>
 | 3 | Temporary files in /tmp | ALWAYS (before completion) | Git status fails, dirty repo |
 | 4 | Architecture compliance | BEFORE every commit | Commit blocked, CI/CD fails |
 | 5 | GitHub Issues tracking | ALWAYS (task management) | Task incomplete, no tracking |
+| 6 | Use agent session harness | Multi-session agent work | Lost context, duplicated work |
+
+---
+
+## AI Agent Rules: Multi-Session Work
+
+When an AI agent is assigned work that spans multiple sessions (multiple LLM context windows), the **Agent Session Harness** standard applies. This prevents context loss and duplicated effort.
+
+### Mandatory Artifacts
+
+| Artifact | File | Purpose | Creator |
+|----------|------|---------|---------|
+| Feature list | `feature-list.json` | Enumerates all features with status | Human (task creation) |
+| Progress log | `agent-progress.md` | Tracks what was done in each session | Agent (per session) |
+| Init script | `init.sh` | Rebuilds dev environment from scratch | Agent (first session) |
+
+### The Session Rule
+
+> **Only one feature per session.**
+>
+> A session is one agent context window. It starts with `./init.sh` and ends with a progress log entry. Each session works on exactly one feature from `feature-list.json`. No exceptions.
+
+### SOPs for Multi-Session Work
+
+| Phase | SOP | When |
+|-------|-----|------|
+| Start | [`docs/04-sops/10-initialize-environment.md`](docs/04-sops/10-initialize-environment.md) | First session or environment reset |
+| Work | [`docs/04-sops/11-implement-feature.md`](docs/04-sops/11-implement-feature.md) | Every feature implementation session |
+| End | [`docs/04-sops/12-session-handoff.md`](docs/04-sops/12-session-handoff.md) | Every session end |
+
+### Full Standard
+
+See [`docs/01-agnostic/01-standards/18-agent-session-harness.md`](docs/01-agnostic/01-standards/18-agent-session-harness.md) for the complete specification.
 
 ---
 
