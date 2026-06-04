@@ -1,13 +1,17 @@
 # Quasar Boilerplate Coding Guide
 
-> **Purpose**: This file is the Quasar developer's quick-reference and the architect's audit baseline for the **Quasar/Vue 3** boilerplate. Every code change must be producible from and auditable against this verified frontend boilerplate.
+> **Purpose**: This file is the Quasar developer's quick-reference for the **Quasar/Vue 3** boilerplate. Every code change in Quasar frontends must be producible from, and auditable against, the verified boilerplate in [`boilerplate/quasar/`](boilerplate/quasar/).
 
-> **Rule**: If your PR pattern is not already demonstrated here, add it to the boilerplate first, then copy it into your feature.
+> **Rule**: If your PR pattern is not already demonstrated in the Quasar boilerplate, add it there first, then copy it into your feature.
 
-> **Note**: This guide is maintained in `docs/01-agnostic/01-standards/17-agents-quasar.md`. The boilerplate copy is for convenience.
+> **Stack**: Quasar 2.x | Vue 3.4+ | TypeScript | Pinia | Vite
+> **Architecture**: Clean Architecture + Feature-based organization
 
-> **Stack**: Quasar Framework 2 + Vue 3 + TypeScript + Pinia + Vite
-> **Architecture**: Clean Architecture + Domain-Driven Design
+> **New Features (2026-06-04)**:
+> - ✅ Complete MFA implementation (TOTP + WebAuthn)
+> - ✅ Pinia stores (auth, order, mfa)
+> - ✅ Comprehensive test suite (Vitest + Vue Testing Library)
+> - ✅ Dependency-cruiser architecture validation
 
 ---
 
@@ -17,591 +21,409 @@
 
 | Rule | Violation |
 |------|-----------|
-| No `any` type anywhere | Every prop, function, variable must have explicit type |
-| Composition API with `<script setup>` | Use Vue 3 Composition API, avoid Options API |
-| Quasar components > Custom UI | Prefer Quasar components over custom implementations |
-| Pinia for state management | Global state in Pinia, local in `ref`/`reactive` |
-| No side effects in render | All side effects in `onMounted` or composables |
-| Immutable state updates | Never mutate Pinia state directly; use actions |
-| Type-safe composables | All composables must have explicit return types |
+| Domain types have **zero** framework imports | No Vue/Quasar/Pinia/Axios in `types/` |
+| Composables orchestrate, components render | No business logic in `.vue` files |
+| Pinia stores for global state | No prop drilling across 3+ levels |
+| API calls in `api/` folder | No direct HTTP in components |
+| Type-safe composables | No `any` types without justification |
 
 ### 1.2 Naming Conventions
 
 | Scope | Convention | Example |
 |-------|-----------|---------|
-| Vue components | PascalCase | `OrderList.vue`, `UserProfile.vue` |
-| Composables | useCamelCase | `useOrders.ts`, `useAuth.ts` |
-| Pinia stores | useCamelCase + Store suffix | `useOrderStore.ts`, `useAuthStore.ts` |
-| TypeScript types | PascalCase | `Order.ts`, `CreateOrderCommand.ts` |
-| Interfaces | PascalCase (no I prefix) | `OrderPayload` |
-| Functions | camelCase | `fetchOrders`, `formatCurrency` |
-| Constants | UPPER_SNAKE_CASE | `API_TIMEOUT`, `MAX_RETRY_COUNT` |
-| Event handlers | @click, @change, @submit | `handleClick`, `handleChange` |
-| Ref variables | camelCase | `isLoading`, `isFormValid` |
+| Vue components | PascalCase | `MfaSetupModal.vue`, `OrderList.vue` |
+| Composables | camelCase with `use` prefix | `useMfa`, `useAuth` |
+| Pinia stores | camelCase with `use` + `Store` suffix | `useAuthStore`, `useOrderStore` |
+| TypeScript types | PascalCase | `MfaConfig`, `Order`, `User` |
+| API modules | camelCase + `Api` suffix | `mfaApi`, `orderApi` |
+| Test files | `*.test.ts` | `useMfaStore.test.ts` |
+| Git branches | `feature/`, `bugfix/`, `refactor/` | `feature/mfa-setup` |
 
-### 1.3 Project Structure
+### 1.3 HTTP Status Codes (API Responses)
 
-```
-boilerplate/quasar/
-├── src/
-│   ├── components/          # Reusable UI components (presentational)
-│   ├── pages/               # Route-level page components (container)
-│   ├── layouts/             # Quasar layout components
-│   ├── composables/         # Vue 3 composables (business logic, data fetching)
-│   ├── stores/              # Pinia state management
-│   ├── services/            # API clients and external service wrappers
-│   ├── types/               # TypeScript interfaces and types (domain models)
-│   ├── utils/               # Pure utility functions
-│   ├── boot/                # Quasar boot files (initialization)
-│   ├── router/              # Vue Router configuration
-│   └── css/                 # Global styles, Quasar variables
-├── tests/                   # Unit tests (Vitest)
-├── e2e/                     # End-to-end tests (Playwright)
-├── .quasar/                 # Quasar configuration
-├── .eslintrc.js
-├── tsconfig.json
-├── quasar.config.ts
-└── package.json
-```
-
-### 1.4 Clean Architecture Mapping
-
-| Architecture Layer | Quasar Directory | Description |
-|-------------------|------------------|-------------|
-| Domain | `types/` | Pure domain interfaces, value objects, models |
-| Application | `composables/`, `stores/` | Business logic, use cases, state management |
-| Infrastructure | `services/`, `boot/` | API clients, external integrations, initialization |
-| Presentation | `components/`, `pages/`, `layouts/` | UI components, route handlers, layouts |
-
-**Import Rules:**
-- `types/` - Pure, no dependencies on other layers
-- `stores/` - Can import from `types/` only
-- `composables/` - Can import from `types/` and `stores/`, but NOT from `services/` directly
-- `services/` - Can import from `types/` only (no business logic)
-- `components/` - Can import from `types/`, `composables/`, `stores/`, `services/` as needed
-- `pages/` - Can import from `components/`, `composables/`, `stores/`
+| Code | When |
+|------|------|
+| 200 | Success |
+| 201 | Resource created |
+| 204 | Success, no body |
+| 400 | Validation error |
+| 401 | Authentication required |
+| 403 | Insufficient permissions |
+| 404 | Resource not found |
+| 409 | Conflict (duplicate) |
+| 422 | Validation errors (detailed) |
+| 500 | Server error |
 
 ---
 
 ## 2. Project Structure
 
-See section 1.3 for complete directory tree with descriptions.
+```
+quasar-app/
+├── src/
+│   ├── boot/              # Boot files (axios, i18n, etc.)
+│   ├── components/        # Shared UI components
+│   │   └── __tests__/     # Component tests
+│   ├── features/          # Feature modules (Clean Architecture)
+│   │   └── mfa/
+│   │       ├── api/       # API client
+│   │       ├── components/# Feature-specific components
+│   │       ├── hooks/     # Composables (business logic)
+│   │       ├── store/     # Pinia store
+│   │       ├── types/     # TypeScript types
+│   │       └── __tests__/ # Feature tests
+│   ├── layouts/           # Layout components
+│   ├── pages/             # Page components
+│   ├── router/            # Vue Router configuration
+│   ├── stores/            # Global Pinia stores
+│   │   └── __tests__/     # Store tests
+│   ├── types/             # Shared TypeScript types
+│   ├── css/               # Global styles
+│   └── test/              # Test utilities
+│       └── setup.ts       # Vitest setup
+├── tests/
+│   ├── e2e/               # Playwright E2E tests
+│   └── fixtures/          # Test fixtures
+├── .dependency-cruiser.js # Architecture validation rules
+├── vitest.config.ts       # Vitest configuration
+├── quasar.config.js       # Quasar configuration
+└── package.json
+```
 
 ---
 
-## 3. Golden Rules
+## 3. Code Templates
 
-| Rule | Violation | Rationale |
-|------|-----------|-----------|
-| No `any` type anywhere | Every prop must have explicit type | Type safety, IDE support |
-| Composition API with `<script setup>` | Use Vue 3 Composition API | Modern Vue, simpler |
-| Quasar components > Custom UI | Prefer Quasar components | Consistency, speed |
-| Pinia for state management | Global state in Pinia stores | Predictable state |
-| No side effects in render | All side effects in `onMounted` or composables | Pure render functions |
-| Immutable state updates | Never mutate Pinia state directly | Vue reactivity system |
-| Type-safe composables | All composables have explicit return types | Type safety |
-
----
-
-## 4. Code Templates
-
-### 4.1 Domain — Type Definitions (TypeScript Interfaces)
+### 3.1 Domain Types (Pure TypeScript)
 
 ```typescript
-// types/Order.ts
-export interface OrderItem {
-  productId: string;
-  quantity: number;
-  unitPrice: number;
-  totalAmount: number;
-}
+// features/mfa/types/mfa.types.ts
+export type MfaMethodType = 'totp' | 'webauthn' | 'backup_codes';
+export type MfaStatus = 'enabled' | 'disabled' | 'pending_setup';
 
-export interface Order {
-  id: string;
-  customerId: string;
-  items: OrderItem[];
-  totalAmount: number;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+export interface MfaConfig {
+  userId: string;
+  status: MfaStatus;
+  primaryMethod: MfaMethodType | null;
+  backupMethods: MfaMethodType[];
   createdAt: string;
   updatedAt?: string;
 }
-
-export interface CreateOrderCommand {
-  customerId: string;
-  items: OrderItem[];
-}
-
-export interface UpdateOrderStatusCommand {
-  orderId: string;
-  status: Order['status'];
-}
 ```
 
-### 4.2 Application — Composable (Clean Architecture Pattern)
+### 3.2 API Client (Infrastructure)
 
 ```typescript
-// composables/useOrders.ts
-import { ref, computed } from 'vue';
-import { Order } from 'src/types/Order';
-import { orderService } from 'src/services/orderService';
+// features/mfa/api/mfaApi.ts
+import { api } from 'src/services/apiClient';
+import type { MfaConfig, TotpSecret } from '../types/mfa.types';
 
-interface UseOrdersReturn {
-  orders: Ref<Order[]>;
-  loading: Ref<boolean>;
-  error: Ref<Error | null>;
-  refresh: () => Promise<void>;
-  createOrder: (command: CreateOrderCommand) => Promise<Order>;
-}
+export const mfaApi = {
+  async getConfig(userId: string): Promise<MfaConfig> {
+    const response = await api.get<MfaConfig>(`/mfa/${userId}/config`);
+    return response.data;
+  },
 
-export const useOrders = (): UseOrdersReturn => {
-  const orders = ref<Order[]>([]);
-  const loading = ref<boolean>(false);
-  const error = ref<Error | null>(null);
-
-  const fetchOrders = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      orders.value = await orderService.getAll();
-    } catch (err) {
-      error.value = err instanceof Error ? err : new Error('Unknown error');
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const createOrder = async (command: CreateOrderCommand): Promise<Order> => {
-    loading.value = true;
-    try {
-      const newOrder = await orderService.create(command);
-      orders.value.push(newOrder);
-      return newOrder;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  return { orders, loading, error, refresh: fetchOrders, createOrder };
+  async initializeTotp(userId: string): Promise<TotpSecret> {
+    const response = await api.post<TotpSecret>(`/mfa/${userId}/totp/init`);
+    return response.data;
+  },
 };
 ```
 
-### 4.3 Presentation — Component (Presentational)
-
-```vue
-<!-- components/OrderList.vue -->
-<script setup lang="ts">
-import { PropType } from 'vue';
-import { Order } from 'src/types/Order';
-import OrderItem from './OrderItem.vue';
-
-defineProps({
-  orders: {
-    type: Array as PropType<Order[]>,
-    required: true,
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-  error: {
-    type: Object as PropType<Error | null>,
-    default: null,
-  },
-});
-</script>
-
-<template>
-  <q-inner-loading :showing="loading">
-    <q-spinner color="primary" size="3em" />
-  </q-inner-loading>
-
-  <q-banner v-if="error" class="bg-negative text-white">
-    {{ error.message }}
-  </q-banner>
-
-  <q-list v-if="!loading && !error && orders.length">
-    <OrderItem
-      v-for="order in orders"
-      :key="order.id"
-      :order="order"
-    />
-  </q-list>
-
-  <q-item v-if="!loading && !error && !orders.length">
-    <q-item-section>
-      <q-item-label>No orders found</q-item-label>
-    </q-item-section>
-  </q-item>
-</template>
-```
-
-### 4.4 Presentation — Page Component (Container)
-
-```vue
-<!-- pages/OrdersPage.vue -->
-<script setup lang="ts">
-import { onMounted } from 'vue';
-import { useQuasar } from 'quasar';
-import OrderList from 'components/OrderList.vue';
-import { useOrders } from 'composables/useOrders';
-
-const $q = useQuasar();
-const { orders, loading, error, refresh } = useOrders();
-
-onMounted(() => {
-  refresh();
-});
-
-const handleRefresh = () => {
-  $q.loading.show();
-  refresh().finally(() => $q.loading.hide());
-};
-</script>
-
-<template>
-  <q-page class="q-pa-md">
-    <div class="row justify-between items-center q-mb-md">
-      <div class="text-h5">Orders</div>
-      <q-btn
-        icon="refresh"
-        label="Refresh"
-        color="primary"
-        :loading="loading"
-        @click="handleRefresh"
-      />
-    </div>
-
-    <OrderList
-      :orders="orders"
-      :loading="loading"
-      :error="error"
-    />
-  </q-page>
-</template>
-```
-
-### 4.5 Infrastructure — Pinia Store
+### 3.3 Pinia Store (State Management)
 
 ```typescript
-// stores/useAuthStore.ts
+// features/mfa/store/useMfaStore.ts
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { User } from 'src/types/User';
-import { authService } from 'src/services/authService';
+import { mfaApi } from '../api/mfaApi';
 
-export const useAuthStore = defineStore('auth', () => {
+export const useMfaStore = defineStore('mfa', () => {
   // State
-  const user = ref<User | null>(null);
-  const loading = ref<boolean>(false);
+  const config = ref<MfaConfig | null>(null);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
 
   // Getters
-  const isAuthenticated = computed(() => !!user.value);
-  const userName = computed(() => user.value?.name ?? 'Guest');
+  const isEnabled = computed(() => config.value?.status === 'enabled');
 
   // Actions
-  const setUser = (newUser: User | null) => {
-    user.value = newUser;
-  };
-
-  const login = async (credentials: { email: string; password: string }) => {
+  async function loadConfig(userId: string) {
     loading.value = true;
     try {
-      const response = await authService.login(credentials);
-      setUser(response.user);
-      return response;
+      config.value = await mfaApi.getConfig(userId);
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Failed to load';
     } finally {
       loading.value = false;
     }
-  };
+  }
 
-  const logout = async () => {
-    await authService.logout();
-    setUser(null);
+  return {
+    config,
+    loading,
+    error,
+    isEnabled,
+    loadConfig,
   };
-
-  return { user, loading, isAuthenticated, userName, setUser, login, logout };
 });
 ```
 
-### 4.6 Infrastructure — API Client (Boot File)
+### 3.4 Composable (Business Logic)
 
 ```typescript
-// boot/axios.ts
-import { boot } from 'quasar/wrappers';
-import axios, { AxiosInstance } from 'axios';
+// features/mfa/hooks/useMfa.ts
+import { useMfaStore } from '../store/useMfaStore';
 
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $axios: AxiosInstance;
-    $api: AxiosInstance;
-  }
-}
+export const useMfa = () => {
+  const store = useMfaStore();
 
-const api = axios.create({
-  baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:8080/api/v1',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  const loadMfaConfig = async (userId: string) => {
+    await store.loadConfig(userId);
+  };
+
+  const verifyCode = async (userId: string, code: string) => {
+    return await store.verifyCode({ userId, method: 'totp', code });
+  };
+
+  return {
+    config: store.config,
+    loading: store.loading,
+    isEnabled: store.isEnabled,
+    loadMfaConfig,
+    verifyCode,
+  };
+};
+```
+
+### 3.5 Vue Component (Composition API)
+
+```vue
+<!-- features/mfa/components/MfaSettingsPage.vue -->
+<template>
+  <q-page class="q-pa-md">
+    <div class="text-h5 q-mb-md">Security Settings</div>
+
+    <q-card>
+      <q-card-section>
+        <div class="row items-center">
+          <q-avatar icon="security" color="primary" text-color="white" />
+          <div class="q-ml-md">
+            <div class="text-h6">Two-Factor Authentication</div>
+            <div class="text-caption text-grey">{{ mfaStatusText }}</div>
+          </div>
+          <q-space />
+          <q-btn
+            v-if="!isEnabled"
+            label="Enable"
+            color="primary"
+            @click="showSetupModal = true"
+          />
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useMfa } from '../hooks/useMfa';
+
+const props = defineProps<{ userId: string }>();
+const { config, isEnabled, loadMfaConfig } = useMfa();
+
+const showSetupModal = ref(false);
+
+const mfaStatusText = computed(() => {
+  if (!config.value) return 'Not configured';
+  return isEnabled.value ? 'Enabled' : 'Setup in progress';
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+onMounted(async () => {
+  await loadMfaConfig(props.userId);
 });
+</script>
+```
 
-export default boot(({ app }) => {
-  app.config.globalProperties.$axios = axios;
-  app.config.globalProperties.$api = api;
+### 3.6 Vitest Test (Store)
+
+```typescript
+// stores/__tests__/useAuthStore.test.ts
+import { setActivePinia, createPinia } from 'pinia';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { useAuthStore } from '../useAuthStore';
+
+describe('useAuthStore', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  it('should have correct initial state', () => {
+    const store = useAuthStore();
+    
+    expect(store.user).toBeNull();
+    expect(store.token).toBeNull();
+    expect(store.isAuthenticated).toBe(false);
+  });
+
+  it('should set user and token', () => {
+    const store = useAuthStore();
+    const mockUser = {
+      id: 'user-123',
+      email: 'test@example.com',
+      name: 'Test User',
+      role: 'admin',
+    };
+
+    store.setUser(mockUser);
+    store.setToken('jwt-token');
+
+    expect(store.user).toEqual(mockUser);
+    expect(store.isAuthenticated).toBe(true);
+  });
 });
+```
 
-export { api };
+### 3.7 Architecture Validation (Dependency Cruiser)
+
+```bash
+# Run architecture validation
+npx depcruise --validate .dependency-cruiser.js src/
+
+# Generate dependency graph (visual)
+npx depcruise src/ --output-type dot | dot -T svg > dependency-graph.svg
+
+# Check for orphan modules
+npx depcruise src/ --focus -- --orphan
 ```
 
 ---
 
-## 5. Standards Index
+## 4. Testing Guide
 
-| Topic | Document | When to Read |
-|-------|----------|--------------|
-| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
-| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
-| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
-
-### Standard Operating Procedures
-
-| SOP | Document | When to Use |
-|-----|----------|-------------|
-| Add frontend page | [`docs/04-sops/03-add-new-frontend-page.md`](docs/04-sops/03-add-new-frontend-page.md) | New page/route |
-| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | Backend API integration |
-
----
-
-## 6. Language-Specific Guidelines
-
-### 6.1 Domain Layer (types/)
-- **Pure TypeScript interfaces** — no dependencies
-- **No business logic** — type definitions only
-- **Use TypeScript utility types** — `Partial`, `Pick`, `Omit`
-
-### 6.2 Application Layer (composables/, stores/)
-- **Composables** orchestrate data fetching and state
-- **Pinia stores** for global state with actions
-- **No direct API calls in components** — use composables
-- **Type-safe return types** — explicit interface for composable return
-
-### 6.3 Infrastructure Layer (services/, boot/)
-- **API clients** handle HTTP, authentication, errors
-- **Boot files** for Vue/Quasar initialization
-- **Thin wrappers** — delegate to domain types
-
-### 6.4 Presentation Layer (components/, pages/, layouts/)
-- **Presentational components** — receive props, render UI
-- **Container components** — connect composables to presentational
-- **Quasar first** — use Quasar components over custom
-
-### 6.5 Testing
+### 4.1 Running Tests
 
 ```bash
-# Run unit tests
+# Run all tests
 npm run test
+
+# Run tests in watch mode
+npm run test:watch
 
 # Run with coverage
 npm run test:coverage
 
+# Run specific test file
+npx vitest src/features/mfa/__tests__/useMfaStore.test.ts
+
 # Run E2E tests
-npm run test:e2e
+npx playwright test
+```
+
+### 4.2 Test Structure
+
+```typescript
+describe('Component/Store/Hook Name', () => {
+  beforeEach(() => {
+    // Setup
+  });
+
+  describe('feature or method group', () => {
+    it('should [expected behavior] when [condition]', async () => {
+      // Arrange
+      // Act
+      // Assert
+    });
+  });
+});
+```
+
+### 4.3 Testing Best Practices
+
+- ✅ **Mock API calls**, not business logic
+- ✅ **Test behavior**, not implementation
+- ✅ **Use descriptive test names** (should...when...)
+- ✅ **Test edge cases** (empty state, errors, loading)
+- ✅ **Keep tests independent** (no shared state)
+- ✅ **Use beforeEach for setup**, afterEach for cleanup
+
+---
+
+## 5. Pre-Commit Checklist
+
+```bash
+# 1. Run tests
+npm run test
+
+# 2. Run linting
+npm run lint
+
+# 3. Check formatting
+npm run prettier:check
+
+# 4. Validate architecture
+npx depcruise --validate .dependency-cruiser.js src/
+
+# 5. Build check
+npm run build
 ```
 
 ---
 
-## 7. AI Agent Tooling
+## 6. AI Agent Tooling
 
-### Serena MCP for Quasar/Vue
+### Serena MCP for Quasar
 
-```bash
-# Find Vue components
-find_symbol(query: "OrderList", kind: "component")
+```typescript
+// Find Vue components
+find_symbol(query: "MfaSetupModal", kind: "component")
 
-# Find composables
-find_symbol(query: "useOrders", kind: "function")
+// Find composables
+find_symbol(query: "useMfa", kind: "function")
 
-# Find Pinia stores
-find_symbol(query: "useOrderStore", kind: "function")
+// Find Pinia stores
+find_symbol(query: "useMfaStore", kind: "function")
 
-# Find all usages of a component
-find_referencing_symbols(symbol: "OrderList")
-
-# Find type/interface definitions
-find_symbol(query: "Order", kind: "interface")
-
-# Get file structure overview
-get_symbols_overview(file: "src/pages/OrdersPage.vue")
-
-# Safe rename (updates imports and template usage)
-rename_symbol(symbol: "OldComponent", newName: "NewComponent")
+// Get module overview
+get_symbols_overview(file: "src/features/mfa/hooks/useMfa.ts")
 ```
 
 ### Context-Mode for Quasar Patterns
 
-```python
-# Find Quasar architecture patterns
-ctx_search(queries: ["Quasar Clean Architecture"], source: "quasar-boilerplate")
-ctx_search(queries: ["Vue 3 composables pattern"])
-ctx_search(queries: ["Pinia state management"])
-ctx_search(queries: ["Quasar component examples"])
-ctx_search(queries: ["TypeScript Vue 3 strict mode"])
+```typescript
+ctx_search(queries: ["Quasar component patterns"])
+ctx_search(queries: ["Pinia store best practices"])
+ctx_search(queries: ["Vue 3 composition API examples"])
+ctx_search(queries: ["Vitest Vue component testing"])
 ```
-
-### Sequential-Thinking for Quasar Architecture
-
-```python
-# Before creating new feature
-mcp_sequential_thinking_think(
-  thread_purpose="Adding new Order feature",
-  thought="Determining if this needs new store or existing",
-  thought_index=1,
-  tool_recommendation="ctx_search(queries: ['Pinia store patterns'])",
-  left_to_be_done="1. Check existing stores, 2. Determine component structure, 3. Plan state management"
-)
-
-mcp_sequential_thinking_think(
-  thought="Deciding between Pinia vs local state",
-  thought_index=2,
-  tool_recommendation="ctx_search(queries: ['Pinia vs ref reactive pattern'])"
-)
-```
-
-### Superpowers Skills for Quasar Development
-
-| Task | Skill | Command |
-|------|-------|---------|
-| Plan Quasar feature | `writing-plans` | "Let's plan this OrderList feature" |
-| Write Vue tests | `test-driven-development` | "Write tests for OrderList component" |
-| Debug TypeScript error | `systematic-debugging` | "TypeScript type error in component" |
-| Before commit | `verification-before-completion` | "Ready to commit" |
-| Code review | `requesting-code-review` | "Review this Vue component" |
-
-### Quasar Pre-Commit Checklist (AI Agents)
-
-**MANDATORY - Run before claiming Quasar tasks complete:**
-
-```bash
-# 1. Run ESLint
-npm run lint
-
-# 2. Type checking
-npx vue-tsc --noEmit
-
-# 3. Run unit tests
-npm run test
-
-# 4. Run E2E tests (if pages changed)
-npm run test:e2e
-
-# 5. Format code
-npm run prettier
-
-# 6. Check for any types
-grep -r ": any" src/ && exit 1
-```
-
-**AI Agent Responsibility:** Use Superpowers `verification-before-completion` to enforce this checklist.
 
 ---
 
-## 8. Architecture Audit Checklist
+## 7. Architecture Validation
 
-**MANDATORY for EVERY Quasar PR:**
+### Dependency Rules
 
-### Type Safety
+| From | Cannot Import | Reason |
+|------|--------------|--------|
+| `features/*/types/` | vue, quasar, pinia, axios | Domain purity |
+| `features/*/hooks/` | components | Separation of concerns |
+| `stores/` | components | State shouldn't know UI |
+| `api/` | components, pages | Infrastructure isolation |
 
-- [ ] No `any` types anywhere (strict TypeScript)
-- [ ] All props have explicit type definitions
-- [ ] All function return types declared
-- [ ] Using TypeScript utility types (`Partial`, `Pick`, `Omit`)
-- [ ] Composable return types explicitly defined
-
-### Component Patterns
-
-- [ ] All components use Composition API (`<script setup>`)
-- [ ] Using Quasar components (not custom UI)
-- [ ] Components have single responsibility
-- [ ] Presentational vs Container separation clear
-- [ ] Props validation with types
-
-### State Management
-
-- [ ] Global state in Pinia stores (`stores/`)
-- [ ] Local state in components (`ref`/`reactive`)
-- [ ] No business logic in components (moved to composables)
-- [ ] Immutable state updates (via Pinia actions)
-
-### Layer Dependencies
-
-- [ ] `types/` - Pure, no dependencies
-- [ ] `stores/` - Can import from `types/` only
-- [ ] `composables/` - Can import from `types/` and `stores/`
-- [ ] `services/` - Can import from `types/` only
-- [ ] `components/` - Can import from `types/`, `composables/`, `stores/`, `services/`
-- [ ] No circular dependencies
-
-### UI/UX
-
-- [ ] Using Quasar components (not custom UI)
-- [ ] Responsive design considered
-- [ ] Accessibility (ARIA labels, keyboard navigation)
-- [ ] Loading states and error handling
-
-### Testing
-
-- [ ] TDD followed (tests written first)
-- [ ] Unit tests for components (Vitest)
-- [ ] Unit tests for composables
-- [ ] E2E tests for pages (Playwright)
-
-### Pre-Commit Commands
+### Run Validation
 
 ```bash
-# Run ESLint
-npm run lint
+# Validate all rules
+npx depcruise --validate .dependency-cruiser.js src/
 
-# Type check
-npx vue-tsc --noEmit
-
-# Run tests
-npm run test
-
-# Check for any types
-grep -r ": any" src/ && exit 1
+# Generate report
+npx depcruise src/ --output-type html > dependency-report.html
 ```
-
-**VIOLATION = REJECT**: Fix before committing.
-
----
-
-## 9. Related Documentation
-
-### Core Principles (Language-Agnostic)
-- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
-- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
-- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
-- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
-
-### Other Language Boilerplates
-- **Java**: [`/boilerplate/java/AGENTS.md`](../java/AGENTS.md)
-- **Python**: [`/boilerplate/python/AGENTS.md`](../python/AGENTS.md)
-- **ReactJS**: [`/boilerplate/reactjs/AGENTS.md`](../reactjs/AGENTS.md)
-
-### Templates
-- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
 
 ---
 
 *Living document. Update as boilerplate evolves.*
 
-**Last Updated**: 2026-05-25
+**Last Updated**: 2026-06-04  
 **Maintained By**: @architecture-team

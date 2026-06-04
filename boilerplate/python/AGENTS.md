@@ -9,6 +9,11 @@
 > **Stack**: FastAPI 0.111+ (Python 3.11+) | PostgreSQL | Testcontainers | pytest-archon
 > **Architecture**: Clean Architecture + Domain-Driven Design
 
+> **New Features (2026-06-04)**:
+> - ✅ State machine for Order status transitions
+> - ✅ Rate limiting middleware with Redis backend
+> - ✅ Redis caching layer with cache-aside pattern
+
 ---
 
 ## 1. Quick Reference
@@ -113,6 +118,109 @@ order-service/
 ---
 
 ## 4. Code Templates
+
+### 3.1 State Machine — Order Status Transitions
+
+```python
+# domain/order_state_machine.py
+from enum import Enum
+from typing import Set, Dict
+
+class OrderStatus(str, Enum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    PROCESSING = "PROCESSING"
+    SHIPPED = "SHIPPED"
+    DELIVERED = "DELIVERED"
+    CANCELLED = "CANCELLED"
+
+class OrderStateMachine:
+    VALID_TRANSITIONS: Dict[OrderStatus, Set[OrderStatus]] = {
+        OrderStatus.PENDING: {OrderStatus.CONFIRMED, OrderStatus.CANCELLED},
+        OrderStatus.CONFIRMED: {OrderStatus.PROCESSING, OrderStatus.CANCELLED},
+        OrderStatus.PROCESSING: {OrderStatus.SHIPPED, OrderStatus.CANCELLED},
+        OrderStatus.SHIPPED: {OrderStatus.DELIVERED},
+        OrderStatus.DELIVERED: set(),  # Terminal state
+        OrderStatus.CANCELLED: set(),  # Terminal state
+    }
+    
+    @classmethod
+    def can_transition(cls, from_status: OrderStatus, to_status: OrderStatus) -> bool:
+        return to_status in cls.VALID_TRANSITIONS.get(from_status, set())
+    
+    @classmethod
+    def validate_transition(cls, from_status: OrderStatus, to_status: OrderStatus) -> None:
+        if not cls.can_transition(from_status, to_status):
+            raise InvalidStatusTransitionError(
+                f"Cannot transition from {from_status.value} to {to_status.value}"
+            )
+
+# Usage in Order aggregate
+def confirm(self) -> None:
+    OrderStateMachine.validate_transition(self.status, OrderStatus.CONFIRMED)
+    self.status = OrderStatus.CONFIRMED
+```
+
+### 3.2 Rate Limiting Middleware
+
+```python
+# infrastructure/middleware/rate_limit.py
+from infrastructure.middleware.rate_limit import RateLimitMiddleware
+
+# In main.py or app creation
+app.add_middleware(
+    RateLimitMiddleware,
+    redis_url="redis://localhost:6379",
+    default_limit=RateLimitConfig(requests=100, seconds=60),
+)
+
+# Pre-configured rules:
+# - /api/v1/auth/login: 5 requests/minute (per IP)
+# - /api/v1/orders POST: 30 requests/minute (per user)
+```
+
+### 3.3 Redis Cache Layer
+
+```python
+# infrastructure/cache/redis_cache.py
+from infrastructure.cache.redis_cache import RedisCache
+
+cache = RedisCache(
+    redis_url="redis://localhost:6379",
+    default_ttl=3600,
+    key_prefix="cache",
+)
+
+# Cache-aside pattern
+async def get_order(order_id: str):
+    return await cache.get_or_set(
+        f"order:{order_id}",
+        lambda: fetch_order_from_db(order_id),
+        ttl=1800
+    )
+
+# Direct operations
+await cache.set("user:123", user_data, ttl=3600)
+user = await cache.get("user:123", type_hint=User)
+await cache.delete("user:123")
+```
+
+### 3.4 Architecture Tests (pytest-archon)
+
+```python
+# tests/archunit/test_architecture_comprehensive.py
+
+# Run with: pytest tests/archunit/ -v
+
+# Tests enforce:
+# 1. Domain layer has zero framework imports
+# 2. Application layer has no infrastructure imports
+# 3. No circular dependencies
+# 4. All domain classes use @dataclass
+# 5. Value objects are frozen (immutable)
+# 6. Domain events named in past tense
+# 7. Use cases have execute() or handle() methods
+```
 
 ### 4.1 Domain — Aggregate Root (Python Dataclass)
 
