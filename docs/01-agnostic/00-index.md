@@ -47,17 +47,7 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 
 ## 20 — ADRs
 
-| # | Document | Purpose |
-|---|----------|---------|
-| 01 | [clean-architecture.md](02-adrs/01-clean-architecture.md) | Clean Architecture + DDD adoption |
-| 03 | [eda-outbox.md](02-adrs/02-eda-outbox.md) | Event-Driven Architecture with Outbox pattern |
-| 04 | [batch-idempotency.md](02-adrs/03-batch-idempotency.md) | Batch processing idempotency |
-| 05 | [api-idempotency.md](02-adrs/04-api-idempotency.md) | REST API idempotency |
-| 06 | [frontend-architecture.md](02-adrs/05-frontend-architecture.md) | SPA vs SSR decision |
-| 07 | [migration-strategy.md](02-adrs/06-migration-strategy.md) | Database migration approach |
-| 09 | [structured-logging.md](02-adrs/07-structured-logging.md) | JSON structured logging |
-| 12 | [port-adapter.md](02-adrs/08-port-adapter.md) | Hexagonal (Port-Adapter) architecture |
-| 13 | | OpenAPI-driven contract enforcement |
+See the [ADR Index (02-adrs/00-adr-index.md)](02-adrs/00-adr-index.md) for the canonical catalog.
 
 ## 30 — Guidelines
 

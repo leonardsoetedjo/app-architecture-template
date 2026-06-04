@@ -1,0 +1,97 @@
+# Machine-readable agent configuration for app-architecture-template
+# Consuming agents: Hermes, Cursor, Cody, and similar AI coding agents
+# For human readers: see docs/AI_NAVIGATION.md for the cheat sheet
+version: "1.0"
+
+# -----------------------------------------------------------------------
+# Skills to auto-load on session start
+# -----------------------------------------------------------------------
+skills:
+  auto_load:
+    - architecture-auditing
+    - test-driven-development
+    - verification-before-completion
+  on_demand:
+    - systematic-debugging
+    - writing-plans
+    - requesting-code-review
+
+# -----------------------------------------------------------------------
+# MCP servers this agent context expects
+# -----------------------------------------------------------------------
+mcp_servers:
+  - serena
+  - context-mode
+  - sequential-thinking
+
+# -----------------------------------------------------------------------
+# Context-Mode source definitions
+# These map to ctx_search(source=...) calls in agent instructions.
+# See docs/.index.json for the canonical list and paths.
+# -----------------------------------------------------------------------
+context_sources:
+  architecture-docs:
+    path: docs/01-agnostic
+    extensions: [".md"]
+    description: "Standards, ADRs, guidelines, templates"
+  sops:
+    path: docs/04-sops
+    extensions: [".md"]
+    description: "Standard Operating Procedures"
+  java-boilerplate:
+    path: boilerplate/java
+    extensions: [".md", ".java", ".xml", ".yml", ".yaml", ".properties"]
+    description: "Java Spring Boot Clean Architecture"
+  python-boilerplate:
+    path: boilerplate/python
+    extensions: [".md", ".py", ".toml", ".ini", ".sh"]
+    description: "Python FastAPI Clean Architecture"
+  frontend-boilerplate:
+    path: boilerplate/reactjs
+    extensions: [".md", ".ts", ".tsx", ".js", ".json", ".css"]
+    description: "ReactJS + TypeScript + Ant Design"
+  quasar-boilerplate:
+    path: boilerplate/quasar
+    extensions: [".md", ".ts", ".vue", ".js", ".json", ".css"]
+    description: "Quasar + Vue 3 + TypeScript"
+  scripts:
+    path: scripts
+    extensions: [".sh", ".py"]
+    description: "Automation and validation scripts"
+
+# -----------------------------------------------------------------------
+# Forbidden import patterns by layer
+# Matches run against changed files in pre-commit.
+# -----------------------------------------------------------------------
+forbidden_patterns:
+  - name: domain_framework_imports_python
+    pattern: "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)"
+    path_regex: "src/domain/.*\\.py$"
+    message: "Domain layer must not import frameworks"
+
+  - name: domain_framework_imports_java
+    pattern: "^(import)\\s+(org\\.springframework|javax\\.persistence|lombok)"
+    path_regex: "src/main/java/.*/domain/.*\\.java$"
+    message: "Domain layer must not import frameworks"
+
+# -----------------------------------------------------------------------
+# Agent navigation shortcuts
+# -----------------------------------------------------------------------
+ai_navigation: docs/AI_NAVIGATION.md
+index: docs/.index.json
+
+# -----------------------------------------------------------------------
+# Pre-commit command
+# Agents MUST run this before claiming any task complete.
+# -----------------------------------------------------------------------
+pre_commit: ./scripts/architecture-pre-commit.sh
+
+# -----------------------------------------------------------------------
+# Quick reference — valid in any stack
+# -----------------------------------------------------------------------
+rules:
+  one_feature_per_session: true
+  no_reports_in_repo: true
+  temp_files_in_tmp_only: true
+  architecture_compliance_before_commit: true
+  github_issues_for_tracking: true

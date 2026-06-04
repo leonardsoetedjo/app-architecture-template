@@ -1,0 +1,295 @@
+{
+  "version": "1.0",
+  "schema": "app-architecture-template-index",
+  "generated_at": "2026-06-04",
+  "categories": {
+    "standards": {
+      "path": "docs/01-agnostic/01-standards",
+      "description": "Core architectural standards"
+    },
+    "adrs": {
+      "path": "docs/01-agnostic/02-adrs",
+      "description": "Architectural Decision Records"
+    },
+    "guidelines": {
+      "path": "docs/01-agnostic/03-guidelines",
+      "description": "Practical patterns and how-to guides"
+    },
+    "templates": {
+      "path": "docs/01-agnostic/04-templates",
+      "description": "Reusable document templates"
+    },
+    "sops": {
+      "path": "docs/04-sops",
+      "description": "Standard Operating Procedures"
+    },
+    "boilerplate-java": {
+      "path": "boilerplate/java",
+      "description": "Spring Boot DDD boilerplate"
+    },
+    "boilerplate-python": {
+      "path": "boilerplate/python",
+      "description": "FastAPI + SQLAlchemy DDD boilerplate"
+    },
+    "boilerplate-reactjs": {
+      "path": "boilerplate/reactjs",
+      "description": "React + TypeScript + Ant Design boilerplate"
+    },
+    "boilerplate-quasar": {
+      "path": "boilerplate/quasar",
+      "description": "Quasar + Vue 3 + TypeScript boilerplate"
+    }
+  },
+  "sources": {
+    "architecture-docs": {
+      "path": "docs/01-agnostic",
+      "extensions": [
+        ".md"
+      ],
+      "description": "All standards, ADRs, guidelines, templates"
+    },
+    "sops": {
+      "path": "docs/04-sops",
+      "extensions": [
+        ".md"
+      ],
+      "description": "All standard operating procedures"
+    },
+    "java-boilerplate": {
+      "path": "boilerplate/java",
+      "extensions": [
+        ".md",
+        ".java",
+        ".xml",
+        ".yml",
+        ".yaml",
+        ".properties"
+      ],
+      "description": "Java Spring boilerplate"
+    },
+    "python-boilerplate": {
+      "path": "boilerplate/python",
+      "extensions": [
+        ".md",
+        ".py",
+        ".toml",
+        ".ini",
+        ".sh"
+      ],
+      "description": "Python FastAPI boilerplate"
+    },
+    "frontend-boilerplate": {
+      "path": "boilerplate/reactjs",
+      "extensions": [
+        ".md",
+        ".ts",
+        ".tsx",
+        ".js",
+        ".json",
+        ".css"
+      ],
+      "description": "ReactJS frontend boilerplate"
+    },
+    "quasar-boilerplate": {
+      "path": "boilerplate/quasar",
+      "extensions": [
+        ".md",
+        ".ts",
+        ".vue",
+        ".js",
+        ".json",
+        ".css"
+      ],
+      "description": "Quasar frontend boilerplate"
+    },
+    "scripts": {
+      "path": "scripts",
+      "extensions": [
+        ".sh",
+        ".py"
+      ],
+      "description": "Automation and validation scripts"
+    },
+    "docker-compose-files": {
+      "path": ".",
+      "extensions": [
+        ".yml",
+        ".yaml"
+      ],
+      "file_glob": "docker-compose*.yml",
+      "description": "Docker Compose configurations"
+    }
+  },
+  "navigation": {
+    "ai_agents_md": "docs/AI_NAVIGATION.md",
+    "root_agents_md": "AGENTS.md",
+    "sop_index": "docs/04-sops/00-index.md",
+    "adr_index": "docs/01-agnostic/02-adrs/00-adr-index.md",
+    "standards_index": "docs/01-agnostic/00-index.md",
+    "root_index": "docs/00-index.md"
+  },
+  "standards": {
+    "frontend-architecture": "docs/01-agnostic/01-standards/01-frontend-architecture.md",
+    "architecture": "docs/01-agnostic/01-standards/02-architecture.md",
+    "workflow": "docs/01-agnostic/01-standards/03-workflow.md",
+    "solid-principles": "docs/01-agnostic/01-standards/04-solid-principles.md",
+    "resilience": "docs/01-agnostic/01-standards/05-resilience.md",
+    "api-contract": "docs/01-agnostic/01-standards/06-api-contract.md",
+    "common-schemas": "docs/01-agnostic/01-standards/07-common-schemas.md",
+    "secrets": "docs/01-agnostic/01-standards/08-secrets.md",
+    "mdc-logging": "docs/01-agnostic/01-standards/09-mdc-logging.md",
+    "testing": "docs/01-agnostic/01-standards/10-testing.md",
+    "review": "docs/01-agnostic/01-standards/11-review.md",
+    "frontend-structure": "docs/01-agnostic/01-standards/12-frontend-structure.md",
+    "agents": "AGENTS.md",
+    "agents-java": "docs/01-agnostic/01-standards/14-agents-java.md",
+    "agents-python": "docs/01-agnostic/01-standards/15-agents-python.md",
+    "agents-reactjs": "docs/01-agnostic/01-standards/16-agents-reactjs.md",
+    "agents-quasar": "docs/01-agnostic/01-standards/17-agents-quasar.md",
+    "agent-session-harness": "docs/01-agnostic/01-standards/18-agent-session-harness.md",
+    "agent-imperatives": "docs/01-agnostic/01-standards/19-agent-imperatives.md"
+  },
+  "sops": {
+    "01": {
+      "file": "docs/04-sops/01-add-new-aggregate-root.md",
+      "task": "Add new aggregate root",
+      "layer": "domain"
+    },
+    "02": {
+      "file": "docs/04-sops/02-add-new-rest-endpoint.md",
+      "task": "Add REST endpoint",
+      "layer": "application"
+    },
+    "03": {
+      "file": "docs/04-sops/03-add-new-frontend-page.md",
+      "task": "Add frontend page",
+      "layer": "frontend"
+    },
+    "04": {
+      "file": "docs/04-sops/04-add-flyway-migration.md",
+      "task": "Add Flyway migration",
+      "layer": "infrastructure",
+      "stack": "java"
+    },
+    "05": {
+      "file": "docs/04-sops/05-publish-domain-event.md",
+      "task": "Publish domain event",
+      "layer": "domain"
+    },
+    "06": {
+      "file": "docs/04-sops/06-configure-external-service.md",
+      "task": "Configure external service",
+      "layer": "application"
+    },
+    "07": {
+      "file": "docs/04-sops/07-add-new-use-case.md",
+      "task": "Add new use case",
+      "layer": "application"
+    },
+    "08": {
+      "file": "docs/04-sops/08-add-new-domain-event.md",
+      "task": "Add new domain event (detailed)",
+      "layer": "domain"
+    },
+    "09": {
+      "file": "docs/04-sops/09-add-new-batch-job.md",
+      "task": "Add new batch job",
+      "layer": "infrastructure"
+    },
+    "10": {
+      "file": "docs/04-sops/10-initialize-environment.md",
+      "task": "Initialize environment (agent)",
+      "layer": "agent"
+    },
+    "11": {
+      "file": "docs/04-sops/11-implement-feature.md",
+      "task": "Implement feature (agent)",
+      "layer": "agent"
+    },
+    "12": {
+      "file": "docs/04-sops/12-session-handoff.md",
+      "task": "Session handoff (agent)",
+      "layer": "agent"
+    },
+    "13": {
+      "file": "docs/04-sops/13-configure-branch-protection.md",
+      "task": "Configure branch protection",
+      "layer": "devops"
+    },
+    "14": {
+      "file": "docs/04-sops/14-realtime-monitoring.md",
+      "task": "Set up real-time monitoring",
+      "layer": "devops"
+    },
+    "15": {
+      "file": "docs/04-sops/15-dual-version-secrets.md",
+      "task": "Manage dual-version secrets",
+      "layer": "devops"
+    }
+  },
+  "adr_gaps": {
+    "09": {
+      "status": "intentionally_skipped",
+      "reason": "Security decisions documented in standalone guides",
+      "documents": [
+        "docs/01-agnostic/03-guidelines/rate-limiting.md",
+        "docs/01-agnostic/03-guidelines/rbac.md"
+      ]
+    }
+  },
+  "sop_gaps": {
+    "alembic-migration": {
+      "status": "planned",
+      "tracking_issue": 126,
+      "description": "Python Alembic migration SOP"
+    },
+    "value-object": {
+      "status": "planned",
+      "description": "Add new value object SOP"
+    },
+    "api-version": {
+      "status": "planned",
+      "description": "Add new API version SOP"
+    },
+    "reusable-frontend-component": {
+      "status": "planned",
+      "description": "Add reusable frontend component SOP"
+    }
+  },
+  "skills": {
+    "auto_load": [
+      "architecture-auditing",
+      "test-driven-development",
+      "verification-before-completion"
+    ],
+    "on_demand": [
+      "systematic-debugging",
+      "writing-plans",
+      "requesting-code-review"
+    ]
+  },
+  "mcp_servers": [
+    "serena",
+    "context-mode",
+    "sequential-thinking"
+  ],
+  "forbidden_patterns": [
+    {
+      "name": "domain_framework_imports_python",
+      "pattern": "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)",
+      "path_regex": "src/domain/.*\\.py$",
+      "message": "Domain layer must not import frameworks"
+    },
+    {
+      "name": "domain_framework_imports_java",
+      "pattern": "^(import)\\s+(org\\.springframework|javax\\.persistence|lombok)",
+      "path_regex": "src/main/java/.*/domain/.*\\.java$",
+      "message": "Domain layer must not import frameworks"
+    }
+  ],
+  "pre_commit": "./scripts/architecture-pre-commit.sh",
+  "scripts": {
+    "architecture_pre_commit": "scripts/architecture-pre-commit.sh",
+    "doc_lint": "scripts/doc-lint.py"
+  }
+}

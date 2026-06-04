@@ -26,29 +26,59 @@ owner: "@architecture-team"
 ## SOP Index
 
 ### Domain Layer SOPs
-| SOP | Task | When to Use |
-|-----|------|-------------|
-| [SOP-01](01-add-new-aggregate-root.md) | Add new aggregate root | New domain entity with business logic |
-| [SOP-05](05-publish-domain-event.md) | Publish domain event | Event-driven communication between aggregates |
-| [SOP-10](10-initialize-environment.md) | Initialize environment (agent) | Agent session start — setup harness |
-| [SOP-11](11-implement-feature.md) | Implement feature (agent) | Agent feature work — single feature per session |
-| [SOP-12](12-session-handoff.md) | Session handoff (agent) | Agent session end — hand off to next agent |
+
+| # | SOP | Task | When to Use |
+|---|-----|------|-------------|
+| 01 | [Add Aggregate Root](01-add-new-aggregate-root.md) | Add new aggregate root | New domain entity with business logic |
+| 05 | [Publish Domain Event](05-publish-domain-event.md) | Publish domain event | Event-driven communication between aggregates |
+| 07 | [Add Use Case](07-add-new-use-case.md) | Add new use case / interactor | New application operation |
+| 08 | [Add Domain Event](08-add-new-domain-event.md) | Add new domain event (detailed) | Event-driven communication |
 
 ### Application Layer SOPs
-| SOP | Task | When to Use |
-|-----|------|-------------|
-| [SOP-02](02-add-new-rest-endpoint.md) | Add REST endpoint | New API operation |
-| [SOP-06](06-configure-external-service.md) | Configure external service | Third-party API integration |
+
+| # | SOP | Task | When to Use |
+|---|-----|------|-------------|
+| 02 | [Add REST Endpoint](02-add-new-rest-endpoint.md) | Add REST endpoint | New API operation |
+| 06 | [Configure External Service](06-configure-external-service.md) | Configure external service | Third-party API integration |
 
 ### Infrastructure Layer SOPs
-| SOP | Task | When to Use |
-|-----|------|-------------|
-| [SOP-04](04-add-flyway-migration.md) | Add database migration | Schema changes (Java/Flyway) |
+
+| # | SOP | Task | When to Use |
+|---|-----|------|-------------|
+| 04 | [Add Flyway Migration](04-add-flyway-migration.md) | Add database migration (Java/Flyway) | Schema changes — Java stack |
+| 09 | [Add Batch Job](09-add-new-batch-job.md) | Add new batch job | Background processing |
 
 ### Frontend SOPs
-| SOP | Task | When to Use |
-|-----|------|-------------|
-| [SOP-03](03-add-new-frontend-page.md) | Add frontend page | New UI route/page |
+
+| # | SOP | Task | When to Use |
+|---|-----|------|-------------|
+| 03 | [Add Frontend Page](03-add-new-frontend-page.md) | Add frontend page | New UI route/page |
+
+### Agent/DevOps SOPs
+
+| # | SOP | Task | When to Use |
+|---|-----|------|-------------|
+| 10 | [Initialize Environment](10-initialize-environment.md) | Initialize environment (agent) | Agent session start — setup harness |
+| 11 | [Implement Feature](11-implement-feature.md) | Implement feature (agent) | Agent feature work — single feature per session |
+| 12 | [Session Handoff](12-session-handoff.md) | Session handoff (agent) | Agent session end — hand off to next agent |
+| 13 | [Configure Branch Protection](13-configure-branch-protection.md) | Configure branch protection | GitHub/GitLab code quality |
+| 14 | [Real-Time Monitoring](14-realtime-monitoring.md) | Set up real-time monitoring | Observability and alerting |
+| 15 | [Dual-Version Secrets](15-dual-version-secrets.md) | Manage dual-version secrets | Secret rotation with zero downtime |
+
+---
+
+## Missing SOPs (Planned)
+
+| Priority | Task | Status |
+|----------|------|--------|
+| P1 | Add new value object | [PLANNED] |
+| P1 | Add new API version | [PLANNED] |
+| P1 | Add new reusable frontend component | [PLANNED] |
+| P2 | Add new E2E test | [PLANNED] |
+| P2 | Database schema change (Alembic/Python) | [PLANNED] — see Issue #126 |
+| P2 | Security vulnerability response | [PLANNED] |
+| P2 | Performance optimization | [PLANNED] |
+| P2 | Feature flag rollout | [PLANNED] |
 
 ---
 
@@ -69,26 +99,6 @@ owner: "@architecture-team"
 
 ---
 
-## Missing SOPs (Planned)
-
-The following SOPs are planned for future development (see Issue #51):
-
-| Priority | SOP | Task |
-|----------|-----|------|
-| P0 | SOP-07 | Add new use case/interactor |
-| P0 | SOP-08 | Add new domain event (detailed) |
-| P0 | SOP-09 | Add new batch job |
-| P1 | SOP-10 | Add new value object |
-| P1 | SOP-11 | Add new API version |
-| P1 | SOP-12 | Add new reusable frontend component |
-| P2 | SOP-13 | Add new E2E test |
-| P2 | SOP-14 | Database schema change (non-Flyway) |
-| P2 | SOP-15 | Security vulnerability response |
-| P2 | SOP-16 | Performance optimization |
-| P2 | SOP-17 | Feature flag rollout |
-
----
-
 ## Cross-References
 
 ### Related Documentation
@@ -99,22 +109,3 @@ The following SOPs are planned for future development (see Issue #51):
 
 ### Templates
 - **SOP Template**: [04-templates/01-sop-template.md](../04-templates/01-sop-template.md) *(planned)*
-
----
-
-## Quick Reference
-
-**Before Starting:**
-1. Identify which SOP matches your task
-2. Read the entire SOP before coding
-3. Check prerequisites (e.g., "Requires SOP-01 completed")
-
-**During Implementation:**
-1. Follow steps in exact order
-2. Use provided code templates
-3. Run verification steps after each major step
-
-**Before Completing:**
-1. Run all verification steps
-2. Check architecture compliance
-3. Update SOP if you found a better way
