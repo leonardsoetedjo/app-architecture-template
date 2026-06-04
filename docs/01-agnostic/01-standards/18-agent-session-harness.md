@@ -323,7 +323,8 @@ The session harness is referenced by all boilerplate AGENTS.md files:
 
 - Java agents: see `docs/01-agnostic/01-standards/14-agents-java.md`
 - Python agents: see `docs/01-agnostic/01-standards/15-agents-python.md`
-- Frontend agents: see `docs/01-agnostic/01-standards/16-agents-reactjs.md`
+- Frontend agents: see `docs/01-agnostic/01-standards/16-agents-reactjs.md` and `docs/01-agnostic/01-standards/20-frontend-agent-harness.md`
+- Quasar agents: see `docs/01-agnostic/01-standards/17-agents-quasar.md` and `docs/01-agnostic/01-standards/20-frontend-agent-harness.md`
 
 ---
 

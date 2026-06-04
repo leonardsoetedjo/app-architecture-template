@@ -1,0 +1,91 @@
+{
+  "version": "1.0",
+  "project": "order-service-java",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "features": [
+    {
+      "id": "ORD-001",
+      "category": "functional",
+      "priority": 1,
+      "description": "User can create an order with at least one item",
+      "acceptance_criteria": [
+        "POST /api/v1/orders returns 201 with order ID",
+        "Order appears in database with PENDING status",
+        "OrderPlaced event published to outbox",
+        "Validation returns 400 for empty items list"
+      ],
+      "passes": false,
+      "notes": "TODO: implement PlaceOrderUseCase"
+    },
+    {
+      "id": "ORD-002",
+      "category": "functional",
+      "priority": 1,
+      "description": "User can list their orders with pagination",
+      "acceptance_criteria": [
+        "GET /api/v1/orders returns 200 with paginated list",
+        "Only orders for authenticated user are returned",
+        "Pagination includes page, size, totalElements",
+        "Sorting by createdAt descending"
+      ],
+      "passes": false,
+      "notes": "TODO: implement ListOrdersUseCase"
+    },
+    {
+      "id": "ORD-003",
+      "category": "functional",
+      "priority": 2,
+      "description": "User can cancel a pending order",
+      "acceptance_criteria": [
+        "PATCH /api/v1/orders/{id}/cancel returns 200",
+        "Order status changes to CANCELLED",
+        "OrderCancelled event published",
+        "Returns 409 if order already shipped"
+      ],
+      "passes": false,
+      "notes": "TODO: implement CancelOrderUseCase"
+    },
+    {
+      "id": "BATCH-001",
+      "category": "functional",
+      "priority": 3,
+      "description": "Batch job status tracking for scheduled jobs",
+      "acceptance_criteria": [
+        "BatchJob entity tracks business status",
+        "Status enum: SCHEDULED, PROCESSING, COMPLETED, FAILED",
+        "API endpoint GET /api/v1/batch-jobs/{id}",
+        "Quartz listener updates business status"
+      ],
+      "passes": false,
+      "notes": "TODO: See issues #96-#99"
+    },
+    {
+      "id": "ARCH-001",
+      "category": "non-functional",
+      "priority": 1,
+      "description": "Clean Architecture compliance",
+      "acceptance_criteria": [
+        "Domain layer has no Spring/JPA annotations",
+        "Application layer has no HTTP framework imports",
+        "ArchUnit tests pass",
+        "./scripts/architecture-pre-commit.sh passes"
+      ],
+      "passes": true,
+      "notes": "Boilerplate structure enforces Clean Architecture"
+    },
+    {
+      "id": "TEST-001",
+      "category": "testing",
+      "priority": 1,
+      "description": "Test pyramid implementation",
+      "acceptance_criteria": [
+        "Unit tests for all use cases",
+        "Integration tests for all controllers",
+        "Testcontainers for PostgreSQL integration",
+        "80%+ code coverage"
+      ],
+      "passes": false,
+      "notes": "TODO: add comprehensive test suite"
+    }
+  ]
+}

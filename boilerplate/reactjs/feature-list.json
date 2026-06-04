@@ -15,7 +15,9 @@
         "Empty state shown when no orders"
       ],
       "passes": true,
-      "notes": "Implemented in boilerplate. See OrdersPage.tsx + useOrders hook"
+      "notes": "Implemented in boilerplate. See OrdersPage.tsx + useOrders hook",
+      "page_affected": "OrdersPage",
+      "responsive_breakpoints": [320, 768, 1440]
     },
     {
       "id": "UI-002",
@@ -29,7 +31,9 @@
         "Success redirects to order list"
       ],
       "passes": true,
-      "notes": "Implemented in boilerplate. See OrderForm.tsx"
+      "notes": "Implemented in boilerplate. See OrderForm.tsx",
+      "page_affected": "OrderPage",
+      "responsive_breakpoints": [320, 768, 1440]
     },
     {
       "id": "UI-003",
@@ -42,11 +46,47 @@
         "Order status updates in UI after cancel"
       ],
       "passes": false,
-      "notes": "TODO: implement cancel order feature"
+      "notes": "TODO: implement cancel order feature",
+      "page_affected": "OrdersPage",
+      "components_affected": ["OrderList", "CancelOrderButton"]
+    },
+    {
+      "id": "COM-001",
+      "category": "component",
+      "priority": 1,
+      "description": "BaseButton component with variants",
+      "acceptance_criteria": [
+        "Component accepts variant, size, loading, disabled props",
+        "Renders Ant Design Button",
+        "Supports icon prop and children",
+        "No console warnings in Storybook"
+      ],
+      "passes": true,
+      "notes": "Implemented - BaseButton.tsx with 18 stories",
+      "component_affected": "BaseButton",
+      "story_required": true,
+      "visual_states": ["default", "loading", "disabled", "hover", "focus"]
+    },
+    {
+      "id": "COM-002",
+      "category": "component",
+      "priority": 1,
+      "description": "BaseInput component with states",
+      "acceptance_criteria": [
+        "Component accepts value, onChange, error, disabled props",
+        "Renders Ant Design Input",
+        "Supports prefix/suffix icons",
+        "Character counter option"
+      ],
+      "passes": true,
+      "notes": "Implemented - BaseInput.tsx with 17 stories",
+      "component_affected": "BaseInput",
+      "story_required": true,
+      "visual_states": ["default", "focused", "error", "disabled"]
     },
     {
       "id": "STORY-001",
-      "category": "testing",
+      "category": "story",
       "priority": 1,
       "description": "Storybook stories for core UI components",
       "acceptance_criteria": [
