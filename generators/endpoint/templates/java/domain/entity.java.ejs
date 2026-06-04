@@ -1,0 +1,67 @@
+package com.example.domain.models;
+
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Domain entity for <%= entityName %>.
+ * Pure domain model - no framework imports (no Lombok, no JPA annotations).
+ */
+public class <%= entityName %> {
+    private final UUID id;
+    private final Instant createdAt;
+    private Instant updatedAt;
+
+    // Add domain-specific fields here
+    // private final String name;
+    // private final BigDecimal amount;
+
+    public <%= entityName %>(UUID id, Instant createdAt) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.updatedAt = createdAt;
+    }
+
+    public static <%= entityName %> createNew() {
+        return new <%= entityName %>(UUID.randomUUID(), Instant.now());
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void markUpdated() {
+        this.updatedAt = Instant.now();
+    }
+
+    // Add domain methods here (business logic)
+    // Example:
+    // public void updateName(String newName) {
+    //     if (newName == null || newName.isBlank()) {
+    //         throw new DomainException("Name cannot be empty");
+    //     }
+    //     this.name = newName;
+    //     markUpdated();
+    // }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        <%= entityName %> that = (<%= entityName %>) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}

@@ -1,0 +1,62 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+  "name": "ReactJS Frontend",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "dsznajder.es7-react-js-snippets",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "sbrunk.storybook-for-vscode",
+        "formulahendry.auto-rename-tag",
+        "formulahendry.auto-close-tag"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "files.exclude": {
+          "**/node_modules": false
+        },
+        "explorer.excludeGitIgnore": true
+      }
+    }
+  },
+  "containerEnv": {
+    "NODE_ENV": "development"
+  },
+  "forwardPorts": [5173, 6006],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "notify"
+    },
+    "6006": {
+      "label": "Storybook",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "npm ci",
+  "postStartCommand": "echo 'Dev container ready! Run npm run dev to start Vite or npm run storybook for Storybook.'",
+  "remoteUser": "node",
+  "hostRequirements": {
+    "memory": "4gb",
+    "cpus": 2
+  }
+}

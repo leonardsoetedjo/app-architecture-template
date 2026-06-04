@@ -40,6 +40,37 @@
       ],
       "passes": false,
       "notes": "TODO: implement CancelOrderUseCase and controller"
+    },
+    {
+      "id": "WF-001",
+      "category": "infrastructure",
+      "priority": 1,
+      "description": "Workflow execution tracking with business status",
+      "acceptance_criteria": [
+        "Domain models: WorkflowExecution, WorkflowStatus",
+        "Repository port: WorkflowPort",
+        "SQLAlchemy implementation: SqlAlchemyWorkflowPort",
+        "Prefect task with status updates",
+        "Prefect flow orchestrating tasks",
+        "FastAPI endpoint GET /api/workflows/{id}"
+      ],
+      "passes": true,
+      "notes": "MVP chain #105-110 COMPLETE - Domain (domain/models/workflows/, domain/ports/workflows/), Infrastructure (infrastructure/persistence/workflows/), Prefect (infrastructure/workflows/tasks/, flows/), API (infrastructure/api/workflow_router.py). Clean Architecture compliant."
+    },
+    {
+      "id": "STORY-001",
+      "category": "testing",
+      "priority": 2,
+      "description": "Storybook coverage for React components",
+      "acceptance_criteria": [
+        "Atom stories (BaseButton, BaseInput)",
+        "Molecule stories (SearchField, FormField, InputGroup)",
+        "Widget stories (OrderList, OrderForm)",
+        "All states documented (loading, error, success)",
+        "Interactive testing harness"
+      ],
+      "passes": true,
+      "notes": "Completed 2026-06-04 — BaseButton.stories.tsx (18 stories), BaseInput.stories.tsx (17 stories), SearchField.stories.tsx (12 stories), OrderList.stories.tsx (9 stories), OrderForm.stories.tsx (10 stories) = 66 total stories"
     }
   ]
 }

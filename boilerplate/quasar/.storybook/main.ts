@@ -1,8 +1,10 @@
-import type { StorybookConfig } from '@storybook/react-vite';
-import { mergeConfig } from 'vite';
+import type { StorybookConfig } from '@storybook/vue3-vite';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
+  stories: [
+    '../src/**/*.mdx',
+    '../src/**/*.stories.@(ts|tsx|vue)',
+  ],
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
@@ -10,21 +12,14 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
   ],
   framework: {
-    name: '@storybook/react-vite',
+    name: '@storybook/vue3-vite',
     options: {},
   },
   docs: {
     autodocs: 'tag',
   },
-  viteFinal: async (config) => {
-    return mergeConfig(config, {
-      resolve: {
-        alias: {
-          '@src': '/src',
-          '@tests': '/src/tests',
-        },
-      },
-    });
+  core: {
+    disableTelemetry: true,
   },
 };
 

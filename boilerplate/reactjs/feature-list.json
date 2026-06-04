@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "project": "reactjs-frontend",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "features": [
+    {
+      "id": "UI-001",
+      "category": "functional",
+      "priority": 1,
+      "description": "User can view list of orders",
+      "acceptance_criteria": [
+        "OrdersPage displays order list from API",
+        "Loading state shown during fetch",
+        "Error state displayed on failure",
+        "Empty state shown when no orders"
+      ],
+      "passes": true,
+      "notes": "Implemented in boilerplate. See OrdersPage.tsx + useOrders hook"
+    },
+    {
+      "id": "UI-002",
+      "category": "functional",
+      "priority": 1,
+      "description": "User can create a new order via form",
+      "acceptance_criteria": [
+        "OrderForm component with validation",
+        "Ant Design form fields for items",
+        "Submit triggers API call",
+        "Success redirects to order list"
+      ],
+      "passes": true,
+      "notes": "Implemented in boilerplate. See OrderForm.tsx"
+    },
+    {
+      "id": "UI-003",
+      "category": "functional",
+      "priority": 2,
+      "description": "User can cancel an order",
+      "acceptance_criteria": [
+        "Cancel button visible on pending orders",
+        "Confirmation dialog before cancel",
+        "Order status updates in UI after cancel"
+      ],
+      "passes": false,
+      "notes": "TODO: implement cancel order feature"
+    },
+    {
+      "id": "STORY-001",
+      "category": "testing",
+      "priority": 1,
+      "description": "Storybook stories for core UI components",
+      "acceptance_criteria": [
+        "Button component stories with variants",
+        "Input component stories with states",
+        "Form component stories with validation",
+        "Loading and error states documented",
+        "Widget stories for OrderList"
+      ],
+      "passes": true,
+      "notes": "Completed 2026-06-04 — BaseButton.stories.tsx (18 stories), BaseInput.stories.tsx (17 stories), SearchField.stories.tsx (12 stories), OrderList.stories.tsx (9 stories), OrderForm.stories.tsx (10 stories) = 66 total stories"
+    },
+    {
+      "id": "STORY-002",
+      "category": "testing",
+      "priority": 1,
+      "description": "Storybook integration with testing framework",
+      "acceptance_criteria": [
+        "Storybook tests run in CI pipeline",
+        "Visual regression tests configured",
+        "Accessibility tests enabled"
+      ],
+      "passes": false,
+      "notes": "TODO: See issue #133"
+    },
+    {
+      "id": "E2E-001",
+      "category": "testing",
+      "priority": 1,
+      "description": "Playwright E2E tests for critical paths",
+      "acceptance_criteria": [
+        "User login flow tested",
+        "Order creation flow tested",
+        "Order list pagination tested"
+      ],
+      "passes": true,
+      "notes": "E2E tests exist in e2e/ directory"
+    }
+  ]
+}

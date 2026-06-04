@@ -1,0 +1,43 @@
+package com.example.infrastructure.api;
+
+import com.example.application.usecases.<%= featureNamePascal %>UseCase;
+import com.example.application.dtos.<%= featureNamePascal %>Command;
+import com.example.application.dtos.<%= featureNamePascal %>Result;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+
+/**
+ * REST controller for <%= entityName %> operations.
+ * Infrastructure layer - can import Spring annotations.
+ */
+@RestController
+@RequestMapping("/api/v1/<%= featureNameKebab %>")
+public class <%= entityName %>Controller {
+
+    private final <%= featureNamePascal %>UseCase <%= featureNameCamel %>UseCase;
+
+    public <%= entityName %>Controller(<%= featureNamePascal %>UseCase <%= featureNameCamel %>UseCase) {
+        this.<%= featureNamePascal %>UseCase = <%= featureNameCamel %>UseCase;
+    }
+
+    /**
+     * Handle <%= featureNamePascal %> request.
+     */
+    @PostMapping
+    public ResponseEntity<<%= featureNamePascal %>Result> <%= featureNameCamel %>(
+            @RequestBody <%= featureNamePascal %>Command command) {
+        
+        <%= featureNamePascal %>Result result = <%= featureNameCamel %>UseCase.execute(command);
+        
+        return ResponseEntity
+            .created(URI.create("/api/v1/<%= featureNameKebab %>/" + result.id()))
+            .body(result);
+    }
+
+    // Add additional endpoints as needed:
+    // @GetMapping("/{id}")
+    // @PutMapping("/{id}")
+    // @DeleteMapping("/{id}")
+}

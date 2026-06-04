@@ -1,0 +1,38 @@
+"""
+Repository port for <%= featureNamePascal %>.
+Interface defined in domain layer - implementation in infrastructure.
+"""
+from abc import ABC, abstractmethod
+from typing import Optional
+from uuid import UUID
+
+from src.domain.models.<%= featureNameSnake %> import <%= featureNamePascal %>Entity
+
+
+class <%= featureNamePascal %>RepositoryPort(ABC):
+    """Repository port for <%= featureNamePascal %> persistence."""
+    
+    @abstractmethod
+    def save(self, entity: <%= featureNamePascal %>Entity) -> <%= featureNamePascal %>Entity:
+        """Save <%= featureNamePascal %> entity."""
+        pass
+    
+    @abstractmethod
+    def find_by_id(self, entity_id: UUID) -> Optional[<%= featureNamePascal %>Entity]:
+        """Find <%= featureNamePascal %> by ID."""
+        pass
+    
+    @abstractmethod
+    def find_all(self) -> list[<%= featureNamePascal %>Entity]:
+        """Find all <%= featureNamePascal %> entities."""
+        pass
+    
+    @abstractmethod
+    def delete_by_id(self, entity_id: UUID) -> bool:
+        """Delete <%= featureNamePascal %> by ID."""
+        pass
+    
+    @abstractmethod
+    def exists_by_id(self, entity_id: UUID) -> bool:
+        """Check if <%= featureNamePascal %> exists by ID."""
+        pass

@@ -1,0 +1,76 @@
+{
+  "version": "1.0",
+  "project": "java-order-service",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "features": [
+    {
+      "id": "ORD-001",
+      "category": "functional",
+      "priority": 1,
+      "description": "User can create an order with at least one item",
+      "acceptance_criteria": [
+        "POST /api/v1/orders returns 201 with order ID",
+        "Order appears in database with PENDING status",
+        "OrderPlaced event published to outbox"
+      ],
+      "passes": true,
+      "notes": "Implemented in boilerplate. See PlaceOrderUseCaseImpl + OrderController + V1__create_orders_table.sql"
+    },
+    {
+      "id": "ORD-002",
+      "category": "functional",
+      "priority": 1,
+      "description": "User can list their orders",
+      "acceptance_criteria": [
+        "GET /api/v1/orders returns 200 with paginated list",
+        "Only orders for authenticated user are returned"
+      ],
+      "passes": true,
+      "notes": "Implemented in boilerplate. See ListOrdersUseCaseImpl"
+    },
+    {
+      "id": "ORD-003",
+      "category": "functional",
+      "priority": 2,
+      "description": "User can cancel an order before it ships",
+      "acceptance_criteria": [
+        "POST /api/v1/orders/{id}/cancel returns 200",
+        "Order status changes to CANCELLED",
+        "OrderCancelled event published"
+      ],
+      "passes": false,
+      "notes": "TODO: implement CancelOrderUseCaseImpl and controller endpoint"
+    },
+    {
+      "id": "BATCH-001",
+      "category": "infrastructure",
+      "priority": 1,
+      "description": "Batch job status tracking MVP chain",
+      "acceptance_criteria": [
+        "Domain: BatchJob, BatchJobStatus entities",
+        "Repository port in domain/ports/",
+        "JPA implementation in infrastructure/persistence/",
+        "Spring Batch tasklet sample",
+        "Quartz job configuration",
+        "REST API endpoints",
+        "Integration tests"
+      ],
+      "passes": true,
+      "notes": "MVP chain #98-104 COMPLETE - Domain (domain/models/batch/BatchJob.java, BatchJobStatus.java), Infrastructure (infrastructure/batch/tasklets/SampleTasklet.java, infrastructure/scheduler/jobs/SampleQuartzJob.java), JPA repositories, REST API. Clean Architecture compliant."
+    },
+    {
+      "id": "STORY-001",
+      "category": "testing",
+      "priority": 2,
+      "description": "Storybook coverage for Quasar components",
+      "acceptance_criteria": [
+        ".storybook/ configuration (main.ts, preview.ts)",
+        "Quasar provider setup with decorators",
+        "Component stories for OrderList, OrderForm, AppLayout",
+        "All states documented (loading, error, success)"
+      ],
+      "passes": true,
+      "notes": "Storybook configured 2026-06-04 - .storybook/main.ts, .storybook/preview.ts with Quasar provider. Existing stories: OrderList, OrderForm, AppLayout."
+    }
+  ]
+}

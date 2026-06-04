@@ -64,6 +64,8 @@ owner: "@architecture-team"
 | 13 | [Configure Branch Protection](13-configure-branch-protection.md) | Configure branch protection | GitHub/GitLab code quality |
 | 14 | [Real-Time Monitoring](14-realtime-monitoring.md) | Set up real-time monitoring | Observability and alerting |
 | 15 | [Dual-Version Secrets](15-dual-version-secrets.md) | Manage dual-version secrets | Secret rotation with zero downtime |
+| 16 | [Add Alembic Migration](16-add-alembic-migration.md) | Database schema change (Python/Alembic) | Schema changes — Python stack |
+| **17** | **[Agent Session Harness](18-agent-session-harness.md)** | **Standard harness artifacts for all boilerplates** | **New boilerplate setup or audit compliance** |
 
 ---
 
@@ -79,6 +81,7 @@ owner: "@architecture-team"
 | P2 | Security vulnerability response | [PLANNED] |
 | P2 | Performance optimization | [PLANNED] |
 | P2 | Feature flag rollout | [PLANNED] |
+| P2 | **Agent Session Harness Standard** | **[COMPLETE] SOP #18** |
 
 ---
 

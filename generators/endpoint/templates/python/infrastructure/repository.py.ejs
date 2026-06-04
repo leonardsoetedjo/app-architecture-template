@@ -1,0 +1,59 @@
+"""
+Repository implementation for <%= featureNamePascal %>.
+Infrastructure layer - can import SQLAlchemy.
+"""
+from typing import Optional
+from uuid import UUID
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from src.domain.models.<%= featureNameSnake %> import <%= featureNamePascal %>Entity
+from src.domain.ports.<%= featureNameSnake %>_repository import <%= featureNamePascal %>RepositoryPort
+
+
+class <%= featureNamePascal %>Repository(<%= featureNamePascal %>RepositoryPort):
+    """Repository implementation for <%= featureNamePascal %>."""
+    
+    def __init__(self, session: Session):
+        self.session = session
+    
+    def save(self, entity: <%= featureNamePascal %>Entity) -> <%= featureNamePascal %>Entity:
+        """Save <%= featureNamePascal %> entity."""
+        # Convert domain entity to SQLAlchemy model and persist
+        # db_model = <%= featureNamePascal %>Model.from_domain(entity)
+        # self.session.add(db_model)
+        # self.session.commit()
+        # self.session.refresh(db_model)
+        # return db_model.to_domain()
+        raise NotImplementedError("Implement persistence logic")
+    
+    def find_by_id(self, entity_id: UUID) -> Optional[<%= featureNamePascal %>Entity]:
+        """Find <%= featureNamePascal %> by ID."""
+        # stmt = select(<%= featureNamePascal %>Model).where(<%= featureNamePascal %>Model.id == entity_id)
+        # db_model = self.session.execute(stmt).scalar_one_or_none()
+        # return db_model.to_domain() if db_model else None
+        raise NotImplementedError("Implement persistence logic")
+    
+    def find_all(self) -> list[<%= featureNamePascal %>Entity]:
+        """Find all <%= featureNamePascal %> entities."""
+        # stmt = select(<%= featureNamePascal %>Model).order_by(<%= featureNamePascal %>Model.created_at.desc())
+        # db_models = self.session.execute(stmt).scalars().all()
+        # return [model.to_domain() for model in db_models]
+        raise NotImplementedError("Implement persistence logic")
+    
+    def delete_by_id(self, entity_id: UUID) -> bool:
+        """Delete <%= featureNamePascal %> by ID."""
+        # db_model = self.find_by_id(entity_id)
+        # if db_model:
+        #     self.session.delete(db_model)
+        #     self.session.commit()
+        #     return True
+        # return False
+        raise NotImplementedError("Implement persistence logic")
+    
+    def exists_by_id(self, entity_id: UUID) -> bool:
+        """Check if <%= featureNamePascal %> exists by ID."""
+        # stmt = select(<%= featureNamePascal %>Model.id).where(<%= featureNamePascal %>Model.id == entity_id)
+        # return self.session.execute(stmt).scalar_one_or_none() is not None
+        raise NotImplementedError("Implement persistence logic")

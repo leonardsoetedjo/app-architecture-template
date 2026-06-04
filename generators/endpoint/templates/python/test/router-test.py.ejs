@@ -1,0 +1,54 @@
+"""
+Integration tests for <%= featureNamePascal %> router.
+Tests REST layer with mocked use case.
+"""
+from uuid import uuid4
+from datetime import datetime
+
+import pytest
+from fastapi import status
+from fastapi.testclient import TestClient
+
+from src.application.dtos.<%= featureNameSnake %>_dtos import <%= featureNamePascal %>Result
+
+
+class Test<%= featureNamePascal %>Router:
+    """Tests for <%= featureNamePascal %> router."""
+    
+    @pytest.fixture
+    def client(self, mock_<%= featureNameCamel %>_usecase):
+        """Create test client with mocked dependencies."""
+        from src.main import app
+        # Override dependency
+        # app.dependency_overrides[get_<%= featureNameCamel %>_usecase] = lambda: mock_<%= featureNameCamel %>_usecase
+        return TestClient(app)
+    
+    @pytest.fixture
+    def mock_<%= featureNameCamel %>_usecase(self):
+        """Mock use case for testing."""
+        from unittest.mock import Mock
+        usecase = Mock()
+        
+        # Configure mock response
+        usecase.execute.return_value = <%= featureNamePascal %>Result(
+            id=uuid4(),
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+        )
+        
+        return usecase
+    
+    def test_<%= featureNameCamel %>_success(self, client, mock_<%= featureNameCamel %>_usecase):
+        """Should handle <%= featureNamePascal %> request successfully."""
+        # Given
+        command_data = {}  # Add command fields
+        
+        # When
+        response = client.post("/api/v1/<%= featureNameKebab %>", json=command_data)
+        
+        # Then
+        assert response.status_code == status.HTTP_201_CREATED
+        assert "location" in response.headers
+        # mock_<%= featureNameCamel %>_usecase.execute.assert_called_once()
+    
+    # Add more test cases for error scenarios

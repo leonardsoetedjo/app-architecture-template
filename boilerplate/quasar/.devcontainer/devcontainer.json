@@ -1,0 +1,65 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+  "name": "Quasar Frontend",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "vue.volar",
+        "quasar.quasar-vscode",
+        "ms-vscode.vscode-typescript-next",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "sbrunk.storybook-for-vscode",
+        "formulahendry.auto-rename-tag",
+        "formulahendry.auto-close-tag"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "vue.complete.casing.status": true,
+        "vue.complete.casing.props": "kebab-case",
+        "vue.complete.casing.tag": "kebab-case",
+        "files.exclude": {
+          "**/node_modules": false
+        },
+        "explorer.excludeGitIgnore": true
+      }
+    }
+  },
+  "containerEnv": {
+    "NODE_ENV": "development"
+  },
+  "forwardPorts": [9000, 6006],
+  "portsAttributes": {
+    "9000": {
+      "label": "Quasar Dev Server",
+      "onAutoForward": "notify"
+    },
+    "6006": {
+      "label": "Storybook",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "npm ci",
+  "postStartCommand": "echo 'Dev container ready! Run quasar dev to start Quasar or npm run storybook for Storybook.'",
+  "remoteUser": "node",
+  "hostRequirements": {
+    "memory": "4gb",
+    "cpus": 2
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "generator-clean-architecture",
+  "version": "1.0.0",
+  "description": "Yeoman generators for Clean Architecture scaffolding (Java/Spring Boot, Python/FastAPI, React, Quasar)",
+  "keywords": [
+    "yeoman-generator",
+    "clean-architecture",
+    "spring-boot",
+    "fastapi",
+    "react",
+    "quasar",
+    "scaffolding",
+    "ddd"
+  ],
+  "homepage": "https://github.com/leonardsoetedjo/app-architecture-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leonardsoetedjo/app-architecture-template.git"
+  },
+  "license": "MIT",
+  "author": "Leonard Soetedjo",
+  "main": "generators/app/index.js",
+  "scripts": {
+    "test": "yeoman-test",
+    "link": "npm link"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "yeoman-generator": "^7.1.1"
+  },
+  "devDependencies": {
+    "yeoman-test": "^8.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "generators"
+  ]
+}

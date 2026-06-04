@@ -1,0 +1,62 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+  "name": "Java Order Service (Spring Boot)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "installMaven": "true",
+      "mavenVersion": "3.9.6"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "containerEnv": {
+    "JAVA_HOME": "/usr/local/sdkman/candidates/java/current",
+    "MAVEN_HOME": "/usr/local/sdkman/candidates/maven/current",
+    "SPRING_PROFILES_ACTIVE": "dev"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-boot-dev-pack",
+        "vscjava.vscode-maven",
+        "redhat.vscode-xml",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "ms-vscode.vscode-typescript-next"
+      ],
+      "settings": {
+        "java.project.referencedLibraries": [
+          "target/**/*.jar",
+          "repository/**/*.jar"
+        ],
+        "java.compile.nullAnalysis.mode": "automatic",
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "vscjava.vscode-java-dependency"
+      }
+    }
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Spring Boot Application",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "./mvnw clean install -DskipTests",
+  "postStartCommand": "echo 'Dev container ready! Run ./mvnw spring-boot:run to start the application.'",
+  "remoteUser": "vscode",
+  "hostRequirements": {
+    "memory": "4gb",
+    "cpus": 2
+  }
+}

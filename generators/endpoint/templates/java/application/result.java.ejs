@@ -1,0 +1,22 @@
+package com.example.application.dtos;
+
+import java.time.Instant;
+import java.util.UUID;
+
+/**
+ * Result DTO for <%= featureNamePascal %>.
+ * Contains output data from the use case.
+ */
+public record <%= featureNamePascal %>Result(
+    UUID id,
+    Instant createdAt,
+    Instant updatedAt
+    // Add result fields here
+    // Example:
+    // String name,
+    // BigDecimal amount
+) {
+    public static <%= featureNamePascal %>Result from(/* domain entity */) {
+        return new <%= featureNamePascal %>Result(/* args */);
+    }
+}

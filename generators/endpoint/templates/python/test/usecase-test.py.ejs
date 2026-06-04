@@ -1,0 +1,50 @@
+"""
+Unit tests for <%= featureNamePascal %>UseCase.
+Tests application logic with mocked dependencies.
+"""
+from unittest.mock import Mock
+
+import pytest
+
+from src.application.usecases.<%= featureNameSnake %>_usecase import <%= featureNamePascal %>UseCase
+from src.application.dtos.<%= featureNameSnake %>_dtos import (
+    <%= featureNamePascal %>Command,
+    <%= featureNamePascal %>Result,
+)
+
+
+class Test<%= featureNamePascal %>UseCase:
+    """Tests for <%= featureNamePascal %>UseCase."""
+    
+    @pytest.fixture
+    def mock_repository(self):
+        """Mock repository for testing."""
+        return Mock()
+    
+    @pytest.fixture
+    def usecase(self, mock_repository):
+        """Create use case with mocked dependencies."""
+        return <%= featureNamePascal %>UseCase(repository=mock_repository)
+    
+    def test_execute_success(self, usecase, mock_repository):
+        """Should execute <%= featureNamePascal %> successfully."""
+        # Given
+        command = <%= featureNamePascal %>Command.create()
+        expected_result = <%= featureNamePascal %>Result(
+            id=command.id,
+            created_at=command.created_at,
+            updated_at=command.updated_at,
+        )
+        
+        # Mock repository behavior
+        # mock_repository.save.return_value = expected_entity
+        
+        # When
+        # result = usecase.execute(command)
+        
+        # Then
+        # assert result == expected_result
+        # mock_repository.save.assert_called_once()
+        pass  # Implement test when use case logic is implemented
+    
+    # Add more test cases for edge cases and error scenarios

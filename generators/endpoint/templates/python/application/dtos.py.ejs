@@ -1,0 +1,53 @@
+"""
+DTOs for <%= featureNamePascal %>.
+Application layer data transfer objects.
+"""
+from dataclasses import dataclass
+from datetime import datetime
+from uuid import UUID
+
+
+@dataclass
+class <%= featureNamePascal %>Command:
+    """Command DTO for <%= featureNamePascal %>.
+    
+    Contains input data for the use case.
+    """
+    # Add command fields here
+    # id: UUID
+    # name: str
+    # amount: Decimal
+    
+    def __post_init__(self):
+        # Add validation here
+        pass
+    
+    @classmethod
+    def create(cls, **kwargs) -> "<%= featureNamePascal %>Command":
+        """Create command from kwargs."""
+        return cls(**kwargs)
+
+
+@dataclass
+class <%= featureNamePascal %>Result:
+    """Result DTO for <%= featureNamePascal %>.
+    
+    Contains output data from the use case.
+    """
+    id: UUID
+    created_at: datetime
+    updated_at: datetime
+    # Add result fields here
+    # name: str
+    # amount: Decimal
+    
+    @classmethod
+    def from_entity(cls, entity) -> "<%= featureNamePascal %>Result":
+        """Create result from domain entity."""
+        return cls(
+            id=entity.id,
+            created_at=entity.created_at,
+            updated_at=entity.updated_at,
+            # name=entity.name,
+            # amount=entity.amount,
+        )

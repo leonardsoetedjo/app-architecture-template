@@ -1,0 +1,61 @@
+"""
+FastAPI router for <%= featureNamePascal %>.
+Infrastructure layer - can import FastAPI.
+"""
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
+from uuid import UUID
+
+from src.application.usecases.<%= featureNameSnake %>_usecase import <%= featureNamePascal %>UseCase
+from src.application.dtos.<%= featureNameSnake %>_dtos import (
+    <%= featureNamePascal %>Command,
+    <%= featureNamePascal %>Result,
+)
+
+router = APIRouter(prefix="/api/v1/<%= featureNameKebab %>", tags=["<%= featureNameKebab %>"])
+
+
+def get_<%= featureNameCamel %>_usecase() -> <%= featureNamePascal %>UseCase:
+    """Dependency injection for <%= featureNamePascal %>UseCase."""
+    # Return use case with injected dependencies
+    # return <%= featureNamePascal %>UseCase(repository=<%= featureNameCamel %>_repository)
+    raise NotImplementedError("Configure dependency injection")
+
+
+@router.post(
+    "",
+    response_model=<%= featureNamePascal %>Result,
+    status_code=status.HTTP_201_CREATED,
+    summary="<%= featureNamePascal %>",
+    description="Create a new <%= featureNameKebab %>.",
+)
+async def <%= featureNameCamel %>(
+    command: <%= featureNamePascal %>Command,
+    usecase: <%= featureNamePascal %>UseCase = Depends(get_<%= featureNameCamel %>_usecase),
+) -> <%= featureNamePascal %>Result:
+    """
+    Handle <%= featureNamePascal %> request.
+    
+    Args:
+        command: Command containing input data
+        usecase: Use case instance
+        
+    Returns:
+        Result containing created entity data
+    """
+    result = usecase.execute(command)
+    return result
+
+
+# Add additional endpoints as needed:
+# @router.get("/{entity_id}", response_model=<%= featureNamePascal %>Result)
+# async def get_by_id(entity_id: UUID, ...) -> <%= featureNamePascal %>Result:
+#     ...
+#
+# @router.put("/{entity_id}", response_model=<%= featureNamePascal %>Result)
+# async def update(entity_id: UUID, ...) -> <%= featureNamePascal %>Result:
+#     ...
+#
+# @router.delete("/{entity_id}", status_code=status.HTTP_204_NO_CONTENT)
+# async def delete(entity_id: UUID, ...) -> None:
+#     ...
