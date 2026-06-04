@@ -1,13 +1,14 @@
 package com.example.orderservice.domain.models;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class OrderItem {
     private final UUID productId;
-    private final int quantity;
-    private final double unitPrice;
+    private final Integer quantity;
+    private final BigDecimal unitPrice;
 
-    public OrderItem(UUID productId, int quantity, double unitPrice) {
+    public OrderItem(UUID productId, Integer quantity, BigDecimal unitPrice) {
         this.productId = productId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
@@ -17,11 +18,15 @@ public class OrderItem {
         return productId;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public double getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }

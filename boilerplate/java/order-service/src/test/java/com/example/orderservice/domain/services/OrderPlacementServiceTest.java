@@ -3,6 +3,8 @@ package com.example.orderservice.domain.services;
 import com.example.orderservice.domain.models.*;
 import com.example.orderservice.domain.ports.OrderRepository;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -38,7 +40,7 @@ class OrderPlacementServiceTest {
     void placeOrder_createsOrder_whenValidItems() {
         UUID customerId = UUID.randomUUID();
         List<OrderItem> items = List.of(
-            new OrderItem(UUID.randomUUID(), 2, 29.99)
+            new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(29.99))
         );
 
         Order result = service.placeOrder(customerId, items);

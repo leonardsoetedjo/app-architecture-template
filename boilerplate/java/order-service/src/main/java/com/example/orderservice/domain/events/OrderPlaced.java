@@ -2,6 +2,7 @@ package com.example.orderservice.domain.events;
 
 import com.example.orderservice.domain.models.OrderId;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,9 +17,9 @@ public class OrderPlaced extends DomainEvent {
     private final OrderId orderId;
     private final UUID customerId;
     private final List<OrderItemEventData> items;
-    private final double totalAmount;
+    private final BigDecimal totalAmount;
     
-    public OrderPlaced(OrderId orderId, UUID customerId, List<OrderItemEventData> items, double totalAmount) {
+    public OrderPlaced(OrderId orderId, UUID customerId, List<OrderItemEventData> items, BigDecimal totalAmount) {
         super("OrderPlaced");
         this.orderId = orderId;
         this.customerId = customerId;
@@ -43,7 +44,7 @@ public class OrderPlaced extends DomainEvent {
         return items;
     }
     
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
     
@@ -53,8 +54,8 @@ public class OrderPlaced extends DomainEvent {
      */
     public record OrderItemEventData(
         UUID productId,
-        int quantity,
-        double unitPrice,
-        double totalAmount
+        Integer quantity,
+        BigDecimal unitPrice,
+        BigDecimal totalAmount
     ) {}
 }

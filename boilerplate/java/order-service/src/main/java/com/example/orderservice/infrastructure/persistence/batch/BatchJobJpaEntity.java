@@ -65,14 +65,14 @@ public class BatchJobJpaEntity {
      */
     @Column(name = "records_processed", nullable = false)
     @Builder.Default
-    private int recordsProcessed = 0;
+    private Integer recordsProcessed = 0;
     
     /**
      * Number of records that failed processing.
      */
     @Column(name = "records_failed", nullable = false)
     @Builder.Default
-    private int recordsFailed = 0;
+    private Integer recordsFailed = 0;
     
     /**
      * Error message if the job failed.

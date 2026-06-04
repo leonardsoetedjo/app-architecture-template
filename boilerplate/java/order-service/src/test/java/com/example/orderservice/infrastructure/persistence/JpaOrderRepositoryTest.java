@@ -17,6 +17,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ class JpaOrderRepositoryTest {
 
     @Test
     void shouldSaveOrder() {
-        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 2, 29.99)));
+        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(29.99))));
         Order saved = orderRepository.save(order);
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isNotNull();
@@ -57,7 +58,7 @@ class JpaOrderRepositoryTest {
 
     @Test
     void shouldFindOrderById() {
-        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, 9.99)));
+        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(9.99))));
         Order saved = orderRepository.save(order);
         OrderId id = saved.getId();
 
@@ -68,8 +69,8 @@ class JpaOrderRepositoryTest {
 
     @Test
     void shouldFindAllOrders() {
-        orderRepository.save(Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, 10.0))));
-        orderRepository.save(Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 2, 20.0))));
+        orderRepository.save(Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(10.0)))));
+        orderRepository.save(Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(20.0)))));
 
         List<Order> orders = orderRepository.findAll();
         assertThat(orders).hasSizeGreaterThanOrEqualTo(2);
@@ -77,7 +78,7 @@ class JpaOrderRepositoryTest {
 
     @Test
     void shouldDeleteOrder() {
-        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, 5.0)));
+        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(5.0))));
         Order saved = orderRepository.save(order);
         OrderId id = saved.getId();
 
@@ -87,14 +88,14 @@ class JpaOrderRepositoryTest {
 
     @Test
     void shouldExistById() {
-        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, 15.0)));
+        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(15.0))));
         Order saved = orderRepository.save(order);
         assertThat(orderRepository.existsById(saved.getId())).isTrue();
     }
 
     @Test
     void shouldUpdateOrderStatus() {
-        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, 25.0)));
+        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(25.0))));
         Order saved = orderRepository.save(order);
         OrderId id = saved.getId();
 
@@ -111,8 +112,8 @@ class JpaOrderRepositoryTest {
     @Test
     void shouldSaveOrderWithMultipleItems() {
         List<OrderItem> items = List.of(
-            new OrderItem(UUID.randomUUID(), 1, 10.0),
-            new OrderItem(UUID.randomUUID(), 3, 5.0)
+            new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(10.0)),
+            new OrderItem(UUID.randomUUID(), 3, BigDecimal.valueOf(5.0))
         );
         Order order = Order.create(UUID.randomUUID(), items);
         Order saved = orderRepository.save(order);
@@ -123,18 +124,18 @@ class JpaOrderRepositoryTest {
     @Test
     void shouldCalculateTotalValue() {
         List<OrderItem> items = List.of(
-            new OrderItem(UUID.randomUUID(), 2, 15.0),
-            new OrderItem(UUID.randomUUID(), 1, 30.0)
+            new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(15.0)),
+            new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(30.0))
         );
         Order order = Order.create(UUID.randomUUID(), items);
-        assertThat(order.calculateTotalValue()).isEqualTo(60.0);
+        assertThat(order.calculateTotalValue()).isEqualTo(BigDecimal.valueOf(60.0));
     }
 
     @Test
     void shouldFindByCustomerId() {
         UUID customerId = UUID.randomUUID();
-        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 1, 5.0))));
-        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 2, 10.0))));
+        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(5.0)))));
+        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(10.0)))));
 
         List<Order> orders = orderRepository.findByCustomerId(customerId);
         assertThat(orders).hasSize(2);
@@ -143,7 +144,7 @@ class JpaOrderRepositoryTest {
     @Test
     void shouldCountOrders() {
         long before = orderRepository.count();
-        orderRepository.save(Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, 1.0))));
+        orderRepository.save(Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(1.0)))));
         assertThat(orderRepository.count()).isEqualTo(before + 1);
     }
 }

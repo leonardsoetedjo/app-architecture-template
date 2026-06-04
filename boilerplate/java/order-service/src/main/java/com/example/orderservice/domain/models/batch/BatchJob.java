@@ -53,13 +53,13 @@ public class BatchJob {
      * Number of records successfully processed.
      */
     @Builder.Default
-    int recordsProcessed = 0;
+    Integer recordsProcessed = 0;
     
     /**
      * Number of records that failed processing.
      */
     @Builder.Default
-    int recordsFailed = 0;
+    Integer recordsFailed = 0;
     
     /**
      * Error message if the job failed.

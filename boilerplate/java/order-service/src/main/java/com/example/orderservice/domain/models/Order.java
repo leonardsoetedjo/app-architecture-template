@@ -1,5 +1,6 @@
 package com.example.orderservice.domain.models;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,10 +75,14 @@ public class Order {
         this.confirmedAt = OffsetDateTime.now();
     }
 
-    public double calculateTotalValue() {
+    public BigDecimal calculateTotalValue() {
         return items.stream()
-            .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
-            .sum();
+            .map(OrderItem::getTotalAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getTotalAmount() {
+        return calculateTotalValue();
     }
 
     @Override

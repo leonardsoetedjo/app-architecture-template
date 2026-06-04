@@ -37,7 +37,7 @@ class OrderControllerTest {
         UUID productId = UUID.randomUUID();
         createOrderCommand = new CreateOrderCommand(
             UUID.randomUUID(),
-            List.of(new OrderItemDTO(productId, 2, 19.99))
+            List.of(new OrderItemDTO(productId, 2, java.math.BigDecimal.valueOf(19.99)))
         );
     }
 

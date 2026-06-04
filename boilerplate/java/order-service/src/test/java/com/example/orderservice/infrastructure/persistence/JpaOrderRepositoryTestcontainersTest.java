@@ -15,6 +15,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,7 +53,7 @@ class JpaOrderRepositoryTestcontainersTest {
 
     @Test
     void shouldSaveAndRetrieveOrder() {
-        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 2, 29.99)));
+        Order order = Order.create(UUID.randomUUID(), List.of(new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(29.99))));
         Order saved = orderRepository.save(order);
         Optional<Order> found = orderRepository.findById(saved.getId());
         assertThat(found).isPresent();
@@ -62,8 +63,8 @@ class JpaOrderRepositoryTestcontainersTest {
     @Test
     void shouldFindByCustomerId() {
         UUID customerId = UUID.randomUUID();
-        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 1, 15.0))));
-        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 3, 25.0))));
+        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(15.0)))));
+        orderRepository.save(Order.create(customerId, List.of(new OrderItem(UUID.randomUUID(), 3, BigDecimal.valueOf(25.0)))));
         List<Order> orders = orderRepository.findByCustomerId(customerId);
         assertThat(orders).hasSize(2);
     }

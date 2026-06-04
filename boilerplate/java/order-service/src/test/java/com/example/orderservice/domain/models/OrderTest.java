@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.DisplayName;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,8 +22,8 @@ class OrderTest {
             // Arrange
             UUID customerId = UUID.randomUUID();
             List<OrderItem> items = List.of(
-                new OrderItem(UUID.randomUUID(), 2, 19.99),
-                new OrderItem(UUID.randomUUID(), 1, 29.99)
+                new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(19.99)),
+                new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(29.99))
             );
 
             // Act
@@ -43,7 +44,7 @@ class OrderTest {
             // Arrange
             UUID customerId = UUID.randomUUID();
             List<OrderItem> items = List.of(
-                new OrderItem(UUID.randomUUID(), 1, 9.99)
+                new OrderItem(UUID.randomUUID(), 1, BigDecimal.valueOf(9.99))
             );
 
             // Act
@@ -110,12 +111,12 @@ class OrderTest {
             UUID productId = UUID.randomUUID();
 
             // Act
-            OrderItem item = new OrderItem(productId, 5, 10.99);
+            OrderItem item = new OrderItem(productId, 5, BigDecimal.valueOf(10.99));
 
             // Assert
             assertEquals(productId, item.getProductId());
             assertEquals(5, item.getQuantity());
-            assertEquals(10.99, item.getUnitPrice(), 0.001);
+            assertEquals(BigDecimal.valueOf(10.99), item.getUnitPrice());
         }
     }
 

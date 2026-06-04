@@ -34,7 +34,7 @@ public class OrderStateEntity {
     
     @Version
     @Column(name = "version", nullable = false)
-    private int version;
+    private Integer version;
     
     // Default constructor for JPA
     public OrderStateEntity() {}
@@ -43,7 +43,7 @@ public class OrderStateEntity {
         this.orderId = orderId;
         this.currentState = currentState;
         this.stateChangedAt = Instant.now();
-        this.version = 0;
+        // version stays null — Hibernate uses null as the unsaved-value marker
     }
     
     // Getters and setters
@@ -51,7 +51,7 @@ public class OrderStateEntity {
     public OrderState getCurrentState() { return currentState; }
     public OrderState getPreviousState() { return previousState; }
     public Instant getStateChangedAt() { return stateChangedAt; }
-    public int getVersion() { return version; }
+    public Integer getVersion() { return version; }
     
     public void setCurrentState(OrderState currentState) {
         this.previousState = this.currentState;

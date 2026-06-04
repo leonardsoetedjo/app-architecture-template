@@ -207,10 +207,11 @@ class OrderIntegrationTest {
     
     private Order createTestOrder() {
         Order order = new Order(
-            UUID.randomUUID(),
-            "user-123",
-            OrderState.PENDING,
-            List.of(new OrderItem(UUID.randomUUID(), 2, BigDecimal.valueOf(29.99)))
+            new OrderId(UUID.randomUUID()),
+            UUID.fromString("user-123"),
+            List.of(new OrderItem(UUID.randomUUID(), 2, java.math.BigDecimal.valueOf(29.99))),
+            java.time.OffsetDateTime.now(),
+            "PENDING"
         );
         return orderRepository.save(order);
     }

@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +22,6 @@ public class OrderItemEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity order;
     private UUID productId;
-    private int quantity;
-    private double unitPrice;
+    private Integer quantity;
+    private BigDecimal unitPrice;
 }

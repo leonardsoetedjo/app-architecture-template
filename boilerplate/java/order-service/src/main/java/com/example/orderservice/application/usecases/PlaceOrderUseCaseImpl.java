@@ -6,6 +6,7 @@ import com.example.orderservice.domain.models.*;
 import com.example.orderservice.domain.ports.EventPublisher;
 import com.example.orderservice.domain.services.OrderPlacementService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 

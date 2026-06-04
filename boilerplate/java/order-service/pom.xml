@@ -123,8 +123,6 @@
             <version>8.9.0</version>
         </dependency>
 
-        $1
-
         <!-- Spring Batch -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
