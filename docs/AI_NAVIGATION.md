@@ -41,7 +41,7 @@ status: "Active"
 | **Add REST endpoint** | `04-sops/02-add-new-rest-endpoint.md` | `serena`, `writing-plans` |
 | **Add frontend page** | `04-sops/03-add-new-frontend-page.md` | `serena`, `writing-plans` |
 | **Add DB migration (Java/Flyway)** | `04-sops/04-add-flyway-migration.md` | `terminal` (run Flyway) |
-| **Add DB migration (Python/Alembic)** | `04-sops/04-add-alembic-migration.md` [PLANNED] | `terminal` (run Alembic) |
+| **Add DB migration (Python/Alembic)** | `04-sops/16-add-alembic-migration.md` | `terminal` (run Alembic) |
 | **Publish domain event** | `04-sops/05-publish-domain-event.md` | `ctx_search`, source=`architecture-docs` |
 | **Configure external service** | `04-sops/06-configure-external-service.md` | `ctx_search`, source=`architecture-docs` |
 | **Add use case / interactor** | `04-sops/07-add-new-use-case.md` | `sequential-thinking` skill |

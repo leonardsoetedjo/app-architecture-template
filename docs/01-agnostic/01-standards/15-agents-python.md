@@ -214,7 +214,7 @@ async def create_order(
 |-----|----------|--------------|
 | Add a new aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](../../04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
 | Add a new REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](../../04-sops/02-add-new-rest-endpoint.md) | Adding an API |
-| Add an Alembic migration | [`docs/04-sops/04-add-alembic-migration.md`](../../04-sops/04-add-alembic-migration.md) | Schema changes |
+| Add an Alembic migration | [`docs/04-sops/16-add-alembic-migration.md`](../../04-sops/16-add-alembic-migration.md) | Schema changes |
 | Publish a domain event | [`docs/04-sops/05-publish-domain-event.md`](../../04-sops/05-publish-domain-event.md) | Event-driven flows |
 
 ### Boilerplate Templates

@@ -273,7 +273,7 @@ class OrderEntity(Base):
 |-----|----------|-------------|
 | Add aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](docs/04-sops/01-add-new-aggregate-root.md) | New domain feature |
 | Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | New API |
-| Add Alembic migration | [`docs/04-sops/04-add-alembic-migration.md`](docs/04-sops/04-add-alembic-migration.md) | Schema changes |
+| Add Alembic migration | [`docs/04-sops/16-add-alembic-migration.md`](docs/04-sops/16-add-alembic-migration.md) | Schema changes |
 | Publish domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
 
 ---

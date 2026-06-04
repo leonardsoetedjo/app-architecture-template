@@ -14,8 +14,6 @@
   "version": "1.0",
   "project": "${PROJECT_NAME}",
   "generated_at": "${ISO8601_TIMESTAMP}",
-  "generated_by": "${AGENT_NAME}",
-  "source_issue": "${GITHUB_ISSUE_URL}",
   "features": []
 }
 ```

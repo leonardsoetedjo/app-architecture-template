@@ -26,10 +26,10 @@ An `init.sh` script must satisfy these invariants:
 
 ```bash
 #!/usr/bin/env bash
-# init.sh — Start dev environment for ${PROJECT_NAME}
+# init.sh — Start dev environment for <PROJECT_NAME>
 set -euo pipefail
 
-PROJECT_NAME="${PROJECT_NAME}"
+PROJECT_NAME="<PROJECT_NAME>"
 COMPOSE_FILES="-f docker-compose.yml -f docker-compose.standalone.yml"
 HEALTH_URL="http://localhost:8080/actuator/health"
 SMOKE_TEST_URL="http://localhost:8080/api/v1/orders"
@@ -41,7 +41,7 @@ if [ "${1:-}" = "--verify" ]; then
 fi
 
 if [ "$VERIFY_ONLY" = false ]; then
-    echo "=== Starting ${PROJECT_NAME} dev environment ==="
+    echo "=== Starting <PROJECT_NAME> dev environment ==="
 
     # 1. Start infrastructure
     docker compose $COMPOSE_FILES up -d postgres
@@ -60,11 +60,11 @@ if [ "$VERIFY_ONLY" = false ]; then
     }
 
     # 3. Run migrations
-    ./mvnw flyway:migrate -pl ${SERVICE_MODULE} -q
+    ./mvnw flyway:migrate -pl <SERVICE_MODULE> -q
 
     # 4. Start application
     echo "Starting application..."
-    ./mvnw spring-boot:run -pl ${SERVICE_MODULE} -q &
+    ./mvnw spring-boot:run -pl <SERVICE_MODULE> -q &
     APP_PID=$!
 
     # 5. Wait for health
@@ -100,10 +100,10 @@ echo "API docs: http://localhost:8080/swagger-ui.html"
 
 ```bash
 #!/usr/bin/env bash
-# init.sh — Start dev environment for ${PROJECT_NAME}
+# init.sh — Start dev environment for <PROJECT_NAME>
 set -euo pipefail
 
-PROJECT_NAME="${PROJECT_NAME}"
+PROJECT_NAME="<PROJECT_NAME>"
 COMPOSE_FILES="-f docker-compose.yml -f docker-compose.standalone.yml"
 HEALTH_URL="http://localhost:8000/health"
 SMOKE_TEST_URL="http://localhost:8000/api/v1/orders"
@@ -114,7 +114,7 @@ if [ "${1:-}" = "--verify" ]; then
 fi
 
 if [ "$VERIFY_ONLY" = false ]; then
-    echo "=== Starting ${PROJECT_NAME} dev environment ==="
+    echo "=== Starting <PROJECT_NAME> dev environment ==="
 
     # 1. Start infrastructure
     docker compose $COMPOSE_FILES up -d postgres
@@ -166,10 +166,10 @@ echo "Docs: http://localhost:8000/docs"
 
 ```bash
 #!/usr/bin/env bash
-# init.sh — Start dev environment for ${PROJECT_NAME} frontend
+# init.sh — Start dev environment for <PROJECT_NAME> frontend
 set -euo pipefail
 
-PROJECT_NAME="${PROJECT_NAME}"
+PROJECT_NAME="<PROJECT_NAME>"
 DEV_URL="http://localhost:5173"
 SMOKE_TEST_URL="http://localhost:5173"
 
@@ -179,7 +179,7 @@ if [ "${1:-}" = "--verify" ]; then
 fi
 
 if [ "$VERIFY_ONLY" = false ]; then
-    echo "=== Starting ${PROJECT_NAME} frontend ==="
+    echo "=== Starting <PROJECT_NAME> frontend ==="
 
     # 1. Install dependencies if needed
     if [ ! -d "node_modules" ]; then
