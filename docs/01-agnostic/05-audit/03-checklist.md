@@ -39,12 +39,12 @@ Every reference to [`boilerplate/`](../boilerplate/) in this checklist points to
 
 - [ ] **Domain Isolation**: Does the `domain/` layer have zero imports from `application/`, `infrastructure/`, or any framework (Spring/FastAPI/SQLAlchemy)?
   - *Audit hint*: Search for `import org.springframework` or `import jakarta.persistence` inside `domain/` — presence = instant fail.
-  - *Boilerplate reference*: See [`order-service/src/main/java/com/example/orderservice/domain/`](../../boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/).
+  - *Boilerplate reference*: See [`order-service/src/main/java/com/example/orderservice/domain/`](../../../boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/).
 - [ ] **Dependency Rule**: Do all dependencies point inward? (Infrastructure → Application → Domain).
 - [ ] **Boundary DTOs**: Are DTOs used for all data crossing layer boundaries? (No entities leaked to controllers).
-  - *Boilerplate reference*: [`order-service/application/dtos/`](../../boilerplate/java/order-service/src/main/java/com/example/orderservice/application/dtos/).
+  - *Boilerplate reference*: [`order-service/application/dtos/`](../../../boilerplate/java/order-service/src/main/java/com/example/orderservice/application/dtos/).
 - [ ] **Port/Adapter Pattern**: Are repository and external service interfaces defined in the domain layer as ports?
-  - *Boilerplate reference*: [`OrderRepository.java`](../../boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/ports/OrderRepository.java).
+  - *Boilerplate reference*: [`OrderRepository.java`](../../../boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/ports/OrderRepository.java).
 
 ## 2. Domain-Driven Design (DDD)
 
@@ -70,7 +70,7 @@ Every reference to [`boilerplate/`](../boilerplate/) in this checklist points to
 ## 5. Persistence & Data
 
 - [ ] **Migration Safety**: Does the DB migration follow the **Expand-Contract pattern** for backward compatibility?
-  - *Boilerplate reference*: [`boilerplate/migrations/`](../../boilerplate/migrations/).
+  - *Boilerplate reference*: [`boilerplate/migrations/`](../../../boilerplate/migrations/).
 - [ ] **Locker/Concurrency**: Is optimistic locking (`@Version`) used for aggregates to prevent lost updates?
 - [ ] **N+1 Prevention**: Are lazy-loaded associations fetched using `JOIN FETCH` in repositories to avoid N+1 select issues?
 - [ ] **Relationship Management**: Are child entities saved explicitly via repositories in the service layer rather than relying on `cascade` or `orphanRemoval`?
@@ -81,9 +81,9 @@ Every reference to [`boilerplate/`](../boilerplate/) in this checklist points to
 ## 6. Frontend & UI
 
 - [ ] **Symmetry**: Does the frontend use a dedicated service layer? (No direct `axios` calls in components).
-  - *Boilerplate reference*: [`frontend/src/services/apiClient.ts`](../../boilerplate/frontend/src/services/apiClient.ts).
+  - *Boilerplate reference*: [`frontend/src/services/apiClient.ts`](../../../boilerplate/frontend/src/services/apiClient.ts).
 - [ ] **State Ownership**: Is complex data transformation logic extracted into a Custom Hook/Composable?
-  - *Boilerplate reference*: [`frontend/src/hooks/useOrders.ts`](../../boilerplate/frontend/src/hooks/useOrders.ts).
+  - *Boilerplate reference*: [`frontend/src/hooks/useOrders.ts`](../../../boilerplate/frontend/src/hooks/useOrders.ts).
 - [ ] **Error Handling**: Does the UI display a correlation key (`ERR-XXXXX`) for all unhandled exceptions?
 - [ ] **a11y**: Does the UI comply with WCAG 2.1 Level AA (semantic HTML, contrast, focus)?
 - [ ] **TypeScript Discipline**: Is `any` strictly prohibited? Are all props interfaces explicitly defined?
@@ -92,13 +92,13 @@ Every reference to [`boilerplate/`](../boilerplate/) in this checklist points to
 ## 7. Testing
 
 - [ ] **Unit Tests**: Is the core domain logic covered by unit tests in isolation?
-  - *Boilerplate reference*: [`OrderPlacementServiceTest.java`](../../boilerplate/java/order-service/src/test/java/com/example/orderservice/domain/services/OrderPlacementServiceTest.java).
+  - *Boilerplate reference*: [`OrderPlacementServiceTest.java`](../../../boilerplate/java/order-service/src/test/java/com/example/orderservice/domain/services/OrderPlacementServiceTest.java).
 - [ ] **Integration Tests**: Are service boundaries tested using Testcontainers or an in-memory DB?
 - [ ] **E2E Flow**: Is the critical user journey verified by a Playwright test?
-  - *Boilerplate reference*: [`frontend/e2e/api.spec.ts`](../../boilerplate/frontend/e2e/api.spec.ts).
+  - *Boilerplate reference*: [`frontend/e2e/api.spec.ts`](../../../boilerplate/frontend/e2e/api.spec.ts).
 - [ ] **API Contract**: Does the API implementation match the OpenAPI/Swagger specification?
 - [ ] **Bruno Coverage**: Is there at least one `.bru` request for every exposed endpoint?
-  - *Boilerplate reference*: [`tests/bruno/`](../../boilerplate/tests/bruno/).
+  - *Boilerplate reference*: [`tests/bruno/`](../../../boilerplate/tests/bruno/).
 
 ---
 

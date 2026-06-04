@@ -12,7 +12,7 @@ owner: "@architecture-team"
 >
 > **Rule**: If your PR pattern is not already demonstrated in this Python boilerplate (`boilerplate/python/order-service/`), add it there first, then copy it into your feature.
 >
-> **Note**: For Java or frontend patterns, refer to the main [`AGENTS.md`](../AGENTS.md).
+> **Note**: For Java or frontend patterns, refer to the main [`AGENTS.md`](../../../AGENTS.md).
 
 > **Stack**: FastAPI + SQLAlchemy (Python 3.11+) | PostgreSQL | Testcontainers  
 > **Architecture**: Clean Architecture + Domain-Driven Design
@@ -202,27 +202,27 @@ async def create_order(
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Clean Architecture & DDD principles | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../docs/01-agnostic/02-adrs/01-clean-architecture.md) | Design decisions |
-| General API standards | [`docs/01-agnostic/01-standards/02-architecture.md`](../docs/01-agnostic/01-standards/02-architecture.md) | Writing backend code |
-| Git, Docker, CI/CD, Deployment | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
-| DDD deep dive | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../docs/01-agnostic/02-adrs/01-clean-architecture.md) | Domain model design |
-| Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](../docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
+| Clean Architecture & DDD principles | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../02-adrs/01-clean-architecture.md) | Design decisions |
+| General API standards | [`docs/01-agnostic/01-standards/02-architecture.md`](02-architecture.md) | Writing backend code |
+| Git, Docker, CI/CD, Deployment | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../../03-guidelines/01-deployment.md) | DevOps tasks |
+| DDD deep dive | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../02-adrs/01-clean-architecture.md) | Domain model design |
+| Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](11-review.md) | Preparing/reviewing PRs |
 
 ### Standard Operating Procedures
 
 | SOP | Document | When to Read |
 |-----|----------|--------------|
-| Add a new aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](../docs/04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
-| Add a new REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](../docs/04-sops/02-add-new-rest-endpoint.md) | Adding an API |
-| Add an Alembic migration | [`docs/04-sops/04-add-alembic-migration.md`](../docs/04-sops/04-add-alembic-migration.md) | Schema changes |
-| Publish a domain event | [`docs/04-sops/05-publish-domain-event.md`](../docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
+| Add a new aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](../../04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
+| Add a new REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](../../04-sops/02-add-new-rest-endpoint.md) | Adding an API |
+| Add an Alembic migration | [`docs/04-sops/04-add-alembic-migration.md`](../../04-sops/04-add-alembic-migration.md) | Schema changes |
+| Publish a domain event | [`docs/04-sops/05-publish-domain-event.md`](../../04-sops/05-publish-domain-event.md) | Event-driven flows |
 
 ### Boilerplate Templates
 
 | Template | Location | When to Use |
 |----------|----------|--------------|
 | New FastAPI microservice | This `boilerplate/python/order-service/` | Bootstrapping a Python service |
-| Main coding guide | [`../AGENTS.md`](../AGENTS.md) | All stacks (Java, Python, Frontend) |
+| Main coding guide | [`../AGENTS.md`](../../../AGENTS.md) | All stacks (Java, Python, Frontend) |
 
 ---
 

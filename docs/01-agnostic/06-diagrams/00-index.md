@@ -195,7 +195,7 @@ Rendered PNGs available in `docs/01-agnostic/06-diagrams/rendered/`
 
 **GitHub README**:
 ```markdown
-![Clean Architecture](docs/01-agnostic/06-diagrams/rendered/01-clean-architecture.png)
+![Clean Architecture](./rendered/01-clean-architecture.png)
 ```
 
 ---

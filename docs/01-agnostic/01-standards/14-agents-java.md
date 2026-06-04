@@ -8,11 +8,11 @@ owner: "@architecture-team"
 
 # Java Boilerplate Coding Guide
 
-> **Purpose**: This file is the Java developer's quick-reference and the architect's audit baseline for the **Java/Spring Boot** boilerplate. Every code change in Java services must be producible from, and auditable against, the verified boilerplate in [`boilerplate/java/order-service/`](boilerplate/java/order-service/).
+> **Purpose**: This file is the Java developer's quick-reference and the architect's audit baseline for the **Java/Spring Boot** boilerplate. Every code change in Java services must be producible from, and auditable against, the verified boilerplate in [`boilerplate/java/order-service/`](../../../boilerplate/java/order-service/).
 >
 > **Rule**: If your PR pattern is not already demonstrated in the Java boilerplate, add it there first, then copy it into your feature.
 >
-> **Note**: For full project guidance including Python and frontend, see the main [`AGENTS.md`](../AGENTS.md) in the repository root.
+> **Note**: For full project guidance including Python and frontend, see the main [`AGENTS.md`](../../../AGENTS.md) in the repository root.
 >
 > **AI Agents**: This guide includes Serena MCP, Context-Mode, and Superpowers integration. See Section 8 for AI tooling.
 
@@ -229,14 +229,14 @@ public class OrderEntity {
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](../docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
-| Git, Docker, CI/CD | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../docs/01-agnostic/03-guidelines/01-deployment.md) | DevOps tasks |
-| Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](../docs/01-agnostic/01-standards/11-review.md) | Preparing/reviewing PRs |
-| **Add aggregate root / entity** | [`docs/04-sops/01-add-new-aggregate-root.md`](../docs/04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
-| **Add REST endpoint** | [`docs/04-sops/02-add-new-rest-endpoint.md`](../docs/04-sops/02-add-new-rest-endpoint.md) | Adding an API |
-| **Add Flyway migration** | [`docs/04-sops/04-add-flyway-migration.md`](../docs/04-sops/04-add-flyway-migration.md) | Schema changes |
-| **Publish domain event** | [`docs/04-sops/05-publish-domain-event.md`](../docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
-| **Configure external service** | [`docs/04-sops/06-configure-external-service.md`](../docs/04-sops/06-configure-external-service.md) | External integrations |
+| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](02-architecture.md) | Design decisions |
+| Git, Docker, CI/CD | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../../03-guidelines/01-deployment.md) | DevOps tasks |
+| Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](11-review.md) | Preparing/reviewing PRs |
+| **Add aggregate root / entity** | [`docs/04-sops/01-add-new-aggregate-root.md`](../../04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
+| **Add REST endpoint** | [`docs/04-sops/02-add-new-rest-endpoint.md`](../../04-sops/02-add-new-rest-endpoint.md) | Adding an API |
+| **Add Flyway migration** | [`docs/04-sops/04-add-flyway-migration.md`](../../04-sops/04-add-flyway-migration.md) | Schema changes |
+| **Publish domain event** | [`docs/04-sops/05-publish-domain-event.md`](../../04-sops/05-publish-domain-event.md) | Event-driven flows |
+| **Configure external service** | [`docs/04-sops/06-configure-external-service.md`](../../04-sops/06-configure-external-service.md) | External integrations |
 
 ---
 
@@ -244,8 +244,8 @@ public class OrderEntity {
 
 | Template | Location |
 |----------|----------|
-| New Spring Boot microservice | [`boilerplate/java/order-service/`](boilerplate/java/order-service/) |
-| Database health indicator | [`infrastructure/health/DatabaseHealthIndicator.java`](boilerplate/java/order-service/src/main/java/com/example/orderservice/infrastructure/health/DatabaseHealthIndicator.java) |
+| New Spring Boot microservice | [`boilerplate/java/order-service/`](../../../boilerplate/java/order-service/) |
+| Database health indicator | [`infrastructure/health/DatabaseHealthIndicator.java`](../../../boilerplate/java/order-service/src/main/java/com/example/orderservice/infrastructure/health/DatabaseHealthIndicator.java) |
 
 ---
 

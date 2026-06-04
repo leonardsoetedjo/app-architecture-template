@@ -16,29 +16,77 @@ FAILED=0
 check_agent_session_harness() {
   echo "  [0/5] Checking agent session harness..."
   
-  # Check for agent harness artifacts if they exist
-  if [ -f "feature-list.json" ] || [ -f "agent-progress.md" ] || [ -f "init.sh" ]; then
-    echo "      Agent harness artifacts detected"
-    
-    # Verify feature-list.json is valid JSON
-    if [ -f "feature-list.json" ]; then
-      if ! python3 -c "import json; json.load(open('feature-list.json'))" 2>/dev/null; then
-        echo "      ❌ FAIL: feature-list.json is not valid JSON"
-        return 1
-      fi
-    fi
-    
-    # Verify agent-progress.md exists and has entries
-    if [ -f "agent-progress.md" ]; then
-      if ! grep -q "## Session " agent-progress.md 2>/dev/null; then
-        echo "      ⚠️  WARNING: agent-progress.md has no session entries"
-        # Non-blocking: just warn
-      fi
-    fi
-    
-    echo "      ✅ Agent harness OK"
-  else
+  # If a project uses the session harness, it must have ALL mandatory artifacts.
+  # Per Standard 18, the four mandatory files are: feature-list.json,
+  # agent-progress.md, init.sh, and agent-harness.md.
+  # This check does not flag absence (not every project uses multi-session agents),
+  # but if ANY artifact is present the others MUST also be present and valid.
+  
+  local present=0
+  local failed=0
+  
+  for f in feature-list.json agent-progress.md init.sh agent-harness.md; do
+    [ -f "$f" ] && present=$((present + 1))
+  done
+  
+  if [ $present -eq 0 ]; then
     echo "      Skipping (no agent harness artifacts)"
+    return 0
+  fi
+  
+  echo "      Agent harness artifacts detected ($present/4)"
+  
+  # Verify feature-list.json is valid JSON
+  if [ -f "feature-list.json" ]; then
+    if ! python3 -c "import json; json.load(open('feature-list.json'))" 2>/dev/null; then
+      echo "      ❌ FAIL: feature-list.json is not valid JSON"
+      failed=1
+    fi
+  else
+    echo "      ❌ FAIL: feature-list.json is required when harness is used (Standard 18)"
+    failed=1
+  fi
+  
+  # Verify init.sh exists and is executable
+  if [ -f "init.sh" ]; then
+    if [ ! -x "init.sh" ]; then
+      echo "      ❌ FAIL: init.sh exists but is not executable (chmod +x init.sh)"
+      failed=1
+    fi
+    # Validate bash syntax without executing
+    if ! bash -n init.sh 2>/dev/null; then
+      echo "      ❌ FAIL: init.sh has bash syntax errors"
+      failed=1
+    fi
+  else
+    echo "      ❌ FAIL: init.sh is required when harness is used (Standard 18)"
+    failed=1
+  fi
+  
+  # Verify agent-progress.md has entries (non-blocking warning)
+  if [ -f "agent-progress.md" ]; then
+    if ! grep -q "## Session " agent-progress.md 2>/dev/null; then
+      echo "      ⚠️  WARNING: agent-progress.md has no session entries"
+    fi
+  fi
+  
+  # Verify agent-harness.md exists (non-blocking warning)
+  if [ ! -f "agent-harness.md" ]; then
+    echo "      ⚠️  WARNING: agent-harness.md missing (copy from Standard 18 or create project-specific)"
+  fi
+  
+  if [ $failed -eq 0 ]; then
+    echo "      ✅ Agent harness OK ($present/4 mandatory files found, all valid)"
+    return 0
+  else
+    echo ""
+    echo "      When the session harness is used, ALL four artifacts are required:"
+    echo "        - feature-list.json  (valid JSON with feature list)"
+    echo "        - agent-progress.md  (session log)"
+    echo "        - init.sh            (executable dev-env startup script)"
+    echo "        - agent-harness.md   (project-specific harness instructions)"
+    echo ""
+    return 1
   fi
   
   return 0

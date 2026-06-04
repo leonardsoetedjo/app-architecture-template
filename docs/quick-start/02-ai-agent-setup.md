@@ -18,26 +18,27 @@ Context-Mode indexes all documentation for instant retrieval.
 
 ```python
 # Index the entire docs directory (one-time setup)
+# NOTE: Replace {REPO_ROOT} with the actual clone path of this repository
 mcp_context_mode_ctx_index(
-    path="/home/admin/workspace/app-architecture-template/docs",
+    path="{REPO_ROOT}/docs",
     source="architecture-docs"
 )
 
 # Index boilerplate-specific code
 mcp_context_mode_ctx_index(
-    path="/home/admin/workspace/app-architecture-template/boilerplate/java",
+    path="{REPO_ROOT}/boilerplate/java",
     source="java-boilerplate",
     extensions=[".md", ".java"]
 )
 
 mcp_context_mode_ctx_index(
-    path="/home/admin/workspace/app-architecture-template/boilerplate/python",
+    path="{REPO_ROOT}/boilerplate/python",
     source="python-boilerplate",
     extensions=[".md", ".py"]
 )
 
 mcp_context_mode_ctx_index(
-    path="/home/admin/workspace/app-architecture-template/boilerplate/reactjs",
+    path="{REPO_ROOT}/boilerplate/reactjs",
     source="frontend-boilerplate",
     extensions=[".md", ".ts", ".tsx"]
 )
@@ -57,8 +58,9 @@ Serena indexes all code symbols for cross-language navigation.
 
 ```python
 # Activate the project
+# NOTE: Replace {REPO_ROOT} with the actual clone path of this repository
 mcp_serena_activate_project(
-    project="/home/admin/workspace/app-architecture-template"
+    project="{REPO_ROOT}"
 )
 
 # Verify symbol indexing

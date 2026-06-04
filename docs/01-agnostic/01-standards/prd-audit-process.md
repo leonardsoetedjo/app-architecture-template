@@ -305,9 +305,9 @@ Maintain a running list of:
 | Document | Relationship |
 |----------|--------------|
 | [Clean Architecture Standards](./02-architecture.md) | Architecture principles referenced in audits |
-| [Security Requirements](./09-security.md) | Security checklist for PRDs |
+| [Security Requirements](./security-architecture-review.md) | Security checklist for PRDs |
 | [Review Checklists](./11-review.md) | Code review complements PRD review |
-| [SOPs](../04-sops/) | Standard procedures often originate from PRDs |
+| [SOPs](../../04-sops/) | Standard procedures often originate from PRDs |
 
 ---
 

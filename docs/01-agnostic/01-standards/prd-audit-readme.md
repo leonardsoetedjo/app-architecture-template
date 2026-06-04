@@ -292,9 +292,9 @@ The PRD audit process is successful when:
 ## 🔗 Related Resources
 
 - [Clean Architecture Standards](./02-architecture.md)
-- [Security Requirements](./09-security.md)
+- [Security Requirements](./security-architecture-review.md)
 - [Code Review Checklist](./11-review.md)
-- [Standard Operating Procedures](../04-sops/)
+- [Standard Operating Procedures](../../04-sops/)
 
 ---
 

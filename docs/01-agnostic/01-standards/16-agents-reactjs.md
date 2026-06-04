@@ -12,7 +12,7 @@ owner: "@architecture-team"
 
 > **Rule**: If your PR pattern is not already demonstrated here, add it to the boilerplate first, then copy it into your feature.
 
-> **Note**: For backend API specifications and shared architecture principles, see the main [`AGENTS.md`](../../AGENTS.md) at the project root.
+> **Note**: For backend API specifications and shared architecture principles, see the main [`AGENTS.md`](../../../AGENTS.md) at the project root.
 
 > Stack: **React 18 + TypeScript + Ant Design 5 + Vite + Zustand**
 > Architecture: **Clean Architecture + Domain-Driven Design**

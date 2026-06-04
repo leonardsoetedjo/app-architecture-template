@@ -8,9 +8,9 @@
 
 | Feature | Description | Location |
 |---------|-------------|----------|
-| **Interactive Setup Checklists** | Step-by-step project configuration (identity, stack selection, security, deployment) | [`docs/04-templates/01-new-project-checklist.md`](docs/04-templates/01-new-project-checklist.md), [`02-quick-setup-checklist.md`](docs/04-templates/02-quick-setup-checklist.md) |
-| **Architecture Decision Records (ADRs)** | Template for documenting significant architectural decisions | [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/) |
-| **Document Frontmatter Templates** | Standardized documentation structure with automation metadata | [`docs/04-templates/03-document-frontmatter.md`](docs/04-templates/03-document-frontmatter.md) |
+| **Interactive Setup Checklists** | Step-by-step project configuration (identity, stack selection, security, deployment) | [`docs/04-templates/01-new-project-checklist.md`](../04-templates/01-new-project-checklist.md), [`02-quick-setup-checklist.md`](../04-templates/02-quick-setup-checklist.md) |
+| **Architecture Decision Records (ADRs)** | Template for documenting significant architectural decisions | [`docs/01-agnostic/02-adrs/`](./02-adrs/) |
+| **Document Frontmatter Templates** | Standardized documentation structure with automation metadata | [`docs/04-templates/03-document-frontmatter.md`](../04-templates/03-document-frontmatter.md) |
 | **PRD Architecture Audit Toolkit** | Comprehensive product requirement document validation | [`docs/01-agnostic/01-standards/prd-audit-delivery-summary.md`](docs/01-agnostic/01-standards/prd-audit-delivery-summary.md) |
 | **New Service Generator** | Automated script to scaffold new services with correct structure | [`scripts/new-project.sh`](scripts/new-project.sh) |
 
