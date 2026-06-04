@@ -1,0 +1,17 @@
+package <%= packageName %>;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * <%= serviceNamePascal %> - Clean Architecture Microservice
+ * 
+ * Application entry point.
+ */
+@SpringBootApplication
+public class <%= serviceNamePascal %>Application {
+    
+    public static void main(String[] args) {
+        SpringApplication.run(<%= serviceNamePascal %>Application.class, args);
+    }
+}

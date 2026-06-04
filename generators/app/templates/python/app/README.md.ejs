@@ -1,0 +1,133 @@
+# <%= serviceNamePascal %>
+
+## <%= serviceNamePascal %> - Clean Architecture Microservice
+
+A production-ready microservice built with FastAPI following Clean Architecture principles.
+
+## Quick Start
+
+### Prerequisites
+- Python 3.11+
+- Poetry 1.8+
+- PostgreSQL 14+
+- Docker (optional, for testing)
+
+### Running Locally
+
+```bash
+# Install dependencies
+poetry install
+
+# Run application
+poetry run uvicorn src.main:app --reload
+
+# Run tests
+poetry run pytest
+
+# Run type checking
+poetry run mypy src
+
+# Run linter
+poetry run ruff check src
+```
+
+### Access Points
+- **Application**: http://localhost:8000
+- **API Docs**: http://localhost:8000/api/v1/docs
+- **Health Check**: http://localhost:8000/health
+
+## Architecture
+
+This service follows Clean Architecture with four layers:
+
+```
+src/
+├── domain/           # Enterprise business rules (pure Python, no frameworks)
+│   ├── models/       # Entities, value objects
+│   ├── ports/        # Repository interfaces, event publishers
+│   └── services/     # Domain services
+├── application/      # Application business rules
+│   ├── usecases/    # Use case interfaces + implementations
+│   ├── dtos/        # Data transfer objects
+│   └── sagas/       # Saga orchestrators
+├── infrastructure/   # Framework implementations
+│   ├── api/         # FastAPI routers
+│   ├── persistence/ # SQLAlchemy repositories
+│   └── config/      # Settings, dependencies
+└── presentation/    # HTTP layer
+    └── api/         # API routers
+```
+
+## Key Features
+
+- ✅ Clean Architecture compliance
+- ✅ FastAPI with async support
+- ✅ SQLAlchemy 2.0 + Alembic migrations
+- ✅ Pydantic v2 for validation
+- ✅ pytest for testing
+- ✅ OpenAPI documentation
+- ✅ Structured logging with structlog
+- ✅ Docker support
+
+## Development
+
+### Adding a New Feature
+
+Use the Yeoman generator:
+
+```bash
+yo clean-architecture:endpoint
+```
+
+Or follow SOP-02: [Add REST Endpoint](../../docs/04-sops/02-add-new-rest-endpoint.md)
+
+### Running Architecture Validation
+
+```bash
+poetry run pytest tests/archunit/
+```
+
+## Deployment
+
+### Docker
+
+```bash
+docker build -t <%= serviceNameKebab %> .
+docker run -p 8000:8000 -e DATABASE_URL=postgresql://host:5432/db <%= serviceNameKebab %>
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DATABASE_URL` | `postgresql://postgres:***@localhost:5432/<%= serviceNameSnake %>` | PostgreSQL connection |
+| `DEBUG` | `False` | Debug mode |
+| `HOST` | `0.0.0.0` | Server host |
+| `PORT` | `8000` | Server port |
+| `LOG_LEVEL` | `INFO` | Logging level |
+| `SECRET_KEY` | `change-me-in-production` | JWT secret key |
+
+## Testing
+
+```bash
+# All tests
+poetry run pytest
+
+# With coverage
+poetry run pytest --cov=src --cov-report=html
+
+# Unit tests only
+poetry run pytest tests/unit/
+
+# Integration tests
+poetry run pytest tests/integration/
+
+# Architecture tests
+poetry run pytest tests/archunit/
+```
+
+## Related Documentation
+
+- [Clean Architecture Standards](../../docs/01-agnostic/01-standards/02-architecture.md)
+- [Python Patterns](../../docs/01-agnostic/01-standards/15-agents-python.md)
+- [Add REST Endpoint SOP](../../docs/04-sops/02-add-new-rest-endpoint.md)

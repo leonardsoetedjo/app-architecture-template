@@ -46,6 +46,21 @@
       "notes": "TODO: implement CancelOrderUseCase"
     },
     {
+      "id": "WORKFLOW-001",
+      "category": "functional",
+      "priority": 2,
+      "description": "Workflow engine for order state management (Issue #73)",
+      "acceptance_criteria": [
+        "State machine with 9 states (PENDING through REFUNDED)",
+        "REST API endpoints for all state transitions",
+        "State persistence with JPA/SQLAlchemy",
+        "Integration tests for state transitions",
+        "Invalid transitions return 400 Bad Request"
+      ],
+      "passes": true,
+      "notes": "Complete - Java uses Spring StateMachine, Python uses transitions library. See docs/WORKFLOW_ENGINE_GUIDE.md"
+    },
+    {
       "id": "BATCH-001",
       "category": "functional",
       "priority": 3,
@@ -56,8 +71,8 @@
         "API endpoint GET /api/v1/batch-jobs/{id}",
         "Quartz listener updates business status"
       ],
-      "passes": false,
-      "notes": "TODO: See issues #96-#99"
+      "passes": true,
+      "notes": "Complete - See issues #96-#99. Domain layer, JPA repository, service, Spring Batch tasklet, Quartz job, REST API all implemented."
     },
     {
       "id": "ARCH-001",

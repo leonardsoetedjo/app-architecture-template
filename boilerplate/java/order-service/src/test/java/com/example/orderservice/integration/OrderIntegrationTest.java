@@ -135,27 +135,33 @@ class OrderIntegrationTest {
     }
     
     @Test
-    @DisplayName("PUT /api/v1/orders/{id}/state - Transition order state (workflow engine)")
+    @DisplayName("POST /api/v1/orders/{id}/state/confirm-payment - Transition order state (workflow engine)")
     void transitionOrderState() throws Exception {
         Order order = createTestOrder();
         
         // Transition from PENDING to CONFIRMED
-        mockMvc.perform(put("/api/v1/orders/" + order.getId() + "/state")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"event\": \"CONFIRM_PAYMENT\"}")
+        mockMvc.perform(post("/api/v1/orders/" + order.getId() + "/state/confirm-payment")
                 .header("X-User-Id", "user-123")
                 .header("X-User-Role", "USER"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.state", is("CONFIRMED")));
+            .andExpect(jsonPath("$.success", is("true")))
+            .andExpect(jsonPath("$.newState", is("CONFIRMED")));
         
         // Transition from CONFIRMED to PROCESSING
-        mockMvc.perform(put("/api/v1/orders/" + order.getId() + "/state")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"event\": \"START_PROCESSING\"}")
+        mockMvc.perform(post("/api/v1/orders/" + order.getId() + "/state/start-processing")
                 .header("X-User-Id", "user-123")
                 .header("X-User-Role", "USER"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.state", is("PROCESSING")));
+            .andExpect(jsonPath("$.success", is("true")))
+            .andExpect(jsonPath("$.newState", is("PROCESSING")));
+        
+        // Invalid transition should fail
+        mockMvc.perform(post("/api/v1/orders/" + order.getId() + "/state/confirm-payment")
+                .header("X-User-Id", "user-123")
+                .header("X-User-Role", "USER"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.success", is("false")))
+            .andExpect(jsonPath("$.error", is("Invalid state transition")));
     }
     
     @Test

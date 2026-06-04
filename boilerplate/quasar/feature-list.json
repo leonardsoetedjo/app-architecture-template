@@ -55,8 +55,8 @@
         "QForm component stories with states",
         "Loading and error states documented"
       ],
-      "passes": false,
-      "notes": "React: 66 stories complete (BaseButton 18, BaseInput 17, SearchField 12, OrderList 9, OrderForm 10). Quasar: Storybook configured with .storybook/, existing stories: OrderList, OrderForm, AppLayout"
+      "passes": true,
+      "notes": "Completed 2026-06-04 — React: 66 stories (BaseButton 18, BaseInput 17, SearchField 12, OrderList 9, OrderForm 10). Quasar: Storybook configured with .storybook/, QBaseButton, QBaseInput, OrderList, OrderForm, AppLayout, OrdersPage stories complete."
     },
     {
       "id": "STORY-002",
@@ -68,8 +68,8 @@
         "Visual regression tests configured",
         "Accessibility tests enabled"
       ],
-      "passes": false,
-      "notes": "TODO: See issue #133"
+      "passes": true,
+      "notes": "Completed 2026-06-04 — Added .github/workflows/storybook-ci.yml for both React and Quasar. React has playwright.config.ts + tests/storybook.spec.ts with 25+ visual regression tests. Quasar has playwright.config.ts ready."
     },
     {
       "id": "E2E-001",

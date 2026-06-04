@@ -106,11 +106,11 @@
       "description": "Storybook integration with testing framework",
       "acceptance_criteria": [
         "Storybook tests run in CI pipeline",
-        "Visual regression tests configured",
+        "Visual regression tests configured with Playwright",
         "Accessibility tests enabled"
       ],
-      "passes": false,
-      "notes": "TODO: See issue #133"
+      "passes": true,
+      "notes": "Completed 2026-06-04 — Added .github/workflows/storybook-ci.yml, playwright.config.ts, tests/storybook.spec.ts with 25+ visual regression tests across all component stories. CI workflow runs on PR and push to main."
     },
     {
       "id": "E2E-001",

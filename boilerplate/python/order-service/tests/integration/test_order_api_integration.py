@@ -160,7 +160,7 @@ async def test_get_order_unauthorized_idor_prevention(client):
 
 @pytest.mark.asyncio
 async def test_transition_order_state_workflow_engine(client):
-    """PUT /api/v1/orders/{id}/state - Transition order state (workflow engine)."""
+    """POST /api/v1/orders/{id}/state/confirm-payment - Transition order state (workflow engine)."""
     # Create order
     order_data = {
         "customer_id": "user-123",
@@ -175,22 +175,31 @@ async def test_transition_order_state_workflow_engine(client):
     order_id = create_response.json()["id"]
     
     # Transition from PENDING to CONFIRMED
-    response = await client.put(
-        f"/api/v1/orders/{order_id}/state",
-        json={"event": "CONFIRM_PAYMENT"},
+    response = await client.post(
+        f"/api/v1/orders/{order_id}/state/confirm-payment",
         headers={"X-User-Id": "user-123", "X-User-Role": "USER"}
     )
     assert response.status_code == 200
-    assert response.json()["state"] == "CONFIRMED"
+    data = response.json()
+    assert data["success"] is True
+    assert data["new_state"] == "CONFIRMED"
     
     # Transition from CONFIRMED to PROCESSING
-    response = await client.put(
-        f"/api/v1/orders/{order_id}/state",
-        json={"event": "START_PROCESSING"},
+    response = await client.post(
+        f"/api/v1/orders/{order_id}/state/start-processing",
         headers={"X-User-Id": "user-123", "X-User-Role": "USER"}
     )
     assert response.status_code == 200
-    assert response.json()["state"] == "PROCESSING"
+    data = response.json()
+    assert data["success"] is True
+    assert data["new_state"] == "PROCESSING"
+    
+    # Invalid transition should fail (can't confirm payment from PROCESSING)
+    response = await client.post(
+        f"/api/v1/orders/{order_id}/state/confirm-payment",
+        headers={"X-User-Id": "user-123", "X-User-Role": "USER"}
+    )
+    assert response.status_code == 400  # Bad request - invalid transition
 
 
 @pytest.mark.asyncio

@@ -1,0 +1,58 @@
+"""
+<%= serviceNamePascal %> - Clean Architecture Microservice
+
+FastAPI application entry point.
+"""
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from src.infrastructure.config.settings import settings
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan events."""
+    # Startup
+    print(f"🚀 Starting <%= serviceNamePascal %>...")
+    yield
+    # Shutdown
+    print(f"👋 Shutting down <%= serviceNamePascal %>...")
+
+
+app = FastAPI(
+    title="<%= serviceNamePascal %>",
+    description="Clean Architecture Microservice with FastAPI",
+    version="0.1.0",
+    lifespan=lifespan,
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy", "service": "<%= serviceNameKebab %>"}
+
+
+@app.get("/")
+async def root():
+    """Root endpoint."""
+    return {
+        "service": "<%= serviceNamePascal %>",
+        "version": "0.1.0",
+        "docs": "/api/v1/docs",
+    }
+
+
+# Include routers here
+# from src.presentation.api import router
+# app.include_router(router, prefix="/api/v1")
