@@ -32,7 +32,7 @@ repos:
       # Gate 4: Architecture Tests - Enforce layer boundaries with pytest-archon
       - id: arch-test
         name: Architecture tests
-        entry: pytest tests/archunit/ -v
+        entry: pytest tests/archunit/test_comprehensive_architecture.py -v
         language: system
         pass_filenames: false
         require_serial: true

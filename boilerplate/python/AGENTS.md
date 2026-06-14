@@ -205,22 +205,31 @@ user = await cache.get("user:123", type_hint=User)
 await cache.delete("user:123")
 ```
 
-### 3.4 Architecture Tests (pytest-archon)
+### 3.4 Architecture Tests (Comprehensive Suite)
 
-```python
-# tests/archunit/test_architecture_comprehensive.py
+**File:** `tests/archunit/test_comprehensive_architecture.py`
 
-# Run with: pytest tests/archunit/ -v
+```bash
+# Run all architecture tests
+pytest tests/archunit/test_comprehensive_architecture.py -v
 
-# Tests enforce:
-# 1. Domain layer has zero framework imports
-# 2. Application layer has no infrastructure imports
-# 3. No circular dependencies
-# 4. All domain classes use @dataclass
-# 5. Value objects are frozen (immutable)
-# 6. Domain events named in past tense
-# 7. Use cases have execute() or handle() methods
+# Run specific test
+pytest tests/archunit/test_comprehensive_architecture.py::test_domain_has_no_framework_imports -v
 ```
+
+**Tests enforce:**
+1. **Layer boundaries** - Domain has zero framework imports, Application has no infrastructure imports
+2. **Framework isolation** - No FastAPI/SQLAlchemy/Pydantic annotations in domain layer
+3. **Naming conventions** - Domain events in past tense (OrderPlaced), Repositories end with "Repository"
+4. **Structural patterns** - Domain classes use @dataclass, value objects are frozen (immutable)
+5. **Use case structure** - All use cases have execute() or handle() method
+6. **No circular dependencies** - Dependencies flow inward only
+
+**Severity levels:**
+- `error` - Test fails (forbidden imports, framework annotations in domain)
+- `warning` - Test passes with warning (naming conventions, missing dataclass on non-critical classes)
+
+**Reference:** `docs/01-agnostic/01-standards/21-validation-harness.md` - Gate 4 (Architecture Tests)
 
 ### 4.1 Domain — Aggregate Root (Python Dataclass)
 

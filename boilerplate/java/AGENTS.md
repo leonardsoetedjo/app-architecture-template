@@ -265,15 +265,35 @@ public class OrderEntity {
 ### 6.4 Testing
 
 ```bash
-# Run ArchUnit architecture tests
-mvn test -Dtest=CleanArchitectureLayersTest
+# Run ArchUnit architecture tests (comprehensive suite)
+mvn test -Dtest=ComprehensiveArchitectureTest
 
-# Run all tests
+# Run specific test
+mvn test -Dtest=ComprehensiveArchitectureTest#domainLayerMustNotDependOnApplicationOrInfrastructure
+
+# Run all tests including ArchUnit
 mvn test
 
 # Run with coverage
 mvn test jacoco:report
 ```
+
+**Tests enforce:**
+1. **Layer boundaries** - Domain → Application → Infrastructure (inward-only dependencies)
+2. **Framework isolation** - No Spring/Lombok/JPA annotations in domain layer
+3. **Component localization** - Controllers in infrastructure.api, Entities in infrastructure.persistence
+4. **Naming conventions** - Domain events in past tense, Repositories end with "Repository"
+5. **Constructor injection** - No @Autowired on fields (forces immutability)
+6. **No circular dependencies** - Domain cannot depend on infrastructure
+
+**Test categories:**
+- `CleanArchitectureLayersTest` - Basic layer dependency rules
+- `DependencyRulesTest` - Framework isolation and component localization  
+- `DomainRulesTest` - Domain-specific constraints (no Lombok, no frameworks)
+- `ComprehensiveArchitectureTest` - Full suite with naming, structure, and injection rules
+- `OptimisticLockingRulesTest` - Optimistic locking patterns
+
+**Reference:** `docs/01-agnostic/01-standards/21-validation-harness.md` - Gate 4 (Architecture Tests)
 
 ---
 
