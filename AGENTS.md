@@ -65,12 +65,14 @@ Base `docker-compose.yml` has **no ports, no Traefik labels** — zero leakage.
 For full spec see `docs/01-agnostic/01-standards/19-agent-imperatives.md`.
 | # | Rule | When |
 |---|------|------|
-| 1 | **Serena + Context-Mode first** — never manual search before trying `ctx_search`/`mcp_serena_*` | Always |
-| 2 | **No markdown reports in repo** — use GitHub Issues for findings | Always |
-| 3 | **Temp files in `/tmp/` only** — delete before marking done | Always |
-| 4 | **Architecture compliance** — run `./scripts/architecture-pre-commit.sh` | Before commit |
-| 5 | **GitHub Issues for tracking** — one feature per issue | Always |
-| 6 | **Agent session harness** — `feature-list.json` + `init.sh` | Multi-session |
+| 1 | **AGENTS.md wins** — takes precedence over all other docs when they conflict | Always |
+| 2 | **Deployment mode is not optional** — read AGENTS.md, verify via curl before closing deploy tasks | Deploy / infrastructure tasks |
+| 3 | **Serena + Context-Mode first** — never manual search before trying `ctx_search`/`mcp_serena_*` | Always |
+| 4 | **No markdown reports in repo** — use GitHub Issues for findings | Always |
+| 5 | **Temp files in `/tmp/` only** — delete before marking done | Always |
+| 6 | **Architecture compliance** — run `./scripts/architecture-pre-commit.sh` | Before commit |
+| 7 | **GitHub Issues for tracking** — one feature per issue | Always |
+| 8 | **Agent session harness** — `feature-list.json` + `init.sh` | Multi-session |
 
 ## 📋 Pre-Commit Checklist (MANDATORY)
 ```bash

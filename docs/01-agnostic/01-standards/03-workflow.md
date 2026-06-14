@@ -88,15 +88,35 @@ Testing is not a single step, but a pyramid.
 - **E2E Tests**: Verify the "Golden Path" from the UI to the Database.
 - **Regression**: Ensure no existing functionality is broken by the new change.
 
----
-
 ## 6. Deployment & Monitoring
-Deployment is the final stage of the lifecycle.
+Deployment is the final stage of the lifecycle. **A deploy task is not "done" when `docker compose up` exits — it is done when the service is routable and responding.**
 
-- **Migration First**: Apply database migrations (`Flyway`/`Liquibase`) using the Expand-Contract pattern.
+### 6.1 Deployment Mode Selection (MANDATORY)
+
+Before any deployment command:
+1. Read AGENTS.md to determine the project's deployment mode.
+2. **Fleet mode** (default for `hermes-design` projects): Use `docker compose up -d` (base file has Traefik labels). Verify via `https://<TS_HOSTNAME>`.
+3. **Standalone mode** (local dev only): Use `docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d`. Verify via `http://localhost:<port>`.
+4. If AGENTS.md and another doc conflict, AGENTS.md wins (Imperative #1).
+
+### 6.2 Deployment Verification Gate (MANDATORY)
+
+Every deploy task MUST include verification in its acceptance criteria:
+
+```markdown
+- [ ] `docker compose ps` shows service `running` or `healthy`
+- [ ] `curl -sf --max-time 10 <expected-URL>` returns HTTP 200
+- [ ] No 404/502 from Traefik or reverse proxy
+```
+
+The agent MUST attach curl output to the kanban close metadata. If verification fails, the task is **not complete**.
+
+### 6.3 Deployment Procedure
+
+- **Migration First**: Apply database migrations (`Flyway`/`Liquibase`/`Alembic`) using the Expand-Contract pattern.
 - **Gradual Rollout**: Use Canary or Blue-Green deployments for high-risk changes.
 - **Observability**: Monitor the new feature via:
     - **Logs**: Check for new errors in Splunk (NDJSON).
     - **Metrics**: Monitor latency and error rates via Prometheus/Grafana.
     - **Traces**: Verify the request flow via OpenTelemetry/Zipkin.
-- **Confirmation**: A task is only "Complete" when it is verified in production.
+- **Confirmation**: A task is only "Complete" when it is verified in production via the expected URL.

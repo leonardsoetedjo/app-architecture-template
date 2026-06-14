@@ -22,6 +22,34 @@ An `init.sh` script must satisfy these invariants:
 
 ## Templates by Stack
 
+### Template Variables
+
+Every `init.sh` MUST declare these variables at the top. The initializer agent sets them based on AGENTS.md:
+
+```bash
+# Deployment mode: "fleet" or "standalone"
+DEPLOY_MODE="fleet"
+
+# Fleet mode verification URL (Traefik + Tailscale)
+HEALTH_URL_FLEET="https://your-hostname.ts.net/actuator/health"
+SMOKE_TEST_URL_FLEET="https://your-hostname.ts.net/api/v1/orders"
+
+# Standalone mode verification URL (direct localhost)
+HEALTH_URL_STANDALONE="http://localhost:8080/actuator/health"
+SMOKE_TEST_URL_STANDALONE="http://localhost:8080/api/v1/orders"
+
+# Runtime selection — do not modify
+if [ "$DEPLOY_MODE" = "fleet" ]; then
+    HEALTH_URL="$HEALTH_URL_FLEET"
+    SMOKE_TEST_URL="$SMOKE_TEST_URL_FLEET"
+    COMPOSE_FILES="-f docker-compose.yml"
+else
+    HEALTH_URL="$HEALTH_URL_STANDALONE"
+    SMOKE_TEST_URL="$SMOKE_TEST_URL_STANDALONE"
+    COMPOSE_FILES="-f docker-compose.yml -f docker-compose.standalone.yml"
+fi
+```
+
 ### Java (Spring Boot)
 
 ```bash
@@ -30,9 +58,21 @@ An `init.sh` script must satisfy these invariants:
 set -euo pipefail
 
 PROJECT_NAME="<PROJECT_NAME>"
-COMPOSE_FILES="-f docker-compose.yml -f docker-compose.standalone.yml"
-HEALTH_URL="http://localhost:8080/actuator/health"
-SMOKE_TEST_URL="http://localhost:8080/api/v1/orders"
+DEPLOY_MODE="<fleet|standalone>"  # Set per AGENTS.md
+HEALTH_URL_FLEET="https://<TS_HOSTNAME>/actuator/health"
+SMOKE_TEST_URL_FLEET="https://<TS_HOSTNAME>/api/v1/orders"
+HEALTH_URL_STANDALONE="http://localhost:8080/actuator/health"
+SMOKE_TEST_URL_STANDALONE="http://localhost:8080/api/v1/orders"
+
+if [ "$DEPLOY_MODE" = "fleet" ]; then
+    HEALTH_URL="$HEALTH_URL_FLEET"
+    SMOKE_TEST_URL="$SMOKE_TEST_URL_FLEET"
+    COMPOSE_FILES="-f docker-compose.yml"
+else
+    HEALTH_URL="$HEALTH_URL_STANDALONE"
+    SMOKE_TEST_URL="$SMOKE_TEST_URL_STANDALONE"
+    COMPOSE_FILES="-f docker-compose.yml -f docker-compose.standalone.yml"
+fi
 
 # Parse arguments
 VERIFY_ONLY=false
@@ -104,9 +144,21 @@ echo "API docs: http://localhost:8080/swagger-ui.html"
 set -euo pipefail
 
 PROJECT_NAME="<PROJECT_NAME>"
-COMPOSE_FILES="-f docker-compose.yml -f docker-compose.standalone.yml"
-HEALTH_URL="http://localhost:8000/health"
-SMOKE_TEST_URL="http://localhost:8000/api/v1/orders"
+DEPLOY_MODE="<fleet|standalone>"  # Set per AGENTS.md
+HEALTH_URL_FLEET="https://<TS_HOSTNAME>/health"
+SMOKE_TEST_URL_FLEET="https://<TS_HOSTNAME>/api/v1/orders"
+HEALTH_URL_STANDALONE="http://localhost:8000/health"
+SMOKE_TEST_URL_STANDALONE="http://localhost:8000/api/v1/orders"
+
+if [ "$DEPLOY_MODE" = "fleet" ]; then
+    HEALTH_URL="$HEALTH_URL_FLEET"
+    SMOKE_TEST_URL="$SMOKE_TEST_URL_FLEET"
+    COMPOSE_FILES="-f docker-compose.yml"
+else
+    HEALTH_URL="$HEALTH_URL_STANDALONE"
+    SMOKE_TEST_URL="$SMOKE_TEST_URL_STANDALONE"
+    COMPOSE_FILES="-f docker-compose.yml -f docker-compose.standalone.yml"
+fi
 
 VERIFY_ONLY=false
 if [ "${1:-}" = "--verify" ]; then
@@ -222,9 +274,11 @@ When the initializer agent creates `init.sh`, it must customize these variables:
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `PROJECT_NAME` | Project name for messages | `order-service` |
-| `COMPOSE_FILES` | Docker Compose files to use | `-f docker-compose.yml -f docker-compose.standalone.yml` |
-| `HEALTH_URL` | Application health endpoint | `http://localhost:8080/actuator/health` |
-| `SMOKE_TEST_URL` | URL to test most recent feature | `http://localhost:8080/api/v1/orders` |
+| `DEPLOY_MODE` | `fleet` or `standalone` per AGENTS.md | `fleet` |
+| `HEALTH_URL_FLEET` | Fleet mode health endpoint | `https://order.example.com/actuator/health` |
+| `SMOKE_TEST_URL_FLEET` | Fleet mode smoke test URL | `https://order.example.com/api/v1/orders` |
+| `HEALTH_URL_STANDALONE` | Standalone mode health endpoint | `http://localhost:8080/actuator/health` |
+| `SMOKE_TEST_URL_STANDALONE` | Standalone mode smoke test URL | `http://localhost:8080/api/v1/orders` |
 | `SERVICE_MODULE` | Maven module name (Java only) | `order-service` |
 
 ### Adding Smoke Tests
@@ -246,12 +300,15 @@ curl -sf -X POST "$SMOKE_TEST_URL" \
 Before claiming `init.sh` complete, verify:
 
 - [ ] Script is executable: `chmod +x init.sh`
+- [ ] `DEPLOY_MODE` set per AGENTS.md (fleet or standalone)
+- [ ] Fleet URLs point to actual Traefik/Tailscale hostname, not localhost
 - [ ] `./init.sh` starts all services without errors
 - [ ] `./init.sh --verify` runs quickly and reports status
 - [ ] Script prints PID when it starts the app
 - [ ] Script fails with clear message if health check fails
 - [ ] Smoke test covers the most recent feature
 - [ ] Running twice doesn't break anything
+- [ ] `AGENTS.md` and `init.sh` agree on deployment mode — no contradiction
 
 ---
 
