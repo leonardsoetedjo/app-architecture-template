@@ -1,0 +1,65 @@
+[importlinter]
+root_package = order_service
+
+# Contract 1: Clean Architecture Layer Ordering
+# Dependencies flow inward: infrastructure → application → domain
+# Domain (bottom) cannot import from above
+# Application (middle) can import domain, cannot import infrastructure
+# Infrastructure (top) can import both
+[importlinter:contract:1]
+name = Clean Architecture Layer Contract
+type = layers
+containers = order_service
+layers =
+    infrastructure
+    application
+    domain
+
+# Contract 2: Domain Has No Framework Imports
+# Domain layer must be pure Python with zero framework dependencies
+[importlinter:contract:2]
+name = Domain Has No Framework Imports
+type = forbidden
+source_modules =
+    order_service.domain
+forbidden_modules =
+    fastapi
+    sqlalchemy
+    pydantic
+    redis
+    alembic
+    celery
+    httpx
+    aiohttp
+    requests
+
+# Contract 3: Application Has No Infrastructure Imports
+# Application layer depends on ports (interfaces), not concrete implementations
+[importlinter:contract:3]
+name = Application Has No Infrastructure Imports
+type = forbidden
+source_modules =
+    order_service.application
+forbidden_modules =
+    order_service.infrastructure
+
+# Contract 4: API Depends on Ports, Not Concrete Repositories
+# Endpoints must use dependency injection, not instantiate repositories directly
+[importlinter:contract:4]
+name = API Depends on Ports, Not Concrete Repositories
+type = forbidden
+source_modules =
+    order_service.infrastructure.api
+forbidden_modules =
+    order_service.infrastructure.persistence.sqlalchemy_adapters
+
+# Contract 5: Domain Events Are Self-Contained
+# Domain events must not import from application or infrastructure
+[importlinter:contract:5]
+name = Domain Events Are Self-Contained
+type = forbidden
+source_modules =
+    order_service.domain.events
+forbidden_modules =
+    order_service.application
+    order_service.infrastructure
