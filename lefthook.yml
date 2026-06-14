@@ -1,0 +1,228 @@
+# Lefthook - Polyglot Git Hook Manager
+# Reference: docs/01-agnostic/01-standards/21-validation-harness.md
+#
+# Installation:
+#   curl -sSfL https://lefthook.dev/install | bash
+#   # or: npm install -g lefthook
+#   # or: brew install lefthook
+#
+# Usage:
+#   lefthook install          # Install git hooks
+#   lefthook run pre-commit   # Run pre-commit hooks manually
+#   lefthook run pre-push     # Run pre-push hooks manually
+#
+# Skip hooks:
+#   SKIP=arch-test git commit  # Skip specific hook
+#   git commit --no-verify     # Skip all hooks (emergency only)
+
+pre-commit:
+  parallel: true  # Run commands in parallel for speed
+  commands:
+    # ========================================================================
+    # PYTHON - FastAPI Boilerplate
+    # ========================================================================
+    python-import:
+      glob: "boilerplate/python/**/*.py"
+      run: |
+        cd boilerplate/python/order-service && \
+        python -c "from src.main import app"
+      skip:
+        - merge
+        - rebase
+
+    python-lint:
+      glob: "boilerplate/python/**/*.py"
+      run: |
+        cd boilerplate/python/order-service && \
+        ruff check src/ tests/
+      skip:
+        - merge
+        - rebase
+
+    python-type:
+      glob: "boilerplate/python/**/*.py"
+      run: |
+        cd boilerplate/python/order-service && \
+        pyright src/
+      skip:
+        - merge
+        - rebase
+
+    python-arch:
+      glob: "boilerplate/python/**/*"
+      run: |
+        cd boilerplate/python/order-service && \
+        pytest tests/archunit/test_comprehensive_architecture.py -v --tb=short
+      require_serial: true
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # JAVA - Spring Boot Boilerplate
+    # ========================================================================
+    java-compile:
+      glob: "boilerplate/java/**/*.java"
+      run: |
+        cd boilerplate/java/order-service && \
+        mvn compile -q -DskipTests
+      skip:
+        - merge
+        - rebase
+
+    java-arch:
+      glob: "boilerplate/java/**/*"
+      run: |
+        cd boilerplate/java/order-service && \
+        mvn test -Dtest=ComprehensiveArchitectureTest -q
+      require_serial: true
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # TYPESCRIPT - React Boilerplate
+    # ========================================================================
+    react-lint:
+      glob: "boilerplate/reactjs/**/*.{ts,tsx}"
+      run: |
+        cd boilerplate/reactjs && \
+        npx eslint {staged_files}
+      skip:
+        - merge
+        - rebase
+
+    react-type:
+      glob: "boilerplate/reactjs/**/*.{ts,tsx}"
+      run: |
+        cd boilerplate/reactjs && \
+        npx tsc --noEmit
+      skip:
+        - merge
+        - rebase
+
+    react-arch:
+      glob: "boilerplate/reactjs/**/*"
+      run: |
+        cd boilerplate/reactjs && \
+        npx depcruise --validate .dependency-cruiser.cjs src/
+      require_serial: true
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # TYPESCRIPT - Quasar Boilerplate
+    # ========================================================================
+    quasar-lint:
+      glob: "boilerplate/quasar/**/*.{ts,tsx,vue}"
+      run: |
+        cd boilerplate/quasar && \
+        npx eslint {staged_files}
+      skip:
+        - merge
+        - rebase
+
+    quasar-type:
+      glob: "boilerplate/quasar/**/*.{ts,tsx,vue}"
+      run: |
+        cd boilerplate/quasar && \
+        npx vue-tsc --noEmit
+      skip:
+        - merge
+        - rebase
+
+    quasar-arch:
+      glob: "boilerplate/quasar/**/*"
+      run: |
+        cd boilerplate/quasar && \
+        npx depcruise --validate .dependency-cruiser.js src/
+      require_serial: true
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # GENERAL - Code Quality (All Languages)
+    # ========================================================================
+    trailing-whitespace:
+      glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json}"
+      run: |
+        sed -i '' 's/[[:space:]]*$//' {staged_files} 2>/dev/null || \
+        sed -i 's/[[:space:]]*$//' {staged_files}
+      skip:
+        - merge
+        - rebase
+
+    end-of-file:
+      glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json}"
+      run: |
+        # Ensure file ends with newline
+        [ -n "$(tail -c1 {staged_files})" ] && echo "" >> {staged_files}
+      skip:
+        - merge
+        - rebase
+
+pre-push:
+  parallel: true
+  commands:
+    # ========================================================================
+    # PYTHON - Full Test Suite (pre-push only, not on every commit)
+    # ========================================================================
+    python-test:
+      run: |
+        cd boilerplate/python/order-service && \
+        pytest tests/unit/ -x --tb=short
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # JAVA - Full Test Suite (pre-push only)
+    # ========================================================================
+    java-test:
+      run: |
+        cd boilerplate/java/order-service && \
+        mvn test -q
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # REACT - Unit Tests (pre-push only)
+    # ========================================================================
+    react-test:
+      run: |
+        cd boilerplate/reactjs && \
+        npm run test:unit
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # QUASAR - Unit Tests (pre-push only)
+    # ========================================================================
+    quasar-test:
+      run: |
+        cd boilerplate/quasar && \
+        npm run test:unit
+      skip:
+        - merge
+        - rebase
+
+commit-msg:
+  commands:
+    conventional-commit:
+      run: |
+        # Validate commit message format
+        # Format: type(scope): description
+        # Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
+        if ! grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\([a-z0-9-]+\))?: .{1,100}" "$1"; then
+          echo "❌ Invalid commit message format!"
+          echo ""
+          echo "Expected: type(scope): description"
+          echo "Example:  feat(order-service): add payment validation"
+          echo ""
+          echo "Valid types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+          exit 1
+        fi

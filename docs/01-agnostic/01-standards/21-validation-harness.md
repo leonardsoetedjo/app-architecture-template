@@ -20,100 +20,146 @@ Every project, regardless of language, MUST have these **5 validation gates**:
 | **1. Import/Compile** | Verify modules resolve | `python -c "from app.main import app"` | `tsc --noEmit` | `mvn compile` |
 | **2. Type Check** | Catch type errors | `pyright` | `tsc --noEmit` | `javac` (built-in) |
 | **3. Lint** | Catch style/bugs | `ruff check` | `eslint` | `checkstyle` |
-| **4. Architecture** | Enforce boundaries | `pytest-archunit` | `dependency-cruiser` | `ArchUnit` |
+| **4. Architecture** | Enforce boundaries | `import-linter` | `dependency-cruiser` | `ArchUnit` |
 | **5. Tests** | Verify behavior | `pytest` | `vitest` | `JUnit` |
 
 **Key insight:** The **gate names and purposes are universal**. Only the tool names change per language.
 
 ## Pre-commit Configuration (Universal)
 
-**Tool:** `pre-commit` (MIT License) — https://pre-commit.com
+**Tool:** `lefthook` (MIT License) — https://lefthook.dev
+
+**Why Lefthook over pre-commit:**
+- ✅ **10-50x faster** (Go binary, parallel execution)
+- ✅ **Language-agnostic** (single config for polyglot repos)
+- ✅ **No runtime dependencies** (doesn't require Python/Node.js)
+- ✅ **Built-in staged file filtering** (no `lint-staged` needed)
+- ✅ **Version-controlled hooks** (`.lefthook/` directory)
 
 **Installation:**
 ```bash
-pip install pre-commit
-pre-commit install
+# Install Lefthook (choose one)
+curl -sSfL https://lefthook.dev/install | bash  # Linux/macOS
+npm install -g lefthook                          # Node.js
+brew install lefthook                            # macOS
+
+# Install hooks
+lefthook install
 ```
 
 **Pattern:**
 ```yaml
-# .pre-commit-config.yaml
-repos:
-  - repo: local
-    hooks:
-      # Gate 1: Import/Compile
-      - id: import-check
-        entry: <language-specific command>
-        language: system
-        pass_filenames: false
-      
-      # Gate 2: Type Check
-      - id: type-check
-        entry: <language-specific command>
-        language: system
-      
-      # Gate 3: Lint
-      - id: lint
-        entry: <language-specific command>
-        language: system
-      
-      # Gate 4: Architecture Tests
-      - id: arch-test
-        entry: <language-specific command>
-        language: system
-        pass_filenames: false
-      
-      # Gate 5: Unit Tests (optional on commit, required in CI)
-      - id: unit-test
-        entry: <language-specific command>
-        language: system
-        pass_filenames: false
-        require_serial: true
+# lefthook.yml
+pre-commit:
+  parallel: true  # Run commands in parallel for speed
+  commands:
+    # Gate 1: Import/Compile
+    import-check:
+      glob: "*.{py,ts,tsx,java}"
+      run: <language-specific command>
+    
+    # Gate 2: Type Check
+    type-check:
+      glob: "*.{py,ts,tsx,java}"
+      run: <language-specific command>
+    
+    # Gate 3: Lint
+    lint:
+      glob: "*.{py,ts,tsx,java}"
+      run: <language-specific command>
+    
+    # Gate 4: Architecture Tests
+    arch-test:
+      glob: "*.{py,ts,tsx,java}"
+      run: <language-specific command>
+      require_serial: true  # Architecture tests must run sequentially
+    
+    # Gate 5: Unit Tests (optional on commit, required on push)
+    unit-test:
+      glob: "*.{py,ts,tsx,java}"
+      run: <language-specific command>
+      require_serial: true
 ```
 
 ## Language-Specific Commands
 
 ### Python
 ```yaml
-- id: import-check
-  entry: python -c "from app.main import app"
-- id: type-check
-  entry: pyright src/app
-- id: lint
-  entry: ruff check src/app
-- id: arch-test
-  entry: pytest tests/archunit/test_architecture.py -v
-- id: unit-test
-  entry: pytest tests/ -x
+# lefthook.yml
+pre-commit:
+  commands:
+    import-check:
+      glob: "*.py"
+      run: cd boilerplate/python && python -c "from src.main import app"
+    type-check:
+      glob: "*.py"
+      run: cd boilerplate/python && pyright src/
+    lint:
+      glob: "*.py"
+      run: cd boilerplate/python && ruff check src/ tests/
+    arch-test:
+      glob: "*.py"
+      run: cd boilerplate/python && lint-imports
+      require_serial: true
 ```
+
+**Tools:**
+- `import-linter` (architecture contracts) — https://import-linter.readthedocs.io/
+- `ruff` (linting, 100x faster than pylint)
+- `pyright` (type checking)
+- `pytest` (test runner)
 
 ### TypeScript/Node.js
 ```yaml
-- id: import-check
-  entry: npm run build --dry-run
-- id: type-check
-  entry: tsc --noEmit
-- id: lint
-  entry: eslint src/
-- id: arch-test
-  entry: depcruise --validate
-- id: unit-test
-  entry: vitest run
+# lefthook.yml
+pre-commit:
+  commands:
+    import-check:
+      glob: "*.{ts,tsx}"
+      run: cd boilerplate/reactjs && npx tsc --noEmit
+    type-check:
+      glob: "*.{ts,tsx}"
+      run: cd boilerplate/reactjs && npx tsc --noEmit
+    lint:
+      glob: "*.{ts,tsx}"
+      run: cd boilerplate/reactjs && npx eslint {staged_files}
+    arch-test:
+      glob: "*.{ts,tsx}"
+      run: cd boilerplate/reactjs && npx depcruise --validate .dependency-cruiser.cjs src/
+      require_serial: true
 ```
+
+**Tools:**
+- `dependency-cruiser` (architecture validation) — https://github.com/sverweij/dependency-cruiser
+- `eslint` (linting)
+- `typescript` (type checking)
+- `vitest` (test runner)
 
 ### Java
 ```yaml
-- id: import-check
-  entry: mvn compile -q
-- id: type-check
-  entry: mvn compile -q  # Built into javac
-- id: lint
-  entry: mvn checkstyle:check
-- id: arch-test
-  entry: mvn test -Dtest=CleanArchitectureLayersTest
-- id: unit-test
-  entry: mvn test -q
+# lefthook.yml
+pre-commit:
+  commands:
+    import-check:
+      glob: "*.java"
+      run: cd boilerplate/java && mvn compile -q
+    type-check:
+      glob: "*.java"
+      run: cd boilerplate/java && mvn compile -q
+    lint:
+      glob: "*.java"
+      run: cd boilerplate/java && mvn checkstyle:check
+    arch-test:
+      glob: "*.java"
+      run: cd boilerplate/java && mvn test -Dtest=ComprehensiveArchitectureTest -q
+      require_serial: true
 ```
+
+**Tools:**
+- `ArchUnit` (architecture tests) — https://www.archunit.org/
+- `Maven` (build, compile)
+- `Checkstyle` (linting)
+- `JUnit` (test runner)
 
 ### Go
 ```yaml
@@ -170,9 +216,9 @@ Required fields for ALL handoffs:
 
 Before merging ANY project (any language):
 
-- [ ] `.pre-commit-config.yaml` exists in repository root and uses open source tools
+- [ ] `lefthook.yml` exists in repository root
 - [ ] All 5 validation gates configured (import, type, lint, arch, test)
-- [ ] Pre-commit installed in development workflow (`pre-commit install`)
+- [ ] Lefthook installed (`lefthook install`)
 - [ ] CI/CD runs all 5 gates
 - [ ] GitHub Issue Template for handoffs exists
 - [ ] Profile skills document validation requirements
@@ -184,11 +230,12 @@ The Python boilerplate MUST contain these files:
 
 | File | Purpose | Location |
 |------|---------|----------|
-| `.pre-commit-config.yaml` | Pre-commit hook configuration | Repository root |
-| `pyproject.toml` | Dev dependencies (pyright, ruff, pytest, pytest-archon) | Repository root |
+| `lefthook.yml` | Git hook configuration (polyglot) | Repository root |
+| `.importlinter` | Architecture contracts | Repository root |
+| `pyproject.toml` | Dev dependencies (pyright, ruff, pytest, import-linter) | Repository root |
 | `tests/archunit/` | Architecture test suite | Tests directory |
 
-**Reference implementation:** `boilerplate/python/order-service/.pre-commit-config.yaml`
+**Reference implementation:** `boilerplate/python/order-service/.importlinter`
 
 ## Session Discovery
 
@@ -203,5 +250,9 @@ The Python boilerplate MUST contain these files:
 ## References
 
 - **Imperative 10 & 11:** `docs/01-agnostic/01-standards/19-agent-imperatives.md`
-- **Pre-commit:** https://pre-commit.com
-- **Example (Python):** `forex-trading-app/.pre-commit-config.yaml`
+- **Lefthook:** https://lefthook.dev
+- **import-linter:** https://import-linter.readthedocs.io/
+- **ArchUnit:** https://www.archunit.org/
+- **dependency-cruiser:** https://github.com/sverweij/dependency-cruiser
+- **Validation Harness Guide:** `docs/01-agnostic/01-standards/22-validation-harness-guide.md`
+- **Example (Python):** `forex-trading-app/lefthook.yml`

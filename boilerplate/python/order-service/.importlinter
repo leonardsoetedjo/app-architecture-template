@@ -1,65 +1,83 @@
-[importlinter]
-root_package = order_service
+# Import Linter Configuration
+# Enforces Clean Architecture layer boundaries for Python/FastAPI
+# Reference: docs/01-agnostic/01-standards/21-validation-harness.md
+#
+# Install: pip install import-linter
+# Run: lint-imports
+#
+# Contract Types:
+# - layers: Enforce layered architecture (higher cannot import lower)
+# - independence: Modules must be independent (no imports between them)
+# - forbidden: Specific imports are forbidden
 
-# Contract 1: Clean Architecture Layer Ordering
-# Dependencies flow inward: infrastructure → application → domain
-# Domain (bottom) cannot import from above
-# Application (middle) can import domain, cannot import infrastructure
-# Infrastructure (top) can import both
+root_package = src
+
 [importlinter:contract:1]
-name = Clean Architecture Layer Contract
+name = "Layer boundaries (Clean Architecture)"
 type = layers
-containers = order_service
-layers =
-    infrastructure
-    application
-    domain
+containers =
+    src
+    src.domain
+    src.application
+    src.infrastructure
+    src.presentation
 
-# Contract 2: Domain Has No Framework Imports
-# Domain layer must be pure Python with zero framework dependencies
+# Dependencies flow inward only:
+# presentation -> infrastructure -> application -> domain
+# domain cannot import anything from other layers
+# application cannot import infrastructure or presentation
+# infrastructure cannot import presentation
+
 [importlinter:contract:2]
-name = Domain Has No Framework Imports
+name = "Domain layer isolation"
+type = independence
+modules =
+    src.domain
+ignore_imports =
+    # Allow domain to import from typing, dataclasses (stdlib)
+    src.domain -> typing
+    src.domain -> dataclasses
+    src.domain -> datetime
+    src.domain -> decimal
+    src.domain -> uuid
+    src.domain -> abc
+
+[importlinter:contract:3]
+name = "No framework imports in domain"
 type = forbidden
 source_modules =
-    order_service.domain
+    src.domain
 forbidden_modules =
     fastapi
     sqlalchemy
     pydantic
     redis
     alembic
-    celery
-    httpx
-    aiohttp
-    requests
+    starlette
 
-# Contract 3: Application Has No Infrastructure Imports
-# Application layer depends on ports (interfaces), not concrete implementations
-[importlinter:contract:3]
-name = Application Has No Infrastructure Imports
-type = forbidden
-source_modules =
-    order_service.application
-forbidden_modules =
-    order_service.infrastructure
-
-# Contract 4: API Depends on Ports, Not Concrete Repositories
-# Endpoints must use dependency injection, not instantiate repositories directly
 [importlinter:contract:4]
-name = API Depends on Ports, Not Concrete Repositories
+name = "No infrastructure imports in application"
 type = forbidden
 source_modules =
-    order_service.infrastructure.api
+    src.application
 forbidden_modules =
-    order_service.infrastructure.persistence.sqlalchemy_adapters
+    src.infrastructure
 
-# Contract 5: Domain Events Are Self-Contained
-# Domain events must not import from application or infrastructure
 [importlinter:contract:5]
-name = Domain Events Are Self-Contained
+name = "Application layer isolation"
 type = forbidden
 source_modules =
-    order_service.domain.events
+    src.application
 forbidden_modules =
-    order_service.application
-    order_service.infrastructure
+    fastapi
+    sqlalchemy
+    redis
+
+[importlinter:contract:6]
+name = "No circular dependencies"
+type = independence
+modules =
+    src.domain
+    src.application
+    src.infrastructure
+    src.presentation

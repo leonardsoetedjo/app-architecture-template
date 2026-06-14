@@ -29,13 +29,15 @@ repos:
         pass_filenames: false
         types: [python]
 
-      # Gate 4: Architecture Tests - Enforce layer boundaries with pytest-archon
+      # Gate 4: Architecture Tests - Enforce layer boundaries with import-linter
       - id: arch-test
         name: Architecture tests
-        entry: pytest tests/archunit/test_comprehensive_architecture.py -v
+        entry: lint-imports
         language: system
         pass_filenames: false
         require_serial: true
+        # Additional args for verbose output
+        # args: ['--verbose']
 
       # Gate 5: Unit Tests - Verify behavior (optional on commit, required in CI)
       - id: unit-test
