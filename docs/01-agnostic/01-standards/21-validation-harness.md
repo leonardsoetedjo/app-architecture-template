@@ -15,13 +15,13 @@ This implements **Imperative 10** (Validate Before Build) and **Imperative 11** 
 
 Every project, regardless of language, MUST have these **5 validation gates**:
 
-| Gate | Purpose | Python | TypeScript | Java |
-|------|---------|--------|------------|------|
-| **1. Import/Compile** | Verify modules resolve | `python -c "from app.main import app"` | `tsc --noEmit` | `mvn compile` |
-| **2. Type Check** | Catch type errors | `pyright` | `tsc --noEmit` | `javac` (built-in) |
-| **3. Lint** | Catch style/bugs | `ruff check` | `eslint` | `checkstyle` |
-| **4. Architecture** | Enforce boundaries | `import-linter` | `dependency-cruiser` | `ArchUnit` |
-| **5. Tests** | Verify behavior | `pytest` | `vitest` | `JUnit` |
+| Gate | Purpose | Python | TypeScript | Java | Database | Docker |
+|------|---------|--------|------------|------|----------|--------|
+| **1. Import/Compile** | Verify modules | `python -c "from app.main import app"` | `tsc --noEmit` | `mvn compile` | `alembic check` | `docker-compose config` |
+| **2. Type Check** | Catch type errors | `pyright` | `tsc --noEmit` | `javac` | N/A | N/A |
+| **3. Lint** | Catch style/bugs | `ruff check` | `eslint` | `checkstyle` | N/A | `hadolint` |
+| **4. Architecture** | Enforce boundaries | `import-linter` | `dependency-cruiser` | `ArchUnit` | N/A | N/A |
+| **5. Tests** | Verify behavior | `pytest` | `vitest` | `JUnit` | `pytest tests/migrations/` | `docker build` |
 
 **Key insight:** The **gate names and purposes are universal**. Only the tool names change per language.
 
@@ -255,4 +255,5 @@ The Python boilerplate MUST contain these files:
 - **ArchUnit:** https://www.archunit.org/
 - **dependency-cruiser:** https://github.com/sverweij/dependency-cruiser
 - **Validation Harness Guide:** `docs/01-agnostic/01-standards/22-validation-harness-guide.md`
+- **Database & Docker Validation:** `docs/01-agnostic/01-standards/23-database-docker-validation.md`
 - **Example (Python):** `forex-trading-app/lefthook.yml`
