@@ -57,3 +57,18 @@ Use `feature-list.json` + `agent-progress.md` + `init.sh` when work spans multip
 ## Imperative 9: Verify Before Close
 
 For deploy/infrastructure tasks: include curl output or container status as evidence in the close metadata. If verification fails, the task is not done.
+
+## Imperative 10: Validate Before Build
+
+For any task touching `pyproject.toml`, `package.json`, `Dockerfile`, or TypeScript source:
+
+1. **Run the stack's dependency checker** before claiming changes are done:
+   - Python/Poetry: `poetry check` → `poetry lock --check` → `poetry install --dry-run`
+   - Node/npm: `npm audit` → `npm ls --depth=0`
+2. **Run the stack's type/build checker**:
+   - TypeScript: `npx tsc --noEmit`
+   - Python: `pyright` or `mypy`
+   - Dockerfile: `docker build --target runtime` (fast-fail on missing COPYs)
+3. **Only after all pass**, proceed to `docker compose build` or runtime testing.
+
+If any validation fails, the task is not done. Do not discover package name errors or missing binaries during `docker compose build`.
