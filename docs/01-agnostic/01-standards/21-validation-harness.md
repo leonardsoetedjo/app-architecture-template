@@ -256,4 +256,5 @@ The Python boilerplate MUST contain these files:
 - **dependency-cruiser:** https://github.com/sverweij/dependency-cruiser
 - **Validation Harness Guide:** `docs/01-agnostic/01-standards/22-validation-harness-guide.md`
 - **Database & Docker Validation:** `docs/01-agnostic/01-standards/23-database-docker-validation.md`
+- **Complete Testing Harness:** `docs/01-agnostic/01-standards/24-complete-testing-harness.md`
 - **Example (Python):** `forex-trading-app/lefthook.yml`
