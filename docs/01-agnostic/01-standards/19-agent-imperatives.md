@@ -130,13 +130,22 @@ For deploy/infrastructure tasks: include curl output or container status as evid
 
 For any task touching `pyproject.toml`, `package.json`, `Dockerfile`, or TypeScript source:
 
-1. **Run the stack's dependency checker** before claiming changes are done:
+1. **Pre-commit hooks MUST be installed** — `pre-commit install` is mandatory in Phase 1 of every task
+2. **Run the stack's dependency checker** before claiming changes are done:
    - Python/Poetry: `poetry check` → `poetry lock --check` → `poetry install --dry-run`
    - Node/npm: `npm audit` → `npm ls --depth=0`
-2. **Run the stack's type/build checker**:
+3. **Run the stack's type/build checker**:
    - TypeScript: `npx tsc --noEmit`
    - Python: `pyright` or `mypy`
    - Dockerfile: `docker build --target runtime` (fast-fail on missing COPYs)
-3. **Only after all pass**, proceed to `docker compose build` or runtime testing.
+4. **Run the validation harness** (Standard 21):
+   - Pre-commit hooks: `pre-commit run --all-files` (runs automatically on commit)
+   - Import validation: `python -c "from app.main import app"` (Python) or equivalent
+   - Architecture tests: `pytest tests/archunit/` (Python) or `mvn test -Dtest=CleanArchitectureLayersTest` (Java)
+5. **Only after all pass**, proceed to `docker compose build` or runtime testing.
 
 If any validation fails, the task is not done. Do not discover package name errors or missing binaries during `docker compose build`.
+
+**Enforcement:** Pre-commit hooks are **not optional**. They run on every `git commit`. Bypassing with `--no-verify` requires explicit human approval and must be documented in the commit message.
+
+**Reference:** `docs/01-agnostic/01-standards/21-validation-harness.md` — Open source tools only, no custom scripts.
