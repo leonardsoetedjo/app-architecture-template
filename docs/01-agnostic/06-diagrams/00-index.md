@@ -185,7 +185,7 @@ Rendered PNGs available in `docs/01-agnostic/06-diagrams/rendered/`
 
 **Markdown**:
 ```markdown
-![Clean Architecture](rendered/01-clean-architecture.png)
+![Clean Architecture](01-clean-architecture.png)
 ```
 
 **Notion/Obsidian**:
@@ -195,7 +195,7 @@ Rendered PNGs available in `docs/01-agnostic/06-diagrams/rendered/`
 
 **GitHub README**:
 ```markdown
-![Clean Architecture](./rendered/01-clean-architecture.png)
+![Clean Architecture](./01-clean-architecture.png)
 ```
 
 ---

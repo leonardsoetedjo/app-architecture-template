@@ -188,6 +188,6 @@ Both services implement rate limiting:
 
 ## Related Documentation
 
-- [Clean Architecture Standards](../../01-agnostic/01-standards/02-architecture.md)
-- [MFA Implementation](../../04-sops/mfa-implementation.md)
-- [Batch Job Architecture](../../01-agnostic/01-standards/batch-job-status-architecture.md)
+- [Clean Architecture Standards](01-agnostic/01-standards/02-architecture.md)
+- [MFA Implementation](04-sops/06-configure-external-service.md)
+- [Batch Job Architecture](01-agnostic/01-standards/batch-job-status-architecture.md)

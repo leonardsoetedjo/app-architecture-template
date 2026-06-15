@@ -230,7 +230,7 @@ public class OrderEntity {
 | Topic | Document | When to Read |
 |-------|----------|--------------|
 | Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](02-architecture.md) | Design decisions |
-| Git, Docker, CI/CD | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../../03-guidelines/01-deployment.md) | DevOps tasks |
+| Git, Docker, CI/CD | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../03-guidelines/01-deployment.md) | DevOps tasks |
 | Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](11-review.md) | Preparing/reviewing PRs |
 | **Add aggregate root / entity** | [`docs/04-sops/01-add-new-aggregate-root.md`](../../04-sops/01-add-new-aggregate-root.md) | Starting a new domain feature |
 | **Add REST endpoint** | [`docs/04-sops/02-add-new-rest-endpoint.md`](../../04-sops/02-add-new-rest-endpoint.md) | Adding an API |

@@ -1,6 +1,6 @@
 # Quasar Boilerplate Coding Guide
 
-> **Purpose**: This file is the Quasar developer's quick-reference for the **Quasar/Vue 3** boilerplate. Every code change in Quasar frontends must be producible from, and auditable against, the verified boilerplate in [`boilerplate/quasar/`](boilerplate/quasar/).
+> **Purpose**: This file is the Quasar developer's quick-reference for the **Quasar/Vue 3** boilerplate. Every code change in Quasar frontends must be producible from, and auditable against, the verified boilerplate in [`boilerplate/quasar/`](./).
 
 > **Rule**: If your PR pattern is not already demonstrated in the Quasar boilerplate, add it there first, then copy it into your feature.
 

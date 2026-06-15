@@ -111,4 +111,4 @@ owner: "@architecture-team"
 - **Python Backend**: [03-python/00-index.md](../03-python/00-index.md)
 
 ### Templates
-- **SOP Template**: [04-templates/01-sop-template.md](../04-templates/01-sop-template.md) *(planned)*
+- **SOP Template**: [04-templates/01-sop-template.md](../04-templates/02-quick-setup-checklist.md) *(planned)*

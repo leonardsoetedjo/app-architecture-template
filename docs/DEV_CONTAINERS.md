@@ -290,5 +290,5 @@ Add to `customizations.vscode.settings`:
 ## Related Documentation
 
 - [API Documentation](./API_DOCUMENTATION.md)
-- [Clean Architecture Standards](../01-agnostic/01-standards/02-architecture.md)
-- [Agent Session Harness](../04-sops/18-agent-session-harness.md)
+- [Clean Architecture Standards](01-agnostic/01-standards/02-architecture.md)
+- [Agent Session Harness](04-sops/18-agent-session-harness.md)

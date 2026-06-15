@@ -300,19 +300,19 @@ grep -r "{framework}" src/domain/ && exit 1
 ## 9. Related Documentation
 
 ### Core Principles (Language-Agnostic)
-- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
-- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
-- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
-- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+- **Standards**: [`docs/01-agnostic/01-standards/`](../01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](../01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](../01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](../01-agnostic/01-standards/13-agents.md)
 
 ### Other Language Boilerplates
-- **Java**: [`/boilerplate/java/AGENTS.md`](../java/AGENTS.md)
-- **Python**: [`/boilerplate/python/AGENTS.md`](../python/AGENTS.md)
-- **ReactJS**: [`/boilerplate/reactjs/AGENTS.md`](../reactjs/AGENTS.md)
-- **Quasar**: [`/boilerplate/quasar/AGENTS.md`](../quasar/AGENTS.md)
+- **Java**: [`/boilerplate/java/AGENTS.md`](../../boilerplate/java/AGENTS.md)
+- **Python**: [`/boilerplate/python/AGENTS.md`](../../boilerplate/python/AGENTS.md)
+- **ReactJS**: [`/boilerplate/reactjs/AGENTS.md`](../../boilerplate/reactjs/AGENTS.md)
+- **Quasar**: [`/boilerplate/quasar/AGENTS.md`](../../boilerplate/quasar/AGENTS.md)
 
 ### Templates
-- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](05-agents-boilerplate-template.md)
 
 ---
 

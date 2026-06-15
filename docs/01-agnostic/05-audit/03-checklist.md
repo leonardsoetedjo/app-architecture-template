@@ -8,17 +8,17 @@ owner: "@architecture-team"
 
 # Architecture & Implementation Audit Checklist
 
-This checklist is the **audit instrument** used by software architects to evaluate pull requests from junior developers. It is derived from, and must stay in sync with, the verified boilerplate in [`boilerplate/`](../boilerplate/) and the standards in [`docs/01-agnostic/01-standards/`](../01-standards/).
+This checklist is the **audit instrument** used by software architects to evaluate pull requests from junior developers. It is derived from, and must stay in sync with, the verified boilerplate in [`boilerplate/`](../../../boilerplate/) and the standards in [`docs/01-agnostic/01-standards/`](../01-standards/).
 
 ## 🎯 Purpose
 
 1. **Developer guardrail**: Junior developers read this checklist *before* coding so they know exactly what "correct" looks like.
 2. **Architect audit tool**: The architect walks every PR through this list. If a check fails, the PR is rejected with a reference to the specific standard or SOP to fix.
-3. **Boilerplate alignment**: Any deviation between a developer's code and the [`boilerplate/`](../boilerplate/) structures must be justified in an ADR.
+3. **Boilerplate alignment**: Any deviation between a developer's code and the [`boilerplate/`](../../../boilerplate/) structures must be justified in an ADR.
 
 ## 🔒 Boilerplate = Working Code (not stubs)
 
-Every reference to [`boilerplate/`](../boilerplate/) in this checklist points to **real, compilable, runnable code**:
+Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist points to **real, compilable, runnable code**:
 - `cd boilerplate/java/common && mvn clean compile` → BUILD SUCCESS
 - `cd boilerplate/java/order-service && mvn clean compile` → BUILD SUCCESS
 - `cd boilerplate/frontend && npm run build` → dist/ generated
@@ -81,9 +81,9 @@ Every reference to [`boilerplate/`](../boilerplate/) in this checklist points to
 ## 6. Frontend & UI
 
 - [ ] **Symmetry**: Does the frontend use a dedicated service layer? (No direct `axios` calls in components).
-  - *Boilerplate reference*: [`frontend/src/services/apiClient.ts`](../../../boilerplate/frontend/src/services/apiClient.ts).
+  - *Boilerplate reference*: `frontend/src/services/apiClient.ts`.
 - [ ] **State Ownership**: Is complex data transformation logic extracted into a Custom Hook/Composable?
-  - *Boilerplate reference*: [`frontend/src/hooks/useOrders.ts`](../../../boilerplate/frontend/src/hooks/useOrders.ts).
+  - *Boilerplate reference*: `frontend/src/hooks/useOrders.ts`.
 - [ ] **Error Handling**: Does the UI display a correlation key (`ERR-XXXXX`) for all unhandled exceptions?
 - [ ] **a11y**: Does the UI comply with WCAG 2.1 Level AA (semantic HTML, contrast, focus)?
 - [ ] **TypeScript Discipline**: Is `any` strictly prohibited? Are all props interfaces explicitly defined?
@@ -95,7 +95,7 @@ Every reference to [`boilerplate/`](../boilerplate/) in this checklist points to
   - *Boilerplate reference*: [`OrderPlacementServiceTest.java`](../../../boilerplate/java/order-service/src/test/java/com/example/orderservice/domain/services/OrderPlacementServiceTest.java).
 - [ ] **Integration Tests**: Are service boundaries tested using Testcontainers or an in-memory DB?
 - [ ] **E2E Flow**: Is the critical user journey verified by a Playwright test?
-  - *Boilerplate reference*: [`frontend/e2e/api.spec.ts`](../../../boilerplate/frontend/e2e/api.spec.ts).
+  - *Boilerplate reference*: [`frontend/e2e/api.spec.ts`](../../../boilerplate/reactjs/e2e/api.spec.ts).
 - [ ] **API Contract**: Does the API implementation match the OpenAPI/Swagger specification?
 - [ ] **Bruno Coverage**: Is there at least one `.bru` request for every exposed endpoint?
   - *Boilerplate reference*: [`tests/bruno/`](../../../boilerplate/tests/bruno/).

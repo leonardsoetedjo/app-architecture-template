@@ -372,4 +372,4 @@ CronTrigger(day=1, hour=0)              # First day of month at midnight
 
 - SOP-02: [Add New REST Endpoint](02-add-new-rest-endpoint.md)
 - SOP-07: [Add New Use Case](07-add-new-use-case.md)
-- SOP-09: [Add New External Service Integration](09-add-new-external-service.md)
+- SOP-09: [Add New External Service Integration](06-configure-external-service.md)

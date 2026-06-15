@@ -242,6 +242,24 @@ check_e2e_tests() {
 # Track timing
 START_TIME=$(date +%s%N)
 
+
+# Check documentation links are valid
+check_docs_links() {
+  echo "  [5/5] Checking documentation links..."
+  if [ -f "scripts/validate-docs-links.py" ]; then
+    if python3 scripts/validate-docs-links.py > /dev/null 2>&1; then
+      echo "      OK: All documentation links valid"
+      return 0
+    else
+      echo "      FAIL: Broken documentation links found (run python3 scripts/validate-docs-links.py for details)"
+      return 1
+    fi
+  else
+    echo "      SKIP: scripts/validate-docs-links.py not found"
+    return 0
+  fi
+}
+
 # Run all checks
 check_agent_session_harness || FAILED=1
 echo ""
@@ -256,6 +274,9 @@ check_frontend_architecture || FAILED=1
 echo ""
 
 check_e2e_tests || FAILED=1
+echo ""
+
+check_docs_links || FAILED=1
 echo ""
 
 # Calculate duration
@@ -273,6 +294,7 @@ if [ $FAILED -eq 0 ]; then
   echo "  - Python architecture: OK"
   echo "  - Frontend architecture: OK"
   echo "  - E2E tests: OK"
+  echo "  - Documentation links: OK"
   echo ""
   echo "📋 Copy the 'Architecture:' block above for your commit message"
   exit 0

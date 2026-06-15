@@ -296,16 +296,16 @@ export default useStore;
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
-| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
-| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
+| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](../../docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
+| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](../../docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
+| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](../../docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
 
 ### Standard Operating Procedures
 
 | SOP | Document | When to Use |
 |-----|----------|-------------|
-| Add frontend page | [`docs/04-sops/03-add-new-frontend-page.md`](docs/04-sops/03-add-new-frontend-page.md) | New page/route |
-| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | Backend API integration |
+| Add frontend page | [`docs/04-sops/03-add-new-frontend-page.md`](../../docs/04-sops/03-add-new-frontend-page.md) | New page/route |
+| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](../../docs/04-sops/02-add-new-rest-endpoint.md) | Backend API integration |
 
 ---
 
@@ -512,10 +512,10 @@ grep -r ": any" src/ && exit 1
 ## 9. Related Documentation
 
 ### Core Principles (Language-Agnostic)
-- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
-- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
-- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
-- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+- **Standards**: [`docs/01-agnostic/01-standards/`](../../docs/01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](../../docs/01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](../../docs/01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](../../docs/01-agnostic/01-standards/13-agents.md)
 
 ### Other Language Boilerplates
 - **Java**: [`/boilerplate/java/AGENTS.md`](../java/AGENTS.md)
@@ -523,7 +523,7 @@ grep -r ": any" src/ && exit 1
 - **Quasar**: [`/boilerplate/quasar/AGENTS.md`](../quasar/AGENTS.md)
 
 ### Templates
-- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](../../docs/04-templates/05-agents-boilerplate-template.md)
 
 ---
 

@@ -1,6 +1,6 @@
 # Python Boilerplate Coding Guide
 
-> **Purpose**: This file is the Python developer's quick-reference and the architect's audit baseline for the **Python/FastAPI** boilerplate. Every code change in Python services must be producible from, and auditable against, the verified boilerplate in [`boilerplate/python/order-service/`](boilerplate/python/order-service/).
+> **Purpose**: This file is the Python developer's quick-reference and the architect's audit baseline for the **Python/FastAPI** boilerplate. Every code change in Python services must be producible from, and auditable against, the verified boilerplate in [`boilerplate/python/order-service/`](order-service/).
 
 > **Rule**: If your PR pattern is not already demonstrated in the Python boilerplate, add it there first, then copy it into your feature.
 
@@ -380,18 +380,18 @@ class OrderEntity(Base):
 
 | Topic | Document | When to Read |
 |-------|----------|--------------|
-| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
-| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
-| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
+| Architecture & DDD | [`docs/01-agnostic/01-standards/02-architecture.md`](../../docs/01-agnostic/01-standards/02-architecture.md) | Design decisions |
+| Review Checklists | [`docs/01-agnostic/01-standards/11-review.md`](../../docs/01-agnostic/01-standards/11-review.md) | Preparing PRs |
+| AI Tooling | [`docs/01-agnostic/01-standards/13-agents.md`](../../docs/01-agnostic/01-standards/13-agents.md) | Using AI agents |
 
 ### Standard Operating Procedures
 
 | SOP | Document | When to Use |
 |-----|----------|-------------|
-| Add aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](docs/04-sops/01-add-new-aggregate-root.md) | New domain feature |
-| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](docs/04-sops/02-add-new-rest-endpoint.md) | New API |
-| Add Alembic migration | [`docs/04-sops/16-add-alembic-migration.md`](docs/04-sops/16-add-alembic-migration.md) | Schema changes |
-| Publish domain event | [`docs/04-sops/05-publish-domain-event.md`](docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
+| Add aggregate root | [`docs/04-sops/01-add-new-aggregate-root.md`](../../docs/04-sops/01-add-new-aggregate-root.md) | New domain feature |
+| Add REST endpoint | [`docs/04-sops/02-add-new-rest-endpoint.md`](../../docs/04-sops/02-add-new-rest-endpoint.md) | New API |
+| Add Alembic migration | [`docs/04-sops/16-add-alembic-migration.md`](../../docs/04-sops/16-add-alembic-migration.md) | Schema changes |
+| Publish domain event | [`docs/04-sops/05-publish-domain-event.md`](../../docs/04-sops/05-publish-domain-event.md) | Event-driven flows |
 
 ---
 
@@ -574,10 +574,10 @@ mypy src/
 ## 9. Related Documentation
 
 ### Core Principles (Language-Agnostic)
-- **Standards**: [`docs/01-agnostic/01-standards/`](docs/01-agnostic/01-standards/)
-- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](docs/01-agnostic/02-adrs/)
-- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](docs/01-agnostic/03-guidelines/)
-- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](docs/01-agnostic/01-standards/13-agents.md)
+- **Standards**: [`docs/01-agnostic/01-standards/`](../../docs/01-agnostic/01-standards/)
+- **ADRs (why)**: [`docs/01-agnostic/02-adrs/`](../../docs/01-agnostic/02-adrs/)
+- **Guidelines (how)**: [`docs/01-agnostic/03-guidelines/`](../../docs/01-agnostic/03-guidelines/)
+- **AI Tooling**: [`docs/01-agnostic/01-standards/13-agents.md`](../../docs/01-agnostic/01-standards/13-agents.md)
 
 ### Other Language Boilerplates
 - **Java**: [`/boilerplate/java/AGENTS.md`](../java/AGENTS.md)
@@ -585,7 +585,7 @@ mypy src/
 - **Quasar**: [`/boilerplate/quasar/AGENTS.md`](../quasar/AGENTS.md)
 
 ### Templates
-- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](docs/04-templates/05-agents-boilerplate-template.md)
+- **AGENTS.md Template**: [`docs/04-templates/05-agents-boilerplate-template.md`](../../docs/04-templates/05-agents-boilerplate-template.md)
 
 ---
 

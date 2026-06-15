@@ -18,11 +18,11 @@
 
 **For AI Agents:**
 - 🤖 [AI Agent Guide](ai_agent_guide.md) - Mandatory test-first workflow
-- 🔧 [Enforcement Skill](enforce-e2e-tests-on-code-changes) - Auto-triggered skill
+- 🔧 Enforcement Skill - Auto-triggered skill
 
 **For Everyone:**
 - 📖 This README - Overview and navigation
-- 📊 [Implementation Summary](IMPLEMENTATION_SUMMARY.md) - Technical details
+- 📊 Implementation Summary - Technical details
 
 ---
 
@@ -219,7 +219,7 @@ GitHub Actions automatically runs on every PR:
 - ✅ Runs full E2E suite
 - ✅ Blocks merge if tests fail
 
-See [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) for workflow details.
+See IMPLEMENTATION_SUMMARY.md for workflow details.
 
 ---
 

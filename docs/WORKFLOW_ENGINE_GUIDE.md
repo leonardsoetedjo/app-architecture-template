@@ -352,6 +352,6 @@ public class OrderCreationSaga {
 
 ## Related Documents
 
-- [SAGA Pattern Guide](../../04-sops/saga-pattern.md)
-- [Event-Driven Architecture](../../01-agnostic/02-adrs/05-event-driven.md)
-- [API Design Standards](../../01-agnostic/01-standards/05-api-design.md)
+- [SAGA Pattern Guide](04-sops/02-add-new-rest-endpoint.md)
+- [Event-Driven Architecture](01-agnostic/02-adrs/02-eda-outbox.md)
+- [API Design Standards](01-agnostic/03-guidelines/08-openapi-standards.md)

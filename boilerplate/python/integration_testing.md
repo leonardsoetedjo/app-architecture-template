@@ -440,7 +440,7 @@ def test_integration(db_session):
 
 ## Related Documentation
 
-- **Python AGENTS.md**: [`boilerplate/python/AGENTS.md`](boilerplate/python/AGENTS.md)
+- **Python AGENTS.md**: [`boilerplate/python/AGENTS.md`](AGENTS.md)
 - **TDD Skill**: `test-driven-development`
 - **Testcontainers Docs**: https://testcontainers-python.readthedocs.io/
 

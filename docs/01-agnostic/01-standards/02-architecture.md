@@ -8,11 +8,7 @@ owner: "@architecture-team"
 
 # Architecture Standards
 
-## 1. Clean Architecture Principles
-
-- **Domain-centric**: The domain layer has no external dependencies. Business rules live here.
-- **Dependency Rule**: Inner layers do not know about outer layers. Dependencies point inward. Prohibit any import from `infrastructure` or `application` inside the `domain` layer.
-- **CQS (Command Query Separation)**: Use Case classes must either return a result (Command) or return data (Query), never both.
+### 1.1 Forbidden Imports by Layer\n\nTo maintain the integrity of the Clean Architecture dependency rule, the following imports are strictly prohibited:\n\n| Layer | Cannot Import (Python) | Cannot Import (Java) |\n|-------|------------------------|----------------------|\n| **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` |\n| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks |\n| **Infrastructure** | *(none — can import all)* | *(none — can import all)* |\n\n**Verification**: Run `./scripts/architecture-pre-commit.sh` or manually check using:\n- Python: `grep -r \"fastapi\\|sqlalchemy\" src/domain/`\n- Java: Check for prohibited packages in domain source files.\n\n---\n
 
 ### Dependency Flow Diagram
 ```plantuml

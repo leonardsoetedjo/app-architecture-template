@@ -204,7 +204,7 @@ async def create_order(
 |-------|----------|--------------|
 | Clean Architecture & DDD principles | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../02-adrs/01-clean-architecture.md) | Design decisions |
 | General API standards | [`docs/01-agnostic/01-standards/02-architecture.md`](02-architecture.md) | Writing backend code |
-| Git, Docker, CI/CD, Deployment | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../../03-guidelines/01-deployment.md) | DevOps tasks |
+| Git, Docker, CI/CD, Deployment | [`docs/01-agnostic/03-guidelines/01-deployment.md`](../03-guidelines/01-deployment.md) | DevOps tasks |
 | DDD deep dive | [`docs/01-agnostic/02-adrs/01-clean-architecture.md`](../02-adrs/01-clean-architecture.md) | Domain model design |
 | Review checklists | [`docs/01-agnostic/01-standards/11-review.md`](11-review.md) | Preparing/reviewing PRs |
 

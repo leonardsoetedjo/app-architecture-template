@@ -105,13 +105,15 @@ git status --short
 
 ## 🚫 Forbidden Imports by Layer
 
+To maintain the integrity of the Clean Architecture dependency rule, the following imports are strictly prohibited. Refer to [01-agnostic/01-standards/02-architecture.md](01-agnostic/01-standards/02-architecture.md) for the canonical table.
+
 | Layer | Cannot Import (Python) | Cannot Import (Java) |
 |-------|------------------------|----------------------|
 | **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` |
 | **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks |
 | **Infrastructure** | *(none — can import all)* | *(none — can import all)* |
 
-**Verification:** `grep -r "fastapi\|sqlalchemy" src/domain/ && exit 1` (Python)
+**Verification**: `grep -r "fastapi|sqlalchemy" src/domain/ && exit 1` (Python)
 
 ---
 

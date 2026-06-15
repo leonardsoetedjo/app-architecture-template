@@ -97,7 +97,7 @@ mcp_serena_find_symbol(name_path_pattern="*/domain/*", relative_path="your-proje
 
 ### Audit Report Template
 
-See: [`docs/05-audit/`](docs/05-audit/) for audit report templates and checklists.
+See: [`docs/01-agnostic/05-audit/`](docs/01-agnostic/05-audit/) for audit report templates and checklists.
 
 **Audit Frequency:**
 - **New projects:** Audit at end of sprint 1, then monthly
@@ -132,8 +132,8 @@ docker compose up -d
 
 | Document | Purpose |
 |----------|---------|
-| **[✨ Features Overview](docs/01-agnostic/FEATURES.md)** | Complete list of 40+ features by SDLC stage |
-| **[🛡️ Governance Model](docs/01-agnostic/GOVERNANCE.md)** | Phase gate guardrails and enforcement mechanisms |
+| **[✨ Features Overview](docs/01-agnostic/features.md)** | Complete list of 40+ features by SDLC stage |
+| **[🛡️ Governance Model](docs/01-agnostic/governance.md)** | Phase gate guardrails and enforcement mechanisms |
 | **[🤖 AI Agent Guide](AGENTS.md)** | Template maintainer workflow for AI agents |
 | **[📋 Setup Checklist](docs/04-templates/02-quick-setup-checklist.md)** | Interactive new project configuration |
 
@@ -202,7 +202,7 @@ This template enforces **mandatory compliance gates** between SDLC stages:
 - **Domain**: No Spring, JPA, FastAPI, SQLAlchemy
 - **Application**: No REST controllers or HTTP frameworks
 
-See [Governance Model](docs/01-agnostic/GOVERNANCE.md) for enforcement details.
+See [Governance Model](docs/01-agnostic/governance.md) for enforcement details.
 
 ---
 
