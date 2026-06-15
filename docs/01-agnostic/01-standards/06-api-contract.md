@@ -28,8 +28,32 @@ Every API endpoint **must** include:
 While the spec is generated from code, it still serves as the contract.
 
 - **Validation**: The generated spec must be validated against organizational standards using Spectral or similar linting tools in the CI pipeline.
-- **Versioning**: Breaking changes must result in a version increment in the URL (e.g., `/v1/` $\rightarrow$ `/v2/`).
+- **Versioning**: Breaking changes must result in a version increment in the URL (e.g., `/v1/` → `/v2/`).
 - **Review**: API changes must be reviewed by the architecture team to ensure consistency across services.
+
+## 2.1 Router Registration Rule (Python/FastAPI)
+
+**Rule:** Every new endpoint module containing an `APIRouter` MUST be imported and registered in the central router aggregator (`api.py` / `api_router.py`).
+
+**Failure mode:** Creating `endpoints/portfolio.py` with `router = APIRouter()` but forgetting to add it to `api/v1/api.py` causes all `/portfolio/*` endpoints to return 404. This is one of the most common "ghost endpoint" bugs.
+
+**Correct workflow:**
+```python
+# 1. Create the endpoint module
+# app/api/v1/endpoints/portfolio.py
+from fastapi import APIRouter
+router = APIRouter()
+
+@router.get("/portfolio/summary")
+async def get_portfolio_summary(): ...
+
+# 2. Wire it into the central aggregator
+# app/api/v1/api.py
+from app.api.v1.endpoints import portfolio  # ← MUST import
+api_router.include_router(portfolio.router, prefix="/portfolio")  # ← MUST register
+```
+
+**Detection:** Architecture tests scan `endpoints/` for `APIRouter` definitions and verify each module name appears in the central `api.py`. Unregistered routers fail the build.
 
 ## 3. Distribution
 The generated OpenAPI spec is published to a central portal (e.g., Swagger Hub or a shared internal page) as part of the deployment pipeline to allow consumers to generate type-safe clients.

@@ -493,6 +493,228 @@ def test_comprehensive_architecture_check():
     )
 
 
+def test_sqlmodel_models_have_tablename():
+    """Every SQLModel with table=True MUST declare __tablename__.
+
+    SQLModel auto-generates table names from class names (camelCase → snake_case),
+    but the result is often surprising (e.g., 'AuditLog' → 'audit_log', not 'audit_logs').
+    Explicit __tablename__ prevents silent mismatches between models and migrations.
+    """
+    src_path = Path(__file__).parent.parent.parent / 'src'
+    violations = []
+
+    for py_file in src_path.rglob('*.py'):
+        if py_file.name == '__init__.py':
+            continue
+        try:
+            content = py_file.read_text(encoding='utf-8')
+            tree = ast.parse(content)
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ClassDef):
+                continue
+            # Detect SQLModel inheritance + table=True
+            is_sqlmodel = any(
+                (isinstance(base, ast.Name) and base.id == 'SQLModel')
+                or (isinstance(base, ast.Attribute) and base.attr == 'SQLModel')
+                for base in node.bases
+            )
+            if not is_sqlmodel:
+                continue
+
+            has_table_true = False
+            for kw in node.keywords:
+                if kw.arg == 'table' and isinstance(kw.value, ast.Constant) and kw.value.value is True:
+                    has_table_true = True
+                    break
+
+            if not has_table_true:
+                continue  # Not a table model
+
+            # Check for __tablename__ assignment in class body
+            has_tablename = any(
+                isinstance(child, ast.Assign)
+                and any(isinstance(t, ast.Name) and t.id == '__tablename__' for t in child.targets)
+                for child in node.body
+            )
+
+            if not has_tablename:
+                violations.append(
+                    f"  - {py_file.relative_to(src_path)}:{node.lineno} "
+                    f"'{node.name}' has table=True but no __tablename__"
+                )
+
+    assert len(violations) == 0, (
+        f"Found {len(violations)} SQLModel table classes missing __tablename__:\n" +
+        "\n".join(violations)
+    )
+
+
+def test_sqlmodel_foreign_keys_reference_existing_tables():
+    """All foreign_key= references MUST point to tables that exist.
+
+    Detects typos like foreign_key='user.id' when table is 'users',
+    or references to tables that were renamed/removed.
+    """
+    src_path = Path(__file__).parent.parent.parent / 'src'
+    tablenames: set[str] = set()
+    fk_refs: list[tuple[Path, int, str, str]] = []  # file, line, table, column
+
+    for py_file in src_path.rglob('*.py'):
+        if py_file.name == '__init__.py':
+            continue
+        try:
+            content = py_file.read_text(encoding='utf-8')
+            tree = ast.parse(content)
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef):
+                is_sqlmodel = any(
+                    (isinstance(base, ast.Name) and base.id == 'SQLModel')
+                    or (isinstance(base, ast.Attribute) and base.attr == 'SQLModel')
+                    for base in node.bases
+                )
+                if not is_sqlmodel:
+                    continue
+                for child in node.body:
+                    # __tablename__ = "table_name"
+                    if isinstance(child, ast.Assign):
+                        for target in child.targets:
+                            if isinstance(target, ast.Name) and target.id == '__tablename__':
+                                if isinstance(child.value, ast.Constant) and isinstance(child.value.value, str):
+                                    tablenames.add(child.value.value)
+            # Collect foreign_key= keyword arguments
+            if isinstance(node, ast.keyword) and node.arg == 'foreign_key':
+                if isinstance(node.value, ast.Constant) and isinstance(node.value.value, str):
+                    ref = node.value.value
+                    if '.' in ref:
+                        table, col = ref.split('.', 1)
+                        # Find line number from parent context
+                        line = getattr(node.value, 'lineno', 0)
+                        fk_refs.append((py_file, line, table, col))
+
+    # Also scan for ForeignKey("table.column") in sa_column assignments
+    for py_file in src_path.rglob('*.py'):
+        if py_file.name == '__init__.py':
+            continue
+        try:
+            content = py_file.read_text(encoding='utf-8')
+            tree = ast.parse(content)
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                func_name = None
+                if isinstance(node.func, ast.Name):
+                    func_name = node.func.id
+                elif isinstance(node.func, ast.Attribute):
+                    func_name = node.func.attr
+                if func_name == 'ForeignKey':
+                    for arg in node.args:
+                        if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                            ref = arg.value
+                            if '.' in ref:
+                                table, col = ref.split('.', 1)
+                                line = getattr(arg, 'lineno', 0)
+                                fk_refs.append((py_file, line, table, col))
+
+    violations = []
+    for py_file, line, table, col in fk_refs:
+        if table not in tablenames:
+            violations.append(
+                f"  - {py_file.relative_to(src_path)}:{line} "
+                f"foreign_key references '{table}' (not found among {len(tablenames)} tables)"
+            )
+
+    assert len(violations) == 0, (
+        f"Found {len(violations)} foreign_key references to non-existent tables:\n" +
+        "\n".join(violations)
+    )
+
+
+def test_all_routers_registered_in_api():
+    """Every endpoint module containing an APIRouter MUST be included in the central api.py.
+
+    Prevents 404 errors caused by creating a router module but forgetting to
+    wire it into the application. Scans endpoint/ directories for APIRouter
+    instances and checks the central router aggregator imports them.
+    """
+    src_path = Path(__file__).parent.parent.parent / 'src'
+
+    # Discover endpoint directories (common patterns)
+    endpoint_dirs = []
+    for pattern in ['api/*/endpoints', 'api/endpoints', 'infrastructure/api', 'presentation/api']:
+        endpoint_dirs.extend(src_path.glob(pattern))
+
+    # Find all modules that define an APIRouter at module level
+    router_modules: set[str] = set()
+    for endpoint_dir in endpoint_dirs:
+        for py_file in endpoint_dir.rglob('*.py'):
+            if py_file.name == '__init__.py':
+                continue
+            try:
+                content = py_file.read_text(encoding='utf-8')
+                tree = ast.parse(content)
+            except (SyntaxError, UnicodeDecodeError):
+                continue
+
+            for node in tree.body:
+                # Match: router = APIRouter(...) at module level
+                if not isinstance(node, ast.Assign):
+                    continue
+                for target in node.targets:
+                    if not isinstance(target, ast.Name):
+                        continue
+                    if target.id not in ('router', 'api_router'):
+                        continue
+                    call = node.value
+                    if isinstance(call, ast.Call):
+                        func_name = None
+                        if isinstance(call.func, ast.Name):
+                            func_name = call.func.id
+                        elif isinstance(call.func, ast.Attribute):
+                            func_name = call.func.attr
+                        if func_name == 'APIRouter':
+                            rel = py_file.relative_to(src_path)
+                            module_path = str(rel.with_suffix('')).replace('/', '.').replace('\\', '.')
+                            router_modules.add(module_path)
+                            break
+
+    if not router_modules:
+        pytest.skip("No module-level APIRouter definitions found — skipping registration check")
+
+    # Find the central api.py / router aggregator / factory.py
+    api_files = (
+        list(src_path.rglob('api.py'))
+        + list(src_path.rglob('api_router.py'))
+        + list(src_path.rglob('factory.py'))
+    )
+    if not api_files:
+        pytest.skip("No central api.py or factory.py found — skipping registration check")
+
+    # Use the shortest path as the likely aggregator (closest to src root)
+    api_file = min(api_files, key=lambda p: len(str(p.relative_to(src_path))))
+    api_content = api_file.read_text(encoding='utf-8')
+
+    violations = []
+    for module in router_modules:
+        # Check if the module name appears in api.py (import or include_router)
+        module_name = module.split('.')[-1]
+        if module_name not in api_content and module not in api_content:
+            violations.append(
+                f"  - '{module}' defines APIRouter but is not referenced in {api_file.relative_to(src_path)}"
+            )
+
+    assert len(violations) == 0, (
+        f"Found {len(violations)} router modules not wired into central API:\n" +
+        "\n".join(violations)
+    )
+
+
 if __name__ == '__main__':
     import pytest
     pytest.main([__file__, '-v', '--tb=short'])

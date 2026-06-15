@@ -19,6 +19,80 @@ We use PostgreSQL as the primary relational store. All Python services must use 
   - Use `NUMERIC` or `DECIMAL` for all financial/weight precision calculations.
   - Use `TIMESTAMP WITH TIME ZONE` for all timestamps.
 
+## 2a. SQLModel-Specific Rules (MUST follow)
+
+When using **SQLModel** (the standard for Python/FastAPI boilerplate), the following rules prevent the most common runtime errors:
+
+### 2a.1 Every table model MUST declare `__tablename__`
+
+SQLModel auto-generates table names from class names using `camel_to_snake`, but the result is frequently surprising:
+- `AuditLog` → `audit_log` (not `audit_logs`)
+- `UserSettings` → `user_settings` (not `user_setting`)
+- `TradingAccount` → `trading_account` (not `trading_accounts`)
+
+**Rule:** Every class inheriting from `SQLModel` with `table=True` MUST explicitly set `__tablename__ = "<plural_snake_case>"`.
+
+**Why:** Without `__tablename__`, a model and its Alembic migration can silently disagree. The migration creates table `audit_logs` while SQLModel looks for `audit_log`, causing `sqlalchemy.exc.NoReferencedTableError` at runtime.
+
+**Correct:**
+```python
+class AuditLog(SQLModel, table=True):
+    __tablename__ = "audit_logs"
+    ...
+```
+
+**Incorrect:**
+```python
+class AuditLog(SQLModel, table=True):
+    # Missing __tablename__ — SQLModel defaults to "audit_log"
+    ...
+```
+
+### 2a.2 `foreign_key=` references MUST match actual table names
+
+**Rule:** The string passed to `foreign_key="table.column"` MUST exactly match a `__tablename__` declared elsewhere in the codebase.
+
+**Common failure mode:** Singular vs plural mismatch.
+```python
+# Model A declares table='users'
+class User(SQLModel, table=True):
+    __tablename__ = "users"
+
+# Model B references 'user.id' — WRONG (singular)
+class TradingAccount(SQLModel, table=True):
+    user_id: int = Field(foreign_key="user.id")  # ❌ Table is 'users', not 'user'
+
+# Correct:
+class TradingAccount(SQLModel, table=True):
+    user_id: int = Field(foreign_key="users.id")  # ✅
+```
+
+**Detection:** Architecture tests scan all models, collect every `__tablename__`, then verify every `foreign_key=` and `ForeignKey(...)` string against that set. Mismatches fail the build.
+
+### 2a.3 Alembic is the sole schema authority — `create_all()` is forbidden
+
+**Rule:** Production databases MUST be created and evolved via Alembic migrations only. `Base.metadata.create_all()` or `SQLModel.metadata.create_all()` MUST NOT be called at application startup.
+
+**Why:** `create_all()` skips migration history, making it impossible to roll back or track schema changes. It also causes "table already exists" errors when Alembic and `create_all()` race.
+
+**Correct startup pattern:**
+```python
+# main.py — lifespan or startup event
+from alembic.config import Config
+from alembic import command
+
+async def run_migrations():
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
+```
+
+**Forbidden:**
+```python
+# main.py — WRONG
+from sqlmodel import SQLModel
+SQLModel.metadata.create_all(bind=engine)  # ❌ Bypasses migrations
+```
+
 ## 3. SQLAlchemy Patterns
 - **Session Management**: Use `AsyncSession` with FastAPI's dependency injection for all request-scoped operations.
 - **Loading Strategy**: Default to `lazy='select'`. Use `joinedload` or `selectinload` to prevent N+1 query problems.
