@@ -3,15 +3,15 @@
  */
 
 // Types
-export * from '../types/mfa.types';
+export * from './types/mfa.types';
 
 // API
-export { mfaApi } from '../api/mfaApi';
+export { mfaApi } from './api/mfaApi';
 
 // Hooks
-export { useMfa } from '../hooks/useMfa';
+export { useMfa } from './hooks/useMfa';
 
 // Components
-export { MfaSetupModal } from './MfaSetupModal';
-export { MfaVerificationModal } from './MfaVerificationModal';
-export { MfaSettingsPage } from './MfaSettingsPage';
+export { MfaSetupModal } from './components/MfaSetupModal';
+export { MfaVerificationModal } from './components/MfaVerificationModal';
+export { MfaSettingsPage } from './components/MfaSettingsPage';
