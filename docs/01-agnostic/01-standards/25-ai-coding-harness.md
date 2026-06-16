@@ -28,42 +28,27 @@ All AI-generated code MUST pass the Standard 21 gates. Where a gate has a **know
 
 ## Known Tool Gaps & Sanctioned Exceptions
 
-> **Rule:** All validation harnesses MUST use established open-source tools unless no such tool exists.
-> This table documents gaps in the **tools currently adopted in our boilerplate**. Alternatives that exist but were not selected are noted for future evaluation.
+> **Canonical source:** `docs/01-agnostic/01-standards/21-validation-harness.md` § *Known Tool Gaps & Sanctioned Exceptions*
+> 
+> Standard 21 contains the authoritative gaps table, alternatives-evaluated table, custom-script ADR process, and quarterly tool review trigger. **This section in Standard 25 is a reference only** — do not maintain two copies. If any information conflicts, Standard 21 governs.
 
-| # | Gap | Missing Coverage | Sanctioned Workaround | Alternatives Evaluated | ADR Required? |
-|---|-----|------------------|----------------------|----------------------|-------------|
-| 1 | **Python Architecture** | No open-source equivalent of ArchUnit for structural rules (e.g., "all value objects must be frozen dataclasses", "all domain events must use past-tense naming") | Custom AST-based harness: `boilerplate/python/order-service/tests/archunit/test_comprehensive_architecture.py` | `import-linter` covers import-ban only. `pytest-archon` does not exist. **SonarQube** (commercial) has Python architecture rules but requires a server license. | No — grandfathered |
-| 2 | **TypeScript Structural** | `dependency-cruiser` validates dependency graphs, not class-level structural properties (e.g., "all value objects must be readonly interfaces") | ESLint `@typescript-eslint` naming-convention rules + manual code review | **ArchUnitTS** (418 stars, MIT, active) and **ts-arch** (647 stars, MIT, active) are open-source ArchUnit equivalents for TS/JS. Both support dependency direction, naming conventions, code metrics, and UML diagram validation. Neither was adopted when the React boilerplate was established (they were less mature). Evaluate for adoption in next quarterly tool review. | No — grandfathered |
-| 3 | **SQLModel Table Naming** | `pytest` alone cannot verify that `__tablename__` is explicitly declared (runtime error if missing) | AST check in `test_comprehensive_architecture.py` validates `__tablename__` literal presence | No open-source static analyzer for SQLModel `__tablename__` omissions. **SonarQube** Python analyzer does not cover this. | No — bundled with Gap 1 |
-| 4 | **SQLModel Foreign Key Mismatch** | No tool validates that `relationship("Order")` references an entity whose `table=True` model exists | AST check parses `relationship()` call arguments and resolves them against declared `__tablename__` values | No open-source tool validates SQLAlchemy relationship targets against declared tables. **SonarQube** does not cover this. | No — bundled with Gap 1 |
-| 5 | **Router Registration Guard** | No static tool verifies that FastAPI routers imported in `routers/__init__.py` are actually registered in `main.py` with `app.include_router()` | Custom AST traversal compares `imported_names` in `routers/__init__.py` against `include_router(arg_name)` calls | No open-source tool covers FastAPI router registration completeness. | No — bundled with Gap 1 |
+### Quick Reference
 
-### Alternative Tools Under Evaluation
+For AI agents operating in a session, the 5 grandfathered exceptions are:
 
-The following tools were identified as potential replacements for current workarounds. They are NOT adopted yet pending evaluation:
+| # | Gap | Sanctioned Workaround |
+|---|-----|----------------------|
+| 1 | Python structural architecture (no ArchUnit equivalent) | `tests/archunit/test_comprehensive_architecture.py` (AST harness) |
+| 2 | TypeScript structural properties (`dependency-cruiser` covers graphs only) | ESLint `@typescript-eslint` naming-convention + manual review |
+| 3 | SQLModel `__tablename__` runtime omission | AST check in same harness as Gap 1 |
+| 4 | SQLModel foreign-key table existence | AST check in same harness as Gap 1 |
+| 5 | FastAPI router registration completeness | AST check comparing `routers/__init__.py` imports against `main.py` `include_router()` calls |
 
-| Tool | License | Maturity | What It Covers | Why Not Adopted Yet |
-|------|---------|----------|---------------|-------------------|
-| **ArchUnitTS** | MIT | ⭐ 418 stars, last pushed Sep 2025 | Dependency direction, circular deps, naming conventions, code metrics (LCOM, complexity), UML diagram validation, Nx monorepo support | Not available when React boilerplate was established. Evaluate in Q3 2026 tool review. |
-| **ts-arch** | MIT | ⭐ 647 stars, last release Dec 2024 | File/folder dependency checks, cycle detection, PlantUML diagram validation, Nx monorepo support | Same as above. Simpler API than ArchUnitTS but fewer features. |
-| **SonarQube** | Commercial / LGPL community edition | Enterprise standard | Multi-language static analysis, code smells, security hotspots, architecture rules | Violates our **open-source-first policy** (Standard 21 § Principle). Community edition lacks architecture rules. Only acceptable for teams with existing SonarQube licenses. |
+**Alternatives evaluated for future adoption:** ArchUnitTS, ts-arch, SonarQube (see Standard 21 for full evaluation rationale).
 
-### Adding New Custom Verification Scripts
+**Process for new custom scripts:** Demonstrate no open-source tool covers it → File ADR → Constrain to whitelist → Self-test → Architecture team approval.
 
-Any team wishing to add a **new custom verification script** (beyond the 5 grandfathered exceptions above) MUST:
-
-1. **Demonstrate** that the tool gap cannot be closed by an existing open-source tool (check the Alternatives Evaluated column above first)
-2. **File an ADR** explaining why no open-source tool covers the requirement
-3. **Constrain the script** to a whitelist of checks (no general-purpose AST parsing)
-4. **Self-test the script** with at least one positive and one negative case
-5. **Get approval** from the architecture team before merging
-
-### Quarterly Tool Review Trigger
-
-The **Alternatives Evaluated** column is a living document. If any of the listed alternatives reaches maturity (stable API, > 6 months without breaking changes, clear migration path), the architecture team MUST open an evaluation ADR to determine whether it replaces the sanctioned workaround. Teams MAY propose early evaluation outside the quarterly cycle.
-
-Violations of this rule will be flagged during architecture audits.
+**Quarterly review:** If an alternative reaches maturity, architecture team MUST open an evaluation ADR.
 
 ---
 
@@ -88,7 +73,7 @@ Agents MAY NOT hand off failing code with a note saying "CI will catch it."
 
 When an agent encounters a known tool gap (e.g., "dependency-cruiser cannot enforce readonly interfaces"), it MUST:
 - Note the gap in the session log
-- Apply the sanctioned workaround from the table above
+- Apply the sanctioned workaround from the table above (or Standard 21)
 - Not silently skip the check
 
 ### Rule 4: No Silent Bypasses
@@ -106,14 +91,14 @@ These actions violate both Standard 21 and this standard.
 
 - The Python AST harness (Gap 1) is maintained alongside the boilerplate. When upgrading Python versions, re-run the AST tests to confirm `ast.NodeVisitor` API stability.
 - `dependency-cruiser` configuration (`.dependency-cruiser.cjs`) is version-controlled. Changes that relax rules MUST be approved by the architecture team.
-- **ArchUnitTS** and **ts-arch** are tracked in Standard 25 § Alternatives Evaluated. If either reaches stable maturity, the architecture team will open an evaluation ADR.
+- **ArchUnitTS** and **ts-arch** are tracked in Standard 21 § Alternatives Evaluated. If either reaches stable maturity, the architecture team will open an evaluation ADR.
 - The grandfathered exceptions are reviewed annually. If a mature open-source tool emerges that closes a gap, the exception is deprecated and the tool adopted.
 
 ---
 
 ## References
 
-- **Standard 21** — Validation Harness Standard (7-gate universal harness)
+- **Standard 21** — Validation Harness Standard (7-gate universal harness, canonical gaps table)
 - **Imperative 10** — Validate Before Build
 - **Imperative 11** — Verify Before Handoff
 - **ADR-XXX** *(placeholder for future gap resolutions)*

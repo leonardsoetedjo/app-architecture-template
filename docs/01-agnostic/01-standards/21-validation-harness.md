@@ -426,7 +426,7 @@ Fix: Introduce intermediary type/DI context; break cycle by extracting shared mo
 
 **Known Tool Gap**: `dependency-cruiser` validates dependency graphs, not class-level structural properties (e.g., "all value objects must be readonly interfaces"). Those checks are enforced via ESLint `@typescript-eslint` rules or manual review.
 
-**Alternatives Evaluated**: ArchUnitTS (418 stars, MIT, active) and ts-arch (647 stars, MIT, active) are TypeScript ArchUnit equivalents that do support naming conventions and structural rules. Neither was mature when the React boilerplate was established; evaluate in Q3 2026 tool review per Standard 25.
+**Alternatives Evaluated**: ArchUnitTS (418 stars, MIT, active) and ts-arch (647 stars, MIT, active) are TypeScript ArchUnit equivalents that do support naming conventions and structural rules. Neither was mature when the React boilerplate was established; evaluate in Q3 2026 tool review (see § Known Tool Gaps & Sanctioned Exceptions below).
 
 ---
 
@@ -501,16 +501,46 @@ Fix: Introduce intermediary type/DI context; break cycle by extracting shared mo
 
 ## Known Tool Gaps & Sanctioned Exceptions
 
-Per Standard 21 principle (*"MUST use established open source tools unless no such tool exists"*), these are the documented exceptions:
+> **Rule:** All validation harnesses MUST use established open-source tools unless no such tool exists.
+> This section documents gaps in the **tools currently adopted in our boilerplate**. Alternatives that exist but were not selected are noted for future evaluation.
 
-| Gap | Language | Missing tool equivalent | Sanctioned workaround | Where documented |
-|-----|----------|---------------------------|----------------------|------------------|
-| Structural architecture rules (dataclass, naming, frozen) | Python | No ArchUnit equivalent | `test_comprehensive_architecture.py` (custom AST harness) | This appendix |
-| Structural architecture rules (readonly interfaces, naming) | TypeScript | dependency-cruiser covers graphs only | ESLint custom rules or manual review | This appendix |
-| Router-registration guard | Python | None | `test_all_routers_registered_in_api()` (AST scan for `APIRouter`) | This appendix |
-| SQLModel `__tablename__` / FK validation | Python | None | `test_sqlmodel_models_have_tablename()`, `test_sqlmodel_foreign_keys_reference_existing_tables()` | This appendix |
+> **Note to auditors and AI agents:** This table replaces all previously separate gap documentation. If you are reading Standard 25, this is the canonical source — the same content is inlined there by reference only.
 
-When adding a new custom verification, file an ADR referencing this standard. Do not silently add custom scripts.
+### Gaps Table
+
+| # | Gap | Missing Coverage | Sanctioned Workaround | Alternatives Evaluated | ADR Required? |
+|---|-----|------------------|----------------------|----------------------|-------------|
+| 1 | **Python Architecture** | No open-source equivalent of ArchUnit for structural rules (e.g., "all value objects must be frozen dataclasses", "all domain events must use past-tense naming") | Custom AST-based harness: `boilerplate/python/order-service/tests/archunit/test_comprehensive_architecture.py` | `import-linter` covers import-ban only. `pytest-archon` does not exist. **SonarQube** (commercial) has Python architecture rules but requires a server license. | No — grandfathered |
+| 2 | **TypeScript Structural** | `dependency-cruiser` validates dependency graphs, not class-level structural properties (e.g., "all value objects must be readonly interfaces") | ESLint `@typescript-eslint` naming-convention rules + manual code review | **ArchUnitTS** (418 stars, MIT, active) and **ts-arch** (647 stars, MIT, active) are open-source ArchUnit equivalents for TS/JS. Both support dependency direction, naming conventions, code metrics, and UML diagram validation. Neither was adopted when the React boilerplate was established (they were less mature). Evaluate for adoption in next quarterly tool review. | No — grandfathered |
+| 3 | **SQLModel Table Naming** | `pytest` alone cannot verify that `__tablename__` is explicitly declared (runtime error if missing) | AST check in `test_comprehensive_architecture.py` validates `__tablename__` literal presence | No open-source static analyzer for SQLModel `__tablename__` omissions. **SonarQube** Python analyzer does not cover this. | No — bundled with Gap 1 |
+| 4 | **SQLModel Foreign Key Mismatch** | No tool validates that `relationship("Order")` references an entity whose `table=True` model exists | AST check parses `relationship()` call arguments and resolves them against declared `__tablename__` values | No open-source tool validates SQLAlchemy relationship targets against declared tables. **SonarQube** does not cover this. | No — bundled with Gap 1 |
+| 5 | **Router Registration Guard** | No static tool verifies that FastAPI routers imported in `routers/__init__.py` are actually registered in `main.py` with `app.include_router()` | Custom AST traversal compares `imported_names` in `routers/__init__.py` against `include_router(arg_name)` calls | No open-source tool covers FastAPI router registration completeness. | No — bundled with Gap 1 |
+
+### Alternative Tools Under Evaluation
+
+The following tools were identified as potential replacements for current workarounds. They are NOT adopted yet pending evaluation:
+
+| Tool | License | Maturity | What It Covers | Why Not Adopted Yet |
+|------|---------|----------|---------------|-------------------|
+| **ArchUnitTS** | MIT | ⭐ 418 stars, last pushed Sep 2025 | Dependency direction, circular deps, naming conventions, code metrics (LCOM, complexity), UML diagram validation, Nx monorepo support | Not available when React boilerplate was established. Evaluate in Q3 2026 tool review. |
+| **ts-arch** | MIT | ⭐ 647 stars, last release Dec 2024 | File/folder dependency checks, cycle detection, PlantUML diagram validation, Nx monorepo support | Same as above. Simpler API than ArchUnitTS but fewer features. |
+| **SonarQube** | Commercial / LGPL community edition | Enterprise standard | Multi-language static analysis, code smells, security hotspots, architecture rules | Violates our **open-source-first policy** (Standard 21 § Principle). Community edition lacks architecture rules. Only acceptable for teams with existing SonarQube licenses. |
+
+### Adding New Custom Verification Scripts
+
+Any team wishing to add a **new custom verification script** (beyond the 5 grandfathered exceptions above) MUST:
+
+1. **Demonstrate** that the tool gap cannot be closed by an existing open-source tool (check the Alternatives Evaluated table above first)
+2. **File an ADR** explaining why no open-source tool covers the requirement
+3. **Constrain the script** to a whitelist of checks (no general-purpose AST parsing)
+4. **Self-test the script** with at least one positive and one negative case
+5. **Get approval** from the architecture team before merging
+
+### Quarterly Tool Review Trigger
+
+The **Alternatives Evaluated** column is a living document. If any of the listed alternatives reaches maturity (stable API, > 6 months without breaking changes, clear migration path), the architecture team MUST open an evaluation ADR to determine whether it replaces the sanctioned workaround. Teams MAY propose early evaluation outside the quarterly cycle.
+
+Violations of this rule will be flagged during architecture audits.
 
 ## References
 
