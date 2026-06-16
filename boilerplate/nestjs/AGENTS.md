@@ -25,6 +25,30 @@
 | Value objects immutable | Use `readonly` fields + no setters |
 | TypeORM: Infrastructure only | No `@Entity` in domain |
 | Dependency-cruiser gate | `npx depcruise --validate` must pass |
+| **Cache port abstracted** | Domain uses `CacheManager` port — Redis stays in infrastructure |
+| **Events via port** | Domain uses `EventPublisher` — concrete broker stays in infrastructure |
+| **Security audit logging** | All auth events go through `SecurityAuditLogger` |
+| **Rate limiting enforced** | `RateLimitInterceptor` globally applied |
+| **Saga compensation** | Every distributed step has a compensating rollback |
+| **Outbox for event reliability** | Domain events → outbox → relay → broker |
+| **State machine for order lifecycle** | Valid transitions enforced in domain, not DB |
+
+### 1.2 Cross-Stack Pattern Mapping
+
+| Pattern | Java | Python | NestJS |
+|---------|------|--------|--------|
+| Architecture test | ArchUnit | pytest-archon | dependency-cruiser |
+| Cache | `CacheManager` + `RedisCacheManager` | `CacheManager` + `RedisCacheManager` | `CacheManager` port + `RedisCacheAdapter` |
+| Event publishing | `EventPublisher` + `SpringEventPublisher` | `EventPublisher` + `NoOpEventPublisher` | `EventPublisher` port + `EventEmitterPublisherAdapter` |
+| Rate limiting | `RateLimitFilter` (Bucket4j) | `RateLimitMiddleware` (Redis sliding window) | `RateLimitInterceptor` (in-memory / Redis) |
+| Security audit | `SecurityAuditLogger` + MDC | `security_audit_logger` module | `SecurityAuditLogger` service |
+| Batch jobs | Spring Batch + Quartz | Prefect flows | `@nestjs/schedule` + `BatchJobService` |
+| Saga | `OrderCreationSaga` | `order_creation_saga` | `OrderCreationSaga` |
+| State machine | Spring State Machine | Manual transitions dict | `OrderStateMachine` (pure TS) |
+| Resilience | Resilience4j (circuit breaker) | `tenacity` + `httpx` | `ResilientHttpClient` (axios + custom circuit) |
+| Metrics | Micrometer + actuator | `prometheus_client` | `prom-client` + `MetricsController` |
+| Outbox pattern | `OutboxEvent` JPA entity | `OutboxEvent` SQLAlchemy model | `OutboxEvent` TypeORM entity + `OutboxRelayService` |
+| MFA models | `MfaMethod` enum | `mfa_method` enum | `MfaMethod` enum + `MfaConfig` port |
 
 ### 1.2 Naming Conventions
 
@@ -72,31 +96,84 @@ DELETE /api/v1/orders/{id}      # Delete
 order-service/
 ├── src/
 │   ├── main.ts                               # NestJS entry point
-│   ├── app.module.ts                         # Root module
+│   ├── app.module.ts                         # Root module — wiring + DI container
+│   ├── shared/
+│   │   └── constants.ts                     # DI tokens (Symbol.for ports)
 │   ├── domain/                               # Pure TypeScript — zero frameworks
-│   │   ├── models/                          # Aggregates, value objects, enums
+│   │   ├── models/                          # Aggregates, VOs, enums
+│   │   │   ├── order.aggregate.ts
+│   │   │   ├── order-id.value-object.ts
+│   │   │   ├── order-item.value-object.ts
+│   │   │   ├── order-status.enum.ts
+│   │   │   ├── order-state.enum.ts          # State machine states
+│   │   │   ├── order-event.enum.ts          # State machine events
+│   │   │   └── mfa-method.enum.ts           # MFA method types
 │   │   ├── events/                          # Domain events (past tense)
-│   │   ├── ports/                           # Repository interfaces
+│   │   │   └── order-placed.event.ts
+│   │   ├── ports/                           # Repository + service interfaces
+│   │   │   ├── order-repository.port.ts
+│   │   │   ├── cache-manager.port.ts
+│   │   │   ├── event-publisher.port.ts
+│   │   │   └── mfa-config.port.ts
+│   │   ├── services/                        # Pure domain services
+│   │   │   ├── order-placement.service.ts
+│   │   │   └── order-state-machine.service.ts
 │   │   └── exceptions/                      # Domain exceptions
-│   ├── application/                         # Use cases, DTOs, service interfaces
+│   │       ├── domain.exception.ts
+│   │       ├── cache.exception.ts
+│   │       └── event-publish.exception.ts
+│   ├── application/                         # Use cases, DTOs, sagas
 │   │   ├── dtos/                            # Data Transfer Objects
+│   │   │   ├── place-order.dto.ts
+│   │   │   └── order-response.dto.ts
 │   │   ├── usecases/                        # Use case interfaces + impl
-│   │   └── services/                        # Application services
+│   │   │   ├── place-order.use-case.interface.ts
+│   │   │   └── place-order.use-case.impl.ts
+│   │   ├── services/                        # Application services
+│   │   │   └── order.application-service.ts
+│   │   └── sagas/                           # Saga orchestrators
+│   │       └── order-creation.saga.ts
 │   ├── infrastructure/                      # Adapters: controllers, entities, DB
 │   │   ├── api/                             # @Controller REST endpoints
+│   │   │   ├── order.controller.ts
+│   │   │   └── order-state.controller.ts    # State machine endpoint
 │   │   ├── persistence/                     # TypeORM entities + mapper + repository
-│   │   ├── http/                            # External HTTP clients
+│   │   │   ├── order.entity.ts
+│   │   │   ├── order.mapper.ts
+│   │   │   ├── order.typeorm-repository.ts
+│   │   │   └── outbox-event.entity.ts       # Outbox pattern
+│   │   ├── logging/                         # Correlation ID + audit
+│   │   │   ├── correlation-id.interceptor.ts
+│   │   │   ├── logging.interceptor.ts
+│   │   │   └── security-audit-logger.service.ts
+│   │   ├── ratelimit/                       # Tiered rate limiting
+│   │   │   └── rate-limit.interceptor.ts
+│   │   ├── cache/                           # Redis cache adapter
+│   │   │   ├── redis-cache.adapter.ts
+│   │   │   └── cache-invalidation.service.ts
+│   │   ├── events/                          # Event publisher adapters
+│   │   │   ├── event-emitter-publisher.adapter.ts
+│   │   │   └── outbox-relay.service.ts
+│   │   ├── http/                            # External HTTP client with resilience
+│   │   │   └── resilient-http-client.ts
+│   │   ├── metrics/                         # Prometheus metrics endpoint
+│   │   │   └── metrics.controller.ts
 │   │   └── health/                          # Health checks
+│   │       └── health.controller.ts
 │   └── config/                              # NestJS ConfigModule registration
+│       └── database.config.ts
 ├── test/
 │   ├── unit/                                # Jest unit tests
+│   │   ├── domain/
+│   │   ├── application/
+│   │   └── infrastructure/
 │   ├── integration/                         # NestJS Test module tests
 │   └── archunit/                            # dependency-cruiser + structural
 ├── .dependency-cruiser.cjs                  # Architecture validation rules
 ├── package.json
 ├── tsconfig.json
 ├── nest-cli.json
-├── jest*.config.js
+├── jest*.config.js                          # Unit, integration, arch configs
 └── Dockerfile
 ```
 
