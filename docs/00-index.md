@@ -47,15 +47,13 @@ See [03-python/00-index.md](03-python/00-index.md) for the full catalog.
 ### 🦅 NestJS / TypeORM / React
 Platform-specific guidance for the NestJS stack.
 
-| # | Directory | Purpose |
-|---|-----------|---------|
-| [10](04-nestjs/01-backend/) | **Backend** | NestJS, TypeORM, Domain-Driven Design |
-| [20](04-nestjs/02-frontend/) | **Frontend** | React, TypeScript |
-| [30](04-nestjs/03-devops/) | **DevOps** | CI/CD, Docker, Kubernetes |
-| [40](04-nestjs/04-adrs/) | **ADRs** | Stack-specific architectural decisions |
-| [50](04-nestjs/05-guidelines/) | **Guidelines** | Async patterns, interceptors |
+|| # | Document | Purpose |
+|---|---|----------|---------|
+|| 01 | [`boilerplate/nestjs/AGENTS.md`](../boilerplate/nestjs/AGENTS.md) | NestJS boilerplate agent instructions |
+|| 02 | [`01-agnostic/01-standards/26-agents-nestjs.md`](01-agnostic/01-standards/26-agents-nestjs.md) | NestJS agent standards |
+|| 03 | [`boilerplate/nestjs/PARITY_REPORT.md`](../boilerplate/nestjs/PARITY_REPORT.md) | Cross-stack parity report |
 
-See [04-nestjs/00-index.md](04-nestjs/00-index.md) for the full catalog.
+See [`boilerplate/nestjs/AGENTS.md`](../boilerplate/nestjs/AGENTS.md) for the full NestJS boilerplate guide.
 
 ---
 

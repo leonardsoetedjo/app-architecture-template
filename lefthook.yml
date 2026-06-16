@@ -173,6 +173,16 @@ pre-commit:
         - merge
         - rebase
 
+    nestjs-arch-jest:
+      glob: "boilerplate/nestjs/**/*.spec.ts"
+      run: |
+        cd boilerplate/nestjs/order-service && \
+        npx jest --config jest-arch.config.js --passWithNoTests
+      require_serial: true
+      skip:
+        - merge
+        - rebase
+
     # ========================================================================
     # Gate 6: Format (All Languages)
     # ========================================================================

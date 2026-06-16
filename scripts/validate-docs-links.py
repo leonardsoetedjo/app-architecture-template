@@ -7,6 +7,8 @@ def validate_links(root_dir):
     link_pattern = re.compile(r'\[([^\]]+)\]\(([^)]+)\)')
     
     for root, dirs, files in os.walk(root_dir):
+        # Skip node_modules and build directories
+        dirs[:] = [d for d in dirs if d not in ('node_modules', 'target', '.git', '__pycache__', '.venv')]
         for file in files:
             if file.endswith('.md'):
                 path = Path(root) / file

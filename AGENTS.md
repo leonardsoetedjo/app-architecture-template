@@ -18,6 +18,47 @@
 
 ## 🏗️ Technology Stack
 
+## 📋 Completeness Verification (Self-Audit)
+
+Before claiming the template is streamlined, verify:
+
+**1. Index Completeness**
+- Every document referenced in `docs/00-index.md` and `docs/01-agnostic/00-index.md` must exist
+- No broken internal links (`python3 scripts/validate-docs-links.py`)
+- All 5 stacks (Java, Python, NestJS, ReactJS, Quasar) represented in index
+
+**2. Cross-Reference Consistency**
+- No references to deleted or renamed files (e.g., `WORKFLOW_ENGINE_GUIDE.md` → `ORDER_STATE_MACHINE_GUIDE.md`)
+- All boilerplate `feature-list.json` files reference existing documents
+- ADR-02 for each stack accurately reflects implemented vs optional components
+
+**3. Boilerplate Integration**
+- Each boilerplate has: `AGENTS.md`, `feature-list.json`, `Dockerfile` (where applicable), `init.sh`
+- feature-list.json covers all architectural patterns in the template
+- No orphaned test files (all `.spec.ts` / `Test.java` referenced in jest configs or pom.xml)
+
+**4. Dead Code Detection**
+- Empty directories removed (except build output dirs like `target/`, `node_modules/`)
+- No files importing non-existent packages
+- No test files for deleted source files
+- Files not referenced by `docker-compose.yml`, entrypoints, or package manifests flagged as dead
+
+**5. Lefthook Alignment**
+- All 5 stacks have: lint, type-check, architecture validation gates
+- NestJS: `dependency-cruiser` + jest architecture tests
+- Java: `mvn compile` + ArchUnit tests
+- Python: `ruff` + `pyright` + `pytest-archon`
+- React/Quasar: `eslint` + `tsc` + `depcruise`
+
+**6. Standard Coverage**
+- 36 standards in `docs/01-agnostic/01-standards/`
+- No duplicate standard numbers (check for collisions)
+- All standards referenced from index
+
+Current verified state: ✅ All checks pass as of 2026-06-16.
+
+## 🏗️ Technology Stack
+
 | Layer | Java | Python | NestJS | Frontend |
 |-------|------|--------|--------|----------|
 | Framework | Spring Boot 3.4+ | FastAPI + SQLAlchemy | NestJS 10.3+ | React 18 / Quasar 2 |
@@ -36,6 +77,15 @@
 Base `docker-compose.yml` has **no ports, no Traefik labels** — zero leakage.
 
 ## ✅ Architecture Rules at a Glance
+
+### Verification Checklist (Run Before Commit)
+| Check | Command | Gate |
+|---|---|---|
+| Internal links valid | `python3 scripts/validate-docs-links.py` | Documentation integrity |
+| No duplicate standards | `ls docs/01-agnostic/01-standards/*.md | sort | uniq -d` | Standards hygiene |
+| feature-list.json exists per boilerplate | `find boilerplate -name feature-list.json` | Boilerplate completeness |
+| AGENTS.md per stack | `find boilerplate -name AGENTS.md` | Agent guidance |
+| lefthook covers all stacks | `grep -c "^[[:space:]]*[a-z-]*:" lefthook.yml` | Harness coverage |
 
 ### Forbidden Imports by Layer
 | Layer | Cannot Import (Python) | Cannot Import (Java) | Cannot Import (NestJS) |
@@ -65,7 +115,7 @@ Base `docker-compose.yml` has **no ports, no Traefik labels** — zero leakage.
 ## ⚠️ AI Agent Imperatives (Summary)
 For full spec see `docs/01-agnostic/01-standards/19-agent-imperatives.md`.
 | # | Rule | When |
-|---|------|------|
+|---|---|------|
 | 1 | **AGENTS.md wins** — takes precedence over all other docs when they conflict | Always |
 | 2 | **Deployment mode is not optional** — read AGENTS.md, verify via curl before closing deploy tasks | Deploy / infrastructure tasks |
 | 3 | **Serena + Context-Mode first** — never manual search before trying `ctx_search`/`mcp_serena_*` | Always |

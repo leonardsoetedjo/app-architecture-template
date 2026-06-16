@@ -5,5 +5,154 @@
     "status": "implemented",
     "standard": "02-architecture.md",
     "pattern_demo": "Domain/Application/Infrastructure layers with dependency-cruiser"
+  },
+  {
+    "id": "STATE-MACHINE-001",
+    "title": "Order State Machine",
+    "status": "implemented",
+    "standard": "ORDER_STATE_MACHINE_GUIDE.md",
+    "criteria": [
+      "9 states (PENDING through REFUNDED)",
+      "11 valid transitions with guard conditions",
+      "3 terminal states (COMPLETED, CANCELLED, REFUNDED)",
+      "Pure TypeScript in domain layer (no framework deps)"
+    ],
+    "passes": true,
+    "notes": "Complete - Uses transitions-like enum-based state machine. See docs/ORDER_STATE_MACHINE_GUIDE.md"
+  },
+  {
+    "id": "CORR-001",
+    "title": "Correlation ID Interceptor",
+    "status": "implemented",
+    "standard": "09-mdc-logging.md",
+    "criteria": [
+      "Generate or propagate correlation-id header",
+      "Log every request with correlation ID",
+      "Include correlation ID in response headers"
+    ],
+    "passes": true
+  },
+  {
+    "id": "AUDIT-001",
+    "title": "Security Audit Logger",
+    "status": "implemented",
+    "standard": "09-mdc-logging.md",
+    "criteria": [
+      "Log security-relevant events (login, logout, access denied)",
+      "Structured JSON output",
+      "Include user identity and timestamp"
+    ],
+    "passes": true
+  },
+  {
+    "id": "RATE-001",
+    "title": "Rate Limiting Interceptor",
+    "status": "implemented",
+    "standard": "05-resilience.md",
+    "criteria": [
+      "Configurable tiered limits per endpoint",
+      "429 response when limit exceeded",
+      "Integration tests verify behavior"
+    ],
+    "passes": true
+  },
+  {
+    "id": "CACHE-001",
+    "title": "Redis Cache Adapter",
+    "status": "implemented",
+    "standard": "05-resilience.md",
+    "criteria": [
+      "Cache manager port defined in domain",
+      "Redis adapter in infrastructure",
+      "Cache invalidation service with event-driven eviction"
+    ],
+    "passes": true
+  },
+  {
+    "id": "EVENT-001",
+    "title": "Event Publisher + Outbox Pattern",
+    "status": "implemented",
+    "standard": "02-eda-outbox.md",
+    "criteria": [
+      "EventPublisher port in domain layer",
+      "EventEmitter adapter in infrastructure",
+      "Outbox entity for reliable delivery",
+      "Outbox relay service with @nestjs/schedule cron"
+    ],
+    "passes": true
+  },
+  {
+    "id": "BATCH-001",
+    "title": "Batch Job Service",
+    "status": "implemented",
+    "standard": "03-batch-idempotency.md",
+    "criteria": [
+      "@Cron decorator for scheduled execution",
+      "Status lifecycle (PENDING, RUNNING, COMPLETED, FAILED)",
+      "Integration with NestJS scheduler module"
+    ],
+    "passes": true
+  },
+  {
+    "id": "SAGA-001",
+    "title": "Order Creation Saga",
+    "status": "implemented",
+    "standard": "02-eda-outbox.md",
+    "criteria": [
+      "Orchestration pattern with compensating transactions",
+      "Inventory reservation + payment authorization + confirmation",
+      "Rollback on failure (release inventory, void payment)"
+    ],
+    "passes": true
+  },
+  {
+    "id": "HTTP-001",
+    "title": "Resilient HTTP Client",
+    "status": "implemented",
+    "standard": "05-resilience.md",
+    "criteria": [
+      "Axios with retry and circuit breaker",
+      "Timeout configuration",
+      "Error propagation with custom exceptions"
+    ],
+    "passes": true
+  },
+  {
+    "id": "MFA-001",
+    "title": "MFA Models and Config Port",
+    "status": "implemented",
+    "standard": "02-architecture.md",
+    "criteria": [
+      "MfaMethod enum (TOTP, SMS, EMAIL, HARDWARE_TOKEN, BACKUP_CODE)",
+      "MfaConfig port in domain layer",
+      "MFA service in infrastructure"
+    ],
+    "passes": true
+  },
+  {
+    "id": "METRICS-001",
+    "title": "Prometheus Metrics",
+    "status": "implemented",
+    "standard": "05-resilience.md",
+    "criteria": [
+      "prom-client for custom metrics",
+      "Metrics controller exposing /metrics endpoint",
+      "HTTP request duration histogram"
+    ],
+    "passes": true
+  },
+  {
+    "id": "ARCH-001",
+    "title": "Architecture Tests",
+    "status": "implemented",
+    "standard": "02-architecture.md",
+    "criteria": [
+      "dependency-cruiser config (.dependency-cruiser.cjs)",
+      "dependency-rules.spec.ts (layer imports)",
+      "structural-rules.spec.ts (naming conventions)",
+      "No framework imports in domain layer"
+    ],
+    "passes": true,
+    "notes": "Integration tests cover order API, state machine, MFA, Redis caching"
   }
 ]

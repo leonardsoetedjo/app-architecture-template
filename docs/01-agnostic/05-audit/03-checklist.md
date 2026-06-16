@@ -107,7 +107,7 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
 - [ ] **Cache Strategy**: If caching is used, is there a defined TTL and invalidation strategy?
 
 ### 5.1 Batch Jobs
-> **Reference**: [`03-batch-idempotency.md`](../../02-adrs/03-batch-idempotency.md)
+> **Reference**: [`03-batch-idempotency.md`](../02-adrs/03-batch-idempotency.md)
 
 - [ ] **Deterministic IDs**: Batch-inserted records use natural keys or hashed composite keys, not auto-increment/sequence PKs.
 - [ ] **Upsert Pattern**: Batch writer uses `INSERT ... ON CONFLICT` (PostgreSQL) or equivalent merge strategy; no raw `INSERT` without conflict handling.
@@ -118,7 +118,7 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
 
 ## 6. Event-Driven Architecture
 
-> **Reference**: [`02-eda-outbox.md`](../../02-adrs/02-eda-outbox.md)
+> **Reference**: [`02-eda-outbox.md`](../02-adrs/02-eda-outbox.md)
 
 - [ ] **Outbox Relay Active**: A background process (poller, CDC, or scheduler) reads `outbox_events` and publishes to the broker; no events sit unpublished indefinitely.
 - [ ] **Broker Persistence**: The message broker is configured for at-least-once delivery with persistence (not ephemeral in-memory only).
@@ -130,7 +130,7 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
 
 ## 7. Port & Adapter
 
-> **Reference**: [`08-port-adapter.md`](../../02-adrs/08-port-adapter.md)
+> **Reference**: [`08-port-adapter.md`](../02-adrs/08-port-adapter.md)
 
 - [ ] **Factory Present**: A factory function or DI configuration selects the concrete adapter based on `settings.*_MOCK` or environment; no service instantiates an adapter directly.
 - [ ] **Mock in Tests**: Unit tests for services that depend on external APIs use the mock adapter; no HTTP mocking libraries (responses, httpx_mock) are needed for those tests.
