@@ -408,7 +408,7 @@ This is a **custom AST-based harness** (see Standard 21 § Known Tool Gaps for r
 Fail: `Domain layer has N forbidden imports` or `Found M SQLModel classes missing __tablename__`
 Fix: Remove forbidden import; add `__tablename__`; register router in `api.py`
 
-**Known Tool Gap**: Python has no open-source equivalent of ArchUnit for structural rules (dataclass usage, naming conventions, frozen value objects). The `import-linter` project covers import-ban rules only. Our `test_comprehensive_architecture.py` is the sanctioned custom script exception per Standard 21 § Compliance Checklist item 6.
+**Known Tool Gap**: Python has no open-source equivalent of ArchUnit for structural rules (dataclass usage, naming conventions, frozen value objects). The `import-linter` project covers import-ban rules only. **SonarQube** (commercial) has Python architecture rules but requires a server license, violating our open-source-first policy. Our `test_comprehensive_architecture.py` is the sanctioned custom script exception per Standard 21 § Compliance Checklist item 6.
 
 **TypeScript / React / Quasar** (`dependency-cruiser` via `npx depcruise --validate`)
 
@@ -425,6 +425,8 @@ Fail: `dependency-cruiser: ${rule}: ${from} → ${to}`
 Fix: Introduce intermediary type/DI context; break cycle by extracting shared module; replace `any` with proper type
 
 **Known Tool Gap**: `dependency-cruiser` validates dependency graphs, not class-level structural properties (e.g., "all value objects must be readonly interfaces"). Those checks are enforced via ESLint `@typescript-eslint` rules or manual review.
+
+**Alternatives Evaluated**: ArchUnitTS (418 stars, MIT, active) and ts-arch (647 stars, MIT, active) are TypeScript ArchUnit equivalents that do support naming conventions and structural rules. Neither was mature when the React boilerplate was established; evaluate in Q3 2026 tool review per Standard 25.
 
 ---
 
