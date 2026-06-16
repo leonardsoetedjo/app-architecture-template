@@ -4,6 +4,30 @@
 
 ---
 
+---
+
+## 0. Process Compliance
+
+> **Reference**: `docs/01-agnostic/01-standards/03-workflow.md` §1, §3, §4–5
+
+### 0.1 Qualification Phase
+- [ ] **Qualification Complete**: The linked issue/PR references a qualification comment where edge cases and acceptance criteria were agreed upon before coding.
+- [ ] **AC Binary**: Every acceptance criterion is pass/fail (no subjective language like "fast" or "user-friendly").
+  - *Good AC*: "Order creation returns HTTP 201 with `orderId` in ≤200ms."
+  - *Bad AC*: "Order creation is fast and user-friendly."
+
+### 0.2 Blast Radius & Interface-First Design
+- [ ] **Blast Radius Declared**: The PR description lists all affected services, DB tables, and downstream consumers.
+- [ ] **Interface-First**: Request/Response DTOs and DB migration files exist in the PR *before* business logic commits.
+- [ ] **Contract Linked**: The OpenAPI spec (or generated equivalent) is updated and linked in the PR.
+
+### 0.3 Test-First & Self-Audit
+- [ ] **Test-First Evidence**: The earliest commit in the PR branch is a test commit (or test file timestamps predate implementation files).
+- [ ] **Self-Audit Run**: Developer confirms `./scripts/architecture-pre-commit.sh` (or equivalent) passed locally before PR submission.
+- [ ] **Performance Sanity**: For data-intensive changes, developer confirmed no N+1 queries or unindexed columns via `EXPLAIN ANALYZE`.
+
+---
+
 ## 1. Clean Architecture Layers
 
 - [ ] **Domain Layer**
@@ -125,6 +149,19 @@
 
 ---
 
+## 5.1 Batch Jobs
+
+> **Reference**: `docs/01-agnostic/02-adrs/03-batch-idempotency.md`
+
+- [ ] **Deterministic IDs**: Batch-inserted records use natural keys or hashed composite keys, not auto-increment/sequence PKs.
+- [ ] **Upsert Pattern**: Batch writer uses `INSERT ... ON CONFLICT` (PostgreSQL) or equivalent merge strategy.
+- [ ] **Pure Processor**: `ItemProcessor` has no side effects (no HTTP calls, no DB writes, no email sends).
+- [ ] **JobRepository / State Tracking**: Spring Batch `JobRepository` persists execution state so restarts resume from the last successful chunk.
+- [ ] **Undo Column**: Every table modified by batch jobs has a `last_batch_run_id` column populated by the writer.
+- [ ] **Undo Procedure**: A documented SQL command or script can revert all changes for a given `last_batch_run_id`.
+
+---
+
 ## 6. REST & API Contracts
 
 - [ ] **Controller Layer**
@@ -143,6 +180,29 @@
   - [ ] Global exception handler (`@ControllerAdvice`)
   - [ ] Custom exception classes for domain errors
   - [ ] Proper HTTP status codes for error responses
+
+---
+
+## 6.5 Event-Driven Architecture
+
+> **Reference**: `docs/01-agnostic/02-adrs/02-eda-outbox.md`
+
+- [ ] **Outbox Relay Active**: A background process (poller, CDC, or scheduler) reads `outbox_events` and publishes to the broker.
+- [ ] **Broker Persistence**: The message broker is configured for at-least-once delivery with persistence.
+- [ ] **Idempotent Consumers**: Every event handler is idempotent.
+- [ ] **DLQ Monitored**: Failed events route to a dead-letter queue with an alert.
+- [ ] **Schema Validation**: Incoming events validated against schema before processing.
+- [ ] **Saga Documented**: Saga flow documented with steps and compensation actions.
+- [ ] **Compensation Tested**: Compensation actions have automated tests.
+
+## 6.6 Port & Adapter
+
+> **Reference**: `docs/01-agnostic/02-adrs/08-port-adapter.md`
+
+- [ ] **Factory Present**: A factory selects the concrete adapter based on environment config.
+- [ ] **Mock in Tests**: Unit tests for services that depend on external APIs use the mock adapter.
+- [ ] **Migration Path**: README documents what files change when swapping providers.
+- [ ] **Circuit Breaker**: The real adapter wraps external calls in a circuit breaker.
 
 ---
 

@@ -35,6 +35,34 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
 
 ---
 
+## 0. Process Compliance
+
+> **Reference**: [`03-workflow.md`](../01-standards/03-workflow.md) §1, §3, §4–5
+
+### 0.1 Qualification Phase
+- [ ] **Qualification Complete**: The linked issue/PR references a qualification comment where edge cases and acceptance criteria were agreed upon before coding.
+  - *Audit hint*: Look for a comment or ADR timestamped before the first code commit.
+- [ ] **AC Binary**: Every acceptance criterion is pass/fail (no subjective language like "fast" or "user-friendly").
+  - *Good AC*: "Order creation returns HTTP 201 with `orderId` in ≤200ms."
+  - *Bad AC*: "Order creation is fast and user-friendly."
+
+### 0.2 Blast Radius & Interface-First Design
+- [ ] **Blast Radius Declared**: The PR description lists all affected services, DB tables, and downstream consumers.
+  - *Reference*: [`03-workflow.md`](../01-standards/03-workflow.md) §3
+- [ ] **Interface-First**: Request/Response DTOs and DB migration files exist in the PR *before* business logic commits.
+  - *Audit hint*: Check git timestamps — DTO/migration commits should predate service logic.
+- [ ] **Contract Linked**: The OpenAPI spec (or generated equivalent) is updated and linked in the PR.
+  - *Reference*: [`06-api-contract.md`](../01-standards/06-api-contract.md)
+
+### 0.3 Test-First & Self-Audit
+- [ ] **Test-First Evidence**: The earliest commit in the PR branch is a test commit (or test file timestamps predate implementation files).
+  - *Reference*: [`03-workflow.md`](../01-standards/03-workflow.md) §4
+- [ ] **Self-Audit Run**: Developer confirms `./scripts/architecture-pre-commit.sh` (or equivalent) passed locally before PR submission.
+  - *Reference*: [`21-validation-harness.md`](../01-standards/21-validation-harness.md)
+- [ ] **Performance Sanity**: For data-intensive changes, developer confirmed no N+1 queries or unindexed columns via `EXPLAIN ANALYZE`.
+
+---
+
 ## 1. Clean Architecture & Layering
 
 - [ ] **Domain Isolation**: Does the `domain/` layer have zero imports from `application/`, `infrastructure/`, or any framework (Spring/FastAPI/SQLAlchemy)?
@@ -78,7 +106,38 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
 - [ ] **Entity Integrity**: Do `equals()` and `hashCode()` use a stable business key and getter methods instead of the primary key?
 - [ ] **Cache Strategy**: If caching is used, is there a defined TTL and invalidation strategy?
 
-## 6. Frontend & UI
+### 5.1 Batch Jobs
+> **Reference**: [`03-batch-idempotency.md`](../../02-adrs/03-batch-idempotency.md)
+
+- [ ] **Deterministic IDs**: Batch-inserted records use natural keys or hashed composite keys, not auto-increment/sequence PKs.
+- [ ] **Upsert Pattern**: Batch writer uses `INSERT ... ON CONFLICT` (PostgreSQL) or equivalent merge strategy; no raw `INSERT` without conflict handling.
+- [ ] **Pure Processor**: `ItemProcessor` (or Python equivalent) has no side effects (no HTTP calls, no DB writes, no email sends).
+- [ ] **JobRepository / State Tracking**: The batch framework (Spring Batch `JobRepository` or Python equivalent) persists execution state so restarts resume from the last successful chunk, not from the beginning.
+- [ ] **Undo Column**: Every table modified by batch jobs has a `last_batch_run_id` (or equivalent) column populated by the writer.
+- [ ] **Undo Procedure**: A documented SQL command or script can revert all changes for a given `last_batch_run_id`.
+
+## 6. Event-Driven Architecture
+
+> **Reference**: [`02-eda-outbox.md`](../../02-adrs/02-eda-outbox.md)
+
+- [ ] **Outbox Relay Active**: A background process (poller, CDC, or scheduler) reads `outbox_events` and publishes to the broker; no events sit unpublished indefinitely.
+- [ ] **Broker Persistence**: The message broker is configured for at-least-once delivery with persistence (not ephemeral in-memory only).
+- [ ] **Idempotent Consumers**: Every event handler is idempotent (same event processed twice yields the same outcome).
+- [ ] **DLQ Monitored**: Failed events route to a dead-letter queue/channel with an alert or dashboard.
+- [ ] **Schema Validation**: Incoming events are validated against a schema (Avro, JSON Schema, or protobuf) before processing; invalid events are rejected to DLQ, not silently swallowed.
+- [ ] **Saga Documented**: For cross-context transactions, the saga flow (steps + compensation actions) is documented in `docs/architecture/sagas/` or an ADR.
+- [ ] **Compensation Tested**: Compensation actions have automated tests proving they correctly undo the forward action.
+
+## 7. Port & Adapter
+
+> **Reference**: [`08-port-adapter.md`](../../02-adrs/08-port-adapter.md)
+
+- [ ] **Factory Present**: A factory function or DI configuration selects the concrete adapter based on `settings.*_MOCK` or environment; no service instantiates an adapter directly.
+- [ ] **Mock in Tests**: Unit tests for services that depend on external APIs use the mock adapter; no HTTP mocking libraries (responses, httpx_mock) are needed for those tests.
+- [ ] **Migration Path**: `docs/architecture/adapters/` or README documents what files change when swapping providers.
+- [ ] **Circuit Breaker**: The real adapter wraps external calls in a circuit breaker with a defined fallback.
+
+## 8. Frontend & UI
 
 - [ ] **Symmetry**: Does the frontend use a dedicated service layer? (No direct `axios` calls in components).
   - *Boilerplate reference*: `frontend/src/services/apiClient.ts`.
@@ -89,7 +148,7 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
 - [ ] **TypeScript Discipline**: Is `any` strictly prohibited? Are all props interfaces explicitly defined?
   - *Audit hint*: Run `npx tsc --noEmit` in `frontend/` — any error = fail.
 
-## 7. Testing
+## 9. Testing
 
 - [ ] **Unit Tests**: Is the core domain logic covered by unit tests in isolation?
   - *Boilerplate reference*: [`OrderPlacementServiceTest.java`](../../../boilerplate/java/order-service/src/test/java/com/example/orderservice/domain/services/OrderPlacementServiceTest.java).
