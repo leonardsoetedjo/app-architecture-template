@@ -47,6 +47,7 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 ||| 18 | [agent-session-harness.md](01-standards/18-agent-session-harness.md) | Session harness standard |
 ||| 19 | [agent-imperatives.md](01-standards/19-agent-imperatives.md) | AI Agent Imperatives |
 ||| 20 | [frontend-agent-harness.md](01-standards/20-frontend-agent-harness.md) | Frontend Agent Session Harness |
+||| 20 | [workflow-selection.md](01-standards/20-workflow-selection.md) | Workflow Engine Selection Criteria |
 ||| 21 | [validation-harness.md](01-standards/21-validation-harness.md) | Validation Harness Standard (7 gates) |
 ||| 22 | [validation-harness-guide.md](01-standards/22-validation-harness-guide.md) | Validation Harness Guide |
 ||| 23 | [database-docker-validation.md](01-standards/23-database-docker-validation.md) | Database & Docker Validation |

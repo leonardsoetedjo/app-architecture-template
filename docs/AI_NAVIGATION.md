@@ -29,6 +29,8 @@ status: "Active"
 | **Understand Clean Architecture layers** | `01-agnostic/02-adrs/01-clean-architecture.md` | `ctx_search`, source=`architecture-docs` |
 | **Check layer dependency rules** | `01-agnostic/01-standards/02-architecture.md` | `serena_find_symbol` on `domain/` imports |
 | **Understand workflow lifecycle** | `01-agnostic/01-standards/03-workflow.md` | `writing-plans` skill |
+| **Choose state machine vs workflow engine** | `01-agnostic/01-standards/20-workflow-selection.md` | — |
+| **Implement order state machine** | `docs/ORDER_STATE_MACHINE_GUIDE.md` | `writing-plans` skill |
 | **Review SOLID principles** | `01-agnostic/01-standards/04-solid-principles.md` | `ctx_search` |
 | **Add resilience patterns** | `01-agnostic/01-standards/05-resilience.md` | `ctx_search`, source=`architecture-docs` |
 | **Design API contract** | `01-agnostic/01-standards/06-api-contract.md` | `ctx_search`, source=`architecture-docs` |
