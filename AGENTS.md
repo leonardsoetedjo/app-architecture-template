@@ -21,10 +21,10 @@
 | Layer | Java | Python | NestJS | Frontend |
 |-------|------|--------|--------|----------|
 | Framework | Spring Boot 3.4+ | FastAPI + SQLAlchemy | NestJS 10.3+ | React 18 / Quasar 2 |
-| Build | Maven | Poetry + pytest | npm + Jest | Vite + TypeScript |
+| Build | Maven | Poetry + pytest | npm + Jest + dependency-cruiser | Vite + TypeScript |
 | Architecture | ArchUnit | pytest-archon | dependency-cruiser | dependency-cruiser |
-| Database | PostgreSQL 14+ | PostgreSQL 14+ | — |
-| Deployment | Docker Compose (dual-mode) | Docker Compose (dual-mode) | Docker Compose + nginx |
+| Database | PostgreSQL 14+ | PostgreSQL 14+ | PostgreSQL 14+ | — |
+| Deployment | Docker Compose | Docker Compose | Docker Compose | Docker Compose + nginx |
 
 ## 🚀 Dual-Mode Deployment
 
