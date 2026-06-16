@@ -12,6 +12,10 @@ public class OrderId {
         this.value = value;
     }
 
+    public static OrderId from(UUID value) {
+        return new OrderId(value);
+    }
+
     public static OrderId generate() {
         return new OrderId(UUID.randomUUID());
     }

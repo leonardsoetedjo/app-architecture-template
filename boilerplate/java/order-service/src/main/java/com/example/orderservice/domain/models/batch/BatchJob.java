@@ -1,6 +1,7 @@
 package com.example.orderservice.domain.models.batch;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Value;
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
  * @see <a href="https://github.com/leonardsoetedjo/app-architecture-template/blob/main/docs/01-agnostic/01-standards/batch-job-status-architecture.md">
  * Batch Job Status Architecture Guide</a>
  */
+@Getter
 @Value
 @Builder
 public class BatchJob {

@@ -1,7 +1,7 @@
 package com.example.orderservice.infrastructure.cache;
 
 import com.example.orderservice.domain.ports.CacheManager;
-import com.example.orderservice.domain.order_id.OrderId;
+import com.example.orderservice.domain.models.OrderId;
 import org.springframework.stereotype.Service;
 
 /**

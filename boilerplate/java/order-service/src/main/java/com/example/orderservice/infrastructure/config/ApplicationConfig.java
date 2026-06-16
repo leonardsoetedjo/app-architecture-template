@@ -2,6 +2,7 @@ package com.example.orderservice.infrastructure.config;
 
 import com.example.orderservice.application.usecases.PlaceOrderUseCase;
 import com.example.orderservice.application.usecases.PlaceOrderUseCaseImpl;
+import com.example.orderservice.domain.ports.EventPublisher;
 import com.example.orderservice.domain.ports.OrderRepository;
 import com.example.orderservice.domain.services.OrderPlacementService;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +21,9 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public PlaceOrderUseCase placeOrderUseCase(OrderPlacementService orderPlacementService) {
-        return new PlaceOrderUseCaseImpl(orderPlacementService);
+    public PlaceOrderUseCase placeOrderUseCase(
+            OrderPlacementService orderPlacementService,
+            EventPublisher eventPublisher) {
+        return new PlaceOrderUseCaseImpl(orderPlacementService, eventPublisher);
     }
 }

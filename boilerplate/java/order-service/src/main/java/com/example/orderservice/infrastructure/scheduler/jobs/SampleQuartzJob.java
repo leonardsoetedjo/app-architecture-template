@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class SampleQuartzJob implements Job {
+    
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SampleQuartzJob.class);
     
     private final BatchJobService batchJobService;
     
@@ -46,7 +49,7 @@ public class SampleQuartzJob implements Job {
             } catch (Exception ex) {
                 log.error("Could not update job status to FAILED", ex);
             }
-            throw new org.quartz.JobExecutionException(e);
+            throw new RuntimeException(e);
         }
     }
 }

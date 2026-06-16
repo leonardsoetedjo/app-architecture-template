@@ -77,7 +77,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
         
         if (probe.isConsumed()) {
             // Add rate limit headers
-            response.setHeader("X-RateLimit-Limit", String.valueOf(probe.getConsumedTokens()));
+            response.setHeader("X-RateLimit-Limit", "0");
             response.setHeader("X-RateLimit-Remaining", String.valueOf(probe.getRemainingTokens()));
             response.setHeader("X-RateLimit-Reset", String.valueOf(
                 System.currentTimeMillis() + Duration.ofMinutes(1).toMillis()

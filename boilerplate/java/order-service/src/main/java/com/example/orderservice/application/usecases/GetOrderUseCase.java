@@ -3,7 +3,7 @@ package com.example.orderservice.application.usecases;
 import com.example.orderservice.domain.models.Order;
 import com.example.orderservice.domain.ports.OrderRepository;
 import com.example.orderservice.domain.ports.CacheManager;
-import com.example.orderservice.domain.order_id.OrderId;
+import com.example.orderservice.domain.models.OrderId;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
