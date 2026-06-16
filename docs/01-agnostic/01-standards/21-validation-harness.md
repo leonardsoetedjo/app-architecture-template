@@ -13,15 +13,17 @@ This implements **Imperative 10** (Validate Before Build) and **Imperative 11** 
 
 ## The Pattern (Language-Agnostic)
 
-Every project, regardless of language, MUST have these **5 validation gates**:
+Every project, regardless of language, MUST have these **7 validation gates**:
 
-| Gate | Purpose | Python | TypeScript | Java | Database | Docker |
-|------|---------|--------|------------|------|----------|--------|
-| **1. Import/Compile** | Verify modules | `python -c "from app.main import app"` | `tsc --noEmit` | `mvn compile` | `alembic check` | `docker-compose config` |
-| **2. Type Check** | Catch type errors | `pyright` | `tsc --noEmit` | `javac` | N/A | N/A |
-| **3. Lint** | Catch style/bugs | `ruff check` | `eslint` | `checkstyle` | N/A | `hadolint` |
-| **4. Architecture** | Enforce boundaries | `import-linter` | `dependency-cruiser` | `ArchUnit` | N/A | N/A |
-| **5. Tests** | Verify behavior | `pytest` | `vitest` | `JUnit` | `pytest tests/migrations/` | `docker build` |
+| Gate | Purpose | Python | TypeScript | Java | Database | Docker | Format | Security |
+|------|---------|--------|------------|------|----------|--------|--------|----------|
+| **1. Import/Compile** | Verify modules | `python -c "from app.main import app"` | `tsc --noEmit` | `mvn compile` | `alembic check` | `docker-compose config` | — | — |
+| **2. Type Check** | Catch type errors | `pyright` | `tsc --noEmit` | `javac` | N/A | N/A | — | — |
+| **3. Lint** | Catch style/bugs | `ruff check` | `eslint` | `checkstyle` | N/A | `hadolint` | — | — |
+| **4. Architecture** | Enforce boundaries | `import-linter` | `dependency-cruiser` | `ArchUnit` | N/A | N/A | — | — |
+| **5. Format** | Consistent formatting | `black` / `ruff format` | `prettier` | `google-java-format` | N/A | N/A | POSIX sed | — |
+| **6. Security** | Catch secrets / CVEs | `bandit` / `semgrep` | `npm audit` | `SpotBugs` + `OWASP Dep-Check` | N/A | `trivy` | — | — |
+| **7. Tests** | Verify behavior | `pytest` | `vitest` | `JUnit` | `pytest tests/migrations/` | `docker build` | — | — |
 
 **Key insight:** The **gate names and purposes are universal**. Only the tool names change per language.
 
@@ -217,12 +219,12 @@ Required fields for ALL handoffs:
 Before merging ANY project (any language):
 
 - [ ] `lefthook.yml` exists in repository root
-- [ ] All 5 validation gates configured (import, type, lint, arch, test)
+- [ ] All 7 validation gates configured (import, type, lint, arch, format, security, test)
 - [ ] Lefthook installed (`lefthook install`)
-- [ ] CI/CD runs all 5 gates
+- [ ] CI/CD runs all 7 gates
 - [ ] GitHub Issue Template for handoffs exists
 - [ ] Profile skills document validation requirements
-- [ ] No custom validation scripts (unless no open source alternative)
+- [ ] No custom validation scripts (unless no open source alternative — see Appendix)
 
 ## Required Artifacts (Python Boilerplate)
 
@@ -246,6 +248,267 @@ The Python boilerplate MUST contain these files:
 **Corrected fix:** Use `pre-commit` framework with open source tools
 
 **Lesson:** Always reach for open source tools first. Custom scripts are a last resort, not a first choice.
+
+## Appendix — Detailed Per-Tool Verification Matrix
+
+> This appendix specifies exactly what each tool verifies at each gate, so an auditor or AI agent can map a failing gate to its root cause in seconds.
+
+### How to read this matrix
+
+- **Gate**: The validation phase (runs in order)
+- **Tool**: The open-source tool performing the check
+- **Verification**: The exact assertion / rule / pattern checked
+- **Fail mode**: What the error looks like
+- **Fix pattern**: The typical correction
+
+---
+
+### Gate 1: Import / Compile
+
+**Purpose**: Confirm every module referenced by the codebase can be resolved at runtime.
+
+**Java** (`mvn compile -q`)
+- Verify every `import` resolves to a class on the classpath
+- Verify generic type bounds are compatible (compile-time only)
+- Fail: `cannot find symbol`, `package does not exist`, `incompatible types`
+- Fix: Add missing dependency; fix package path; add `src/main/java` to classpath
+
+**Python** (`python -c "from src.main import app"`)
+- Verify every `import` resolves to an installable module
+- Verify no circular import deadlock at module-load time
+- Verify FastAPI app object instantiates without exception
+- Fail: `ModuleNotFoundError`, `ImportError`, `AttributeError` on app
+- Fix: Add to `pyproject.toml` dependencies; correct import path; remove cyclic import
+
+**TypeScript** (`tsc --noEmit`)
+- Verify every `import`/`export` resolves via `tsconfig.json` paths
+- Verify `.d.ts` declarations exist for untyped packages
+- Fail: `Cannot find module`, `Could not find a declaration file`
+- Fix: `npm install -D @types/X`; add `declare module` stub; fix relative path
+
+**React** (`npx tsc --noEmit`)
+- Same as TypeScript gate above, plus JSX factory resolution
+- Fail: `Cannot find module 'react/jsx-runtime'`
+- Fix: Ensure `react` and `@types/react` are in `devDependencies`
+
+**Quasar** (`npx vue-tsc --noEmit`)
+- Same as React, plus Vue SFC `<script setup>` type inference
+- Verify `*.vue` files have matching type stubs (`shims-vue.d.ts`)
+- Fail: `Property does not exist on type` inside template bindings
+- Fix: Declare component emits/props explicitly; add `vite-env.d.ts`
+
+---
+
+### Gate 2: Type Check
+
+**Purpose**: Surface type-safety violations before runtime.
+
+**Java** (`javac` — runs inside `mvn compile`)
+- Verify method signatures satisfy declared generics
+- Verify checked-exception propagation is declared or caught
+- Fail: `incompatible types`, `unreported exception`, `unchecked conversion`
+- Fix: Correct generic bound; add `throws` or `try/catch`; use `<? extends T>`
+
+**Python** (`pyright src/`)
+- Verify PEP-484 type hints match inferred runtime types
+- Verify `TypedDict`, `Protocol`, `Generic` constraints hold
+- Verify SQLModel relationship types (e.g., `Relationship[List[X]]`)
+- Fail: `Argument of type "str" cannot be assigned to parameter of type "int"`, `Unknown` type
+- Fix: Add missing type hints; install stub packages; narrow `Union` branches
+
+**TypeScript / React / Quasar** (`tsc --noEmit` / `vue-tsc --noEmit`)
+- Verify `strict: true` violations (`noImplicitAny`, `strictNullChecks`)
+- Verify generic inference on React hooks (`useState<Type>`)
+- Verify Vue composable return types match destructuring sites
+- Fail: `Type 'null' is not assignable to type 'string'`, `Parameter implicitly has 'any' type`
+- Fix: Add explicit generic argument; guard null with `if (x !== null)`; enable `strict: true`
+
+---
+
+### Gate 3: Lint
+
+**Purpose**: Enforce style, catch anti-patterns, and flag suspicious code.
+
+**Python** (`ruff check src/ tests/`)
+- **Style**: PEP 8 line length, blank lines, import sorting
+- **Bugs**: Unused imports, shadowed builtins, mutable default args
+- **Security**: `eval()` usage, hardcoded secrets, unsafe `subprocess` flags
+- **Architecture drift**: Imports from forbidden packages in wrong layers
+- Fail: `F401` unused import, `E501` line too long, `S102` use of `exec`
+- Fix: `--fix` autofixes style; manual fix for security rules; remove forbidden imports
+
+**Java** (`mvn checkstyle:check`)
+- Verify naming conventions (PascalCase classes, camelCase methods)
+- Verify import ordering (`java.*`, `javax.*`, third-party, project)
+- Verify Javadoc presence on public APIs
+- Fail: `Name 'foo_bar' must match pattern '^[a-z][a-zA-Z0-9]*$'`
+- Fix: Rename to `fooBar`; reorganize imports; add Javadoc comments
+
+**TypeScript / React** (`eslint {staged_files}`)
+- Verify `@typescript-eslint/no-explicit-any` (type-safety)
+- Verify `no-console` (production hygiene)
+- Verify `react-hooks/rules-of-hooks` (Hook call ordering)
+- Verify `@typescript-eslint/no-unused-vars` (dead code)
+- Fail: `Unexpected any`, `React Hook is called conditionally`
+- Fix: Replace `any` with `unknown` + type guard; lift Hook call above conditional
+
+**Quasar** (`eslint {staged_files}`)
+- Same as React, plus Vue-specific rules
+- Verify `vue/require-prop-types` (explicit prop declarations)
+- Verify `vue/no-mutating-props` (read-only props)
+- Fail: `Prop 'foo' should define at least its type`
+- Fix: Add `defineProps<{ foo: string }>()`; clone prop before mutating
+
+---
+
+### Gate 4: Architecture
+
+**Purpose**: Enforce Clean Architecture layer boundaries at build time.
+
+**Java** (`ComprehensiveArchitectureTest.java` via `mvn test`)
+
+Runs 15+ ArchUnit rules:
+
+| Rule | Verification | Severity |
+|------|------------|----------|
+| Layer isolation | `domain` classes never import from `application` or `infrastructure` | error |
+| Ports are interfaces | Classes in `domain.ports` MUST be `interface` | error |
+| Framework isolation (domain) | No Spring/JPA/Lombok annotations in `domain` | error |
+| Framework isolation (app DTOs) | No Lombok in `application.dto` | error |
+| Controller location | `@RestController` MUST reside in `infrastructure.api` | error |
+| JPA entity location | `@Entity` MUST reside in `infrastructure.persistence` | error |
+| Repository location | `@Repository` MUST reside in `infrastructure.persistence` | error |
+| Constructor injection | No field-level `@Autowired` in `infrastructure` or `application` | error |
+| Past-tense events | Classes in `domain.events` (except `*Event`) MUST end in past tense (`ed`/`en`) | error |
+| Repository naming | Interfaces in `domain.ports` MUST end with `Repository` or `Port` | error |
+| Use case naming | Interfaces in `application.usecases` MUST end with `UseCase` | error |
+| Package completeness | Every class MUST live in a recognized layer package | error |
+| No circular dependencies | No package cycles among `domain`, `application`, `infrastructure` | error |
+
+Fail: `Architecture Violation [...] Domain layer must be completely isolated`
+Fix: Move offending class to correct layer; extract interface; use dependency inversion
+
+**Python** (`test_comprehensive_architecture.py` via `pytest`)
+
+This is a **custom AST-based harness** (see Standard 21 § Known Tool Gaps for rationale):
+
+| Test function | Verification | Severity |
+|-------------|------------|----------|
+| `test_domain_has_no_framework_imports` | `domain/` files contain no `import fastapi/sqlalchemy/pydantic/redis/alembic` | error |
+| `test_application_has_no_infrastructure_imports` | `application/` files contain no `import fastapi/sqlalchemy/redis/infrastructure` | error |
+| `test_no_circular_dependencies` | `domain/` files contain no `from application` / `from infrastructure` | error |
+| `test_all_domain_classes_use_dataclass` | Every non-exception, non-ABC class in `domain/` MUST have `@dataclass` | warning |
+| `test_value_objects_are_frozen` | Files matching `*_id.py`, `*config.py` MUST use `@dataclass(frozen=True)` | warning |
+| `test_domain_events_named_in_past_tense` | Classes in `domain/events/` MUST end in `ed/en/ne/te` | warning |
+| `test_use_cases_have_execute_method` | Files in `application/usecases/` MUST define `execute(` or `handle(` | warning |
+| `test_sqlmodel_models_have_tablename` | Every `SQLModel(table=True)` MUST declare `__tablename__` | error |
+| `test_sqlmodel_foreign_keys_reference_existing_tables` | Every `foreign_key=` MUST reference a table defined in codebase | error |
+| `test_all_routers_registered_in_api` | Every module defining `APIRouter` MUST be referenced in central `api.py` | error |
+
+Fail: `Domain layer has N forbidden imports` or `Found M SQLModel classes missing __tablename__`
+Fix: Remove forbidden import; add `__tablename__`; register router in `api.py`
+
+**Known Tool Gap**: Python has no open-source equivalent of ArchUnit for structural rules (dataclass usage, naming conventions, frozen value objects). The `import-linter` project covers import-ban rules only. Our `test_comprehensive_architecture.py` is the sanctioned custom script exception per Standard 21 § Compliance Checklist item 6.
+
+**TypeScript / React / Quasar** (`dependency-cruiser` via `npx depcruise --validate`)
+
+Rules are defined in `.dependency-cruiser.cjs`:
+
+| Rule name | Verification | Severity |
+|-----------|------------|----------|
+| `domain-cannot-depend-on-higher-layers` | `src/types` cannot import from `src/hooks`, `src/services`, `src/store`, `src/components`, `src/pages` | error |
+| `hooks-cannot-import-services-directly` | `src/hooks` cannot import from `src/services` (must use DI / context) | error |
+| `no-circular-dependencies` | No module may transitively import itself | error |
+| `no-any-type` | `any` type usage is forbidden globally | error |
+
+Fail: `dependency-cruiser: ${rule}: ${from} → ${to}`
+Fix: Introduce intermediary type/DI context; break cycle by extracting shared module; replace `any` with proper type
+
+**Known Tool Gap**: `dependency-cruiser` validates dependency graphs, not class-level structural properties (e.g., "all value objects must be readonly interfaces"). Those checks are enforced via ESLint `@typescript-eslint` rules or manual review.
+
+---
+
+### Gate 5: Unit / Integration Tests
+
+**Purpose**: Verify behavior against specifications.
+
+**Python** (`pytest tests/unit/`)
+- Run all `test_*.py` functions in `tests/unit/`
+- Verify assertions pass, fixtures resolve, parametrized cases all succeed
+- Fail: `FAILED tests/unit/test_x.py::test_y - AssertionError`
+- Fix: Correct implementation logic; update test expectation if spec changed
+
+**Java** (`mvn test -q`)
+- Run all `*Test.java` classes under `src/test/java`
+- Verify JUnit lifecycle (`@BeforeEach`, `@AfterEach`) executes without error
+- Fail: `Tests run: N, Failures: M`
+- Fix: Check stack trace for NPE, assertion mismatch, or mocking misconfiguration
+
+**TypeScript / React** (`npm run test:unit`)
+- Run all `*.test.ts(x)` files via Vitest
+- Verify component renders, Hook states update, API mocks return expected data
+- Fail: `Expected "Submit" but received ""`
+- Fix: Add `await waitFor(...)` for async DOM updates; fix mock payload shape
+
+**Quasar** (`npm run test:unit`)
+- Same as React, plus Vue SFC compilation in test environment
+- Verify `mount()` from `@vue/test-utils` works with Quasar plugins
+- Fail: `[Vue warn]: Failed to resolve component: q-btn`
+- Fix: Register Quasar plugin in test setup file (`test/setup.ts`)
+
+---
+
+### Gate 6: Format (Pre-commit, all languages)
+
+**Purpose**: Eliminate diff noise from whitespace, trailing commas, quote style.
+
+**Tool**: Custom POSIX commands in `lefthook.yml` (no open-source formatter mandated — teams may opt in to `black`, `prettier`, or `google-java-format`)
+
+- `trailing-whitespace`: `sed -i 's/[[:space:]]*$//' {staged_files}`
+- `end-of-file`: Ensure file terminates with `\n`
+
+**Note**: We intentionally do NOT mandate a specific formatter because format wars waste more time than they save. Projects MAY add `black`, `prettier`, or `spotless` to their own `lefthook.yml`. The template enforces only "no trailing whitespace, files end with newline" as the universal minimum.
+
+---
+
+### Gate 7: Security (Pre-push or CI, recommended)
+
+**Purpose**: Catch secrets, vulnerabilities, and injection vectors before they reach the default branch.
+
+> **Status**: Not yet wired into `lefthook.yml` by default. Projects MUST opt in based on threat model. See Standard `security-architecture-review.md`.
+
+**Python**
+- `bandit -r src/` — detects `eval()`, weak crypto, hardcoded passwords, SQL injection patterns
+- `semgrep --config=auto src/` — community rule packs for Flask/FastAPI, OWASP Top 10
+- Fail: `Issue: [B105] Possible hardcoded password`
+- Fix: Move secret to env var; use parameterized queries; replace `hashlib.md5` with bcrypt
+
+**TypeScript / Node.js**
+- `npm audit` — flags known CVEs in `node_modules`
+- `eslint-plugin-security` — detects unsafe regex, `innerHTML`, `child_process` without shell escape
+- Fail: `1 moderate severity vulnerability`
+- Fix: `npm audit fix`; replace `innerHTML` with `textContent`; sanitize user input
+
+**Java**
+- `OWASP Dependency-Check` — scans Maven dependencies for CVEs
+- `SpotBugs` (with `findsecbugs-plugin`) — detects XSS, SQLi, weak random
+- Fail: `CVE-2023-XXXX in commons-io:2.11.0`
+- Fix: Upgrade dependency; apply vendor patch; add suppression with ADR justification
+
+---
+
+## Known Tool Gaps & Sanctioned Exceptions
+
+Per Standard 21 principle (*"MUST use established open source tools unless no such tool exists"*), these are the documented exceptions:
+
+| Gap | Language | Missing tool equivalent | Sanctioned workaround | Where documented |
+|-----|----------|---------------------------|----------------------|------------------|
+| Structural architecture rules (dataclass, naming, frozen) | Python | No ArchUnit equivalent | `test_comprehensive_architecture.py` (custom AST harness) | This appendix |
+| Structural architecture rules (readonly interfaces, naming) | TypeScript | dependency-cruiser covers graphs only | ESLint custom rules or manual review | This appendix |
+| Router-registration guard | Python | None | `test_all_routers_registered_in_api()` (AST scan for `APIRouter`) | This appendix |
+| SQLModel `__tablename__` / FK validation | Python | None | `test_sqlmodel_models_have_tablename()`, `test_sqlmodel_foreign_keys_reference_existing_tables()` | This appendix |
+
+When adding a new custom verification, file an ADR referencing this standard. Do not silently add custom scripts.
 
 ## References
 

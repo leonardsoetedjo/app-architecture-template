@@ -143,10 +143,10 @@ pre-commit:
         - rebase
 
     # ========================================================================
-    # GENERAL - Code Quality (All Languages)
+    # Gate 6: Format (All Languages)
     # ========================================================================
-    trailing-whitespace:
-      glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json}"
+    format-trailing-whitespace:
+      glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json,xml,gradle}"
       run: |
         sed -i '' 's/[[:space:]]*$//' {staged_files} 2>/dev/null || \
         sed -i 's/[[:space:]]*$//' {staged_files}
@@ -154,14 +154,44 @@ pre-commit:
         - merge
         - rebase
 
-    end-of-file:
-      glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json}"
+    format-end-of-file:
+      glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json,xml,gradle}"
       run: |
-        # Ensure file ends with newline
         [ -n "$(tail -c1 {staged_files})" ] && echo "" >> {staged_files}
       skip:
         - merge
         - rebase
+
+    # ========================================================================
+    # Gate 7: Security (Optional — install tools per project threat model)
+    # ========================================================================
+    # Uncomment after installing security tools in your project:
+    # python-security:
+    #   glob: "*.py"
+    #   run: |
+    #     cd boilerplate/python/order-service && \
+    #     (bandit -r src/ 2>/dev/null || echo "⚠️ bandit not installed")
+    #   skip:
+    #     - merge
+    #     - rebase
+    #
+    # java-security:
+    #   glob: "*.java"
+    #   run: |
+    #     cd boilerplate/java/order-service && \
+    #     (mvn spotbugs:check 2>/dev/null || echo "⚠️ SpotBugs not installed")
+    #   skip:
+    #     - merge
+    #     - rebase
+    #
+    # node-security:
+    #   glob: "*.{ts,tsx,js,jsx,vue}"
+    #   run: |
+    #     cd boilerplate/reactjs && \
+    #     (npm audit --audit-level=moderate 2>/dev/null || echo "⚠️ npm audit not available")
+    #   skip:
+    #     - merge
+    #     - rebase
 
 pre-push:
   parallel: true
