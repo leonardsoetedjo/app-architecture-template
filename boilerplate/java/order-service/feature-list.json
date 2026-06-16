@@ -58,7 +58,7 @@
         "Invalid transitions return 400 Bad Request"
       ],
       "passes": true,
-      "notes": "Complete - Java uses Spring StateMachine, Python uses transitions library. See docs/WORKFLOW_ENGINE_GUIDE.md"
+      "notes": "Complete - Java uses Spring StateMachine, Python uses transitions library. See docs/ORDER_STATE_MACHINE_GUIDE.md"
     },
     {
       "id": "BATCH-001",

@@ -4,7 +4,7 @@ Integration tests for Order API endpoints.
 Tests cover:
 - Order creation with validation
 - Order retrieval with caching
-- Order state transitions (workflow engine)
+- Order state transitions (state machine)
 - RBAC authorization
 - Rate limiting
 - Security audit logging
@@ -159,8 +159,8 @@ async def test_get_order_unauthorized_idor_prevention(client):
 
 
 @pytest.mark.asyncio
-async def test_transition_order_state_workflow_engine(client):
-    """POST /api/v1/orders/{id}/state/confirm-payment - Transition order state (workflow engine)."""
+async def test_transition_order_state_state_machine(client):
+    """POST /api/v1/orders/{id}/state/confirm-payment - Transition order state (state machine)."""
     # Create order
     order_data = {
         "customer_id": "user-123",

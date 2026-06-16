@@ -1,4 +1,4 @@
-# Workflow Engine Implementation Guide
+# Order State Machine Implementation Guide
 
 **Status**: 🟡 **In Progress** (2026-05-25)  
 **Related Issue**: [#73](https://github.com/leonardsoetedjo/app-architecture-template/issues/73)
@@ -7,7 +7,9 @@
 
 ## Overview
 
-This guide documents the workflow engine implementation using state machines for order lifecycle management and the Saga pattern for distributed transactions.
+This guide documents the **order state machine** implementation for single-entity lifecycle management (order states), plus the Saga pattern for distributed transactions.
+
+**Note:** This is an *aggregate state machine*, not a workflow orchestration engine. For long-running, multi-service workflow orchestration, see ADR-02 (optional: Temporal / Airflow / Camunda).
 
 ---
 

@@ -15,6 +15,7 @@
 - ✅ 11 valid transitions with guard conditions
 - ✅ 3 terminal states (COMPLETED, CANCELLED, REFUNDED)
 - ✅ Design document: `docs/01-agnostic/03-guidelines/workflow-state-machine.md`
+- ✅ Implementation guide: `docs/ORDER_STATE_MACHINE_GUIDE.md`
 
 **Java Implementation (Spring Statemachine):**
 - ✅ Spring Statemachine dependency (3.4.0)

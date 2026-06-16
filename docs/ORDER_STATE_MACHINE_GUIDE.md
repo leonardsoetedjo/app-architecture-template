@@ -1,8 +1,10 @@
-# Workflow Engine Implementation Guide
+# Order State Machine Implementation Guide
 
 ## Overview
 
-This template implements a **state machine-based workflow engine** for managing order lifecycle in both Java/Spring Boot and Python/FastAPI stacks. The workflow engine ensures that orders progress through valid state transitions only.
+This template implements a **state machine** for managing order lifecycle in both Java/Spring Boot and Python/FastAPI stacks. The state machine ensures that orders progress through valid state transitions only.
+
+**Note:** This is an *aggregate state machine* for single-entity lifecycle management. For long-running, multi-service workflow orchestration, see the optional Workflow Engine section in ADR-02 (Temporal / Airflow / Camunda).
 
 ## State Machine Design
 
@@ -308,7 +310,7 @@ class OrderStateModel(Base):
 
 ## Saga Pattern Integration
 
-The workflow engine integrates with the Saga pattern for distributed transactions:
+The state machine integrates with the Saga pattern for distributed transactions:
 
 ```java
 // Java Saga
