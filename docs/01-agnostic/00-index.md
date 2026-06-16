@@ -91,7 +91,7 @@ See the [ADR Index (02-adrs/00-adr-index.md)](02-adrs/00-adr-index.md) for the c
 ||---|----------|---------|
 || 10 | [clean-architecture.puml](06-diagrams/01-clean-architecture.puml) | Clean Architecture layers |
 || 20 | [ddd-aggregate.puml](06-diagrams/02-ddd-aggregate.puml) | Clean Architecture layers |
-|| 30 | [microservices.puml](06-diagram_ la.puml) | Microservices topology |
+|| 30 | [microservices.puml](06-diagrams/03-microservices.puml) | Microservices topology |
 || 40 | [outbox-pattern.puml](06-diagrams/04-outbox-pattern.puml) | Outbox transaction flow |
 || 50 | [port-adapter.puml](06-diagrams/05-port-adapter.puml) | Hexagonal architecture |
 || 60 | [event-driven.puml](06-diagrams/06-event-driven.puml) | EDA message flow |
