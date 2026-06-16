@@ -9,6 +9,7 @@
 |-------|---------------------|----------|
 | **Java Spring Boot** | [`boilerplate/java/AGENTS.md`](boilerplate/java/AGENTS.md) | Java DDD boilerplate |
 | **Python FastAPI** | [`boilerplate/python/AGENTS.md`](boilerplate/python/AGENTS.md) | Python DDD boilerplate |
+| **NestJS** | [`boilerplate/nestjs/AGENTS.md`](boilerplate/nestjs/AGENTS.md) | NestJS Clean Architecture boilerplate |
 | **ReactJS Frontend** | [`boilerplate/reactjs/AGENTS.md`](boilerplate/reactjs/AGENTS.md) | React + TypeScript + Ant Design |
 | **Quasar Frontend** | [`boilerplate/quasar/AGENTS.md`](boilerplate/quasar/AGENTS.md) | Quasar + Vue 3 + TypeScript |
 | **Template maintenance** | ⬅️ You are here (this file) | Standards, ADRs, cross-stack patterns |
@@ -17,11 +18,11 @@
 
 ## 🏗️ Technology Stack
 
-| Layer | Java | Python | Frontend |
-|-------|------|--------|----------|
-| Framework | Spring Boot 3.4+ | FastAPI + SQLAlchemy | React 18 / Quasar 2 |
-| Build | Maven | Poetry + pytest | Vite + TypeScript |
-| Architecture | ArchUnit | pytest-archunit | dependency-cruiser |
+| Layer | Java | Python | NestJS | Frontend |
+|-------|------|--------|--------|----------|
+| Framework | Spring Boot 3.4+ | FastAPI + SQLAlchemy | NestJS 10.3+ | React 18 / Quasar 2 |
+| Build | Maven | Poetry + pytest | npm + Jest | Vite + TypeScript |
+| Architecture | ArchUnit | pytest-archon | dependency-cruiser | dependency-cruiser |
 | Database | PostgreSQL 14+ | PostgreSQL 14+ | — |
 | Deployment | Docker Compose (dual-mode) | Docker Compose (dual-mode) | Docker Compose + nginx |
 
@@ -37,11 +38,11 @@ Base `docker-compose.yml` has **no ports, no Traefik labels** — zero leakage.
 ## ✅ Architecture Rules at a Glance
 
 ### Forbidden Imports by Layer
-| Layer | Cannot Import (Python) | Cannot Import (Java) |
-|-------|------------------------|----------------------|
-| **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` |
-| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks |
-| **Infrastructure** | *(none — can import all)* | *(none — can import all)* |
+| Layer | Cannot Import (Python) | Cannot Import (Java) | Cannot Import (NestJS) |
+|-------|------------------------|----------------------|------------------------|
+| **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` | `@nestjs/*`, `typeorm`, `class-validator` |
+| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks | `typeorm`, `@nestjs/platform-express` |
+| **Infrastructure** | *(none — can import all)* | *(none — can import all)* | *(none — can import all)* |
 
 ### Required Patterns
 1. Repositories → Interface in `domain/ports/`, implementation in `infrastructure/persistence/`

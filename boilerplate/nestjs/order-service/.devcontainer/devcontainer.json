@@ -1,0 +1,21 @@
+{
+  "name": "NestJS Order Service",
+  "dockerComposeFile": "../../docker-compose.yml",
+  "service": "order-service",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "firsttris.vscode-jest-runner"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
+    }
+  },
+  "postCreateCommand": "npm ci",
+  "remoteUser": "node"
+}

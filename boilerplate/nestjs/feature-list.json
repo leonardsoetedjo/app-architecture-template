@@ -1,0 +1,9 @@
+[
+  {
+    "id": "FEAT-001",
+    "title": "NestJS Clean Architecture boilerplate",
+    "status": "implemented",
+    "standard": "02-architecture.md",
+    "pattern_demo": "Domain/Application/Infrastructure layers with dependency-cruiser"
+  }
+]

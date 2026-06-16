@@ -1,0 +1,30 @@
+[
+  {
+    "id": "FEAT-001",
+    "title": "Order placement with Clean Architecture",
+    "status": "implemented",
+    "standard": "Boilerplate reference",
+    "pattern_demo": "domain/aggregate + application/usecase + infrastructure/controller + mapper + tests"
+  },
+  {
+    "id": "FEAT-002",
+    "title": "Dependency-cruiser architecture validation",
+    "status": "implemented",
+    "standard": "21-validation-harness.md Gate 4",
+    "pattern_demo": ".dependency-cruiser.cjs + test/archunit/*.spec.ts"
+  },
+  {
+    "id": "FEAT-003",
+    "title": "TypeORM persistence adapter with mapper",
+    "status": "implemented",
+    "standard": "02-architecture.md",
+    "pattern_demo": "infrastructure/persistence/entity + mapper + repository + port injection"
+  },
+  {
+    "id": "FEAT-004",
+    "title": "Domain state machine for Order status",
+    "status": "implemented",
+    "standard": "Domain-Driven Design",
+    "pattern_demo": "VALID_TRANSITIONS record + assertCanTransitionTo method"
+  }
+]

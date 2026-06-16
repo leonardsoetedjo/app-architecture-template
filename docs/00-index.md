@@ -44,6 +44,19 @@ Platform-specific guidance for the Python stack.
 
 See [03-python/00-index.md](03-python/00-index.md) for the full catalog.
 
+### 🦅 NestJS / TypeORM / React
+Platform-specific guidance for the NestJS stack.
+
+| # | Directory | Purpose |
+|---|-----------|---------|
+| [10](04-nestjs/01-backend/) | **Backend** | NestJS, TypeORM, Domain-Driven Design |
+| [20](04-nestjs/02-frontend/) | **Frontend** | React, TypeScript |
+| [30](04-nestjs/03-devops/) | **DevOps** | CI/CD, Docker, Kubernetes |
+| [40](04-nestjs/04-adrs/) | **ADRs** | Stack-specific architectural decisions |
+| [50](04-nestjs/05-guidelines/) | **Guidelines** | Async patterns, interceptors |
+
+See [04-nestjs/00-index.md](04-nestjs/00-index.md) for the full catalog.
+
 ---
 
 ## 🤖 AI Agent Guidance

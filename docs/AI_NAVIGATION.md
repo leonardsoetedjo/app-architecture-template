@@ -40,6 +40,7 @@ status: "Active"
 | **Add aggregate root (domain)** | `04-sops/01-add-new-aggregate-root.md` | `sequential-thinking` skill |
 | **Add REST endpoint** | `04-sops/02-add-new-rest-endpoint.md` | `serena`, `writing-plans` |
 | **Add frontend page** | `04-sops/03-add-new-frontend-page.md` | `serena`, `writing-plans` |
+| **Add DB migration (NestJS/TypeORM)** | `04-sops/16-add-typeorm-migration.md` | `terminal` (run TypeORM CLI) |
 | **Add DB migration (Java/Flyway)** | `04-sops/04-add-flyway-migration.md` | `terminal` (run Flyway) |
 | **Add DB migration (Python/Alembic)** | `04-sops/16-add-alembic-migration.md` | `terminal` (run Alembic) |
 | **Publish domain event** | `04-sops/05-publish-domain-event.md` | `ctx_search`, source=`architecture-docs` |
@@ -64,10 +65,11 @@ status: "Active"
 
 | Stack | AGENTS.md | Key SOPs | Pre-Commit |
 |-------|-----------|----------|------------|
-| **Java / Spring Boot** | `boilerplate/java/AGENTS.md` | SOP-01, SOP-02, SOP-04 (Flyway) | `mvn test -Dtest=CleanArchitectureLayersTest` |
-| **Python / FastAPI** | `boilerplate/python/AGENTS.md` | SOP-01, SOP-02, SOP-04 (Alembic) | `pytest tests/archunit/ -v` |
-| **React / TypeScript** | `boilerplate/reactjs/AGENTS.md` | SOP-03 | `npm run depcruise` |
-| **Quasar / Vue 3** | `boilerplate/quasar/AGENTS.md` | SOP-03 | `npm run depcruise` |
+|| **Java / Spring Boot** | `boilerplate/java/AGENTS.md` | SOP-01, SOP-02, SOP-04 (Flyway) | `mvn test -Dtest=CleanArchitectureLayersTest` |
+|| **Python / FastAPI** | `boilerplate/python/AGENTS.md` | SOP-01, SOP-02, SOP-04 (Alembic) | `pytest tests/archunit/ -v` |
+|| **NestJS / TypeORM** | `boilerplate/nestjs/AGENTS.md` | SOP-01, SOP-02, SOP-16 (TypeORM) | `npx depcruise --validate .dependency-cruiser.cjs src/` |
+|| **React / TypeScript** | `boilerplate/reactjs/AGENTS.md` | SOP-03 | `npm run depcruise` |
+|| **Quasar / Vue 3** | `boilerplate/quasar/AGENTS.md` | SOP-03 | `npm run depcruise` |
 
 ---
 
@@ -107,15 +109,15 @@ git status --short
 
 To maintain the integrity of the Clean Architecture dependency rule, the following imports are strictly prohibited. Refer to [01-agnostic/01-standards/02-architecture.md](01-agnostic/01-standards/02-architecture.md) for the canonical table.
 
-| Layer | Cannot Import (Python) | Cannot Import (Java) |
-|-------|------------------------|----------------------|
-| **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` |
-| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks |
-| **Infrastructure** | *(none — can import all)* | *(none — can import all)* |
+| Layer | Cannot Import (Python) | Cannot Import (Java) | Cannot Import (NestJS) |
+|-------|------------------------|----------------------|------------------------|
+| **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` | `@nestjs/*`, `typeorm`, `class-validator` |
+| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks | `typeorm`, `@nestjs/platform-express` |
+| **Infrastructure** | *(none — can import all)* | *(none — can import all)* | *(none — can import all)* |
 
 **Verification**: `grep -r "fastapi|sqlalchemy" src/domain/ && exit 1` (Python)
 
 ---
 
-*Last updated: 2026-06-04*
-*Part of app-architecture-template v2.0*
+*Last updated: 2026-06-16*
+*Part of app-architecture-template v2.1*

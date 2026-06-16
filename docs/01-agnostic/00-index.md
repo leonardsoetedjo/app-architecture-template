@@ -39,19 +39,20 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 || 10 | [testing.md](01-standards/10-testing.md) | Testing standards and coverage rules |
 || 11 | [review.md](01-standards/11-review.md) | PR Review and onboarding process |
 || 12 | [frontend-structure.md](01-standards/12-frontend-structure.md) | Frontend directory structure (FSD + MVVM) |
-|| 13 | [agents.md](01-standards/13-agents.md) | AI Agent tooling and workflows (root) |
-|| 14 | [agents-java.md](01-standards/14-agents-java.md) | AI Agent guide for Java boilerplate |
-|| 15 | [agents-python.md](01-standards/15-agents-python.md) | AI Agent guide for Python boilerplate |
-|| 16 | [agents-reactjs.md](01-standards/16-agents-reactjs.md) | AI Agent guide for ReactJS boilerplate |
-|| 17 | [agents-quasar.md](01-standards/17-agents-quasar.md) | AI Agent guide for Quasar boilerplate |
-|| 18 | [agent-session-harness.md](01-standards/18-agent-session-harness.md) | Session harness standard |
-|| 19 | [agent-imperatives.md](01-standards/19-agent-imperatives.md) | AI Agent Imperatives |
-|| 20 | [frontend-agent-harness.md](01-standards/20-frontend-agent-harness.md) | Frontend Agent Session Harness |
-|| 21 | [validation-harness.md](01-standards/21-validation-harness.md) | Validation Harness Standard (7 gates) |
-|| 22 | [validation-harness-guide.md](01-standards/22-validation-harness-guide.md) | Validation Harness Guide |
-|| 23 | [database-docker-validation.md](01-standards/23-database-docker-validation.md) | Database & Docker Validation |
-|| 24 | [complete-testing-harness.md](01-standards/24-complete-testing-harness.md) | Complete Testing Harness Guide |
-|| 25 | [ai-coding-harness.md](01-standards/25-ai-coding-harness.md) | AI Coding Harness Engineering (6-Gate Validation) |
+||| 13 | [agents.md](01-standards/13-agents.md) | AI Agent tooling and workflows (root) |
+||| 14 | [agents-java.md](01-standards/14-agents-java.md) | AI Agent guide for Java boilerplate |
+||| 15 | [agents-python.md](01-standards/15-agents-python.md) | AI Agent guide for Python boilerplate |
+||| 16 | [agents-reactjs.md](01-standards/16-agents-reactjs.md) | AI Agent guide for ReactJS boilerplate |
+||| 17 | [agents-quasar.md](01-standards/17-agents-quasar.md) | AI Agent guide for Quasar boilerplate |
+||| 18 | [agent-session-harness.md](01-standards/18-agent-session-harness.md) | Session harness standard |
+||| 19 | [agent-imperatives.md](01-standards/19-agent-imperatives.md) | AI Agent Imperatives |
+||| 20 | [frontend-agent-harness.md](01-standards/20-frontend-agent-harness.md) | Frontend Agent Session Harness |
+||| 21 | [validation-harness.md](01-standards/21-validation-harness.md) | Validation Harness Standard (7 gates) |
+||| 22 | [validation-harness-guide.md](01-standards/22-validation-harness-guide.md) | Validation Harness Guide |
+||| 23 | [database-docker-validation.md](01-standards/23-database-docker-validation.md) | Database & Docker Validation |
+||| 24 | [complete-testing-harness.md](01-standards/24-complete-testing-harness.md) | Complete Testing Harness Guide |
+||| 25 | [ai-coding-harness.md](01-standards/25-ai-coding-harness.md) | AI Coding Harness Engineering (6-Gate Validation) |
+||| 26 | [agents-nestjs.md](01-standards/26-agents-nestjs.md) | AI Agent guide for NestJS boilerplate |
 
 ## 20 — ADRs
 

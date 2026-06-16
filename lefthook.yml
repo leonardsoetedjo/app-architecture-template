@@ -143,6 +143,37 @@ pre-commit:
         - rebase
 
     # ========================================================================
+    # NESTJS - NestJS / TypeORM Boilerplate
+    # ========================================================================
+    nestjs-lint:
+      glob: "boilerplate/nestjs/**/*.{ts,tsx}"
+      run: |
+        cd boilerplate/nestjs/order-service && \
+        npx eslint {staged_files}
+      skip:
+        - merge
+        - rebase
+
+    nestjs-type:
+      glob: "boilerplate/nestjs/**/*.{ts,tsx}"
+      run: |
+        cd boilerplate/nestjs/order-service && \
+        npx tsc --noEmit
+      skip:
+        - merge
+        - rebase
+
+    nestjs-arch:
+      glob: "boilerplate/nestjs/**/*"
+      run: |
+        cd boilerplate/nestjs/order-service && \
+        npx depcruise --validate .dependency-cruiser.cjs src/
+      require_serial: true
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
     # Gate 6: Format (All Languages)
     # ========================================================================
     format-trailing-whitespace:
@@ -235,6 +266,17 @@ pre-push:
     quasar-test:
       run: |
         cd boilerplate/quasar && \
+        npm run test:unit
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # NESTJS - Full Test Suite (pre-push only)
+    # ========================================================================
+    nestjs-test:
+      run: |
+        cd boilerplate/nestjs/order-service && \
         npm run test:unit
       skip:
         - merge
