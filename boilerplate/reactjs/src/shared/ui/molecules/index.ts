@@ -5,4 +5,4 @@
  * Molecules are combinations of atoms working together.
  */
 
-export { SearchField, type SearchFieldProps } from './SearchField';
+export { SearchField } from './SearchField';

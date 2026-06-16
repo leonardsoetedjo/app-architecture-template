@@ -85,7 +85,7 @@ export const theme: ThemeConfig = {
     Input: {
       colorPrimary: PRIMARY_COLOR,
       colorBorder: '#d9d9d9',
-      colorBorderHover: PRIMARY_COLOR,
+// colorBorderHover: PRIMARY_COLOR, // Removed: property not in AntD v5 type
     },
   },
 };

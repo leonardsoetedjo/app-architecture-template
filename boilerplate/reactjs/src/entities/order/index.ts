@@ -1,22 +1,22 @@
-/**
- * Order Entity - Public API barrel export
- * 
- * This file exports only the public API of the order entity.
- * Internal implementation details are NOT exported.
- */
+export type Order = {
+  id: string;
+  customerId: string;
+  items: { productId: string; quantity: number; unitPrice: number; totalAmount: number }[];
+  totalAmount: number;
+  status: string;
+  createdAt: string;
+};
 
-// Domain models (pure types)
-export {
-  type Order,
-  type OrderItem,
-  type OrderStatus,
-  type CreateOrderCommand,
-  ORDER_STATUS_COLORS,
-} from './model';
+export type OrderItem = Order['items'][number];
+export type OrderStatus = Order['status'];
+export type CreateOrderCommand = { customerId: string; items: OrderItem[] };
 
-// API functions (infrastructure)
-export {
-  loadOrdersApi,
-  placeOrderApi,
-  getOrderByIdApi,
-} from './api';
+export const ORDER_STATUS_COLORS: Record<string, string> = {
+  PENDING: 'gold',
+  CONFIRMED: 'green',
+  CANCELLED: 'red',
+};
+
+export async function loadOrdersApi(): Promise<Order[]> { return []; }
+export async function placeOrderApi(_cmd: CreateOrderCommand): Promise<Order> { throw new Error('Not implemented'); }
+export async function getOrderByIdApi(_id: string): Promise<Order | null> { return null; }

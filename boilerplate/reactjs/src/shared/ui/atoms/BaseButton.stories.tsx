@@ -224,7 +224,7 @@ export const IconButtonStory: Story = {
     <IconButton
       icon={<PlusOutlined />}
       aria-label="Add new item"
-      variant="primary"
+      buttonVariant="primary"
     />
   ),
   name: 'Icon Button',
@@ -236,11 +236,11 @@ export const IconButtonStory: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-      <BaseButton variant="primary">Primary</BaseButton>
-      <BaseButton variant="secondary">Secondary</BaseButton>
-      <BaseButton variant="outline">Outline</BaseButton>
-      <BaseButton variant="text">Text</BaseButton>
-      <BaseButton variant="danger">Danger</BaseButton>
+      <BaseButton buttonVariant="primary">Primary</BaseButton>
+      <BaseButton buttonVariant="secondary">Secondary</BaseButton>
+      <BaseButton buttonVariant="outline">Outline</BaseButton>
+      <BaseButton buttonVariant="text">Text</BaseButton>
+      <BaseButton buttonVariant="danger">Danger</BaseButton>
     </div>
   ),
   parameters: {
@@ -258,9 +258,9 @@ export const AllVariants: Story = {
 export const AllSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-      <BaseButton size="small">Small</BaseButton>
-      <BaseButton size="medium">Medium</BaseButton>
-      <BaseButton size="large">Large</BaseButton>
+      <BaseButton btnSize="small">Small</BaseButton>
+      <BaseButton btnSize="medium">Medium</BaseButton>
+      <BaseButton btnSize="large">Large</BaseButton>
     </div>
   ),
   parameters: {

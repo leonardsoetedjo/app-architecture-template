@@ -33,7 +33,7 @@ interface AppLayoutProps {
  * 
  * Wraps all pages with consistent navigation and layout.
  */
-export const AppLayout: React.FC<AppLayoutProps> = ({ children, className }) => {
+export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Header style={{ 

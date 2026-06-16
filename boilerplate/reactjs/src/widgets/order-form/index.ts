@@ -1,5 +1,1 @@
-/**
- * Order Form Widget - Public API
- */
-
-export { OrderForm, type OrderFormProps } from './OrderForm';
+export { OrderForm } from './OrderForm';

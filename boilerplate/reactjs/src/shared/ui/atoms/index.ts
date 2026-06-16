@@ -5,5 +5,5 @@
  * Atoms are the smallest building blocks of the UI.
  */
 
-export { BaseButton, IconButton, type BaseButtonProps, type IconButtonProps } from './BaseButton';
-export { BaseInput, BaseTextArea, type BaseInputProps, type BaseTextAreaProps } from './BaseInput';
+export { BaseButton, IconButton } from './BaseButton';
+export { BaseInput, BaseTextArea } from './BaseInput';

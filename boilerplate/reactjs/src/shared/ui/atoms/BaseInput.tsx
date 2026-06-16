@@ -13,7 +13,7 @@
  * - Character count
  */
 
-import React, { InputHTMLAttributes, forwardRef, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { Input as AntInput } from 'antd';
 import type { InputProps as AntInputProps } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
@@ -68,7 +68,7 @@ interface BaseInputProps extends Omit<AntInputProps, 'size'> {
  * />
  * ```
  */
-export const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(({
+export const BaseInput = forwardRef<any, BaseInputProps>(({
   label,
   placeholder,
   helperText,
@@ -135,7 +135,7 @@ export const BaseInput = forwardRef<HTMLInputElement, BaseInputProps>(({
         size={sizeMap[size]}
         placeholder={placeholder}
         status={hasError ? 'error' : undefined}
-        showCount={showCount ? { maxLength: maxLength } : undefined}
+        showCount={showCount}
         maxLength={maxLength}
         style={inputStyle}
         addonBefore={leftAddon}

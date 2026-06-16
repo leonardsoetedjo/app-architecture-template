@@ -11,7 +11,7 @@
  * - Type safety with Ant Design props
  */
 
-import React, { ButtonHTMLAttributes, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Button as AntButton } from 'antd';
 import type { ButtonProps as AntButtonProps } from 'antd';
 
@@ -20,11 +20,11 @@ import type { ButtonProps as AntButtonProps } from 'antd';
  * 
  * Extends Ant Design Button props with additional customization.
  */
-interface BaseButtonProps extends AntButtonProps {
+interface BaseButtonProps extends Omit<AntButtonProps, 'loading' | 'variant' | 'size'> {
   /** Button variant - primary, secondary, outline, text */
-  variant?: 'primary' | 'secondary' | 'outline' | 'text' | 'danger';
+  buttonVariant?: 'primary' | 'secondary' | 'outline' | 'text' | 'danger';
   /** Button size - small, medium, large */
-  size?: 'small' | 'medium' | 'large';
+  btnSize?: 'small' | 'medium' | 'large';
   /** Full width button */
   fullWidth?: boolean;
   /** Left icon */
@@ -33,6 +33,8 @@ interface BaseButtonProps extends AntButtonProps {
   rightIcon?: ReactNode;
   /** Loading text (shown while loading) */
   loadingText?: string;
+  /** Loading state */
+  loading?: boolean;
   /** Children (button label) */
   children: ReactNode;
 }
@@ -56,8 +58,8 @@ interface BaseButtonProps extends AntButtonProps {
  * ```
  */
 export const BaseButton: React.FC<BaseButtonProps> = ({
-  variant = 'primary',
-  size = 'medium',
+  buttonVariant = 'primary',
+  btnSize = 'medium',
   fullWidth = false,
   leftIcon,
   rightIcon,
@@ -68,7 +70,7 @@ export const BaseButton: React.FC<BaseButtonProps> = ({
   ...props
 }) => {
   // Map variant to Ant Design type
-  const typeMap: Record<string, AntButtonProps['type']> = {
+  const btnTypeMap: Record<string, NonNullable<AntButtonProps['type']>> = {
     primary: 'primary',
     secondary: 'default',
     outline: 'default',
@@ -90,11 +92,11 @@ export const BaseButton: React.FC<BaseButtonProps> = ({
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
-    ...(variant === 'outline' && {
+    ...(buttonVariant === 'outline' && {
       border: '1px solid #d9d9d9',
       color: '#262626',
     }),
-    ...(variant === 'danger' && {
+    ...(buttonVariant === 'danger' && {
       background: '#ff4d4f',
       borderColor: '#ff4d4f',
       color: 'white',
@@ -103,10 +105,10 @@ export const BaseButton: React.FC<BaseButtonProps> = ({
 
   return (
     <AntButton
-      type={typeMap[variant]}
-      size={sizeMap[size]}
-      loading={loading}
-      disabled={disabled || loading}
+      type={btnTypeMap[buttonVariant]}
+      size={sizeMap[btnSize]}
+      // loading prop handled below
+      disabled={disabled || !!loading}
       style={buttonStyle}
       {...props}
     >

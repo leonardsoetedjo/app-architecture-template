@@ -8,8 +8,8 @@ const App: React.FC = () => {
     <Routes>
       <Route path="/" element={<AppLayout />}>
         <Route path="orders" element={<OrdersPage />} />
-        <Route path="orders/:id" element={<div>Order Detail Page</div>} />
-        <Route path="*" element={<div>404 - Page Not Found</div>} />
+        <Route path="orders/:id" element={<div>Order Detail</div>} />
+        <Route path="*" element={<div>404</div>} />
       </Route>
     </Routes>
   );
