@@ -26,8 +26,8 @@ The following technology stack is selected for the Python/Quasar platform:
 - **Resilience**: `tenacity` (Retries), `circuitbreaker` (Circuit Breaker)
 - **Reporting**: ReportLab / WeasyPrint (PDF generation)
 - **Business Rules**: Custom Logic / Durable Rules (Python-based rule engine)
-- **Workflow Engine**: Temporal / Airflow (Long-running workflows)
-- **Template Engine**: Jinja2 / Quasar Templates
+- **Task Scheduler**: Prefect (Periodic and event-driven batch jobs)
+- **Workflow Engine (Optional)**: Temporal / Airflow (Long-running, multi-service saga orchestration)
 - **Logging**: Loguru (Structured logging, easy configuration)
 
 ## Consequences

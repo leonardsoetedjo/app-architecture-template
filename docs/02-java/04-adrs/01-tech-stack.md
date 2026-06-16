@@ -27,8 +27,8 @@ The following technology stack is selected:
 - **Resilience**: Resilience4j (Circuit Breaker, Retry)
 - **Reporting**: JasperReports
 - **Business Rules**: Drools
-- **Workflow Engine**: Activiti
-- **Template Engine**: Thymeleaf
+- **Task Scheduler**: Quartz (Periodic and event-driven batch jobs)
+- **Workflow Engine (Optional)**: Temporal / Camunda (Long-running, multi-service saga orchestration)
 - **Logging**: Log4j2
 
 ## Consequences
