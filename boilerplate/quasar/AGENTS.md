@@ -6,6 +6,8 @@
 
 > **Stack**: Quasar 2.x | Vue 3.4+ | TypeScript | Pinia | Vite
 > **Architecture**: Clean Architecture + Feature-based organization
+>
+> **DOX Hierarchy**: This is a child document. Read the root [`AGENTS.md`](../../AGENTS.md) first for project-wide standards. This document overrides the root on Quasar-specific conventions.
 
 > **New Features (2026-06-04)**:
 > - ✅ Complete MFA implementation (TOTP + WebAuthn)

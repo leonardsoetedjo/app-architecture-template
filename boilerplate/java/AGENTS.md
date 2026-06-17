@@ -8,6 +8,8 @@
 
 > **Stack**: Spring Boot 3.4.4 (Java 21 LTS) | PostgreSQL | Testcontainers | ArchUnit
 > **Architecture**: Clean Architecture + Domain-Driven Design
+>
+> **DOX Hierarchy**: This is a child document. Read the root [`AGENTS.md`](../../AGENTS.md) first for project-wide standards. This document overrides the root on Java-specific conventions.
 
 ---
 

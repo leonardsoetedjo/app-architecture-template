@@ -8,6 +8,8 @@
 
 > **Stack**: React 18 + TypeScript + Ant Design 5 + Vite + Zustand
 > **Architecture**: Clean Architecture + Domain-Driven Design
+>
+> **DOX Hierarchy**: This is a child document. Read the root [`AGENTS.md`](../../AGENTS.md) first for project-wide standards. This document overrides the root on React-specific conventions.
 
 ---
 

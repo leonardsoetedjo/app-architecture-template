@@ -16,6 +16,38 @@
 
 **Rule:** If you are in a boilerplate directory → read THAT `AGENTS.md`, not this root file.
 
+## 🗺️ DOX Hierarchy (Self-Documenting Documentation)
+
+This repo follows the DOX convention: every directory that needs distinct agent orientation has an `AGENTS.md`. Read from root to target; child overrides parent on conflicts.
+
+### Read Before Editing
+
+1. Start at the **root AGENTS.md** (this file) for project-wide standards
+2. Identify the stack you are working in from the table above
+3. Walk the path: root → `boilerplate/<stack>/AGENTS.md`
+4. Read **every** `AGENTS.md` found along the route — child documents override parent on conflicts
+5. If a boilerplate has nested layers (e.g., `domain/`, `application/`, `infrastructure/`) with their own `AGENTS.md`, read those too
+
+### Update After Editing
+
+After meaningful changes, update the **closest owning AGENTS.md**:
+
+- Added a new boilerplate → update root AGENTS.md stack table and this Child DOX Index
+- Changed a boilerplate's conventions → update that boilerplate's AGENTS.md
+- Added layer-specific rules inside a boilerplate → create/update layer AGENTS.md
+- Added cross-stack standards → update this root AGENTS.md
+
+### Child DOX Index
+
+| Path | Scope | Owner |
+|------|-------|-------|
+| `boilerplate/java/AGENTS.md` | Java Spring Boot boilerplate | Java stack lead |
+| `boilerplate/python/AGENTS.md` | Python FastAPI boilerplate | Python stack lead |
+| `boilerplate/nestjs/AGENTS.md` | NestJS boilerplate | NestJS stack lead |
+| `boilerplate/reactjs/AGENTS.md` | React + TypeScript boilerplate | Frontend stack lead |
+| `boilerplate/quasar/AGENTS.md` | Quasar + Vue 3 boilerplate | Frontend stack lead |
+| `docs/AI_NAVIGATION.md` | One-page task dispatch cheat sheet | Architecture team |
+
 ## 🏗️ Technology Stack
 
 ## 📋 Completeness Verification (Self-Audit)

@@ -8,6 +8,8 @@
 
 > **Stack**: FastAPI 0.111+ (Python 3.11+) | PostgreSQL | Testcontainers | pytest-archon
 > **Architecture**: Clean Architecture + Domain-Driven Design
+>
+> **DOX Hierarchy**: This is a child document. Read the root [`AGENTS.md`](../../AGENTS.md) first for project-wide standards. This document overrides the root on Python-specific conventions.
 
 > **New Features (2026-06-04)**:
 > - ✅ State machine for Order status transitions

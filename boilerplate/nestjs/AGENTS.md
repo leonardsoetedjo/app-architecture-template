@@ -8,6 +8,8 @@
 >
 > **Stack**: NestJS 10.3+ (Node.js 20 LTS) | PostgreSQL | TypeORM | dependency-cruiser
 > **Architecture**: Clean Architecture + Domain-Driven Design
+>
+> **DOX Hierarchy**: This is a child document. Read the root [`AGENTS.md`](../../AGENTS.md) first for project-wide standards. This document overrides the root on NestJS-specific conventions.
 
 ---
 
