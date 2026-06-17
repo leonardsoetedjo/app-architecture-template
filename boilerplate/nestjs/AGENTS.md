@@ -475,3 +475,95 @@ npm run test:arch
 | Python equivalent | `docs/01-agnostic/01-standards/15-agents-python.md` |
 | Java equivalent | `docs/01-agnostic/01-standards/14-agents-java.md` |
 | NestJS (this doc) | `docs/01-agnostic/01-standards/26-agents-nestjs.md` |
+
+---
+
+## 9. Docker Development Mode
+
+### 9.1 The Problem: Rebuild Required for Every Change
+
+The boilerplate Dockerfile does `COPY . /app` at build time. Without volume mounts,
+*every* code change requires a full image rebuild (`docker compose up -d --build`).
+This is slow and unnecessary during active development.
+
+**Symptom:** You fix a bug, commit, restart the container, but the old code is still running.
+
+**Cause:** `docker compose restart` reloads the *baked image* — changes in your working
+directory are invisible to the container.
+
+### 9.2 The Fix: docker-compose.override.yml
+
+Create `docker-compose.override.yml` (gitignored) with bind mounts for development:
+
+```bash
+cp docker-compose.override.yml.example docker-compose.override.yml
+```
+
+```yaml
+# docker-compose.override.yml — development only, NEVER committed
+services:
+  order-service:
+    volumes:
+      - ./src:/app/src:cached
+      - ./package.json:/app/package.json:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./nest-cli.json:/app/nest-cli.json:ro
+    # Enable NestJS watch mode for hot reload
+    command: npm run start:dev
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+```
+
+Then:
+```bash
+# After code changes — FAST restart, no rebuild
+docker compose restart order-service
+
+# Or NestJS watch mode auto-reloads on file changes:
+# Just save the file — container picks it up automatically
+```
+
+### 9.3 When to Restart vs Rebuild
+
+| Action | Speed | When |
+|--------|-------|------|
+| `docker compose restart <service>` | < 3 sec | Source code change, config file edit |
+| `docker compose up -d --no-build` | < 10 sec | Network/volume changes only |
+| `docker compose up -d --build` | 2-5 min | Dockerfile change, dependency change, production deploy |
+
+### 9.4 .dockerignore for Cache Efficiency
+
+The boilerplate SHOULD include a `.dockerignore`. Without it, every `docker build` copies
+`node_modules`, `.git`, `dist/`, test artifacts — busting the dependency cache layer.
+
+**Key exclusions for Node.js/NestJS:**
+```
+.git
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+*.log
+```
+
+### 9.5 Verification Checklist
+
+```bash
+# 1. Does the service have volume mounts for source?
+grep -A5 "volumes:" docker-compose.override.yml | grep "src"
+
+# 2. Can changes reflect without rebuild?
+echo '// test' >> src/main.ts
+docker compose restart order-service
+docker compose exec order-service cat /app/src/main.ts | tail -1
+
+# 3. Does .dockerignore exist?
+ls .dockerignore && grep "node_modules" .dockerignore
+```
+
+**Fleet standard:** Every app in `/opt/data/profiles/*/workspace/` SHOULD have:
+1. `docker-compose.override.yml.example` checked into git
+2. Actual `docker-compose.override.yml` in `.gitignore`
+3. `.dockerignore` excluding build artifacts, tests, and OS files

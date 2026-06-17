@@ -32,6 +32,10 @@ __pycache__/
 *.egg-info/
 .venv/
 
+# Docker Compose overrides (host-specific dev configs)
+docker-compose.override.yml
+*.override.yml
+
 # Misc
 .serena/
 

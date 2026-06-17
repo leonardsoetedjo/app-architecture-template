@@ -427,6 +427,95 @@ mvn test
 
 ---
 
+## 10. Docker Development Mode
+
+### 10.1 The Problem: Rebuild Required for Every Change
+
+The boilerplate Dockerfile copies the compiled JAR at build time. Without volume mounts,
+*every* code change requires a full image rebuild (`docker compose up -d --build`).
+This is slow and unnecessary during active development.
+
+**Symptom:** You fix a bug, commit, restart the container, but the old code is still running.
+
+**Cause:** `docker compose restart` reloads the *baked image* — changes in your working
+directory are invisible to the container.
+
+### 10.2 The Fix: docker-compose.override.yml
+
+Create `docker-compose.override.yml` (gitignored) with bind mounts for development:
+
+```bash
+cp docker-compose.override.yml.example docker-compose.override.yml
+```
+
+```yaml
+# docker-compose.override.yml — development only, NEVER committed
+services:
+  order-service:
+    volumes:
+      - ./target/classes:/app/classes:cached
+      - ./src/main/resources:/app/resources:cached
+    # Enable Spring Boot DevTools for hot reload
+    environment:
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+      - LOGGING_LEVEL_ROOT=DEBUG
+```
+
+Then:
+```bash
+# After code changes — FAST restart, no rebuild
+docker compose restart order-service
+
+# Spring Boot DevTools auto-reloads on class changes:
+# Just save the file — container picks it up automatically
+```
+
+### 10.3 When to Restart vs Rebuild
+
+| Action | Speed | When |
+|--------|-------|------|
+| `docker compose restart <service>` | < 3 sec | Source code change, config file edit |
+| `docker compose up -d --no-build` | < 10 sec | Network/volume changes only |
+| `docker compose up -d --build` | 2-8 min | Dockerfile change, dependency change, production deploy |
+
+### 10.4 .dockerignore for Cache Efficiency
+
+The boilerplate SHOULD include a `.dockerignore`. Without it, every `docker build` copies
+`.git`, `.mvn`, `target/`, test artifacts — busting the dependency cache layer.
+
+**Key exclusions for Java:**
+```
+.git
+.mvn
+target/           # Build output — rebuilt anyway
+*.jar
+*.class
+.idea/
+.vscode/
+```
+
+### 10.5 Verification Checklist
+
+```bash
+# 1. Does the service have volume mounts for source/classes?
+grep -A5 "volumes:" docker-compose.override.yml | grep "target"
+
+# 2. Can changes reflect without rebuild?
+touch src/main/java/com/example/orderservice/OrderServiceApplication.java
+docker compose restart order-service
+docker compose exec order-service ls /app/classes
+
+# 3. Does .dockerignore exist?
+ls .dockerignore && grep "target/" .dockerignore
+```
+
+**Fleet standard:** Every app in `/opt/data/profiles/*/workspace/` SHOULD have:
+1. `docker-compose.override.yml.example` checked into git
+2. Actual `docker-compose.override.yml` in `.gitignore`
+3. `.dockerignore` excluding build artifacts, tests, and IDE files
+
+---
+
 ## 9. Related Documentation
 
 ### Core Principles (Language-Agnostic)
