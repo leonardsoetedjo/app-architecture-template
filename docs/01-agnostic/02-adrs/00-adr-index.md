@@ -2,17 +2,17 @@
 name: "Architecture Decision Records (ADR) Index"
 type: "index"
 audience: ["human", "ai-agent"]
-related: ["adr-01", "adr-02", "adr-03", "adr-04", "adr-05", "adr-06", "adr-07", "adr-08", "adr-10", "adr-11"]
+related: ["adr-01", "adr-02", "adr-03", "adr-04", "adr-05", "adr-06", "adr-07", "adr-08", "adr-10", "adr-11", "adr-12"]
 tags: ["adr", "index", "catalog", "decisions", "architecture"]
-last_verified: "2026-05-27"
+last_verified: "2026-06-17"
 ---
 
 # Architecture Decision Records (ADR) Index
 
 **Purpose**: Complete catalog of all Architecture Decision Records with status and numbering explanation.
 
-**Last Updated**: 2026-05-25  
-**Total ADRs**: 11 records (9 active, 2 gaps explained)
+**Last Updated**: 2026-06-17  
+**Total ADRs**: 12 records (10 active, 1 skipped, 1 gap)
 
 ---
 
@@ -30,7 +30,8 @@ last_verified: "2026-05-27"
 | 08 | [Ports & Adapters Pattern](08-port-adapter.md) | ✅ Active | 2026-05-25 | Architecture |
 | ~~09~~ | *Reserved for Security Architecture* | ⚠️ **Skipped** | - | Security |
 | 10 | [Resilience Patterns](10-resilience-patterns.md) | ✅ Active | 2026-05-25 | Reliability |
-| 11 | [Factory Pattern](11-factory-pattern.md) | ✅ Active | 2026-05-25 | Design Patterns |
+| 11 | [Factory Pattern for Domain Services](11-factory-pattern.md) | ✅ Active | 2026-05-25 | Architecture |
+| 12 | [Docker Development Mode — Volume Mounts Over Rebuilds](12-docker-dev-mode.md) | ✅ Active | 2026-06-17 | DevOps |
 
 ---
 
@@ -56,14 +57,14 @@ last_verified: "2026-05-27"
 - API Design: 1 (04)
 - Data Processing: 1 (03)
 - Frontend: 1 (05)
-- DevOps: 1 (06)
+- DevOps: 2 (06, 12)
 - Observability: 1 (07)
 - Reliability: 1 (10)
 - Design Patterns: 1 (11)
 - Security: 0 (documented separately)
 
 **By Status**:
-- ✅ Active: 10
+- ✅ Active: 11
 - ⚠️ Superseded: 0
 - ❌ Deprecated: 0
 - ⏸️ Draft: 0
