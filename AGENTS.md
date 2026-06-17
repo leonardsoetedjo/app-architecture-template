@@ -83,7 +83,7 @@ Before claiming the template is streamlined, verify:
 - React/Quasar: `eslint` + `tsc` + `depcruise`
 
 **6. Standard Coverage**
-- 36 standards in `docs/01-agnostic/01-standards/`
+- 39 standards in `docs/01-agnostic/01-standards/`
 - No duplicate standard numbers (check for collisions)
 - All standards referenced from index
 
@@ -131,6 +131,31 @@ Base `docker-compose.yml` has **no ports, no Traefik labels** — zero leakage.
 2. Use cases → Interface in `application/usecases/`, implementation alongside
 3. Entities → Pure POJOs/dataclasses in `domain/models/`, no framework annotations
 4. Pre-commit → Run stack's architecture validation before ANY commit
+
+## 🤖 AI Engineering Disciplines
+
+This template is AI-native. Three standards govern how agents interact with the codebase:
+
+| Discipline | Standard | Governs | When |
+|-----------|----------|---------|------|
+| **Prompt Engineering** | [Standard 27](docs/01-agnostic/01-standards/27-prompt-engineering.md) | How agents write prompts (structure, few-shots, versioning) | Every prompt sent to a model |
+| **Context Engineering** | [Standard 28](docs/01-agnostic/01-standards/28-context-engineering.md) | How agents manage what the model sees (budget, RAG, compression) | Every context assembly |
+| **Harness Engineering** | [Standard 29](docs/01-agnostic/01-standards/29-harness-engineering.md) | How agents tie generators, validators, and handoffs into a unified lifecycle | Every task |
+
+**The Harness Lifecycle (Initialize → Scaffold → Validate → Handoff → Verify)**
+
+Every task MUST traverse these five phases. See Standard 29 for the full spec.
+
+```
+Initialize  →  Scaffold  →  Validate  →  Handoff  →  Verify
+(Phase 1)    (Phase 2)   (Phase 3)   (Phase 4)   (Phase 5)
+```
+
+- **Initialize**: Read AGENTS.md, index context, declare budget (Standard 28)
+- **Scaffold**: Use generator → template → manual (in that order)
+- **Validate**: Run 7 gates (Standard 21) + 3 new gates (Standard 29)
+- **Handoff**: Package work with verification evidence
+- **Verify**: Receiving agent confirms reproducibility
 
 ## 📚 Key Documents (One-Line Guide)
 | Document | Read When |

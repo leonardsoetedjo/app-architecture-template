@@ -54,6 +54,9 @@ Documents in this directory apply regardless of the technology stack (Java, Pyth
 ||| 24 | [complete-testing-harness.md](01-standards/24-complete-testing-harness.md) | Complete Testing Harness Guide |
 ||| 25 | [ai-coding-harness.md](01-standards/25-ai-coding-harness.md) | AI Coding Harness Engineering (6-Gate Validation) |
 ||| 26 | [agents-nestjs.md](01-standards/26-agents-nestjs.md) | AI Agent guide for NestJS boilerplate |
+||| **27** | **[prompt-engineering.md](01-standards/27-prompt-engineering.md)** | **Prompt Engineering Standard** |
+||| **28** | **[context-engineering.md](01-standards/28-context-engineering.md)** | **Context Engineering Standard** |
+||| **29** | **[harness-engineering.md](01-standards/29-harness-engineering.md)** | **Harness Engineering Standard** |
 
 ## 20 — ADRs
 

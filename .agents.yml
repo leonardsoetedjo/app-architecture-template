@@ -1,7 +1,31 @@
 # Machine-readable agent configuration for app-architecture-template
 # Consuming agents: Hermes, Cursor, Cody, and similar AI coding agents
 # For human readers: see docs/AI_NAVIGATION.md for the cheat sheet
-version: "1.0"
+version: "1.1"
+
+# -----------------------------------------------------------------------
+# AI Engineering Disciplines
+# See docs/01-agnostic/01-standards/27-prompt-engineering.md
+# See docs/01-agnostic/01-standards/28-context-engineering.md
+# See docs/01-agnostic/01-standards/29-harness-engineering.md
+# -----------------------------------------------------------------------
+ai_engineering:
+  prompt_engineering:
+    standard: docs/01-agnostic/01-standards/27-prompt-engineering.md
+    templates_dir: prompts/
+    versioning: semver
+  context_engineering:
+    standard: docs/01-agnostic/01-standards/28-context-engineering.md
+    default_budget:
+      system: 5%
+      task: 40%
+      retrieved: 30%
+      working: 20%
+      safety: 5%
+  harness_engineering:
+    standard: docs/01-agnostic/01-standards/29-harness-engineering.md
+    lifecycle: [initialize, scaffold, validate, handoff, verify]
+    gates: 10
 
 # -----------------------------------------------------------------------
 # Skills to auto-load on session start
