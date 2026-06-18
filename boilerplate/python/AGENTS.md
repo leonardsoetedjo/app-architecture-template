@@ -376,6 +376,35 @@ class OrderEntity(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 ```
 
+### 4.7 Application — Use Case with Event Dispatch (CRITICAL PATTERN)
+
+**This pattern prevents the #1 recurring audit finding: aggregates record events but use cases never dispatch them.**
+
+```python
+# application/usecases/place_order_use_case_impl.py
+class PlaceOrderUseCaseImpl(PlaceOrderUseCase):
+    def __init__(self, repository: OrderRepository, event_bus: DomainEventBus):
+        self._repository = repository
+        self._event_bus = event_bus
+
+    def execute(self, command: CreateOrderCommand) -> OrderResult:
+        order = Order.create(customer_id=command.customer_id, items=command.items)
+
+        # 1. Persist first
+        self._repository.save(order)
+
+        # 2. Pull events AFTER successful DB commit
+        events = order.pull_events()
+
+        # 3. Dispatch each event
+        for event in events:
+            self._event_bus.dispatch(event)
+
+        return OrderResult(order_id=order.id.value, status=order.status)
+```
+
+**Rule**: If an aggregate records events (has `pull_events()` or `record_event()`), the use case that creates/modifies it MUST call `pull_events()` and dispatch. This is not optional.
+
 ---
 
 ## 5. Standards Index
