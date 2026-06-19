@@ -78,6 +78,7 @@ owner: "@architecture-team"
 | P1 | Add new reusable frontend component | [PLANNED] |
 | P2 | Add new E2E test | [PLANNED] |
 | P2 | Database schema change (Alembic/Python) | **[COMPLETE] #16 [Add Alembic Migration](16-add-alembic-migration.md)** |
+| P2 | **Migrate service to repository pattern** | **[COMPLETE] #17 [Migrate Service to Repository Pattern](17-migrate-service-to-repository-pattern.md)** |
 | P2 | Security vulnerability response | [PLANNED] |
 | P2 | Performance optimization | [PLANNED] |
 | P2 | Feature flag rollout | [PLANNED] |
