@@ -2,6 +2,7 @@
 module.exports = {
   extends: "dependency-cruiser/configs/recommended-strict",
   forbidden: [
+    // Rules enforced: DDD-DEPENDENCY-CHECK (module dependency validation)
     {
       name: "domain-cannot-depend-on-higher-layers",
       comment: "Domain layer must be pure — no imports from application or infrastructure",

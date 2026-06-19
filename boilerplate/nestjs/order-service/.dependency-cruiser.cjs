@@ -11,6 +11,7 @@
 module.exports = {
   forbidden: [
     {
+      // Rule: DDD-DEPENDENCY-CHECK
       name: 'no-domain-imports-application-or-infra',
       comment:
         'Domain layer must not depend on application or infrastructure layers',
@@ -31,6 +32,7 @@ module.exports = {
     },
     {
       name: 'no-framework-in-domain',
+      // Rule: DDD-DOMAIN-PURITY-NESTJS
       comment:
         'Domain layer must not import NestJS, TypeORM, or class-validator',
       severity: 'error',

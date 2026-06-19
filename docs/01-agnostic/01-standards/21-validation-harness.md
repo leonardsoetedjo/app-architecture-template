@@ -220,8 +220,9 @@ Before merging ANY project (any language):
 
 - [ ] `lefthook.yml` exists in repository root
 - [ ] All 7 validation gates configured (import, type, lint, arch, format, security, test)
+- [ ] **Gate 8: Rule Coverage Verification** configured (`verify-rules-covered.py` in lefthook)
 - [ ] Lefthook installed (`lefthook install`)
-- [ ] CI/CD runs all 7 gates
+- [ ] CI/CD runs all 7 gates + rule coverage
 - [ ] GitHub Issue Template for handoffs exists
 - [ ] Profile skills document validation requirements
 - [ ] No custom validation scripts (unless no open source alternative — see Appendix)
@@ -553,3 +554,109 @@ Violations of this rule will be flagged during architecture audits.
 - **Database & Docker Validation:** `docs/01-agnostic/01-standards/23-database-docker-validation.md`
 - **Complete Testing Harness:** `docs/01-agnostic/01-standards/24-complete-testing-harness.md`
 - **Example (Python):** `forex-trading-app/lefthook.yml`
+
+---
+
+## Appendix — Rule Coverage Verification (Gate 8)
+
+> **Purpose:** Ensure `.agents.yml` rules are implemented in every stack that claims them. Prevents rule definitions from drifting away from actual enforcement.
+
+### How It Works
+
+`.agents.yml` is the single source of truth for machine-tracked rules. Each rule carries an `id:` and a `stacks:` declaration. The verification script confirms that every rule ID appears in test/config files within each declared stack.
+
+### Rule ID Format
+
+```yaml
+forbidden_patterns:
+  - id: DDD-DOMAIN-PURITY-PYTHON
+    stacks: [python]
+    pattern: "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)"
+    ...
+```
+
+- **ID prefix** `DDD-` = Domain-Driven Design rule
+- **ID prefix** `TYPESCRIPT-` / `REACT-` / `QUASAR-` = Frontend-specific
+- **Suffix** `-PYTHON` / `-JAVA` / `-NESTJS` = Stack-specific variant
+- **No suffix** = Cross-cutting (all stacks must implement)
+
+### Verification Script
+
+`scripts/verify-rules-covered.py` — schema-agnostic YAML walker + stack auto-discovery.
+
+| Flag | Purpose |
+|------|---------|
+| (none) | Strict mode — fails if any rule uncovered |
+| `--report` | Print full coverage map per rule per stack |
+| `--stack java` | Check only one stack |
+| `--dry-run` | Show what would be checked without executing |
+
+### Expected Evidence in Stack Sources
+
+The script searches for the rule ID string in each stack's source tree. Place it where developers will see it when rules break:
+
+**Java (ArchUnit):**
+```java
+@Test
+@DisplayName("DDD-DOMAIN-PURITY-JAVA: domain must not import frameworks")
+void domainHasNoFrameworkImports() { ... }
+```
+
+**Python (pytest):**
+```python
+def test_domain_has_no_framework_imports():
+    """DDD-DOMAIN-PURITY-PYTHON: domain must not import fastapi/sqlalchemy/pydantic"""
+    ...
+```
+
+**TypeScript (dependency-cruiser):**
+```javascript
+{
+  name: 'no-framework-in-domain',
+  // Rule: DDD-DOMAIN-PURITY-NESTJS
+  comment: 'Domain layer must not import NestJS, TypeORM, or class-validator',
+  ...
+}
+```
+
+### What Triggers a Failure
+
+| Scenario | Script Output |
+|----------|---------------|
+| Rule added to `.agents.yml`, no test in any stack | `FAIL: orphan rule` |
+| Rule claims `stacks: [java, python]`, only Java has test | `WARNING: missing in python` |
+| Rule present in test, not in stack's `AGENTS.md` | `WARNING: not in dispatch` |
+| Stack added but AGENTS.md not updated with rule IDs | Caught by `--report` |
+
+### Lefthook Integration
+
+```yaml
+# lefthook.yml
+pre-commit:
+  commands:
+    rules-coverage:
+      glob: ".agents.yml"
+      run: python3 scripts/verify-rules-covered.py
+      require_serial: true
+
+pre-push:
+  commands:
+    rules-coverage-push:
+      run: python3 scripts/verify-rules-covered.py
+```
+
+### How to Add a New Rule
+
+1. Add rule to `.agents.yml` with `id:` and `stacks:`
+2. Add test/config referencing the ID in each declared stack
+3. Add ID to the stack's `AGENTS.md` rules table
+4. Run `python3 scripts/verify-rules-covered.py --report` to confirm coverage
+5. Commit — lefthook verifies automatically
+
+### Why This Is Resilient
+
+The script does NOT parse test semantics. It only greps for the rule ID string. This means:
+- Renaming a test file doesn't break coverage (grep still finds the ID)
+- Refactoring test internals doesn't break coverage (ID comment preserved)
+- Adding a new stack auto-expands checks (directory discovery)
+- Removing a rule auto-flags orphan (ID disappears from source tree)

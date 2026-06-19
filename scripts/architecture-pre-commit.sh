@@ -242,10 +242,29 @@ check_e2e_tests() {
 # Track timing
 START_TIME=$(date +%s%N)
 
+# Check .agents.yml rule coverage
+verify_rule_coverage() {
+  echo "  [0/6] Checking .agents.yml rule coverage..."
+  
+  if [ -f "scripts/verify-rules-covered.py" ]; then
+    if python3 scripts/verify-rules-covered.py > /dev/null 2>&1; then
+      echo "      ✅ All rules covered across stacks"
+      return 0
+    else
+      echo "      ❌ FAIL: Rule coverage verification failed"
+      echo "      Run: python3 scripts/verify-rules-covered.py --report"
+      return 1
+    fi
+  else
+    echo "      ⚠️  WARNING: scripts/verify-rules-covered.py not found"
+    return 0
+  fi
+}
+
 
 # Check documentation links are valid
 check_docs_links() {
-  echo "  [5/5] Checking documentation links..."
+  echo "  [6/6] Checking documentation links..."
   if [ -f "scripts/validate-docs-links.py" ]; then
     if python3 scripts/validate-docs-links.py > /dev/null 2>&1; then
       echo "      OK: All documentation links valid"
@@ -261,6 +280,9 @@ check_docs_links() {
 }
 
 # Run all checks
+verify_rule_coverage || FAILED=1
+echo ""
+
 check_agent_session_harness || FAILED=1
 echo ""
 
@@ -289,6 +311,7 @@ if [ $FAILED -eq 0 ]; then
   echo ""
   echo "Architecture: ./scripts/architecture-pre-commit.sh PASSED"
   echo "  - Duration: ${DURATION_MS}ms"
+  echo "  - Rule coverage: OK"
   echo "  - Agent harness: OK"
   echo "  - Java architecture: OK"
   echo "  - Python architecture: OK"

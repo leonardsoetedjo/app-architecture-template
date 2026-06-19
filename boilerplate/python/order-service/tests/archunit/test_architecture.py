@@ -1,6 +1,10 @@
 """
 Architecture Tests for Python Boilerplate
 
+Rule Coverage:
+  - DDD-DOMAIN-PURITY-PYTHON: domain/ must not import fastapi/sqlalchemy/pydantic
+  - DDD-APPLICATION-PURITY-PYTHON: application/ must not import fastapi/sqlalchemy
+
 These tests enforce Clean Architecture layer boundaries.
 Currently using simple import checks - pytest-archon integration pending.
 

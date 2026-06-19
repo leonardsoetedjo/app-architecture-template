@@ -1,190 +1,156 @@
 # AGENTS.md — app-architecture-template
 
-> **What is this repo?** A reference template organization for Clean Architecture polyglot services (Java/Spring Boot, Python/FastAPI, React, Quasar).
-> **⚡️ AI Agent cheat sheet:** See [`docs/AI_NAVIGATION.md`](docs/AI_NAVIGATION.md) for task dispatch.
+> **🤖 AGENTS ONLY.** Humans → `README.md` + `docs/`  
+> **Budget:** <500 tokens here. Stack details in boilerplate AGENTS.md.  
+> **Machine-readable config:** `.agents.yml`  
+> **Task dispatch:** `docs/AI_NAVIGATION.md`  
+> **Find stuff:** `ctx_search(source: ...)` — see §4 below.
 
-## 📍 What Stack Are You Working In?
+## 1. What Stack Are You Working In?
 
-| Stack | Read This AGENTS.md | Key Docs |
-|-------|---------------------|----------|
-| **Java Spring Boot** | [`boilerplate/java/AGENTS.md`](boilerplate/java/AGENTS.md) | Java DDD boilerplate |
-| **Python FastAPI** | [`boilerplate/python/AGENTS.md`](boilerplate/python/AGENTS.md) | Python DDD boilerplate |
-| **NestJS** | [`boilerplate/nestjs/AGENTS.md`](boilerplate/nestjs/AGENTS.md) | NestJS Clean Architecture boilerplate |
-| **ReactJS Frontend** | [`boilerplate/reactjs/AGENTS.md`](boilerplate/reactjs/AGENTS.md) | React + TypeScript + Ant Design |
-| **Quasar Frontend** | [`boilerplate/quasar/AGENTS.md`](boilerplate/quasar/AGENTS.md) | Quasar + Vue 3 + TypeScript |
-| **Template maintenance** | ⬅️ You are here (this file) | Standards, ADRs, cross-stack patterns |
+| Stack | Read This AGENTS.md | Source Index | Pre-Commit |
+|-------|---------------------|--------------|------------|
+| **Java** | `boilerplate/java/AGENTS.md` | `ctx_search(source: "java-boilerplate")` | ArchUnit |
+| **Python** | `boilerplate/python/AGENTS.md` | `ctx_search(source: "python-boilerplate")` | pytest-archon |
+| **NestJS** | `boilerplate/nestjs/AGENTS.md` | `ctx_search(source: "nestjs-boilerplate")` | depcruise |
+| **ReactJS** | `boilerplate/reactjs/AGENTS.md` | `ctx_search(source: "frontend-boilerplate")` | depcruise |
+| **Quasar** | `boilerplate/quasar/AGENTS.md` | `ctx_search(source: "quasar-boilerplate")` | depcruise |
+| **Template maintenance** | ⬅️ You are here | `ctx_search(source: "architecture-standards")` | All stacks |
 
-**Rule:** If you are in a boilerplate directory → read THAT `AGENTS.md`, not this root file.
+**Rule:** Read the root AGENTS.md once per session. Read stack-specific AGENTS.md once per task. Then use `ctx_search` for everything else.
 
-## 🗺️ DOX Hierarchy (Self-Documenting Documentation)
+## 2. DOX Hierarchy
 
-This repo follows the DOX convention: every directory that needs distinct agent orientation has an `AGENTS.md`. Read from root to target; child overrides parent on conflicts.
+`AGENTS.md` is **AI-agent exclusive**. Humans: see `README.md` and `docs/`.
 
-### Read Before Editing
+Every directory with distinct orientation has an `AGENTS.md`. Read from root to target; child overrides parent.
 
-1. Start at the **root AGENTS.md** (this file) for project-wide standards
-2. Identify the stack you are working in from the table above
-3. Walk the path: root → `boilerplate/<stack>/AGENTS.md`
-4. Read **every** `AGENTS.md` found along the route — child documents override parent on conflicts
-5. If a boilerplate has nested layers (e.g., `domain/`, `application/`, `infrastructure/`) with their own `AGENTS.md`, read those too
-
-### Update After Editing
-
-After meaningful changes, update the **closest owning AGENTS.md**:
-
-- Added a new boilerplate → update root AGENTS.md stack table and this Child DOX Index
-- Changed a boilerplate's conventions → update that boilerplate's AGENTS.md
-- Added layer-specific rules inside a boilerplate → create/update layer AGENTS.md
-- Added cross-stack standards → update this root AGENTS.md
+**Budget-aware traversal:**
+1. Read root AGENTS.md (this file) — <200 tokens
+2. Read stack AGENTS.md — <500 tokens  
+3. **STOP.** Use `ctx_search` for any deeper lookup. Do not read layer AGENTS.md files linearly.
 
 ### Child DOX Index
 
-| Path | Scope | Owner |
-|------|-------|-------|
-| `boilerplate/java/AGENTS.md` | Java Spring Boot boilerplate | Java stack lead |
-| `boilerplate/python/AGENTS.md` | Python FastAPI boilerplate | Python stack lead |
-| `boilerplate/nestjs/AGENTS.md` | NestJS boilerplate | NestJS stack lead |
-| `boilerplate/reactjs/AGENTS.md` | React + TypeScript boilerplate | Frontend stack lead |
-| `boilerplate/quasar/AGENTS.md` | Quasar + Vue 3 boilerplate | Frontend stack lead |
-| `docs/AI_NAVIGATION.md` | One-page task dispatch cheat sheet | Architecture team |
+| Path | Scope | Stack | Canonical Reference |
+|------|-------|-------|--------------------|
+| `boilerplate/java/AGENTS.md` | Java dispatch | Java | `docs/01-agnostic/01-standards/14-agents-java.md` |
+| `boilerplate/python/AGENTS.md` | Python dispatch | Python | `docs/01-agnostic/01-standards/15-agents-python.md` |
+| `boilerplate/nestjs/AGENTS.md` | NestJS dispatch | NestJS | `docs/01-agnostic/01-standards/26-agents-nestjs.md` |
+| `boilerplate/reactjs/AGENTS.md` | React dispatch | React | `docs/01-agnostic/01-standards/16-agents-reactjs.md` |
+| `boilerplate/quasar/AGENTS.md` | Quasar dispatch | Quasar | `docs/01-agnostic/01-standards/25-agents-quasar.md` (TBD) |
+| `docs/AI_NAVIGATION.md` | One-page task dispatch | All | — |
 
-## 🏗️ Technology Stack
+> **Human equivalents:** Stack intro → `README.md` §Technology Stack. Deep-dive → `docs/01-agnostic/01-standards/XX-agents-*.md`.
 
-## 📋 Completeness Verification (Self-Audit)
+## 3. Context Engineering Rules
 
-Before claiming the template is streamlined, verify:
+This repo follows Standard 28. Before assembling context:
 
-**1. Index Completeness**
-- Every document referenced in `docs/00-index.md` and `docs/01-agnostic/00-index.md` must exist
-- No broken internal links (`python3 scripts/validate-docs-links.py`)
-- All 5 stacks (Java, Python, NestJS, ReactJS, Quasar) represented in index
+| Step | Action |
+|------|--------|
+| 1. Declare budget | Default: task=40%, retrieved=30%, working=20%, safety=5% |
+| 2. Index sources | See `.agents.yml` `context_sources` section |
+| 3. Query selectively | `ctx_search(source: "...", queries: [...])` |
+| 4. Never dump docs | Boilerplate AGENTS.md are <500 tokens. The rest is in indexed sources. |
 
-**2. Cross-Reference Consistency**
-- No references to deleted or renamed files (e.g., `WORKFLOW_ENGINE_GUIDE.md` → `ORDER_STATE_MACHINE_GUIDE.md`)
-- All boilerplate `feature-list.json` files reference existing documents
-- ADR-02 for each stack accurately reflects implemented vs optional components
+### 3.1 Context Sources (.agents.yml)
 
-**3. Boilerplate Integration**
-- Each boilerplate has: `AGENTS.md`, `feature-list.json`, `Dockerfile` (where applicable), `init.sh`
-- feature-list.json covers all architectural patterns in the template
-- No orphaned test files (all `.spec.ts` / `Test.java` referenced in jest configs or pom.xml)
+```python
+# Index once per session
+ctx_index(path="docs/01-agnostic/01-standards", source="architecture-standards")
+ctx_index(path="docs/04-sops", source="sops")
+ctx_index(path="boilerplate/java", source="java-boilerplate")
+ctx_index(path="boilerplate/python", source="python-boilerplate")
+ctx_index(path="boilerplate/nestjs", source="nestjs-boilerplate")
+ctx_index(path="boilerplate/reactjs", source="frontend-boilerplate")
+ctx_index(path="boilerplate/quasar", source="quasar-boilerplate")
+```
 
-**4. Dead Code Detection**
-- Empty directories removed (except build output dirs like `target/`, `node_modules/`)
-- No files importing non-existent packages
-- No test files for deleted source files
-- Files not referenced by `docker-compose.yml`, entrypoints, or package manifests flagged as dead
+### 3.2 Retrieval Examples
 
-**5. Lefthook Alignment**
-- All 5 stacks have: lint, type-check, architecture validation gates
-- NestJS: `dependency-cruiser` + jest architecture tests
-- Java: `mvn compile` + ArchUnit tests
-- Python: `ruff` + `pyright` + `pytest-archon`
-- React/Quasar: `eslint` + `tsc` + `depcruise`
+```python
+# Find how to add a REST endpoint
+ctx_search(queries=["SOP-02 add REST endpoint"], source="sops")
 
-**6. Standard Coverage**
-- 39 standards in `docs/01-agnostic/01-standards/`
-- No duplicate standard numbers (check for collisions)
-- All standards referenced from index
+# Find forbidden imports for Python
+ctx_search(queries=["forbidden import domain fastapi"], source="architecture-standards")
 
-Current verified state: ✅ All checks pass as of 2026-06-16.
+# Find a code pattern in the Java boilerplate
+ctx_search(queries=["repository port pattern", "OrderRepository"], source="java-boilerplate")
+```
 
-## 🏗️ Technology Stack
+## 4. Technology Stack
 
 | Layer | Java | Python | NestJS | Frontend |
 |-------|------|--------|--------|----------|
 | Framework | Spring Boot 3.4+ | FastAPI + SQLAlchemy | NestJS 10.3+ | React 18 / Quasar 2 |
-| Build | Maven | Poetry + pytest | npm + Jest + dependency-cruiser | Vite + TypeScript |
-| Architecture | ArchUnit | pytest-archon | dependency-cruiser | dependency-cruiser |
+| Build | Maven | Poetry + pytest | npm + Jest | Vite + TypeScript |
+| Architecture | ArchUnit | pytest-archon | depcruise | depcruise |
 | Database | PostgreSQL 14+ | PostgreSQL 14+ | PostgreSQL 14+ | — |
 | Deployment | Docker Compose | Docker Compose | Docker Compose | Docker Compose + nginx |
 
-## 🚀 Dual-Mode Deployment
+## 5. Architecture Rules
 
-| Mode | Command | Use When |
-|------|---------|----------|
-| **Fleet** (Traefik + TLS) | `docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d` | Part of `hermes-design` fleet |
-| **Standalone** (localhost) | `docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d` | Local development |
+### Forbidden Imports
 
-Base `docker-compose.yml` has **no ports, no Traefik labels** — zero leakage.
-
-## ✅ Architecture Rules at a Glance
-
-### Verification Checklist (Run Before Commit)
-| Check | Command | Gate |
-|---|---|---|
-| Internal links valid | `python3 scripts/validate-docs-links.py` | Documentation integrity |
-| No duplicate standards | `ls docs/01-agnostic/01-standards/*.md | sort | uniq -d` | Standards hygiene |
-| feature-list.json exists per boilerplate | `find boilerplate -name feature-list.json` | Boilerplate completeness |
-| AGENTS.md per stack | `find boilerplate -name AGENTS.md` | Agent guidance |
-| lefthook covers all stacks | `grep -c "^[[:space:]]*[a-z-]*:" lefthook.yml` | Harness coverage |
-
-### Forbidden Imports by Layer
-| Layer | Cannot Import (Python) | Cannot Import (Java) | Cannot Import (NestJS) |
-|-------|------------------------|----------------------|------------------------|
+| Layer | Python | Java | NestJS |
+|-------|--------|------|--------|
 | **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` | `@nestjs/*`, `typeorm`, `class-validator` |
-| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks | `typeorm`, `@nestjs/platform-express` |
-| **Infrastructure** | *(none — can import all)* | *(none — can import all)* | *(none — can import all)* |
+| **Application** | `fastapi`, `sqlalchemy` | `@RestController` | `typeorm`, `@nestjs/platform-express` |
+
+For full table → `ctx_search(queries:["forbidden imports"], source:"architecture-standards")`
 
 ### Required Patterns
+
 1. Repositories → Interface in `domain/ports/`, implementation in `infrastructure/persistence/`
 2. Use cases → Interface in `application/usecases/`, implementation alongside
 3. Entities → Pure POJOs/dataclasses in `domain/models/`, no framework annotations
 4. Pre-commit → Run stack's architecture validation before ANY commit
 
-## 🤖 AI Engineering Disciplines
+## 6. Dual-Mode Deployment
 
-This template is AI-native. Three standards govern how agents interact with the codebase:
+| Mode | Command |
+|------|---------|
+| Fleet | `docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d` |
+| Standalone | `docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d` |
 
-| Discipline | Standard | Governs | When |
-|-----------|----------|---------|------|
-| **Prompt Engineering** | [Standard 27](docs/01-agnostic/01-standards/27-prompt-engineering.md) | How agents write prompts (structure, few-shots, versioning) | Every prompt sent to a model |
-| **Context Engineering** | [Standard 28](docs/01-agnostic/01-standards/28-context-engineering.md) | How agents manage what the model sees (budget, RAG, compression) | Every context assembly |
-| **Harness Engineering** | [Standard 29](docs/01-agnostic/01-standards/29-harness-engineering.md) | How agents tie generators, validators, and handoffs into a unified lifecycle | Every task |
+## 7. AI Engineering Disciplines
 
-**The Harness Lifecycle (Initialize → Scaffold → Validate → Handoff → Verify)**
+| Discipline | Standard | Tool |
+|-----------|----------|------|
+| Prompt Engineering | [Standard 27](docs/01-agnostic/01-standards/27-prompt-engineering.md) | `.agents.yml` → `prompts/` |
+| Context Engineering | [Standard 28](docs/01-agnostic/01-standards/28-context-engineering.md) | `ctx_index`, `ctx_search` |
+| Harness Engineering | [Standard 29](docs/01-agnostic/01-standards/29-harness-engineering.md) | `lefthook`, `scripts/architecture-pre-commit.sh` |
 
-Every task MUST traverse these five phases. See Standard 29 for the full spec.
+## 8. Mandatory Compliance
 
-```
-Initialize  →  Scaffold  →  Validate  →  Handoff  →  Verify
-(Phase 1)    (Phase 2)   (Phase 3)   (Phase 4)   (Phase 5)
-```
+1. Run `./scripts/architecture-pre-commit.sh`
+2. Include "Architecture: PASSED" in commit message
+3. Use GitHub Issues (no markdown reports in repo)
 
-- **Initialize**: Read AGENTS.md, index context, declare budget (Standard 28)
-- **Scaffold**: Use generator → template → manual (in that order)
-- **Validate**: Run 7 gates (Standard 21) + 3 new gates (Standard 29)
-- **Handoff**: Package work with verification evidence
-- **Verify**: Receiving agent confirms reproducibility
+## 9. Verification
 
-## 📚 Key Documents (One-Line Guide)
-| Document | Read When |
-|----------|-----------|
-| `docs/AI_NAVIGATION.md` | **Start here** for any agent task |
-| `01-agnostic/01-standards/02-architecture.md` | Need layer dependency rules |
-| `01-agnostic/02-adrs/00-adr-index.md` | Need "why" behind a decision |
-| `04-sops/00-index.md` | Need step-by-step implementation guide |
-| `04-sops/10-initialize-environment.md` | First agent session on this repo |
-| `04-sops/11-implement-feature.md` | Implementing a feature |
-| `04-sops/12-session-handoff.md` | Ending an agent session |
-| `01-agnostic/01-standards/18-agent-session-harness.md` | Session harness standard |
+|| Check | Command |
+|-------|---------|
+|| Links valid | `python3 scripts/validate-docs-links.py` |
+|| No duplicate standards | `ls docs/01-agnostic/01-standards/*.md \| sort \| uniq -d` |
+|| feature-list.json per stack | `find boilerplate -name feature-list.json` |
+|| AGENTS.md per stack | `find boilerplate -name AGENTS.md` |
+|| lefthook coverage | `grep -c "^[[:space:]]*[a-z-]*:" lefthook.yml` |
 
-## ⚠️ AI Agent Imperatives (Summary)
-For full spec see `docs/01-agnostic/01-standards/19-agent-imperatives.md`.
-| # | Rule | When |
-|---|---|------|
-| 1 | **AGENTS.md wins** — takes precedence over all other docs when they conflict | Always |
-| 2 | **Deployment mode is not optional** — read AGENTS.md, verify via curl before closing deploy tasks | Deploy / infrastructure tasks |
-| 3 | **Serena + Context-Mode first** — never manual search before trying `ctx_search`/`mcp_serena_*` | Always |
-| 4 | **No markdown reports in repo** — use GitHub Issues for findings | Always |
-| 5 | **Temp files in `/tmp/` only** — delete before marking done | Always |
-| 6 | **Architecture compliance** — run `./scripts/architecture-pre-commit.sh` | Before commit |
-| 7 | **GitHub Issues for tracking** — one feature per issue | Always |
-| 8 | **Agent session harness** — `feature-list.json` + `init.sh` | Multi-session |
+## 10. DOX Tier Compliance
 
-## 📋 Pre-Commit Checklist (MANDATORY)
-```bash
-./scripts/architecture-pre-commit.sh
-```
+Dispatches MUST stay under token budgets. Canonical reference docs have no limit but MUST NOT be read by agents.
 
-*For humans: see `docs/00-index.md` for the full taxonomy.*
+| Check | Command | Gate |
+|-------|---------|------|
+| Root dispatch ≤2,000 tokens (~8,000 chars) | `wc -c AGENTS.md` | ≤8,000 chars |
+| Boilerplate dispatches ≤500 tokens each (~2,000 chars) | `wc -c boilerplate/*/AGENTS.md` | Each ≤2,000 chars |
+| Total ≤4,600 tokens (~18,000 chars) | `python3 -c "import os; print(sum(len(open(f).read()) for f in ['AGENTS.md']+[f'boilerplate/{s}/AGENTS.md' for s in ['java','python','nestjs','reactjs','quasar']]))"` | ≤18,000 chars |
+| Max 3 code blocks per dispatch | `grep -c "^\`\`\`" boilerplate/*/AGENTS.md` | ≤6 fences (3 pairs) |
+| No Docker/CI/IDE tips in dispatch | `grep -i -c "docker.*dev\|devcontainer\|vscode\|intellij" boilerplate/*/AGENTS.md` | 0 matches |
+| Canonical links present | `grep -c "Canonical:" boilerplate/*/AGENTS.md` | All ≥1 match |
+
+**Version:** Clean Architecture v2.1  
+**Last Updated:** 2026-06-19

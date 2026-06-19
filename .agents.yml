@@ -84,19 +84,173 @@ context_sources:
     description: "Automation and validation scripts"
 
 # -----------------------------------------------------------------------
+# Architecture Rules Registry
+# Single source of truth for ALL machine-tracked rules.
+# Each rule MUST have a stable id: and MUST be referenced in stack source trees.
+# See docs/01-agnostic/01-standards/21-validation-harness.md § Rule Coverage Verification
+# -----------------------------------------------------------------------
+architecture_rules:
+  # --- Domain Purity (framework isolation) ---
+  - id: DDD-DOMAIN-PURITY-JAVA
+    name: "Domain has zero Spring/JPA/Lombok imports"
+    description: "No org.springframework, javax.persistence, lombok in domain/"
+    rationale: "Domain logic is framework-agnostic. Coupling to Spring/JPA/Lombok makes testing impossible and prevents stack swaps."
+    severity: error
+    stacks: [java]
+    enforced_by: ArchUnit
+    pre_commit_pattern: "^(import)\\s+(org\\.springframework|javax\\.persistence|lombok)"
+
+  - id: DDD-DOMAIN-PURITY-PYTHON
+    name: "Domain has zero framework imports"
+    description: "No FastAPI/SQLAlchemy/Pydantic in domain/"
+    rationale: "Domain logic is framework-agnostic. Coupling to FastAPI/SQLAlchemy/Pydantic makes testing impossible and prevents stack swaps."
+    severity: error
+    stacks: [python]
+    enforced_by: pytest-archon
+    pre_commit_pattern: "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)"
+
+  - id: DDD-DOMAIN-PURITY-NESTJS
+    name: "Domain has zero NestJS/TypeORM imports"
+    description: "No @nestjs/*, typeorm, class-validator in domain/"
+    rationale: "Domain logic is framework-agnostic. Coupling to NestJS/TypeORM makes testing impossible and prevents stack swaps."
+    severity: error
+    stacks: [nestjs]
+    enforced_by: dependency-cruiser
+
+  - id: DDD-DOMAIN-PURITY-QUASAR
+    name: "Domain types have zero framework imports"
+    description: "No Vue/Quasar/Pinia/Axios in features/*/types/"
+    rationale: "Domain types (entities, value objects) must be pure TypeScript. Framework coupling leaks into business logic."
+    severity: error
+    stacks: [quasar]
+    enforced_by: dependency-cruiser
+
+  # --- Dependency Injection ---
+  - id: DDD-CONSTRUCTOR-INJECTION
+    name: "Constructor injection only"
+    description: "No field-level autowiring/injection"
+    rationale: "Field injection hides dependencies, makes testing harder, and breaks immutability. Constructor injection surfaces all collaborators."
+    severity: error
+    stacks: [java, nestjs, python]
+    enforced_by: ArchUnit / manual review
+
+  # --- DTOs ---
+  - id: DDD-DTO-BOUNDARY
+    name: "DTOs at every boundary"
+    description: "Never expose entities/models to API or DB"
+    rationale: "Entities encapsulate domain invariants. Exposing them to external layers violates encapsulation and couples API contracts to internal structure."
+    severity: error
+    stacks: [java, nestjs, python]
+    enforced_by: ArchUnit / code review
+
+  # --- Currency / Money ---
+  - id: DDD-CURRENCY-001
+    name: "Use precise decimal type for money"
+    description: "No float/double/number for currency"
+    rationale: "Floating-point arithmetic causes rounding errors in financial calculations. BigDecimal (Java), decimal.Decimal (Python), decimal.js (TS) are exact."
+    severity: error
+    stacks: [java, nestjs, python]
+    enforced_by: code review / type checker
+
+  # --- Database ---
+  - id: DDD-DATABASE-001
+    name: "Testcontainers for integration tests"
+    description: "Use real PostgreSQL in tests (not H2/SQLite)"
+    rationale: "H2 and SQLite have different semantics from PostgreSQL (locking, JSON operators, window functions). Tests must verify against production-equivalent behavior."
+    severity: error
+    stacks: [java, python]
+    enforced_by: pytest / JUnit configuration
+
+  # --- Dependency Graph ---
+  - id: DDD-DEPENDENCY-CHECK
+    name: "dependency-cruiser zero violations"
+    description: "npx depcruise --validate must pass"
+    rationale: "dependency-cruiser enforces layer boundaries and forbidden imports at the module graph level, complementing compile-time checks."
+    severity: error
+    stacks: [nestjs, reactjs, quasar]
+    enforced_by: dependency-cruiser
+
+  # --- TypeScript / Frontend ---
+  - id: TYPESCRIPT-STRICT-001
+    name: "Strict typing — no any"
+    description: "Every prop/function/variable typed; no any without justification"
+    rationale: "any defeats type safety. It propagates silently through call chains, turning compile-time errors into runtime failures."
+    severity: error
+    stacks: [reactjs, quasar]
+    enforced_by: ESLint @typescript-eslint/no-explicit-any
+
+  - id: REACT-HOOKS-ONLY
+    name: "Functional components + hooks only"
+    description: "No class components"
+    rationale: "Class components are harder to test, don't support hooks, and are deprecated in React documentation. Functional components with hooks are the standard."
+    severity: error
+    stacks: [reactjs]
+    enforced_by: ESLint react/prefer-function-component
+
+  - id: REACT-STATE-PATTERN
+    name: "Proper state management"
+    description: "Zustand (global), useState (local); no prop drilling"
+    rationale: "Prop drilling creates tight coupling between distant components. Global state (Zustand/Pinia) decouples producers from consumers."
+    severity: error
+    stacks: [reactjs, quasar]
+    enforced_by: dependency-cruiser / code review
+
+  - id: REACT-UI-PATTERN
+    name: "Ant Design over custom CSS"
+    description: "Prefer AntD components over bespoke styling"
+    rationale: "Custom CSS fragments the design system and makes accessibility audits impossible. AntD provides tested, accessible, themeable components."
+    severity: warning
+    stacks: [reactjs]
+    enforced_by: code review
+
+  - id: REACT-BUSINESS-LOGIC
+    name: "Business logic in hooks"
+    description: "No business logic in .tsx render"
+    rationale: "Components should be pure render functions. Business logic belongs in hooks (coordinators) or use cases (domain), enabling unit testing without DOM."
+    severity: error
+    stacks: [reactjs]
+    enforced_by: code review / ESLint complexity rules
+
+  - id: QUASAR-COMPOSABLE-PATTERN
+    name: "Composables orchestrate, components render"
+    description: "No business logic in .vue files"
+    rationale: "Same as REACT-BUSINESS-LOGIC for Vue. .vue files handle template rendering; composables handle orchestration."
+    severity: error
+    stacks: [quasar]
+    enforced_by: code review
+
+  - id: QUASAR-API-ISOLATION
+    name: "API calls in api/ folder"
+    description: "No direct HTTP in components"
+    rationale: "Direct axios/fetch calls in components create untestable, tightly coupled code. Centralized api/ adapters enable mocking, retries, and auth."
+    severity: error
+    stacks: [quasar]
+    enforced_by: dependency-cruiser / code review
+
+# -----------------------------------------------------------------------
 # Forbidden import patterns by layer
-# Matches run against changed files in pre-commit.
+# This is a SUBSET of architecture_rules. Kept for backward compatibility
+# with pre-commit hooks that grep imports directly.
+# Prefer architecture_rules[] for new rules.
 # -----------------------------------------------------------------------
 forbidden_patterns:
-  - name: domain_framework_imports_python
+  - id: DDD-DOMAIN-PURITY-PYTHON
+    name: domain_framework_imports_python
     pattern: "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)"
     path_regex: "src/domain/.*\\.py$"
     message: "Domain layer must not import frameworks"
+    rationale: "Domain logic is framework-agnostic. Coupling to FastAPI/SQLAlchemy/Pydantic makes testing impossible and prevents stack swaps."
+    severity: error
+    stacks: [python]
 
-  - name: domain_framework_imports_java
+  - id: DDD-DOMAIN-PURITY-JAVA
+    name: domain_framework_imports_java
     pattern: "^(import)\\s+(org\\.springframework|javax\\.persistence|lombok)"
     path_regex: "src/main/java/.*/domain/.*\\.java$"
     message: "Domain layer must not import frameworks"
+    rationale: "Domain logic is framework-agnostic. Coupling to Spring/JPA/Lombok makes testing impossible and prevents stack swaps."
+    severity: error
+    stacks: [java]
 
 # -----------------------------------------------------------------------
 # Agent navigation shortcuts

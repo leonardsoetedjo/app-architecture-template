@@ -5,7 +5,7 @@
  * 
  * Run with: npx depcruise --validate .dependency-cruiser.js src/
  * 
- * Rules:
+ * Rules (DDD-DEPENDENCY-CHECK):
  * - Domain layer: No framework imports (Vue, Quasar, Pinia, Axios)
  * - Application layer: No infrastructure imports
  * - Features: Can only import from their own directory or shared modules

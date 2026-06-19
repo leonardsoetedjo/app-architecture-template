@@ -184,6 +184,28 @@ pre-commit:
         - rebase
 
     # ========================================================================
+    # Gate 8: Rule Coverage Verification
+    # Ensures .agents.yml rules are implemented in every stack that claims them
+    # ========================================================================
+    rules-coverage:
+      glob: ".agents.yml"
+      run: python3 scripts/verify-rules-covered.py
+      require_serial: true
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
+    # Gate 9: Documentation Links (catch stale refs before push)
+    # ========================================================================
+    docs-links:
+      glob: "docs/**/*.md"
+      run: python3 scripts/validate-docs-links.py
+      skip:
+        - merge
+        - rebase
+
+    # ========================================================================
     # Gate 6: Format (All Languages)
     # ========================================================================
     format-trailing-whitespace:
@@ -237,6 +259,15 @@ pre-commit:
 pre-push:
   parallel: true
   commands:
+    # ========================================================================
+    # Rule Coverage (re-run in case .agents.yml changed)
+    # ========================================================================
+    rules-coverage-push:
+      run: python3 scripts/verify-rules-covered.py
+      skip:
+        - merge
+        - rebase
+
     # ========================================================================
     # PYTHON - Full Test Suite (pre-push only, not on every commit)
     # ========================================================================

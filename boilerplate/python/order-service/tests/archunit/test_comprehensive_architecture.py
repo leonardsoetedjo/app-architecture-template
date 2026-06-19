@@ -1,6 +1,11 @@
 """
 Comprehensive Architecture Tests using AST Analysis
 
+Enforced Rules:
+  - DDD-DOMAIN-PURITY-PYTHON (domain framework isolation)
+  - DDD-DOMAIN-STRUCTURE (dataclass, immutability, naming)
+  - DDD-APPLICATION-PURITY (infra-free application layer)
+
 This test suite enforces Clean Architecture principles for Python/FastAPI:
 1. Layer dependency rules (inward-only dependencies)
 2. Framework isolation (no FastAPI/SQLAlchemy/Pydantic in domain)
