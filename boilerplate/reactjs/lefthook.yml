@@ -1,0 +1,31 @@
+# Per-boilerplate lefthook: ReactJS Clean Architecture
+pre-commit:
+  parallel: true
+  commands:
+    architecture:
+      run: |
+        npm run depcruise
+        echo "Architecture: PASSED"
+    type-check:
+      run: |
+        npx tsc --noEmit
+        echo "Type: PASSED"
+    lint:
+      run: |
+        npm run lint
+        echo "Lint: PASSED"
+    test:
+      run: |
+        npm test -- --run
+        echo "Test: PASSED"
+    format:
+      run: |
+        npx prettier --check "src/**/*.{ts,tsx}"
+        echo "Format: PASSED"
+
+pre-push:
+  commands:
+    build:
+      run: |
+        npm run build
+        echo "Build: PASSED"

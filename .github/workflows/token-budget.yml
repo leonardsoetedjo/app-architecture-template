@@ -1,0 +1,27 @@
+name: Token Budget Gate
+
+on: [push, pull_request]
+
+jobs:
+  token-budget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check context budgets
+        run: |
+          python3 scripts/measure-context.py --ci --total-budget 18000
+          echo "All context budgets respected"
+
+      - name: Check AGENTS.md headroom
+        run: |
+          python3 scripts/measure-context.py AGENTS.md --budget 2000 --warn-at 80 --fail-at 95
+          echo "AGENTS.md has sufficient headroom"
+
+      - name: Check boilerplate AGENTS.md budgets
+        run: |
+          for f in boilerplate/*/AGENTS.md; do
+            echo "Checking $f"
+            python3 scripts/measure-context.py "$f" --budget 500 --fail-at 100
+          done
+          echo "All boilerplate budgets respected"

@@ -1,0 +1,31 @@
+# Per-boilerplate lefthook: Quasar Clean Architecture
+pre-commit:
+  parallel: true
+  commands:
+    architecture:
+      run: |
+        npx depcruise --validate .dependency-cruiser.js src/
+        echo "Architecture: PASSED"
+    type-check:
+      run: |
+        npx vue-tsc --noEmit
+        echo "Type: PASSED"
+    lint:
+      run: |
+        npm run lint
+        echo "Lint: PASSED"
+    test:
+      run: |
+        npm run test:unit -- --run
+        echo "Test: PASSED"
+    format:
+      run: |
+        npx prettier --check "src/**/*.{ts,vue}"
+        echo "Format: PASSED"
+
+pre-push:
+  commands:
+    build:
+      run: |
+        quasar build
+        echo "Build: PASSED"
