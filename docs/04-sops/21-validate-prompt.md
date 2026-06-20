@@ -90,6 +90,8 @@ Stop at 90 minutes regardless of completion.
 - Frontend: reactive form validation (React Hook Form / Quasar QForm)
 - Error message tied to each `<input>` via `aria-describedby`
 - Error displayed below the field, NOT as a generic toast
+- **Reference:** Frontend Architecture Standard §8 (Form Validation & Input Handling)
+- **Checklist:** `docs/04-templates/03-form-validation-checklist.md`
 
 ### Step 4: Deploy Locally (10 min)
 

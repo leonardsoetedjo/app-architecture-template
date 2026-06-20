@@ -337,3 +337,93 @@ counter++;
 ```
 
 **Rule**: Every non-obvious business rule, workaround, or external dependency must have an explanatory comment with a reference (issue number, ADR, or business rule ID).
+
+---
+
+## 8. Form Validation & Input Handling Standards
+
+To ensure consistent, testable, and accessible form behaviour across all frontend implementations, every form must implement the following validation and interaction patterns.
+
+### 8.1 Per-Field Validation
+
+Every input field **must** have its own dedicated error message area. This enables precise user feedback and stable Playwright selectors.
+
+| Requirement | Rule |
+|---|---|
+| Error container | Each `<input>` must be followed by an error container (e.g. `<span>`, `<p>`, or `<div>`) with a stable `data-testid` |
+| Error visibility | Error shows only when that specific field fails validation; hides when user types in that field |
+| Error placement | Directly beneath the input box, not as a top-of-page banner |
+| Multiple errors | Empty submit on a form with both fields empty must show **two** errors (one per field), not one generic message |
+
+**React Example:**
+```tsx
+<div>
+  <label>Username</label>
+  <input
+    data-testid="login-username-input"
+    value={username}
+    onChange={(e) => { setUsername(e.target.value); setUsernameError(''); }}
+  />
+  {usernameError && (
+    <p data-testid="login-username-error" className="error-text">
+      {usernameError}
+    </p>
+  )}
+</div>
+```
+
+**Quasar/Vue Example:**
+```vue
+<q-input
+  v-model="username"
+  data-testid="login-username-input"
+  :error="!!usernameError"
+  @update:model-value="usernameError = ''"
+/>
+<span v-if="usernameError" data-testid="login-username-error" class="text-negative">
+  {{ usernameError }}
+</span>
+```
+
+### 8.2 Submit Button State
+
+The primary submit button **must** reflect form readiness to prevent accidental or premature submission.
+
+| Condition | Button State |
+|---|---|
+| Any required field is empty | **Disabled** — grayed out, `disabled` attribute set, unclickable |
+| All required fields have content | **Enabled** — normal styling, clickable |
+| Form is actively submitting | **Disabled** — loading spinner or "Please wait..." text, prevents double submission |
+
+**Anti-pattern:** Buttons that are always enabled and rely solely on server-side rejection create a poor user experience and are harder to test deterministically.
+
+### 8.3 Validation Trigger Points
+
+| Trigger | Behaviour |
+|---|---|
+| On empty submit (user clicks disabled button or presses Enter) | Client-side validation fires; per-field errors appear |
+| On field blur (optional) | Client-side validation may fire; per-field error appears |
+| On field input (typing) | That field's error **clears immediately**; other fields' errors remain |
+| On server rejection (wrong password, etc.) | General error banner appears **above the form**; per-field errors remain if they were already shown |
+
+### 8.4 Server-Error Handling
+
+When the server rejects a submission (e.g. invalid credentials), the form must:
+
+1. Show a **general error message** above the form (not a browser alert/popup)
+2. Preserve the username value so the user can retype the password only
+3. Clear the password field for security
+4. Keep focus management sensible (return focus to the first errored field or the password field)
+
+### 8.5 Testing Selectors
+
+Every form element involved in validation must have a `data-testid` for Playwright stability:
+
+| Element | Required `data-testid` |
+|---|---|
+| Each input field | `{form}-{field}-input` (e.g. `login-username-input`) |
+| Each error container | `{form}-{field}-error` (e.g. `login-username-error`) |
+| General error banner | `{form}-general-error` (e.g. `login-general-error`) |
+| Submit button | `{form}-submit-button` (e.g. `login-submit-button`) |
+
+---

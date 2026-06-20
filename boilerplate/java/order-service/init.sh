@@ -42,7 +42,7 @@ if [ "$1" == "--verify" ]; then
     echo "=== Verify mode — skipping application start ==="
 else
     echo "    Starting Spring Boot application..."
-    ./mvnw spring-boot:run -pl order-service -Dspring-boot.run.forked=false &
+    ./mvnw spring-boot:run -Dspring-boot.run.forked=false &
     APP_PID=$!
     export SPRING_BOOT_PID=$APP_PID
     echo "    ✅ Spring Boot started (PID: $APP_PID)"
