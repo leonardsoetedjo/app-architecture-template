@@ -67,6 +67,14 @@ owner: "@architecture-team"
 | 16 | [Add Alembic Migration](16-add-alembic-migration.md) | Database schema change (Python/Alembic) | Schema changes — Python stack |
 | **17** | **[Agent Session Harness](18-agent-session-harness.md)** | **Standard harness artifacts for all boilerplates** | **New boilerplate setup or audit compliance** |
 
+### Validation & Checklist Templates
+
+| # | Template | Purpose | When to Use |
+|---|----------|---------|-------------|
+| 01 | [New Project Checklist](../04-templates/01-new-project-checklist.md) | Project bootstrap checklist | New repo setup |
+| 02 | [Quick Setup Checklist](../04-templates/02-quick-setup-checklist.md) | Quick start verification | New developer onboarding |
+| **03** | **[Form Validation Checklist](../04-templates/03-form-validation-checklist.md)** | **Form UX + input validation checklist** | **Any feature with forms** |
+
 ---
 
 ## Missing SOPs (Planned)
@@ -109,6 +117,7 @@ owner: "@architecture-team"
 
 ### Related Documentation
 - **Architecture Standards**: [01-agnostic/01-standards/02-architecture.md](../01-agnostic/01-standards/02-architecture.md)
+- **Frontend Architecture**: [01-agnostic/01-standards/01-frontend-architecture.md](../01-agnostic/01-standards/01-frontend-architecture.md) *(includes Form Validation §8)*
 - **Review Checklist**: [01-agnostic/01-standards/11-review.md](../01-agnostic/01-standards/11-review.md)
 - **Java Backend**: [02-java/00-index.md](../02-java/00-index.md)
 - **Python Backend**: [03-python/00-index.md](../03-python/00-index.md)
