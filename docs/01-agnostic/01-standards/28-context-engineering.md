@@ -2,7 +2,7 @@
 name: "Context Engineering"
 type: "Standard"
 version: "1.0"
-status: "Draft"
+status: "Active"
 owner: "@architecture-team"
 ---
 
