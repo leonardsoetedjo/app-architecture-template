@@ -79,6 +79,10 @@ fi
 
 echo "=== Auto-Indexing Context Sources (Standard 28 §3.1) ==="
 
+# Create temp file with sources
+TMP_OUTPUT=$(mktemp)
+extract_sources "$REPO_ROOT/.agents.yml" > "$TMP_OUTPUT"
+
 indexed=0
 skipped=0
 
@@ -104,7 +108,8 @@ print(f'  Indexed: {\"$name\"} (\"$path\")')
     echo "  ⏭️  Skipped: $name (unchanged)"
     skipped=$((skipped + 1))
   fi
-done <<( extract_sources "$REPO_ROOT/.agents.yml" )
+done < "$TMP_OUTPUT"
+rm -f "$TMP_OUTPUT"
 
 echo ""
 echo "=== Result: $indexed indexed, $skipped skipped ==="
