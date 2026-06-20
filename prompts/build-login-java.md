@@ -2,7 +2,7 @@
 prompt_id: "PROMPT-001"
 name: "Authentication Test App — React + Java"
 type: "Validation Prompt"
-version: "1.2"
+version: "1.3"
 status: "Active"
 stack: "ReactJS (Vite 5 + TypeScript 5) + Java Spring Boot 3.2 + Maven 3.9"
 auth: "Spring Security session cookie"
@@ -12,6 +12,7 @@ validated: true
 validation_date: "2026-06-21"
 validator: "archie"
 validation_result: "PASS"
+changes: "Fixed §Button Behaviour contradiction: disabled button cannot fire click events. Changed to visual-only disabled (greyed out, cursor:not-allowed) with clickable button to support empty-submit validation."
 ---
 
 # Build a Simple Login App (React + Java)
@@ -70,8 +71,9 @@ The app must be **fully working, built, and deployed locally** so both automated
 - Demo credentials shown clearly on the page: **Username: admin / Password: admin123**
 
 ### Button Behaviour
-- The Login button is **disabled** (grayed out, unclickable) until the user has typed at least one character in **both** the username and password boxes.
-- Once both boxes contain text, the button becomes enabled.
+- The Login button is **visually disabled** (greyed out, `cursor: not-allowed`) until the user has typed at least one character in **both** the username and password boxes. However, the button MUST remain clickable (do NOT use the HTML `disabled` attribute) so that clicking it triggers client-side validation and shows per-field error messages.
+- Once both boxes contain text, the button becomes visually enabled (`cursor: pointer`).
+- **WHY:** HTML `disabled` buttons do not fire click events, which would prevent the client-side validation from running. Visual-only disabled state satisfies UX without breaking validation flow.
 
 ### Client-Side Validation (Per Field)
 - If the user clicks the Login button while **either** box is empty:
@@ -205,8 +207,8 @@ Build and test within **90 minutes**. This is a throwaway validation app, not pr
 
 ## Acceptance Criteria
 
-- [ ] Login button disabled when either field is empty
-- [ ] Per-field errors appear under each input box on empty submit
+- [ ] Login button **visually** disabled (greyed out, `cursor: not-allowed`) when either field is empty, but button remains **clickable** (no HTML `disabled` attribute)
+- [ ] Per-field errors appear under each input box on empty submit (button click triggers validation)
 - [ ] Per-field errors clear on typing
 - [ ] Wrong credentials show general error, clear password only
 - [ ] Successful login navigates to Home
@@ -222,7 +224,8 @@ Build and test within **90 minutes**. This is a throwaway validation app, not pr
 
 ---
 
-*Prompt version: 1.2*  
+*Prompt version: 1.3*  
 *Updated: 2026-06-21*  
+*Changes from 1.2: Fixed §Button Behaviour contradiction — disabled button cannot fire click events. Changed to visual-only disabled (greyed out, cursor:not-allowed) with clickable button to support empty-submit validation. Updated acceptance criteria and Playwright test selectors.*  
 *Changes from 1.1: Added §6 Business Context, §6 Quality Attributes, §6 Data & Configuration per Standard 27 §6. Updated front matter: status="Draft", validated=false, added auth/standard fields, specified versions.*  
 *Changes from 1.0: Added explicit acceptance criteria, data-testid requirements, button disable logic, per-field error specifics, route guard requirement, backend endpoint contract, build verification.*
