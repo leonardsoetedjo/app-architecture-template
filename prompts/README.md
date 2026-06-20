@@ -56,8 +56,9 @@ Each template is a markdown file with this structure:
 
 | Template | Task | Status |
 |----------|------|--------|
-| `generate-endpoint.md` | Generate Clean Architecture endpoint | TODO |
-| `refactor-layer.md` | Extract code into correct layer | TODO |
+| `add-endpoint.md` | Generate Clean Architecture REST endpoint | ✅ Active v1.0.0 |
+| `add-domain-entity.md` | Add domain entity with port + tests | ✅ Active v1.0.0 |
+| `refactor-service.md` | Refactor into correct CA layers | ✅ Active v1.0.0 |
 | `write-architecture-test.md` | Write ArchUnit/dependency-cruiser test | TODO |
 | `audit-imports.md` | Audit forbidden imports by layer | TODO |
 
