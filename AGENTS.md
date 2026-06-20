@@ -4,7 +4,7 @@
 > **Budget:** <500 tokens here. Stack details in boilerplate AGENTS.md.  
 > **Machine-readable config:** `.agents.yml`  
 > **Task dispatch:** `docs/AI_NAVIGATION.md`  
-> **Find stuff:** `ctx_search(source: ...)` — see §4 below.
+> **Find stuff:** `ctx_search(source: ...)` for docs; `serena` MCP for code. See §3.5.
 
 ## 1. What Stack?
 
@@ -49,6 +49,20 @@ ctx_index(path="boilerplate/reactjs", source="frontend-boilerplate")
 ctx_index(path="boilerplate/quasar", source="quasar-boilerplate")
 ```
 
+### 3.5 Tool Dispatch: Docs vs Code
+
+**Rule of thumb:** `ctx_search` for prose docs; `serena` MCP for source code.
+
+| Need | Tool | Example |
+|---|---|---|
+| Standards, SOPs, ADRs, requirements | `ctx_search(source: "...")` | Query `architecture-standards` for layer rules |
+| Boilerplate code templates, configs | `ctx_search(source: "...")` | Query `java-boilerplate` for `pom.xml` deps |
+| Live codebase: find class, method, ref | `serena` (`find_symbol`, `search_for_pattern`) | Verify service has no SQLModel imports |
+| Cross-service call chains, refactor scope | `serena` (`find_referencing_symbols`) | Who calls `FooService`? |
+| File structure, line counts, dir walk | `mcp_project_fs_*` | Count `.py` files in `domain/` |
+
+**Index-before-search rule:** Run `ctx_index(path=..., source=...)` once per source per session before any `ctx_search` against that source. First search against unindexed source returns empty results.
+
 ## 4. Architecture Rules
 
 **Forbidden imports by layer:** `ctx_search(queries:["forbidden imports"], source:"architecture-standards")`
@@ -70,7 +84,7 @@ ctx_index(path="boilerplate/quasar", source="quasar-boilerplate")
 - [ ] Read Standards 27/28/29 (prompt/context/harness)
 - [ ] Read stack-specific AGENTS.md
 - [ ] Budget declared: system=5%, task=___%, retrieved=___%, working=___%, safety=5%
-- [ ] Context sources indexed
+- [ ] **Index** context sources via `ctx_index(path=..., source=...)` BEFORE any `ctx_search` or deep file reads
 - [ ] Task scope clarified (single feature)
 
 ## 5.2 Post-Task / Handoff (Standard 29 Phase 4)
@@ -105,4 +119,4 @@ ctx_index(path="boilerplate/quasar", source="quasar-boilerplate")
 | Canonical links present | `grep -c "Canonical:" boilerplate/*/AGENTS.md` | All ≥1 match |
 
 **Version:** Clean Architecture v2.1  
-**Last Updated:** 2026-06-20
+**Last Updated:** 2026-06-21

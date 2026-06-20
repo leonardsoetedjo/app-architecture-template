@@ -83,6 +83,8 @@ owner: "@architecture-team"
 | P2 | Performance optimization | [PLANNED] |
 | P2 | Feature flag rollout | [PLANNED] |
 | P2 | **Agent Session Harness Standard** | **[COMPLETE] SOP #18** |
+| P2 | **Validate Prompt via Throwaway App** | **[COMPLETE] SOP #21** |
+| P2 | **Playwright E2E for Prompt Validation** | **[COMPLETE] SOP #22** |
 
 ---
 
@@ -111,5 +113,10 @@ owner: "@architecture-team"
 - **Java Backend**: [02-java/00-index.md](../02-java/00-index.md)
 - **Python Backend**: [03-python/00-index.md](../03-python/00-index.md)
 
+### Prompts
+- **Prompt Catalog**: [../../prompts/](../../prompts/) — Validated prompts for stack combinations
+
 ### Templates
 - **SOP Template**: [04-templates/01-sop-template.md](../04-templates/02-quick-setup-checklist.md) *(planned)*
+
+---
