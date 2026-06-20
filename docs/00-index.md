@@ -57,6 +57,23 @@ See [`boilerplate/nestjs/AGENTS.md`](../boilerplate/nestjs/AGENTS.md) for the fu
 
 ---
 
+## 🔄 Fleet Agent Workflow
+
+See **[docs/01-agnostic/03-guidelines/11-fleet-workflow.md](01-agnostic/03-guidelines/11-fleet-workflow.md)** for the canonical six-stage workflow from PRD to deployed code.
+
+| Stage | Agent | Produces | Consumed By |
+|-------|-------|----------|-------------|
+| 1. Requirements | Babablacksheep | PRD | Plana, Archie |
+| 2. Planning | Plana | GitHub Issues | Cody |
+| 3. Prompt Engineering | Archie | Certified Prompt | Cody, Cates |
+| 4. Implementation | Cody | Code (PR) | Cates |
+| 5. Verification | Cates | Test Report | Archie |
+| 6. Architecture Audit | Archie | Audit Report + Issues | Cody |
+
+**Document ownership rules:** PRD owned by BA, Prompt owned by Archie, Code owned by Cody, Audit owned by Archie. No agent modifies another agent's artifacts.
+
+---
+
 ## 🤖 AI Agent Guidance
 
 See **[docs/AI_NAVIGATION.md](AI_NAVIGATION.md)** for the one-page task dispatch cheat sheet.

@@ -1,0 +1,29 @@
+# Per-boilerplate lefthook: Java Clean Architecture
+pre-commit:
+  parallel: true
+  commands:
+    import-linter:
+      run: |
+        [ -f .importlinter ] && import-linter --config .importlinter || echo "Import: SKIPPED (no config)"
+    compile:
+      run: |
+        mvn compile -q
+        echo "Compile: PASSED"
+    architecture:
+      run: |
+        mvn test -Dtest=CleanArchitectureLayersTest -q
+        echo "Architecture: PASSED"
+    lint:
+      run: |
+        mvn spotless:check -q || echo "Lint: FAILED (run 'mvn spotless:apply')"
+    format:
+      run: |
+        mvn spotless:check -q
+        echo "Format: PASSED"
+
+pre-push:
+  commands:
+    tests:
+      run: |
+        mvn test -q
+        echo "Tests: PASSED"

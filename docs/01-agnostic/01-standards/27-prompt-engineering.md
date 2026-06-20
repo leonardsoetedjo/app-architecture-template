@@ -1,7 +1,7 @@
 ---
 name: "Prompt Engineering"
 type: "Standard"
-version: "1.0"
+version: "1.1"
 status: "Active"
 owner: "@architecture-team"
 ---
@@ -229,7 +229,147 @@ Before a prompt template is committed, it MUST pass the Prompt Testing Gate:
 | Copying standards text into prompt | Duplicates docs, risks staleness | Reference by name/section, let RAG fetch current text |
 | No output format specified | Model invents format | Always specify expected structure |
 
-## Verification Checklist
+---
+
+## 6. Prompt Completeness Dimensions (MUST)
+
+Every prompt MUST cover four dimensions. A prompt with a missing dimension is incomplete and MUST NOT be committed.
+
+These dimensions apply to **all** prompt types: task prompts, system prompts, few-shot examples, and validation prompts. They do NOT prescribe what the prompt says — only that certain categories of information are present.
+
+### 6.1 Dimension 1: Business Context
+
+| Element | Question | Example (from PRD) |
+|---------|----------|-------------------|
+| Actor | Who performs the action? | "A registered user" |
+| Goal | What business value is delivered? | "So that the user can access protected account features" |
+| Scope (IN) | What is explicitly included? | "Email/password login only" |
+| Scope (OUT) | What is explicitly excluded? | "OAuth, SSO, password reset, MFA" |
+| Success metric | How do we know it's done? | "Login completes in <2s, user reaches dashboard" |
+
+**Rule:** Business context comes from the PRD. The prompt MUST reference the PRD (e.g., "Per PRD-042 §3.2") rather than duplicating it. If no PRD exists, the prompt MUST contain a miniature version of these elements.
+
+### 6.2 Dimension 2: Functional Requirements
+
+| Element | Description |
+|---------|-------------|
+| Happy path | Step-by-step flow from start to desired end state |
+| Edge cases | Empty input, invalid input, boundary values, partial failures |
+| State transitions | What triggers state change? What guards prevent illegal transitions? |
+| Preconditions | What must be true before this flow starts? |
+| Postconditions | What must be true after this flow completes? |
+
+**Rule:** Every noun and verb in the prompt MUST map to at least one testable assertion.
+
+### 6.3 Dimension 3: Quality Attributes (Minimum Set)
+
+At minimum, the prompt MUST declare expectations for these three attributes. If a dimension is not applicable, state "Not applicable: [reason]" — do not omit it.
+
+| Attribute | Minimum Declaration | Why It Matters |
+|-----------|---------------------|----------------|
+| Performance | Response time, load time, throughput expectation | Prevents "works on my laptop" in production |
+| Security | Auth mechanism, secret handling, input sanitization, CORS | Prevents security holes in generated code |
+| Error resilience | Backend-down UX, timeout handling, retry strategy, circuit breaker | Prevents silent failures and bad UX |
+| Accessibility *(optional)* | Keyboard nav, screen reader support, color contrast | Required for public-facing features |
+| Responsiveness *(optional)* | Breakpoints, mobile support, minimum viewport | Required for multi-device features |
+
+### 6.4 Dimension 4: Data & Configuration
+
+| Element | Description |
+|---------|-------------|
+| Test data | Demo accounts, sample datasets, hardcoded values used for validation |
+| Environment | Ports, URLs, CORS origins, database connections, external services |
+| Persistence | In-memory only, database required, external cache, file system |
+| Secrets | What secrets exist, where they live, NEVER hardcoded in source |
+
+### 6.5 Completeness Verification Gate
+
+Before a prompt is committed, verify all four dimensions are present:
+
+```
+□ Dimension 1 (Business Context): Actor, goal, scope IN/OUT present or PRD referenced
+□ Dimension 2 (Functional): Happy path, ≥2 edge cases, state transitions, pre/post conditions
+□ Dimension 3 (Quality): Performance, security, error resilience declared (or "N/A: reason")
+□ Dimension 4 (Data): Test data, environment, persistence strategy, secret policy
+```
+
+A prompt that passes §5 (5-section structure) but fails §6 (completeness dimensions) is still **not ready for use**.
+
+---
+
+## 7. Validation Prompt Addendum (MUST for type="Validation Prompt")
+
+Prompts with `type: "Validation Prompt"` in front matter are used to validate boilerplates, standards, or architecture patterns via throwaway apps. They have stricter requirements than general task prompts.
+
+These additional requirements apply ON TOP OF §6 (all four dimensions still required).
+
+### 7.1 Stack Specification (MUST)
+
+The prompt MUST declare:
+- Frontend framework + build tool (e.g., React 18 + Vite 5 + TypeScript 5)
+- Backend framework + build tool (e.g., Spring Boot 3.2 + Maven 3.9)
+- Auth mechanism (e.g., Spring Security session cookie, FastAPI SessionMiddleware)
+- Node version, Java version, Python version (as applicable)
+
+### 7.2 Build & Deploy Contract (MUST)
+
+| Check | Required Information |
+|-------|--------------------|
+| Build command | Exact command that MUST succeed (e.g., `./mvnw compile`) |
+| Start backend | Exact command (e.g., `mvn spring-boot:run`) |
+| Start frontend | Exact command (e.g., `npm run dev`) |
+| Health check | Endpoint to verify backend is up (e.g., `GET /actuator/health`) |
+| Port mapping | Backend port, frontend port, any proxy configuration |
+| CORS | Allowed origin(s) for frontend → backend communication |
+
+### 7.3 Test Coverage Contract (MUST)
+
+| Check | Required Information |
+|-------|--------------------|
+| E2E framework | Playwright, Cypress, etc. |
+| Test scenarios | Every feature from the prompt MUST have ≥1 E2E test |
+| data-testid | Every interactive element MUST have a `data-testid` attribute |
+| Failure artifacts | Screenshots, video recording, trace on assertion failure |
+| Headless | Tests MUST run headlessly (CI-compatible) |
+
+### 7.4 Timebox & Cleanup (MUST)
+
+| Element | Requirement |
+|---------|-------------|
+| Maximum duration | Hard stop time (default: 90 minutes) |
+| Throwaway rule | Directory MUST be deleted after validation; only `prompt-findings.md` kept |
+| Feature-list.json | Coverage map proving every prompt sentence maps to a testable feature |
+
+### 7.5 Acceptance Criteria Checklist (MUST)
+
+Validation prompts MUST include a checklist where every item is:
+- Observable (a human or machine can verify it)
+- Atomic (one check per behavior, not compound)
+- Unambiguous ("works" and "looks good" are banned)
+
+Example: ✅ "Login button disabled when username is empty"  
+Example: ❌ "Login works well"
+
+### 7.6 Validation Prompt Verification Gate
+
+Before a validation prompt is committed:
+
+```
+□ All 5 sections from §5 present
+□ All 4 dimensions from §6 present
+□ Stack fully specified (versions, build tools, auth)
+□ Build commands verified by running them (not assumed)
+□ Test selectors listed with data-testid
+□ Timebox declared with cleanup rule
+□ Acceptance criteria are atomic and observable
+□ Prompt has been exercised via SOP-21 (throwaway app built)
+```
+
+**Rule:** A validation prompt that has not been exercised via SOP-21 is a **draft**. It gains `status: "Active"` only after passing throwaway validation.
+
+---
+
+## 8. Verification Checklist
 
 Before claiming prompt engineering work is complete:
 
@@ -240,11 +380,31 @@ Before claiming prompt engineering work is complete:
 □ Each prompt has a changelog with semver version
 □ Prompt Testing Gate passed (2 real inputs, consistent output)
 □ Anti-patterns reviewed and none present
+□ Completeness dimensions verified (§6.5 gate)
+□ If Validation Prompt: §7.6 gate passed and SOP-21 exercised
 ```
 
-## References
+## 9. References
 
 - Standard 02: Architecture Standards (layer rules referenced in prompts)
 - Standard 18: Agent Session Harness (session context management)
 - Standard 28: Context Engineering (RAG, token budgeting)
 - Standard 29: Harness Engineering (prompt testing gate integration)
+- SOP-21: Validate Prompt via Throwaway App (procedure for exercising validation prompts)
+- SOP-22: Playwright E2E Prompt Validation (test suite template for validation prompts)
+
+---
+
+## Changelog
+
+### 1.1.0 — 2026-06-21
+- Added §6 "Prompt Completeness Dimensions": 4 universal dimensions (Business Context, Functional Requirements, Quality Attributes, Data & Configuration) that every prompt MUST satisfy before commitment
+- Added §6.5 "Completeness Verification Gate": mechanical checklist to verify all 4 dimensions
+- Added §7 "Validation Prompt Addendum": stricter requirements for `type: "Validation Prompt"` including stack specification, build/deploy contract, test coverage contract, timebox/cleanup rules, and atomic acceptance criteria
+- Added §7.6 "Validation Prompt Verification Gate": 8-point checklist before a validation prompt gains `status: "Active"`
+- Updated §8 (formerly Verification Checklist) to include §6.5 and §7.6 gates
+- Moved Anti-Patterns to §5 (was implied §4); added structural separator before §6
+- Updated SOP-21 Step 2 to reference Standard 27 §6 dimension check as hard gate (STOP if missing)
+
+### 1.0.0 — 2026-06-01
+- Initial version: 5-section prompt structure, few-shot examples, versioning, prompt testing gate, anti-patterns, verification checklist

@@ -54,15 +54,15 @@ Each template is a markdown file with this structure:
 
 ## Templates
 
-| Template | Task | Status |
-|----------|------|--------|
-| `build-login-java.md` | Build a simple login app with React + Java | ✅ Active v1.0.0 |
-| `build-login-python.md` | Build a simple login app with Quasar + Python | ✅ Active v1.0.0 |
-| `add-endpoint.md` | Generate Clean Architecture REST endpoint | ✅ Active v1.0.0 |
-| `add-domain-entity.md` | Add domain entity with port + tests | ✅ Active v1.0.0 |
-| `refactor-service.md` | Refactor into correct CA layers | ✅ Active v1.0.0 |
-| `write-architecture-test.md` | Write ArchUnit/dependency-cruiser test | TODO |
-| `audit-imports.md` | Audit forbidden imports by layer | TODO |
+| Template | Task | Status | Front Matter |
+|----------|------|--------|-------------|
+| `build-login-java.md` | Build a simple login app with React + Java | ✅ Active v1.2 | `type: "Validation Prompt"`, `validated: true` |
+| `build-login-python.md` | Build a simple login app with Quasar + Python | ✅ Active v1.2 | `type: "Validation Prompt"`, `validated: true` |
+| `add-endpoint.md` | Generate Clean Architecture REST endpoint | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
+| `add-domain-entity.md` | Add domain entity with port + tests | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
+| `refactor-service.md` | Refactor into correct CA layers | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
+| `write-architecture-test.md` | Write ArchUnit/dependency-cruiser test | TODO | — |
+| `audit-imports.md` | Audit forbidden imports by layer | TODO | — |
 
 ## Adding a New Template
 

@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0.0",
+  "created_at": "2026-06-20T15:10:01.443583+00:00Z",
+  "feature_list": {
+    "title": "Golden Path Test",
+    "description": "Scope: tests/integration/",
+    "milestones": [
+      {
+        "name": "Golden Path Test \u2014 Implement tests/integration/",
+        "acceptance_criteria": [
+          "Implement tests/integration/"
+        ],
+        "estimated_tokens": 500,
+        "dependencies": []
+      },
+      {
+        "name": "Golden Path Test \u2014 Tests pass",
+        "acceptance_criteria": [
+          "Tests pass"
+        ],
+        "estimated_tokens": 500,
+        "dependencies": [
+          "Milestone 1"
+        ]
+      },
+      {
+        "name": "Golden Path Test \u2014 Lefthook gates pass",
+        "acceptance_criteria": [
+          "Lefthook gates pass"
+        ],
+        "estimated_tokens": 500,
+        "dependencies": [
+          "Milestone 2"
+        ]
+      }
+    ],
+    "current_milestone": 0,
+    "version": "1.0.0"
+  },
+  "context_budget": {
+    "system": 100,
+    "task": 800,
+    "retrieved": 500,
+    "working": 500,
+    "safety": 100,
+    "total": 2000
+  },
+  "indexed_sources": [
+    "docs/01-agnostic/01-standards",
+    "docs/04-sops",
+    "prompts/"
+  ],
+  "estimated_sessions": 1
+}

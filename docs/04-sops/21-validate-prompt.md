@@ -52,7 +52,18 @@ cp -r app-architecture-template/boilerplate/python/order-service ./throwaway-pyt
 
 ### Step 2: Parse Prompt into a Feature List (10 min)
 
-Translate every sentence in the prompt into a `feature-list.json` entry:
+**Before translating the prompt into features, verify it satisfies Standard 27 §6 (Prompt Completeness Dimensions):**
+
+```
+□ Dimension 1 (Business Context): Actor, goal, scope IN/OUT present or PRD referenced
+□ Dimension 2 (Functional): Happy path, ≥2 edge cases, state transitions, pre/post conditions
+□ Dimension 3 (Quality): Performance, security, error resilience declared (or "N/A: reason")
+□ Dimension 4 (Data): Test data, environment, persistence strategy, secret policy
+```
+
+**If any dimension is missing → STOP. Do not proceed.** Log the gap in `prompt-findings.md` and return the prompt to the author.
+
+Then, translate every sentence in the prompt into a `feature-list.json` entry:
 
 ```json
 {

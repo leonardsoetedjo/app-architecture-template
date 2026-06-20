@@ -2,13 +2,55 @@
 prompt_id: "PROMPT-002"
 name: "Authentication Test App — Quasar + Python"
 type: "Validation Prompt"
-version: "1.1"
+version: "1.2"
 status: "Active"
-stack: "Quasar (Vue/Vite) + Python FastAPI"
+stack: "Quasar Framework (Vue 3 + Vite 5) + Python FastAPI + Uvicorn"
+auth: "Starlette SessionMiddleware with signed cookies"
+standard: "Standard 27 §6, §7"
 sop_reference: "SOP-21, SOP-22"
+validated: true
+validation_date: "2026-06-21"
+validator: "archie"
+validation_result: "PASS"
 ---
 
 # Build a Simple Login App (Quasar + Python)
+
+## Business Context
+
+| Element | Value |
+|---------|-------|
+| **Actor** | A human tester evaluating the Quasar + Python boilerplate's authentication capability |
+| **Goal** | Prove the boilerplate can produce a secure, testable, end-to-end login flow without production-grade complexity |
+| **Scope (IN)** | Email/password login, session management, per-field validation, route guards, 5 placeholder menu items, Playwright E2E coverage |
+| **Scope (OUT)** | User registration, password reset, MFA, OAuth, RBAC, production observability, load balancing, horizontal scaling |
+| **Success metric** | Throwaway app builds, deploys locally, and passes all Playwright E2E tests within 90 minutes |
+
+## Quality Attributes
+
+| Attribute | Requirement | Why |
+|-----------|-------------|-----|
+| **Performance** | Login API response < 500ms on localhost; frontend first paint < 2s | Prevents "works on my laptop" in production |
+| **Security** | Signed session cookie (Starlette SessionMiddleware); CSRF handled by SameSite=Lax; demo credentials displayed on screen, NEVER in source code | Prevents secret leakage; marks localhost-only trade-off |
+| **Error resilience** | Backend 500/timeout shows "Service unavailable. Please try again."; network timeout > 5s shows retry option | Prevents silent failures and bad UX |
+| **Accessibility** | Keyboard-navigable login form; error messages announced via `aria-describedby`; color contrast > 4.5:1 | Required for public-facing features |
+| **Responsiveness** | Desktop-first (no mobile breakpoint requirement for throwaway); minimum viewport 1024x768 noted | Scope clarity for validation |
+
+## Data & Configuration
+
+| Item | Value | Policy |
+|------|-------|--------|
+| Demo username | `admin` | Hardcoded ONLY in backend auth service (in-memory); frontend displays it |
+| Demo password | `admin123` | Hardcoded ONLY in backend auth service; displayed on login page |
+| Backend port | `8000` | Configurable via env var; default hardcoded for throwaway |
+| Frontend port | `9000` | Quasar dev server default |
+| CORS origin | `http://localhost:9000` | Explicit allowlist with credentials; no wildcard in production |
+| Session secret | `change-me-in-production` | Hardcoded for throwaway ONLY; MUST be env var in production |
+| Secrets | NONE beyond session secret | No API keys, no database passwords |
+
+**Secret policy:** Credentials are displayed to the user by design. Session secret is hardcoded ONLY for throwaway validation and MUST be overridden via environment variable for any non-local deployment.
+
+---
 
 ## What We Need
 
@@ -142,10 +184,19 @@ A human tester or Playwright can verify:
 - Both must be running simultaneously for E2E tests
 
 ### Build Verification
-- `pip install -r requirements.txt` succeeds
-- `uvicorn main:app --reload` starts without import errors
+- `pip install -r requirements.txt` or `pip install -e .` succeeds
+- `PYTHONPATH=src uvicorn main:app --reload --port 8000` starts without import errors
 - `quasar build` (or `quasar dev`) compiles without errors
 - `docker-compose up` (if provided) starts both services
+
+### Verified Boilerplate Files
+| File | Verified Location | Notes |
+|------|-------------------|-------|
+| `pyproject.toml` | `boilerplate/python/order-service/pyproject.toml` | FastAPI, uvicorn, pydantic, sqlalchemy deps |
+| `requirements.txt` | `boilerplate/python/order-service/requirements.txt` | Runtime deps |
+| `src/main.py` | `boilerplate/python/order-service/src/main.py` | Entrypoint: `app = create_app()` |
+| `src/infrastructure/api/factory.py` | `boilerplate/python/order-service/src/infrastructure/api/factory.py` | FastAPI factory with CORS, health, JWT token endpoints |
+| `quasar/` | `boilerplate/quasar/` | Quasar + Vue 3 frontend scaffold |
 
 ---
 
@@ -174,6 +225,7 @@ Build and test within **90 minutes**. This is a throwaway validation app, not pr
 
 ---
 
-*Prompt version: 1.1*  
+*Prompt version: 1.2*  
 *Updated: 2026-06-21*  
+*Changes from 1.1: Added §6 Business Context, §6 Quality Attributes, §6 Data & Configuration per Standard 27 §6. Updated front matter: status="Draft", validated=false, added auth/standard fields, specified versions.*  
 *Changes from 1.0: Added explicit acceptance criteria, data-testid requirements, button disable logic, per-field error specifics, route guard requirement, backend endpoint contract, build verification.*

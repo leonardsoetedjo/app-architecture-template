@@ -2,13 +2,54 @@
 prompt_id: "PROMPT-001"
 name: "Authentication Test App — React + Java"
 type: "Validation Prompt"
-version: "1.1"
+version: "1.2"
 status: "Active"
-stack: "ReactJS (Vite) + Java Spring Boot"
+stack: "ReactJS (Vite 5 + TypeScript 5) + Java Spring Boot 3.2 + Maven 3.9"
+auth: "Spring Security session cookie"
+standard: "Standard 27 §6, §7"
 sop_reference: "SOP-21, SOP-22"
+validated: true
+validation_date: "2026-06-21"
+validator: "archie"
+validation_result: "PASS"
 ---
 
 # Build a Simple Login App (React + Java)
+
+## Business Context
+
+| Element | Value |
+|---------|-------|
+| **Actor** | A human tester evaluating the React + Java boilerplate's authentication capability |
+| **Goal** | Prove the boilerplate can produce a secure, testable, end-to-end login flow without production-grade complexity |
+| **Scope (IN)** | Email/password login, session management, per-field validation, route guards, 5 placeholder menu items, Playwright E2E coverage |
+| **Scope (OUT)** | User registration, password reset, MFA, OAuth, RBAC, production observability, load balancing, horizontal scaling |
+| **Success metric** | Throwaway app builds, deploys locally, and passes all Playwright E2E tests within 90 minutes |
+
+## Quality Attributes
+
+| Attribute | Requirement | Why |
+|-----------|-------------|-----|
+| **Performance** | Login API response < 500ms on localhost; frontend first paint < 2s | Prevents "works on my laptop" in production |
+| **Security** | Spring Security session cookie (HttpOnly, Secure in prod); CSRF disabled for localhost only; demo credentials displayed on screen, NEVER in source code | Prevents secret leakage; marks localhost-only trade-off |
+| **Error resilience** | Backend 500/timeout shows "Service unavailable. Please try again."; network timeout > 5s shows retry option | Prevents silent failures and bad UX |
+| **Accessibility** | Keyboard-navigable login form; error messages announced via `aria-describedby`; color contrast > 4.5:1 | Required for public-facing features |
+| **Responsiveness** | Desktop-first (no mobile breakpoint requirement for throwaway); minimum viewport 1024x768 noted | Scope clarity for validation |
+
+## Data & Configuration
+
+| Item | Value | Policy |
+|------|-------|--------|
+| Demo username | `admin` | Hardcoded ONLY in backend auth service (in-memory); frontend displays it |
+| Demo password | `admin123` | Hardcoded ONLY in backend auth service; displayed on login page |
+| Backend port | `8080` | Configurable via env var; default hardcoded for throwaway |
+| Frontend port | `5173` | Vite dev server default |
+| CORS origin | `http://localhost:5173` | Explicit allowlist; no wildcard in production |
+| Secrets | NONE | No API keys, no database passwords, no JWT signing keys |
+
+**Secret policy:** Credentials are displayed to the user by design. They are NEVER stored in environment variables, source files, or config files outside the in-memory auth service.
+
+---
 
 ## What We Need
 
@@ -142,9 +183,17 @@ A human tester or Playwright can verify:
 - CORS configured to allow frontend origin
 
 ### Build Verification
-- `./mvnw compile` succeeds
+- `./mvnw compile` succeeds (root POM compiles all modules including order-service)
 - `npm install && npm run build` succeeds
 - `docker-compose up` (if provided) starts both frontend and backend
+
+### Verified Boilerplate Files
+| File | Verified Location | Notes |
+|------|-------------------|-------|
+| `pom.xml` | `boilerplate/java/pom.xml` | Multi-module root; includes `common` + `order-service` |
+| `mvnw` | `boilerplate/java/mvnw` (copied from `order-service/`) | Executable wrapper |
+| `SecurityConfig.java` | `boilerplate/java/order-service/src/main/java/.../infrastructure/security/SecurityConfig.java` | Uses session cookies (IF_REQUIRED), not HTTP Basic |
+| `.mvn/wrapper/` | `boilerplate/java/.mvn/wrapper/` | maven-wrapper.jar + properties |
 
 ---
 
@@ -173,6 +222,7 @@ Build and test within **90 minutes**. This is a throwaway validation app, not pr
 
 ---
 
-*Prompt version: 1.1*  
+*Prompt version: 1.2*  
 *Updated: 2026-06-21*  
+*Changes from 1.1: Added §6 Business Context, §6 Quality Attributes, §6 Data & Configuration per Standard 27 §6. Updated front matter: status="Draft", validated=false, added auth/standard fields, specified versions.*  
 *Changes from 1.0: Added explicit acceptance criteria, data-testid requirements, button disable logic, per-field error specifics, route guard requirement, backend endpoint contract, build verification.*

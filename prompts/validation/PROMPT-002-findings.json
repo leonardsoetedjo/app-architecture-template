@@ -1,0 +1,35 @@
+{
+  "prompt_id": "PROMPT-002",
+  "name": "Authentication Test App — Quasar + Python",
+  "validation_date": "2026-06-21",
+  "validator": "archie",
+  "stack": "Quasar Framework (Vue 3 + Vite 5) + Python FastAPI + Uvicorn",
+  "features": [
+    {"id": "F01", "description": "Login page renders with demo credentials displayed (admin/admin123)", "passes": true, "priority": 1, "evidence": "Prompt §Screen 1 specifies demo credentials visible"},
+    {"id": "F02", "description": "Username/password inputs with per-field error messages", "passes": true, "priority": 1, "evidence": "Prompt §Client-Side Validation specifies per-field errors below each input"},
+    {"id": "F03", "description": "Login button disabled until both fields non-empty", "passes": true, "priority": 1, "evidence": "Prompt §Button Behaviour explicitly defines disabled/enabled states"},
+    {"id": "F04", "description": "Wrong credentials show graceful error, clear password only", "passes": true, "priority": 1, "evidence": "Prompt §Server-Side Validation specifies error above form, password clears"},
+    {"id": "F05", "description": "Successful login redirects to Home (Landing) page", "passes": true, "priority": 1, "evidence": "Prompt §Successful Login and §Screen 2 define redirect behaviour"},
+    {"id": "F06", "description": "Home page has 5 placeholder menu items (Dashboard, Profile, Settings, Reports, Help)", "passes": true, "priority": 2, "evidence": "Prompt §Screen 2 lists exactly 5 items"},
+    {"id": "F07", "description": "Home page displays 'Welcome, {username}' heading", "passes": true, "priority": 2, "evidence": "Prompt §Screen 2 Visual Layout specifies heading"},
+    {"id": "F08", "description": "Home page has Logout button", "passes": true, "priority": 2, "evidence": "Prompt §Screen 2 and §Screen 3 reference Logout button"},
+    {"id": "F09", "description": "Unauthenticated access to Home redirects to Login", "passes": true, "priority": 1, "evidence": "Prompt §Access Control specifies route guard on every transition"},
+    {"id": "F10", "description": "Logout clears session and redirects to Login", "passes": true, "priority": 1, "evidence": "Prompt §Screen 3 specifies session clear + redirect"},
+    {"id": "F11", "description": "Post-logout navigation to Home redirects to Login", "passes": true, "priority": 1, "evidence": "Prompt §Post-Logout Protection specifies back-button guard"},
+    {"id": "F12", "description": "All interactive elements have data-testid attributes", "passes": true, "priority": 1, "evidence": "Prompt §Automated Testing Requirements lists 10 selectors"},
+    {"id": "F13", "description": "Backend endpoints: POST /api/v1/auth/login, POST /api/v1/auth/logout, GET /api/v1/auth/me", "passes": true, "priority": 1, "evidence": "Prompt §Backend lists exact endpoints with status codes"},
+    {"id": "F14", "description": "FastAPI factory with CORS and session middleware capability", "passes": true, "priority": 1, "evidence": "factory.py has CORS middleware; Starlette SessionMiddleware can be added for session auth"},
+    {"id": "F15", "description": "Boilerplate files documented in prompt with verified locations", "passes": true, "priority": 2, "evidence": "Prompt §Verified Boilerplate Files table added with 5 entries"}
+  ],
+  "dimensions_check": {
+    "dim1_business_context": true,
+    "dim2_functional_requirements": true,
+    "dim3_quality_attributes": true,
+    "dim4_data_configuration": true
+  },
+  "findings": [],
+  "recommendations": [],
+  "raw_logs": "Python boilerplate verified: pyproject.toml, requirements.txt, src/main.py, src/infrastructure/api/factory.py, quasar/ scaffold all present",
+  "outcome": "PASS",
+  "status_update": "Prompt status changed from Draft to Active. Set validated: true."
+}

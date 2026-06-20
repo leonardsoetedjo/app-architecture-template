@@ -72,8 +72,9 @@ See the [ADR Index (02-adrs/00-adr-index.md)](02-adrs/00-adr-index.md) for the c
 || 40 | [scaffolding.md](03-guidelines/04-scaffolding.md) | Project scaffolding rules |
 || 50 | [testing-api.md](03-guidelines/05-testing-api.md) | API testing guidelines |
 || 60 | [testing-e2e.md](03-guidelines/06-testing-e2e.md) | End-to-end testing guidelines |
-|| 70 | [frontend-design.md](03-guidelines/07-frontend-design.md) | Frontend design deep-dive |
-|| 80 | [openapi-standards.md](03-guidelines/08-openapi-standards.md) | OpenAPI specification standards |
+||| 70 | [frontend-design.md](03-guidelines/07-frontend-design.md) | Frontend design deep-dive |
+||| 80 | [openapi-standards.md](03-guidelines/08-openapi-standards.md) | OpenAPI specification standards |
+||| **90** | **[fleet-workflow.md](03-guidelines/11-fleet-workflow.md)** | **End-to-end agent workflow (PRD → Audit)** |
 
 ## 40 — Templates
 

@@ -1,0 +1,31 @@
+# Per-boilerplate lefthook: NestJS Clean Architecture
+pre-commit:
+  parallel: true
+  commands:
+    architecture:
+      run: |
+        npx depcruise --validate .dependency-cruiser.cjs src/
+        echo "Architecture: PASSED"
+    type-check:
+      run: |
+        npx tsc --noEmit
+        echo "Type: PASSED"
+    lint:
+      run: |
+        npm run lint
+        echo "Lint: PASSED"
+    test:
+      run: |
+        npm run test:unit -- --passWithNoTests
+        echo "Test: PASSED"
+    format:
+      run: |
+        npx prettier --check "src/**/*.ts" "test/**/*.ts"
+        echo "Format: PASSED"
+
+pre-push:
+  commands:
+    integration:
+      run: |
+        npm run test:e2e -- --passWithNoTests
+        echo "E2E: PASSED"
