@@ -61,3 +61,17 @@ npm run test                                           # Unit tests
 - [ ] dependency-cruiser passes
 - [ ] No framework imports in `features/*/types/`
 - [ ] Commit message includes "Architecture: depcruise PASSED"
+
+## 6. Testing (Playwright + Quasar DOM)
+
+Quasar renders `data-testid` on the **native HTML element** inside `q-*` components, NOT on wrapper divs. Playwright selectors must target the element directly.
+
+| Component | data-testid Location | Correct Playwright Selector | WRONG |
+|-----------|---------------------|----------------------------|-------|
+| `q-input` | On the `<input>` element | `page.locator('[data-testid="username-input"]')` | `[data-testid="username-input"] input` |
+| `q-btn` | On the `<button>` element | `page.locator('[data-testid="submit-btn"]')` | `[data-testid="submit-btn"] button` |
+| `q-select` | On the underlying select/input | `page.locator('[data-testid="role-select"]')` | `[data-testid="role-select"] select` |
+
+**Rule:** Never append `input`, `button`, or `select` to Quasar `data-testid` selectors. The component renders the attribute directly on the interactive element.
+
+**Per-field errors:** Quasar places error text inside `.q-field__bottom` with `role="alert"`. Use `page.getByRole('alert')` with `filter({ hasText: '...' })` instead of checking inner text directly.

@@ -229,6 +229,7 @@ Before a prompt template is committed, it MUST pass the Prompt Testing Gate:
 | Copying standards text into prompt | Duplicates docs, risks staleness | Reference by name/section, let RAG fetch current text |
 | No output format specified | Model invents format | Always specify expected structure |
 | **Auth state initialized as null/undefined without a "checked" flag** | `computed() === null` is ALWAYS false — route guards skip `checkAuth()` silently, so authenticated users hitting `/login` are NOT redirected to `/home` | Use explicit `hasCheckedAuth` boolean initialized to `false`; set to `true` AFTER first auth check completes. Applies to ALL frameworks (React Context, Vue/Pinia, Angular). |
+| **FastAPI `APIRouter` with absolute prefix** | `APIRouter(prefix="/api/v1/auth")` + `app.include_router(prefix="/api/v1")` produces `/api/v1/api/v1/auth/login` → 404. Developers expect prefix to be absolute from app root (Flask/Express mental model), but FastAPI concatenates. | Use RELATIVE prefix on `APIRouter` (e.g., `prefix="/auth"`) when mounted with `app.include_router(prefix="/api/v1")`. Or omit app-level prefix and use absolute on router. |
 
 ---
 
@@ -365,6 +366,7 @@ Before a validation prompt is committed:
 □ Acceptance criteria are atomic and observable
 □ Prompt has been exercised via SOP-21 (throwaway app built)
 □ **If auth + route guards specified: §5 anti-pattern "Auth state initialized without checked flag" addressed**
+□ **If FastAPI routers specified: §5 anti-pattern "FastAPI APIRouter with absolute prefix" addressed**
 ```
 
 **Rule:** A validation prompt that has not been exercised via SOP-21 is a **draft**. It gains `status: "Active"` only after passing throwaway validation.

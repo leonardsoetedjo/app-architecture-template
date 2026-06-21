@@ -120,6 +120,14 @@ def create_app() -> FastAPI:
     app.include_router(orders_router, prefix="/api/v1")
     app.include_router(mfa_router, prefix="/api/v1")
 
+    # NOTE: Sub-routers mounted with prefix="/api/v1" MUST use RELATIVE prefixes
+    # in their APIRouter definitions (e.g., "/auth", "/orders"), NOT absolute
+    # paths (e.g., "/api/v1/auth"). FastAPI concatenates prefixes, so
+    # `APIRouter(prefix="/api/v1/auth")` + `include_router(prefix="/api/v1")`
+    # produces `/api/v1/api/v1/auth/login` → 404.
+    # CORRECT: router = APIRouter(prefix="/auth")  # relative
+    # WRONG:   router = APIRouter(prefix="/api/v1/auth")  # absolute (double-prefix)
+
     app.post("/api/v1/auth/token", response_model=TokenResponse)(_token_handler)
 
     app.get("/actuator/health")(_health_handler)
