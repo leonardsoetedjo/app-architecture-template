@@ -356,4 +356,4 @@ During architecture audits, verify:
 ---
 
 *Standard based on Anthropic's "Effective harnesses for long-running agents" (Nov 2025).*
-*Integrated with app-architecture-template v2.0 workflow, testing, and agent standards.*
+*Integrated with app-architecture-template v2.1 workflow, testing, and agent standards.*

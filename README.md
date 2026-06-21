@@ -218,5 +218,5 @@ For maintainers:
 ---
 
 **Last Updated:** 2026-05-28  
-**Template Version:** Clean Architecture v2.0 with Phase 2 Ironclad Guardrails  
+**Template Version:** Clean Architecture v2.1 with Phase 2 Ironclad Guardrails  
 **Active Issues:** [#87-#91](https://github.com/leonardsoetedjo/app-architecture-template/issues) (Documentation enhancements)
