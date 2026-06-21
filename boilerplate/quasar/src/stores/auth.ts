@@ -1,34 +1,33 @@
+/**
+ * DDD-DOMAIN-PURITY-QUASAR: Refactored Pinia store.
+ * 
+ * Uses the new domain-pure types from features/auth/types/.
+ * HTTP is delegated to the service layer (QUASAR-API-ISOLATION).
+ */
+
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
-
-const API_BASE = 'http://localhost:8000'
-
-interface AuthState {
-  user: string | null
-  loading: boolean
-  error: string | null
-}
+import type { User, LoginCredentials, AuthResult } from '@/features/auth/types'
+import { authPortInstance } from '@/services/auth'
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref<string | undefined>(undefined)
+  const user = ref<User | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const hasCheckedAuth = ref(false)
 
   const isAuthenticated = computed(() => !!user.value)
-  const hasCheckedAuth = ref(false)
 
   async function login(username: string, password: string): Promise<boolean> {
     loading.value = true
     error.value = null
     try {
-      const res = await axios.post(`${API_BASE}/api/v1/auth/login`, { username, password }, {
-        withCredentials: true,
-      })
-      user.value = res.data.username
-      return true
-    } catch (err: any) {
-      error.value = err.response?.data?.detail || 'Login failed'
+      const result: AuthResult = await authPortInstance.login({ username, password })
+      if (result.success) {
+        user.value = result.user ?? null
+        return true
+      }
+      error.value = result.error || 'Login failed'
       return false
     } finally {
       loading.value = false
@@ -36,20 +35,18 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout(): Promise<void> {
-    try {
-      await axios.post(`${API_BASE}/api/v1/auth/logout`, {}, { withCredentials: true })
-    } catch {
-      // ignore
-    }
+    await authPortInstance.logout()
     user.value = null
   }
 
   async function checkAuth(): Promise<void> {
     try {
-      const res = await axios.get(`${API_BASE}/api/v1/auth/me`, { withCredentials: true })
-      user.value = res.data.username
+      const result = await authPortInstance.checkAuth()
+      user.value = result
     } catch {
       user.value = null
+    } finally {
+      hasCheckedAuth.value = true
     }
   }
 

@@ -65,3 +65,17 @@ npx playwright test                                 # Reuses installed browser
 ```
 
 **Without this:** Each `npx playwright` command defaults to `~/.cache/ms-playwright/`, causing redundant 100MB+ downloads per session.
+
+## 8. Architecture Rules
+
+| Rule ID | Description | Test |
+|---------|-------------|------|
+| `DDD-DOMAIN-PURITY-QUASAR` | No Vue/Quasar/Pinia/Axios in `features/*/types/` | `src/test/architecture.test.ts` |
+| `QUASAR-COMPOSABLE-PATTERN` | No business logic in `.vue` files | `src/test/architecture.test.ts` |
+| `QUASAR-API-ISOLATION` | No direct HTTP in components | `src/test/architecture.test.ts` |
+| `DDD-DEPENDENCY-CHECK` | `depcruise --validate` must pass | `lefthook.yml` + `package.json` |
+| `REACT-STATE-PATTERN` | Pinia for global, `ref`/`computed` for local | `src/test/architecture.test.ts` |
+| `TYPESCRIPT-STRICT-001` | Strict mode enabled, no implicit any | `tsconfig.json` + test |
+
+**Canonical:** `docs/01-agnostic/01-standards/`
+
