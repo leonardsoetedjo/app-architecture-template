@@ -15,6 +15,9 @@
 - **Quasar:** `boilerplate/quasar/AGENTS.md` | Source: `ctx_search(source: "quasar-boilerplate")` | Gate: depcruise
 - **Template maintenance:** ⬅️ You are here | Source: `ctx_search(source: "architecture-standards")` | All stacks
 
+**Quick references (no context window bloat):**
+- `docs/01-agnostic/01-standards/frequent-mistakes.md` — Known framework traps (FastAPI router prefix, auth race conditions, Quasar selectors). Link here instead of copying explanations.
+
 **Rule:** Read root AGENTS.md once per session. Read stack-specific AGENTS.md once per task. Then `ctx_search` for everything else.
 
 ## 2. DOX Hierarchy
