@@ -339,3 +339,19 @@ commit-msg:
           echo "Valid types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
           exit 1
         fi
+    architecture-evidence:
+      run: |
+        # Validate commit message includes architecture compliance evidence
+        # AGENTS.md §5 requires "Architecture:" evidence in every commit
+        if ! grep -qi "Architecture:" "$1"; then
+          echo "❌ Commit message missing architecture compliance evidence!"
+          echo ""
+          echo "Required: include 'Architecture: PASSED' or 'Architecture: SKIPPED (reason)'"
+          echo ""
+          echo "Example:  feat(order-service): add payment validation"
+          echo ""
+          echo "          Architecture: ./scripts/architecture-pre-commit.sh PASSED"
+          echo ""
+          echo "To fix:   git commit --amend -m 'Your message' -m 'Architecture: PASSED'"
+          exit 1
+        fi

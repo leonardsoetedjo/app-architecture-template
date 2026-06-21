@@ -51,7 +51,7 @@
 ## 5. Compliance
 
 1. Run `./scripts/architecture-pre-commit.sh`
-2. Include "Architecture: PASSED" in commit message
+2. Commit message must pass `lefthook run commit-msg` (conventional format + `Architecture:` evidence)
 3. Use GitHub Issues (no markdown reports in repo)
 
 **Pre-task (Std 29 Phase 1):** Read Standards 27/28/29 → read stack AGENTS.md → declare budget → `ctx_index` sources → scope single feature. See `docs/01-agnostic/01-standards/29-harness-engineering.md` §3.
