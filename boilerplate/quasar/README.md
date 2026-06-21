@@ -1,106 +1,107 @@
-# Example Frontend Application
+# Quasar Clean Architecture Boilerplate
 
-React 18 + TypeScript + Ant Design + Clean Architecture Frontend Boilerplate
+Vue 3 + TypeScript + Quasar Framework 2 + Clean Architecture Frontend Boilerplate
 
 ## Architecture
 
-This project follows Clean Architecture principles inspired by the Java backend:
+This project follows Clean Architecture principles:
 
-- **domain/ models** → **types/** TypeScript interfaces
-- **application/ usecases** → **hooks/** Custom React hooks
-- **infrastructure/ api** → **services/** API clients
-- **ui components** → **components/** Presentational components
-- **pages** → **pages/** Container/route-level components
+- **Domain** → Pure TypeScript types and interfaces (zero framework imports)
+- **Application** → Composables (business logic, use cases) + Pinia stores (state management)
+- **Infrastructure** → API clients, external service wrappers
+- **Presentation** → Quasar components (`.vue` files) + page components
+- **Routing** → Vue Router with global navigation guards
 
 ## Tech Stack
 
-- **React 18** with TypeScript
-- **Ant Design 5** for UI components
+- **Vue 3** with Composition API + TypeScript
+- **Quasar Framework 2** for UI components
+- **Pinia** for state management
+- **Vue Router** for navigation
 - **Vite** for build tooling
-- **Vitest** for testing
-- **Zustand** for state management
-- **React Router** for navigation
+- **Vitest** for unit testing
+- **Playwright** for E2E testing
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js >= 18.0.0
-- pnpm (recommended) or npm
+- npm >= 8.0.0
 
-### Installation
+### Install
 
 ```bash
-cd boilerplate/frontend
-pnpm install
+cd boilerplate/quasar
+npm install
 ```
 
 ### Development
 
 ```bash
-pnpm dev
+npm run dev    # Starts Quasar dev server on localhost:9000
 ```
-
-The app will be available at `http://localhost:5173`
 
 ### Build
 
 ```bash
-pnpm build
+npm run build  # Production build
 ```
 
-### Testing
+### Test
 
 ```bash
-pnpm test
-pnpm test:coverage
-```
-
-## Configuration
-
-### Environment Variables
-
-Create a `.env.local` file:
-
-```env
-VITE_API_BASE_URL=http://localhost:8080/api/v1
+npm run test:unit   # Vitest unit tests
+npm run test:e2e    # Playwright E2E tests
 ```
 
 ## Project Structure
 
 ```
 src/
-├── components/          # Reusable UI components
-├── pages/              # Route-level page components
-├── hooks/              # Custom React hooks (data fetching, state logic)
-├── services/           # API clients and service layers
-├── store/              # State management (Zustand)
-├── types/              # TypeScript interfaces and types
-├── utils/              # Pure utility functions
-├── styles/             # Global styles and theme
-└── tests/              # Test files
+├── pages/         # Route-level page components (LoginPage.vue, LandingPage.vue)
+├── stores/        # Pinia stores (auth.ts)
+├── router/        # Vue Router config (index.ts)
+├── composables/   # Reusable composition functions (business logic)
+├── components/    # Reusable UI components
+├── types/         # Pure TypeScript types (zero framework imports)
+├── services/      # API clients and external integrations
+└── boot/          # Quasar boot files (axios, i18n)
 ```
 
-## Naming Conventions
+## Critical Patterns
 
-| Scope | Convention | Example |
-|-------|-----------|---------|
-| React components | PascalCase | `OrderList.tsx` |
-| Hooks | useCamelCase | `useOrders.ts` |
-| TypeScript types | PascalCase | `Order.ts` |
-| Interfaces | PascalCase (I prefix optional) | `OrderPayload` |
-| Functions | camelCase | `fetchOrders` |
-| Constants | UPPER_SNAKE_CASE | `API_TIMEOUT` |
+### Route Guards + Auth State
 
-## Backend Integration
-
-This frontend connects to the order-service backend:
-
+```typescript
+// Router guard with hasCheckedAuth (MANDATORY)
+router.beforeEach(async (to, from, next) => {
+  const auth = useAuthStore()
+  if (!auth.hasCheckedAuth) {
+    await auth.checkAuth()
+    auth.hasCheckedAuth = true  // Set AFTER check completes
+  }
+  // Now make redirect decisions
+})
 ```
-Backend API: http://localhost:8080/api/v1/orders
-Endpoint: POST /api/v1/orders
-Endpoint: GET /api/v1/orders
+
+**WARNING:** `isAuthenticated === null` is ALWAYS false for computed booleans.
+Without `hasCheckedAuth`, route guards skip `checkAuth()` silently.
+See `frequent-mistakes.md` for details.
+
+### Quasar + Playwright Selectors
+
+Quasar renders `data-testid` **on native elements**, not wrapper divs.
+
+```typescript
+// CORRECT: data-testid is ON the input element
+page.locator('[data-testid="username-input"]')
+
+// WRONG: no wrapper div to drill into
+page.locator('[data-testid="username-input"] input')  // ❌
 ```
+
+See AGENTS.md §6 for full table.
 
 ## License
 

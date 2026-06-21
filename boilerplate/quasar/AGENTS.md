@@ -1,7 +1,8 @@
 # Quasar Agent Dispatch
 
 > **Budget:** <500 tokens. Read only the section matching your task.  
-> **Canonical:** `docs/01-agnostic/01-standards/25-agents-quasar.md`  
+> **Canonical:** `docs/01-agnostic/01-standards/17-agents-quasar.md`  
+> **Cross-cutting traps:** `docs/01-agnostic/01-standards/frequent-mistakes.md`  
 > **Source:** `boilerplate/quasar/`
 
 ## Task Map

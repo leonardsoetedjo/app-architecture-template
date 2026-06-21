@@ -1,20 +1,22 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
+import path from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    vue({ template: { transformAssetUrls } }),
+    quasar({ sassVariables: false }),
+  ],
   resolve: {
     alias: {
-      '@src': path.resolve(__dirname, 'src'),
-      '@tests': path.resolve(__dirname, 'src', 'tests'),
+      '@': path.resolve(__dirname, 'src'),
     },
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/tests/setup.ts'],
-    include: ['src/**/*.test.tsx', 'src/**/*.test.ts'],
-    exclude: ['node_modules'],
+  server: {
+    port: 9000,
+    proxy: {
+      '/api': 'http://localhost:8000',
+    },
   },
-});
+})
