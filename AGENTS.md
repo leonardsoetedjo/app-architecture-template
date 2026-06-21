@@ -60,9 +60,13 @@ ctx_index(path="boilerplate/quasar", source="quasar-boilerplate")
 |---|---|---|
 | Standards, SOPs, ADRs, requirements | `ctx_search(source: "...")` | Query `architecture-standards` for layer rules |
 | Boilerplate code templates, configs | `ctx_search(source: "...")` | Query `java-boilerplate` for `pom.xml` deps |
+| **Library docs** (FastAPI, React, Quasar, Spring API) | **`neuledge-context`** (`get_docs`, `search_packages`) | Lookup `fastapi` `APIRouter` semantics |
+| **Internal fleet docs** (standards, prompts, ADRs) | **`ctx_index` + `ctx_search`** | Query `architecture-standards` for layer rules |
 | Live codebase: find class, method, ref | `serena` (`find_symbol`, `search_for_pattern`) | Verify service has no SQLModel imports |
 | Cross-service call chains, refactor scope | `serena` (`find_referencing_symbols`) | Who calls `FooService`? |
 | File structure, line counts, dir walk | `mcp_project_fs_*` | Count `.py` files in `domain/` |
+
+**Rule:** `neuledge-context` is for **published library documentation only** (npm/pip/cargo registries). It cannot index arbitrary markdown repos. For fleet standards, always use `ctx_index` + `ctx_search`.
 
 **Index-before-search rule:** Run `ctx_index(path=..., source=...)` once per source per session before any `ctx_search` against that source. First search against unindexed source returns empty results.
 

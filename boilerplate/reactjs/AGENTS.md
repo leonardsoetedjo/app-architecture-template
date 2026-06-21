@@ -64,3 +64,35 @@ npm test            # Unit tests
 - [ ] dependency-cruiser passes
 - [ ] No `: any` in `src/`
 - [ ] Commit message includes "Architecture: depcruise PASSED"
+
+## 6. Critical Patterns
+
+### Auth + Route Guards (React Router)
+
+React Context auth state MUST use an explicit `hasCheckedAuth` flag:
+
+```typescript
+const [user, setUser] = useState(null);
+const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+
+useEffect(() => {
+  checkAuth().then(u => {
+    setUser(u);
+    setHasCheckedAuth(true);  // Set AFTER check completes
+  });
+}, []);
+```
+
+**Why:** `user === null` is ambiguous ("not checked yet" vs "checked, not logged in"). Route guards skip `checkAuth()` if they see `null` and assume "not authenticated." This causes authenticated users hitting `/login` to NOT redirect to `/home`.
+
+**Framework-agnostic rule:** Any auth system initializing state as `null`/`undefined` MUST gate route guards with `hasCheckedAuth`. See `frequent-mistakes.md` for details.
+
+### Playwright Environment Setup
+
+```bash
+export PLAYWRIGHT_BROWSERS_PATH=/tmp/pw-browsers  # Persistent location
+npx playwright install chromium                      # Once per session
+npx playwright test                                 # Reuses installed browser
+```
+
+**Without this:** Each `npx playwright` command defaults to `~/.cache/ms-playwright/`, causing redundant 100MB+ downloads per session.
