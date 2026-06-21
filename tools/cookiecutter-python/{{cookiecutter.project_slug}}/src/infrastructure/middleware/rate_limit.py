@@ -33,7 +33,7 @@ class RateLimitConfig:
     @property
     def redis_key_pattern(self) -> str:
         """Redis key pattern for this limit."""
-        return f"{self.key_prefix}:{{identifier}}:{{window}}"
+        return self.key_prefix + ":{identifier}:{window}"
 
 
 @dataclass(frozen=True)
