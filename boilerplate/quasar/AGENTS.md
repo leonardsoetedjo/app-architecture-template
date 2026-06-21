@@ -1,81 +1,56 @@
-## 5. Verification
+# Quasar Agent Dispatch
 
-- [ ] dependency-cruiser passes
-- [ ] No framework imports in `features/*/types/`
-- [ ] Commit message includes "Architecture: depcruise PASSED"
+> **Budget:** <500 tokens. Read only the section matching your task.
+> **Canonical:** `docs/01-agnostic/01-standards/17-agents-quasar.md`
+> **Source:** `boilerplate/quasar/`
 
-## 6. Testing (Playwright + Quasar DOM)
+## Task Map
 
-Quasar renders `data-testid` on the **native HTML element** inside `q-*` components, NOT on wrapper divs. Playwright selectors must target the element directly.
+| Intent | Go To |
+|--------|-------|
+| Rules | §1 |
+| Layout | §2 |
+| Pre-commit | §3 |
+| Tests | frequent-mistakes.md |
 
-| Component | data-testid Location | Correct Playwright Selector | WRONG |
-|-----------|---------------------|----------------------------|-------|
-| `q-input` | On the `<input>` element | `page.locator('[data-testid="username-input"]')` | `[data-testid="username-input"] input` |
-| `q-btn` | On the `<button>` element | `page.locator('[data-testid="submit-btn"]')` | `[data-testid="submit-btn"] button` |
-| `q-select` | On the underlying select/input | `page.locator('[data-testid="role-select"]')` | `[data-testid="role-select"] select` |
+## 1. Golden Rules
 
-**Rule:** Never append `input`, `button`, or `select` to Quasar `data-testid` selectors. The component renders the attribute directly on the interactive element.
+| ID | Requirement |
+|----|-------------|
+| TYPESCRIPT-STRICT-001 | `strict:true`, no implicit any |
+| QUASAR-COMPOSABLE-PATTERN | FC + composables only |
+| REACT-STATE-PATTERN | Pinia global, `ref` local |
+| QUASAR-UI-PATTERN | Prefer `q-*` over custom CSS |
+| REACT-BUSINESS-LOGIC | No logic in `.vue` files |
+| DDD-DEPENDENCY-CHECK | `depcruise --validate` pass |
+| DDD-DOMAIN-PURITY-QUASAR | Pure types in `features/*/types/` |
+| QUASAR-API-ISOLATION | Use `services/` layer |
 
-**Per-field errors:** Quasar places error text inside `.q-field__bottom` with `role="alert"`. Use `page.getByRole('alert')` with `filter({ hasText: '...' })` instead of checking inner text directly.
+## 2. Key Paths
 
-## 7. Critical Patterns
+`app/ boot,router | pages/ views | features/ slices | entities/ types | composables/ logic | services/ HTTP | stores/ Pinia | shared/ utils | types/ global`
 
-### Auth + Route Guards (Vue Router + Pinia)
+Import order: entities←shared; features←entities+shared; pages←all; app←all.
 
-Pinia auth store MUST use an explicit `hasCheckedAuth` flag:
-
-```typescript
-// stores/auth.ts
-export const useAuthStore = defineStore('auth', () => {
-  const user = ref(null)
-  const hasCheckedAuth = ref(false)  // MANDATORY
-
-  async function checkAuth() {
-    // ... API call
-    user.value = response.data
-    hasCheckedAuth.value = true  // Set AFTER check completes
-  }
-
-  return { user, hasCheckedAuth, checkAuth }
-})
-```
-
-```typescript
-// router/index.ts
-router.beforeEach(async (to, from, next) => {
-  const auth = useAuthStore()
-  if (!auth.hasCheckedAuth) {
-    await auth.checkAuth()
-    auth.hasCheckedAuth = true
-  }
-  // NOW make redirect decisions based on auth.user
-})
-```
-
-**Why:** `computed(() => !!auth.user) === null` is ALWAYS false — computed booleans are never null. Without `hasCheckedAuth`, the guard skips `checkAuth()` and authenticated users visiting `/login` are NOT redirected to `/home`.
-
-**Framework-agnostic rule:** Any auth system initializing state as `null`/`undefined` MUST gate route guards with `hasCheckedAuth`. See `frequent-mistakes.md` for details.
-
-### Playwright Environment Setup
+## 3. Pre-Commit
 
 ```bash
-export PLAYWRIGHT_BROWSERS_PATH=/tmp/pw-browsers  # Persistent location
-npx playwright install chromium                      # Once per session
-npx playwright test                                 # Reuses installed browser
+cd boilerplate/quasar && npm run depcruise && npx tsc --noEmit && npm run lint && npm test
 ```
 
-**Without this:** Each `npx playwright` command defaults to `~/.cache/ms-playwright/`, causing redundant 100MB+ downloads per session.
+## 4. Verification
 
-## 8. Architecture Rules
+- [ ] dependency-cruiser passes
+- [ ] No `: any` in `src/`
+- [ ] Commit: "Architecture: depcruise PASSED"
 
-| Rule ID | Description | Test |
-|---------|-------------|------|
-| `DDD-DOMAIN-PURITY-QUASAR` | No Vue/Quasar/Pinia/Axios in `features/*/types/` | `src/test/architecture.test.ts` |
-| `QUASAR-COMPOSABLE-PATTERN` | No business logic in `.vue` files | `src/test/architecture.test.ts` |
-| `QUASAR-API-ISOLATION` | No direct HTTP in components | `src/test/architecture.test.ts` |
-| `DDD-DEPENDENCY-CHECK` | `depcruise --validate` must pass | `lefthook.yml` + `package.json` |
-| `REACT-STATE-PATTERN` | Pinia for global, `ref`/`computed` for local | `src/test/architecture.test.ts` |
-| `TYPESCRIPT-STRICT-001` | Strict mode enabled, no implicit any | `tsconfig.json` + test |
+## 5. Architecture Rules
 
-**Canonical:** `docs/01-agnostic/01-standards/`
-
+| ID | Description | Test |
+|----|-------------|------|
+| `DDD-DOMAIN-PURITY-QUASAR` | No framework imports in `features/*/types/` | `architecture.test.ts` |
+| `QUASAR-COMPOSABLE-PATTERN` | No business logic in `.vue` files | `architecture.test.ts` |
+| `QUASAR-API-ISOLATION` | No direct HTTP in components | `architecture.test.ts` |
+| `DDD-DEPENDENCY-CHECK` | `depcruise --validate` pass | `lefthook.yml` |
+| `REACT-STATE-PATTERN` | Pinia global, `ref` local | `architecture.test.ts` |
+| `TYPESCRIPT-STRICT-001` | Strict mode, no implicit any | `tsconfig.json` |
