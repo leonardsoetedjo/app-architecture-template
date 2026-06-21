@@ -1,0 +1,44 @@
+# Per-boilerplate lefthook for Python Clean Architecture
+# Location: boilerplate/python/order-service/lefthook.yml
+# Usage: cd boilerplate/python/order-service && lefthook install
+
+pre-commit:
+  parallel: true
+  commands:
+    import-linter:
+      run: |
+        import-linter --config .importlinter
+        echo "Import: PASSED"
+
+    lint:
+      run: |
+        ruff check src/ tests/
+        echo "Lint: PASSED"
+
+    type-check:
+      run: |
+        pyright src/ tests/
+        echo "Type: PASSED"
+
+    architecture:
+      run: |
+        pytest tests/archunit/ -v --tb=short
+        echo "Architecture: PASSED"
+
+    format:
+      run: |
+        ruff format --diff src/ tests/
+        echo "Format: PASSED"
+
+pre-push:
+  parallel: false
+  commands:
+    tests:
+      run: |
+        pytest tests/ -x --tb=short
+        echo "Tests: PASSED"
+
+commit-msg:
+  scripts:
+    "scripts/check-conventional-commit.py":
+      runner: python3

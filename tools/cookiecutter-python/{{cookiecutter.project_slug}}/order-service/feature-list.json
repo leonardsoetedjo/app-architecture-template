@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "project": "order-service-python",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "features": [
+    {
+      "id": "WORKFLOW-001",
+      "category": "functional",
+      "priority": 2,
+      "description": "Workflow engine for order state management (Issue #73)",
+      "acceptance_criteria": [
+        "State machine with 9 states (PENDING through REFUNDED)",
+        "REST API endpoints for all state transitions",
+        "State persistence with SQLAlchemy",
+        "Integration tests for state transitions",
+        "Invalid transitions return 400 Bad Request"
+      ],
+      "passes": true,
+      "notes": "Complete - Uses transitions library. See docs/ORDER_STATE_MACHINE_GUIDE.md"
+    },
+    {
+      "id": "PREFECT-001",
+      "category": "functional",
+      "priority": 3,
+      "description": "Prefect workflow status tracking (Issues #105-#110)",
+      "acceptance_criteria": [
+        "WorkflowExecution domain model",
+        "SQLAlchemy repository for persistence",
+        "Application service for status updates",
+        "Sample Prefect task and flow",
+        "FastAPI endpoint for workflow status",
+        "Integration test coverage"
+      ],
+      "passes": true,
+      "notes": "Complete - Domain layer, repository, service, Prefect integration, FastAPI endpoint all implemented"
+    },
+    {
+      "id": "ARCH-001",
+      "category": "non-functional",
+      "priority": 1,
+      "description": "Clean Architecture compliance",
+      "acceptance_criteria": [
+        "Domain layer has no FastAPI/SQLAlchemy imports",
+        "Application layer has no HTTP framework imports",
+        "pytest-archunit tests pass",
+        "./scripts/architecture-pre-commit.sh passes"
+      ],
+      "passes": true,
+      "notes": "Boilerplate structure enforces Clean Architecture"
+    },
+    {
+      "id": "TEST-001",
+      "category": "testing",
+      "priority": 1,
+      "description": "Test pyramid implementation",
+      "acceptance_criteria": [
+        "Unit tests for all use cases",
+        "Integration tests for all routers",
+        "Testcontainers for PostgreSQL integration",
+        "80%+ code coverage"
+      ],
+      "passes": true,
+      "notes": "Integration tests cover order API, workflow engine, MFA, Redis caching"
+    }
+  ]
+}

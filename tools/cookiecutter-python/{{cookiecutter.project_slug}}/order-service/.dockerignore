@@ -1,0 +1,58 @@
+# Build context exclusions — these files/directories are never sent to Docker daemon
+# during `docker build`. Reduces image size and improves layer cache hits.
+
+# Git
+.git
+.gitignore
+.github
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+tests/**
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# CI/CD / Deployment
+.github/
+docker-compose*.yml
+*.override.yml
+scripts/deploy*
+scripts/ci*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build outputs
+build/
+dist/
+
+# Temporary files
+*.tmp
+*.bak

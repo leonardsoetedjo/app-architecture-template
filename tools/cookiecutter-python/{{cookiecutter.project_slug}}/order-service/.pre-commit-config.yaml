@@ -1,0 +1,69 @@
+# Pre-commit configuration for Python/FastAPI boilerplate
+# Implements Standard 21: Validation Harness
+# Reference: docs/01-agnostic/01-standards/21-validation-harness.md
+
+repos:
+  - repo: local
+    hooks:
+      # Gate 1: Import/Compile - Verify all modules resolve
+      - id: import-check
+        name: Verify imports resolve
+        entry: python -c "from src.main import app"
+        language: system
+        pass_filenames: false
+        fail_fast: true
+
+      # Gate 2: Type Check - Catch type errors with pyright
+      - id: type-check
+        name: Type check with pyright
+        entry: pyright src/
+        language: system
+        pass_filenames: false
+        types: [python]
+
+      # Gate 3: Lint - Catch style and bugs with ruff
+      - id: lint
+        name: Lint with ruff
+        entry: ruff check src/ tests/
+        language: system
+        pass_filenames: false
+        types: [python]
+
+      # Gate 4: Architecture Tests - Enforce layer boundaries with import-linter
+      - id: arch-test
+        name: Architecture tests
+        entry: lint-imports
+        language: system
+        pass_filenames: false
+        require_serial: true
+        # Additional args for verbose output
+        # args: ['--verbose']
+
+      # Gate 5: Unit Tests - Verify behavior (optional on commit, required in CI)
+      - id: unit-test
+        name: Unit tests
+        entry: pytest tests/unit/ -x --tb=short
+        language: system
+        pass_filenames: false
+        require_serial: true
+        stages: [pre-push]  # Only run on push, not every commit
+
+  # Additional hooks for code quality
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+# Installation:
+#   pip install pre-commit
+#   pre-commit install
+#   pre-commit install --hook-type pre-push
+#
+# Usage:
+#   Runs automatically on `git commit`
+#   Run manually: pre-commit run --all-files
+#   Run specific hook: pre-commit run type-check --all-files

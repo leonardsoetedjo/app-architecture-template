@@ -1,0 +1,13 @@
+{
+  "project_name": "Order Service",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
+  "package_name": "{{ cookiecutter.project_slug.replace('-', '_') }}",
+  "description": "Clean Architecture microservice with FastAPI",
+  "author_name": "Anonymous",
+  "author_email": "dev@example.com",
+  "python_version": "3.13",
+  "use_postgres": ["yes", "no"],
+  "use_redis": ["yes", "no"],
+  "use_rabbitmq": ["yes", "no"],
+  "use_opentelemetry": ["yes", "no"]
+}

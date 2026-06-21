@@ -1,0 +1,17 @@
+{
+  "name": "Order Service (Python/FastAPI)",
+  "schema": "https://schema.getpostman.com/collection/schema/v1.0.0/",
+  "environments": [
+    {
+      "name": "python-local",
+      "values": [
+        {
+          "key": "baseUrl",
+          "value": "http://localhost:8081",
+          "type": "default",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}

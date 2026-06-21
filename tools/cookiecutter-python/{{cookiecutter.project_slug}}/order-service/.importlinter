@@ -1,0 +1,83 @@
+# Import Linter Configuration
+# Enforces Clean Architecture layer boundaries for Python/FastAPI
+# Reference: docs/01-agnostic/01-standards/21-validation-harness.md
+#
+# Install: pip install import-linter
+# Run: lint-imports
+#
+# Contract Types:
+# - layers: Enforce layered architecture (higher cannot import lower)
+# - independence: Modules must be independent (no imports between them)
+# - forbidden: Specific imports are forbidden
+
+root_package = src
+
+[importlinter:contract:1]
+name = "Layer boundaries (Clean Architecture)"
+type = layers
+containers =
+    src
+    src.domain
+    src.application
+    src.infrastructure
+    src.presentation
+
+# Dependencies flow inward only:
+# presentation -> infrastructure -> application -> domain
+# domain cannot import anything from other layers
+# application cannot import infrastructure or presentation
+# infrastructure cannot import presentation
+
+[importlinter:contract:2]
+name = "Domain layer isolation"
+type = independence
+modules =
+    src.domain
+ignore_imports =
+    # Allow domain to import from typing, dataclasses (stdlib)
+    src.domain -> typing
+    src.domain -> dataclasses
+    src.domain -> datetime
+    src.domain -> decimal
+    src.domain -> uuid
+    src.domain -> abc
+
+[importlinter:contract:3]
+name = "No framework imports in domain"
+type = forbidden
+source_modules =
+    src.domain
+forbidden_modules =
+    fastapi
+    sqlalchemy
+    pydantic
+    redis
+    alembic
+    starlette
+
+[importlinter:contract:4]
+name = "No infrastructure imports in application"
+type = forbidden
+source_modules =
+    src.application
+forbidden_modules =
+    src.infrastructure
+
+[importlinter:contract:5]
+name = "Application layer isolation"
+type = forbidden
+source_modules =
+    src.application
+forbidden_modules =
+    fastapi
+    sqlalchemy
+    redis
+
+[importlinter:contract:6]
+name = "No circular dependencies"
+type = independence
+modules =
+    src.domain
+    src.application
+    src.infrastructure
+    src.presentation
