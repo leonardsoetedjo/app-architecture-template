@@ -229,12 +229,12 @@ architecture_rules:
 
 # -----------------------------------------------------------------------
 # Forbidden import patterns by layer
-# This is a SUBSET of architecture_rules. Kept for backward compatibility
-# with pre-commit hooks that grep imports directly.
-# Prefer architecture_rules[] for new rules.
+# DEPRECATED: Use architecture_rules[].pre_commit_pattern instead.
+# Kept minimal for legacy pre-commit hooks that haven't migrated yet.
+# These IDs MUST NOT duplicate entries in architecture_rules[].
 # -----------------------------------------------------------------------
 forbidden_patterns:
-  - id: DDD-DOMAIN-PURITY-PYTHON
+  - id: LEGACY-PYTHON-IMPORT-GREP
     name: domain_framework_imports_python
     pattern: "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)"
     path_regex: "src/domain/.*\\.py$"
@@ -243,7 +243,7 @@ forbidden_patterns:
     severity: error
     stacks: [python]
 
-  - id: DDD-DOMAIN-PURITY-JAVA
+  - id: LEGACY-JAVA-IMPORT-GREP
     name: domain_framework_imports_java
     pattern: "^(import)\\s+(org\\.springframework|javax\\.persistence|lombok)"
     path_regex: "src/main/java/.*/domain/.*\\.java$"
