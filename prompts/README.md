@@ -57,7 +57,7 @@ Each template is a markdown file with this structure:
 | Template | Task | Status | Front Matter |
 |----------|------|--------|-------------|
 | `build-login-java.md` | Build a simple login app with React + Java | ✅ Active v1.3 | `type: "Validation Prompt"`, `validated: true` |
-| `build-login-python.md` | Build a simple login app with Quasar + Python | ✅ Active v1.3 | `type: "Validation Prompt"`, `validated: true` |
+| `build-login-python.md v1.4 | `type: "Validation Prompt"`, `validated: true` |
 | `add-endpoint.md` | Generate Clean Architecture REST endpoint | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
 | `add-domain-entity.md` | Add domain entity with port + tests | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
 | `refactor-service.md` | Refactor into correct CA layers | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |

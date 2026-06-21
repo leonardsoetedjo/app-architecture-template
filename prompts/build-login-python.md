@@ -2,7 +2,7 @@
 prompt_id: "PROMPT-002"
 name: "Authentication Test App — Quasar + Python"
 type: "Validation Prompt"
-version: "1.3"
+version: "1.4"
 status: "Active"
 stack: "Quasar Framework (Vue 3 + Vite 5) + Python FastAPI + Uvicorn"
 auth: "Starlette SessionMiddleware with signed cookies"
@@ -12,7 +12,7 @@ validated: true
 validation_date: "2026-06-21"
 validator: "archie"
 validation_result: "PASS"
-changes: "Fixed §Button Behaviour contradiction: disabled button cannot fire click events. Changed to visual-only disabled (greyed out, cursor:not-allowed) with clickable button to support empty-submit validation."
+changes: "v1.4: Added route guard race condition fix (hasCheckedAuth flag), Quasar data-testid selector notes, and per-field error locator patterns discovered during throwaway build. v1.3: Fixed §Button Behaviour contradiction."
 ---
 
 # Build a Simple Login App (Quasar + Python)
@@ -145,18 +145,21 @@ A human tester or Playwright can verify:
 
 ### Playwright E2E Tests Must Cover:
 
-| Test Case | Selector Requirements |
-|-----------|----------------------|
+| Test Case | Selector Strategy |
+|-----------|-------------------|
 | Demo credentials visible | `data-testid="login-demo-credentials"` |
-| Username input | `data-testid="login-username-input"` |
-| Password input | `data-testid="login-password-input"` |
+| Username input | `data-testid="login-username-input"` (direct — Quasar puts testid ON the input) |
+| Password input | `data-testid="login-password-input"` (direct) |
 | Login button | `data-testid="login-submit-button"` |
-| Username error | `data-testid="login-username-error"` |
-| Password error | `data-testid="login-password-error"` |
+| Per-field errors | `page.getByRole('alert')` with `filter({ hasText: '...' })` — Quasar renders errors as `role="alert"` |
 | General error banner | `data-testid="login-general-error"` |
 | Welcome heading | `data-testid="landing-welcome-heading"` |
 | Menu items container | `data-testid="landing-menu-list"` |
 | Logout button | `data-testid="landing-logout-button"` |
+
+**Critical Selector Note (Quasar-specific):** Quasar's `q-input` renders `data-testid` directly on the `<input>` element, NOT on a wrapper div. Use `[data-testid="login-username-input"]` directly with `page.fill()`, NOT `[data-testid="X"] input`.
+
+**Critical Per-Field Error Note:** Quasar places error text inside `.q-field__bottom` with `role="alert"`. Tests should use `page.getByRole('alert')` rather than checking specific DOM structure.
 
 - Every interactive element must have a `data-testid` attribute.
 - Screenshots must be captured on any assertion failure.
@@ -170,6 +173,26 @@ A human tester or Playwright can verify:
 - **Framework:** Quasar Framework (Vue 3 + Vite)
 - **Routing:** Vue Router with global navigation guards (`beforeEach` check)
 - **Auth State:** Pinia store or Vue reactive object; persists only in memory (server session is source of truth)
+
+**CRITICAL: Route Guard Race Condition Prevention:**
+Checking `computed(() => !!user.value) === null` is ALWAYS false — computed booleans are never null. Use an explicit `hasCheckedAuth` flag:
+
+```javascript
+// Pinia store
+const hasCheckedAuth = ref(false)
+
+// Router guard
+router.beforeEach(async (to, from, next) => {
+  const auth = useAuthStore()
+  if (!auth.hasCheckedAuth) {
+    await auth.checkAuth()
+    auth.hasCheckedAuth = true  // Set AFTER check completes
+  }
+  // ... guard logic
+})
+```
+
+Without this, authenticated users visiting `/` are NOT redirected to `/landing` because `checkAuth()` never runs.
 
 ### Backend
 - **Framework:** Python FastAPI
@@ -220,6 +243,7 @@ Build and test within **90 minutes**. This is a throwaway validation app, not pr
 - [ ] Unauthenticated access to Home redirects to Login
 - [ ] Logout clears session and redirects to Login
 - [ ] Post-logout navigation to Home redirects to Login
+- [ ] Authenticated user visiting Login redirects to Home (verified: requires `hasCheckedAuth` flag)
 - [ ] All interactive elements have `data-testid` attributes
 - [ ] Playwright tests pass covering all scenarios above
 - [ ] Backend `uvicorn main:app` starts without errors
@@ -227,8 +251,9 @@ Build and test within **90 minutes**. This is a throwaway validation app, not pr
 
 ---
 
-*Prompt version: 1.3*  
+*Prompt version: 1.4*  
 *Updated: 2026-06-21*  
-*Changes from 1.2: Fixed §Button Behaviour contradiction — disabled button cannot fire click events. Changed to visual-only disabled (greyed out, cursor:not-allowed) with clickable button to support empty-submit validation. Updated acceptance criteria and Playwright test selectors.*  
-*Changes from 1.1: Added §6 Business Context, §6 Quality Attributes, §6 Data & Configuration per Standard 27 §6. Updated front matter: status="Draft", validated=false, added auth/standard fields, specified versions.*  
+*Changes from 1.3: Added §Route Guard Race Condition Prevention (hasCheckedAuth flag), §Quasar Selector Notes (data-testid on input element, not wrapper), §Per-Field Error Locator Patterns (role="alert" filtering). These were discovered and fixed during the v1.3 throwaway build.*  
+*Changes from 1.2: Fixed §Button Behaviour contradiction — disabled button cannot fire click events. Changed to visual-only disabled (greyed out, cursor:not-allowed) with clickable button to support empty-submit validation.*  
+*Changes from 1.1: Added §6 Business Context, §6 Quality Attributes, §6 Data & Configuration per Standard 27 §6.*  
 *Changes from 1.0: Added explicit acceptance criteria, data-testid requirements, button disable logic, per-field error specifics, route guard requirement, backend endpoint contract, build verification.*
