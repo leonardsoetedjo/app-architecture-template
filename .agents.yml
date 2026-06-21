@@ -226,7 +226,6 @@ architecture_rules:
     severity: error
     stacks: [quasar]
     enforced_by: dependency-cruiser / code review
-
 # -----------------------------------------------------------------------
 # Forbidden import patterns by layer
 # DEPRECATED: Use architecture_rules[].pre_commit_pattern instead.

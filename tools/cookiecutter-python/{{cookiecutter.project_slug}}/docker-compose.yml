@@ -9,9 +9,12 @@ services:
       - "8080:8080"
     environment:
       - PYTHONUNBUFFERED=1
+{%- if cookiecutter.use_postgres == "yes" %}
     depends_on:
       - postgres
+{%- endif %}
 
+{%- if cookiecutter.use_postgres == "yes" %}
   postgres:
     image: postgres:14
     ports:
@@ -25,3 +28,4 @@ services:
 
 volumes:
   postgres_data:
+{%- endif %}
