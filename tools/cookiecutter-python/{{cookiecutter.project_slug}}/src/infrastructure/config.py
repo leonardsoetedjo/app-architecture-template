@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     Uses pydantic-settings for environment-based configuration.
     """
     model_config = SettingsConfigDict(
-        env_prefix="ORDER_SERVICE_",
+        env_prefix="{{ cookiecutter.project_slug | upper | replace('-', '_') }}_",
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     enable_metrics: bool = True
 
     # Database
-    database_url: str = "postgresql://postgres:postgres@localhost:5432/order_db"
+    database_url: str = "postgresql://postgres:***@localhost:5432/{{ cookiecutter.package_name }}_db"
 
     # JWT
     jwt_secret: str = "change-me-in-production"

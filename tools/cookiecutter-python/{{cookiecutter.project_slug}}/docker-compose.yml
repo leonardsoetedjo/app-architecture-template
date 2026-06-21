@@ -17,9 +17,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=order_user
-      - POSTGRES_PASSWORD=order_pass
-      - POSTGRES_DB=orders
+      - POSTGRES_USER={{ cookiecutter.package_name }}_user
+      - POSTGRES_PASSWORD={{ cookiecutter.package_name }}_pass
+      - POSTGRES_DB={{ cookiecutter.package_name }}s
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
