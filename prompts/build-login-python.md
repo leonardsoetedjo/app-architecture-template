@@ -175,24 +175,26 @@ A human tester or Playwright can verify:
 - **Auth State:** Pinia store or Vue reactive object; persists only in memory (server session is source of truth)
 
 **CRITICAL: Route Guard Race Condition Prevention:**
-Checking `computed(() => !!user.value) === null` is ALWAYS false — computed booleans are never null. Use an explicit `hasCheckedAuth` flag:
+Checking auth state (e.g., `isAuthenticated === null` or `isAuthenticated === undefined`) BEFORE `checkAuth()` completes is a race condition. Use an explicit `hasCheckedAuth` flag (or equivalent `isAuthLoading` state) to ensure `checkAuth()` runs exactly once before any route guard decision:
 
 ```javascript
-// Pinia store
-const hasCheckedAuth = ref(false)
+// Vue/Pinia pattern
+const user = ref(undefined);              // undefined = "not checked yet"
+const hasCheckedAuth = ref(false);
 
 // Router guard
 router.beforeEach(async (to, from, next) => {
-  const auth = useAuthStore()
   if (!auth.hasCheckedAuth) {
-    await auth.checkAuth()
-    auth.hasCheckedAuth = true  // Set AFTER check completes
+    await auth.checkAuth();
+    auth.hasCheckedAuth = true;           // Set AFTER check completes
   }
-  // ... guard logic
-})
+  // Only NOW make redirect decisions
+});
 ```
 
-Without this, authenticated users visiting `/` are NOT redirected to `/landing` because `checkAuth()` never runs.
+**Why:** `isAuthenticated === null` checks are ALWAYS false for booleans/computed values. Without `hasCheckedAuth`, an authenticated user refreshing `/login` is NOT redirected to `/home` because `checkAuth()` never runs synchronously. This affects ALL frontend frameworks (React Context, Vue/Pinia, Angular Services).
+
+**Framework-agnostic rule:** Any auth system that initializes auth state as `null`/`undefined` and uses route guards MUST gate the guard with a "checked" boolean that flips to `true` AFTER the first auth check completes.
 
 ### Backend
 - **Framework:** Python FastAPI

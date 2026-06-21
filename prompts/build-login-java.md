@@ -2,7 +2,7 @@
 prompt_id: "PROMPT-001"
 name: "Authentication Test App — React + Java"
 type: "Validation Prompt"
-version: "1.3"
+version: "1.4"
 status: "Active"
 stack: "ReactJS (Vite 5 + TypeScript 5) + Java Spring Boot 3.2 + Maven 3.9"
 auth: "Spring Security session cookie"
@@ -166,9 +166,29 @@ A human tester or Playwright can verify:
 ## Technical Stack & Architecture
 
 ### Frontend
-- **Framework:** React (Vite + TypeScript)
+- **Framework:** ReactJS (Vite 5 + TypeScript)
 - **Routing:** React Router with route guards (`Navigate` or protected route wrapper)
 - **Auth State:** React Context or lightweight store; persists only in memory (server session is source of truth)
+
+**CRITICAL: Route Guard Race Condition Prevention:**
+Checking auth state (e.g., `isAuthenticated === null` or `isAuthenticated === undefined`) BEFORE `checkAuth()` completes is a race condition. Use an explicit `hasCheckedAuth` flag (or equivalent `isAuthLoading` state) to ensure `checkAuth()` runs exactly once before any route guard decision:
+
+```jsx
+// React Context pattern
+const [user, setUser] = useState(undefined);      // undefined = "not checked yet"
+const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+
+// Route guard logic
+if (!hasCheckedAuth) {
+    await checkAuth();
+    setHasCheckedAuth(true);
+}
+// Only NOW make redirect decisions
+```
+
+**Why:** `isAuthenticated === null` checks are ALWAYS false for booleans/computed values. Without `hasCheckedAuth`, an authenticated user refreshing `/login` is NOT redirected to `/home` because `checkAuth()` never runs synchronously. This affects ALL frontend frameworks (React Context, Vue/Pinia, Angular Services).
+
+**Framework-agnostic rule:** Any auth system that initializes auth state as `null`/`undefined` and uses route guards MUST gate the guard with a "checked" boolean that flips to `true` AFTER the first auth check completes.
 
 ### Backend
 - **Framework:** Java Spring Boot
@@ -224,7 +244,7 @@ Build and test within **90 minutes**. This is a throwaway validation app, not pr
 
 ---
 
-*Prompt version: 1.3*  
+*Prompt version: 1.4*  
 *Updated: 2026-06-21*  
 *Changes from 1.2: Fixed §Button Behaviour contradiction — disabled button cannot fire click events. Changed to visual-only disabled (greyed out, cursor:not-allowed) with clickable button to support empty-submit validation. Updated acceptance criteria and Playwright test selectors.*  
 *Changes from 1.1: Added §6 Business Context, §6 Quality Attributes, §6 Data & Configuration per Standard 27 §6. Updated front matter: status="Draft", validated=false, added auth/standard fields, specified versions.*  

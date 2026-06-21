@@ -1,7 +1,7 @@
 ---
 name: "Prompt Engineering"
 type: "Standard"
-version: "1.1"
+version: "1.2"
 status: "Active"
 owner: "@architecture-team"
 ---
@@ -228,6 +228,7 @@ Before a prompt template is committed, it MUST pass the Prompt Testing Gate:
 | Prompts in chat history only | Lost on context reset | Store in `prompts/` directory, version in git |
 | Copying standards text into prompt | Duplicates docs, risks staleness | Reference by name/section, let RAG fetch current text |
 | No output format specified | Model invents format | Always specify expected structure |
+| **Auth state initialized as null/undefined without a "checked" flag** | `computed() === null` is ALWAYS false — route guards skip `checkAuth()` silently, so authenticated users hitting `/login` are NOT redirected to `/home` | Use explicit `hasCheckedAuth` boolean initialized to `false`; set to `true` AFTER first auth check completes. Applies to ALL frameworks (React Context, Vue/Pinia, Angular). |
 
 ---
 
@@ -363,6 +364,7 @@ Before a validation prompt is committed:
 □ Timebox declared with cleanup rule
 □ Acceptance criteria are atomic and observable
 □ Prompt has been exercised via SOP-21 (throwaway app built)
+□ **If auth + route guards specified: §5 anti-pattern "Auth state initialized without checked flag" addressed**
 ```
 
 **Rule:** A validation prompt that has not been exercised via SOP-21 is a **draft**. It gains `status: "Active"` only after passing throwaway validation.
@@ -396,6 +398,11 @@ Before claiming prompt engineering work is complete:
 ---
 
 ## Changelog
+
+### 1.2.0 — 2026-06-21
+- Added §5 anti-pattern: "Auth state initialized as null/undefined without a 'checked' flag" — `computed() === null` is ALWAYS false in route guards; documented fix with `hasCheckedAuth` flag. Applies to ALL frontend frameworks (React Context, Vue/Pinia, Angular).
+- Added §7.6 check: If auth + route guards specified, §5 anti-pattern MUST be addressed before prompt gains `status: "Active"`.
+- Updated PROMPT-001 (React+Java) and PROMPT-002 (Quasar+Python) with §5 anti-pattern fix in Technical Stack sections.
 
 ### 1.1.0 — 2026-06-21
 - Added §6 "Prompt Completeness Dimensions": 4 universal dimensions (Business Context, Functional Requirements, Quality Attributes, Data & Configuration) that every prompt MUST satisfy before commitment
