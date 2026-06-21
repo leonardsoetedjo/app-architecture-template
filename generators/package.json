@@ -21,7 +21,8 @@
   "author": "Leonard Soetedjo",
   "main": "generators/app/index.js",
   "scripts": {
-    "test": "yeoman-test",
+    "test": "node test/template-render.spec.js",
+    "test:integration": "bash ../scripts/validate-templates.sh",
     "link": "npm link"
   },
   "dependencies": {
