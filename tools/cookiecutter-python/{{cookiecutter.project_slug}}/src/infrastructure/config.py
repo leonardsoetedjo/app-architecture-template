@@ -13,7 +13,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    app_name: str = "order-service"
+    app_name: str = "{{ cookiecutter.project_slug }}"
     app_version: str = "1.0.0"
     host: str = "0.0.0.0"
     port: int = 8080

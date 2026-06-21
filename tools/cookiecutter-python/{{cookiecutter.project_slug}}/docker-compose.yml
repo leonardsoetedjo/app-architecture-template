@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  order-service:
+  {{ cookiecutter.project_slug }}:
     build:
       context: .
       dockerfile: Dockerfile

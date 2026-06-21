@@ -1,5 +1,5 @@
 [project]
-name = "order-service"
+name = "{{ cookiecutter.project_slug }}"
 version = "1.0.0"
 description = "Python FastAPI implementation of Order Service"
 requires-python = ">=3.11"

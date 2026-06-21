@@ -5,7 +5,7 @@ Python FastAPI implementation of the Order Service that mirrors the Java Spring 
 ## Architecture
 
 ```
-order-service-python/
+{{ cookiecutter.project_slug }}-python/
 ├── src/
 │   ├── domain/           # Domain models (Order, OrderItem, OrderId)
 │   ├── application/      # Use cases, DTOs, interfaces
@@ -57,7 +57,7 @@ docker-compose up --build
 ### Run Tests in Docker
 
 ```bash
-docker-compose run order-service pytest tests/ -v
+docker-compose run {{ cookiecutter.project_slug }} pytest tests/ -v
 ```
 
 ## Directory Structure

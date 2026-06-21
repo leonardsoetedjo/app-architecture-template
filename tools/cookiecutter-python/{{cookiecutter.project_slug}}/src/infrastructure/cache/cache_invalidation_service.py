@@ -13,8 +13,8 @@ from domain.order_id import OrderId
 class CacheInvalidationService:
     """Centralized cache invalidation service."""
     
-    ORDER_CACHE_PREFIX = "order-service:order:"
-    USER_CACHE_PREFIX = "order-service:user:"
+    ORDER_CACHE_PREFIX = "{{ cookiecutter.project_slug }}:order:"
+    USER_CACHE_PREFIX = "{{ cookiecutter.project_slug }}:user:"
     CACHE_KEY_SUFFIX_FULL = ":full"
     CACHE_KEY_SUFFIX_ITEMS = ":items"
     

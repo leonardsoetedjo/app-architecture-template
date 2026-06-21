@@ -1,6 +1,6 @@
 # Per-boilerplate lefthook for Python Clean Architecture
-# Location: boilerplate/python/order-service/lefthook.yml
-# Usage: cd boilerplate/python/order-service && lefthook install
+# Location: boilerplate/python/{{ cookiecutter.project_slug }}/lefthook.yml
+# Usage: cd boilerplate/python/{{ cookiecutter.project_slug }} && lefthook install
 
 pre-commit:
   parallel: true

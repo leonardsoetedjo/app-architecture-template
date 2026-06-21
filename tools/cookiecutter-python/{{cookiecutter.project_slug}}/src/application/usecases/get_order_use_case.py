@@ -1,26 +1,26 @@
 """
-Update Order Use Case demonstrating Write-Through pattern.
+Get Order Use Case demonstrating Cache-Aside pattern.
 
 Pattern:
-1. Update database
-2. Immediately update cache (write-through)
-3. Return updated order
+1. Check cache first
+2. On cache miss → load from database
+3. Populate cache with result
+4. Return order
 
-This ensures cache consistency with database.
+This optimizes read-heavy workloads by reducing database queries.
 """
 
-from typing import List
+from typing import Optional
 from domain.models.order import Order
-from domain.models.order_item import OrderItem
 from domain.ports.order_repository import OrderRepository
 from domain.ports.cache_manager import CacheManager
 from domain.order_id import OrderId
 
 
-class UpdateOrderUseCase:
-    """Update order with write-through caching."""
+class GetOrderUseCase:
+    """Get order by ID with cache-aside pattern."""
     
-    CACHE_KEY_PREFIX = "order-service:order:"
+    CACHE_KEY_PREFIX = "{{ cookiecutter.project_slug }}:order:"
     CACHE_KEY_SUFFIX = ":full"
     
     def __init__(self, order_repository: OrderRepository, cache_manager: CacheManager):
@@ -34,47 +34,40 @@ class UpdateOrderUseCase:
         self.order_repository = order_repository
         self.cache_manager = cache_manager
     
-    def execute(self, order_id: OrderId, items: List[OrderItem]) -> Order:
+    def execute(self, order_id: OrderId) -> Order:
         """
-        Update order with write-through caching.
+        Get order by ID with cache-aside pattern.
         
         Args:
             order_id: Order ID
-            items: Updated order items
             
         Returns:
-            Updated order
+            Order if found
             
         Raises:
             OrderNotFoundException: If order doesn't exist
         """
-        # Step 1: Update database
-        updated_order = self.order_repository.update(order_id, items)
-        if updated_order is None:
+        cache_key = self._build_cache_key(order_id)
+        
+        # Step 1: Check cache first
+        cached_order = self.cache_manager.get(cache_key, Order)
+        if cached_order is not None:
+            return cached_order
+        
+        # Step 2: Cache miss - load from database
+        order = self.order_repository.find_by_id(order_id)
+        if order is None:
             raise OrderNotFoundException(order_id)
         
-        # Step 2: Write-through - update cache immediately
-        cache_key = self._build_cache_key(order_id)
-        self.cache_manager.put(cache_key, updated_order)
+        # Step 3: Populate cache
+        self.cache_manager.put(cache_key, order)
         
-        return updated_order
-    
-    def cancel_order(self, order_id: OrderId) -> None:
-        """
-        Cancel order with cache invalidation.
-        
-        Args:
-            order_id: Order ID to cancel
-        """
-        # Update database
-        self.order_repository.cancel(order_id)
-        
-        # Invalidate cache (don't cache cancelled orders)
-        self.invalidate_cache(order_id)
+        # Step 4: Return order
+        return order
     
     def invalidate_cache(self, order_id: OrderId) -> None:
         """
-        Invalidate order cache.
+        Invalidate order cache (call after updates).
         
         Args:
             order_id: Order ID to invalidate

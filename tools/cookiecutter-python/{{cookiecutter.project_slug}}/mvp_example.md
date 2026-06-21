@@ -98,7 +98,7 @@ service = WorkflowExecutionService(mock_port)
 ### 1. Database Migration
 
 ```bash
-cd boilerplate/python/order-service
+cd boilerplate/python/{{ cookiecutter.project_slug }}
 alembic upgrade head
 ```
 

@@ -164,23 +164,23 @@ class TestCacheInvalidationServiceIntegration:
         # Arrange
         from domain.order_id import OrderId
         order_id = OrderId("test-123")
-        cache_manager.put("order-service:order:test-123:full", "order-data")
+        cache_manager.put("{{ cookiecutter.project_slug }}:order:test-123:full", "order-data")
         
         # Act
         invalidation_service.invalidate_order(order_id)
         
         # Assert
-        assert cache_manager.get("order-service:order:test-123:full", str) is None
+        assert cache_manager.get("{{ cookiecutter.project_slug }}:order:test-123:full", str) is None
     
     def test_invalidate_all_orders(self, invalidation_service, cache_manager: RedisCacheManager):
         """Should invalidate all orders."""
         # Arrange
-        cache_manager.put("order-service:order:1:full", "order1")
-        cache_manager.put("order-service:order:2:full", "order2")
+        cache_manager.put("{{ cookiecutter.project_slug }}:order:1:full", "order1")
+        cache_manager.put("{{ cookiecutter.project_slug }}:order:2:full", "order2")
         
         # Act
         invalidation_service.invalidate_all_orders()
         
         # Assert
-        assert cache_manager.get("order-service:order:1:full", str) is None
-        assert cache_manager.get("order-service:order:2:full", str) is None
+        assert cache_manager.get("{{ cookiecutter.project_slug }}:order:1:full", str) is None
+        assert cache_manager.get("{{ cookiecutter.project_slug }}:order:2:full", str) is None

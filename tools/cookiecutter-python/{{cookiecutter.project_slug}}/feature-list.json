@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "project": "order-service-python",
+  "project": "{{ cookiecutter.project_slug }}-python",
   "generated_at": "2026-06-04T00:00:00Z",
   "features": [
     {

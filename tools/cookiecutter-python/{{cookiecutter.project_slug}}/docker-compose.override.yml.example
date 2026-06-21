@@ -19,7 +19,7 @@
 #   - CI/CD pipelines (this file is gitignored)
 #
 services:
-  order-service:
+  {{ cookiecutter.project_slug }}:
     volumes:
       - ./src:/app/src:cached
       - ./alembic:/app/alembic:cached

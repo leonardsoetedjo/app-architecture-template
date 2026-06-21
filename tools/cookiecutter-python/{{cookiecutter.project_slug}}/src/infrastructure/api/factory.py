@@ -68,7 +68,7 @@ def create_app() -> FastAPI:
         docs_url="/api/v1/docs",
         openapi_url="/api/v1/openapi.json",
         swagger_ui_init_oauth={
-            "clientId": "order-service-client",
+            "clientId": "{{ cookiecutter.project_slug }}-client",
         },
     )
 

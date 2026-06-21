@@ -9,9 +9,9 @@ Cache Key Naming Convention:
     {service}:{entity-type}:{identifier}:{field?}
 
 Examples:
-    - "order-service:order:123:full"
-    - "order-service:user:456:profile"
-    - "order-service:permissions:role:admin"
+    - "{{ cookiecutter.project_slug }}:order:123:full"
+    - "{{ cookiecutter.project_slug }}:user:456:profile"
+    - "{{ cookiecutter.project_slug }}:permissions:role:admin"
 """
 
 from abc import ABC, abstractmethod
@@ -80,7 +80,7 @@ class CacheManager(ABC):
         Clear all cache entries matching pattern.
         
         Args:
-            pattern: Key pattern (e.g., "order-service:order:*")
+            pattern: Key pattern (e.g., "{{ cookiecutter.project_slug }}:order:*")
         """
         pass
     
