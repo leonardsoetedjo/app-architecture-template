@@ -4,10 +4,9 @@ Replaced monolithic Yeoman with stack-native scaffolding tools.
 
 | Stack | Tool | Directory | Status |
 |-------|------|-----------|--------|
-| Java | Maven Archetype | `maven-archetype-java/` | Skeleton (needs full templates) |
 | Python | Cookiecutter | `cookiecutter-python/` | Skeleton (needs Jinja transformation) |
-| ReactJS | Yeoman | `yeoman-js/` | Stub (planned) |
-| Quasar | Yeoman | `yeoman-js/` | Stub (planned) |
+| Java | Maven Archetype | _TBD_ | Planned |
+| ReactJS/Quasar | Yeoman | _TBD_ | Planned |
 
 ## Rationale
 

@@ -35,6 +35,7 @@ order-service/
 │       └── factory.py   # Mounts all routers with prefix="/api/v1"
 │           # NOTE: Sub-routers MUST use RELATIVE prefixes (e.g., "/auth"),
 │           # NOT absolute paths (e.g., "/api/v1/auth"). FastAPI concatenates.
+│           # See frequent-mistakes.md — FASTAPI-ROUTER-PREFIX-DOUBLE
 └── tests/               # unit/, integration/, archunit/
 ```
 

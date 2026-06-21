@@ -220,6 +220,8 @@ Before a prompt template is committed, it MUST pass the Prompt Testing Gate:
 
 ## Anti-Patterns (MUST NOT)
 
+> **Quick reference:** For framework-specific traps with code examples, see `frequent-mistakes.md`. This section lists the canonical anti-pattern names for prompt validation checklists.
+
 | Anti-Pattern | Why It's Broken | Fix |
 |-------------|-----------------|-----|
 | "Be creative" | Unbounded output, non-deterministic | Replace with explicit constraints and output format |
@@ -228,8 +230,8 @@ Before a prompt template is committed, it MUST pass the Prompt Testing Gate:
 | Prompts in chat history only | Lost on context reset | Store in `prompts/` directory, version in git |
 | Copying standards text into prompt | Duplicates docs, risks staleness | Reference by name/section, let RAG fetch current text |
 | No output format specified | Model invents format | Always specify expected structure |
-| **Auth state initialized as null/undefined without a "checked" flag** | `computed() === null` is ALWAYS false — route guards skip `checkAuth()` silently, so authenticated users hitting `/login` are NOT redirected to `/home` | Use explicit `hasCheckedAuth` boolean initialized to `false`; set to `true` AFTER first auth check completes. Applies to ALL frameworks (React Context, Vue/Pinia, Angular). |
-| **FastAPI `APIRouter` with absolute prefix** | `APIRouter(prefix="/api/v1/auth")` + `app.include_router(prefix="/api/v1")` produces `/api/v1/api/v1/auth/login` → 404. Developers expect prefix to be absolute from app root (Flask/Express mental model), but FastAPI concatenates. | Use RELATIVE prefix on `APIRouter` (e.g., `prefix="/auth"`) when mounted with `app.include_router(prefix="/api/v1")`. Or omit app-level prefix and use absolute on router. |
+| **Auth state initialized as null/undefined without a "checked" flag** | `computed() === null` is ALWAYS false — route guards skip `checkAuth()` silently, so authenticated users hitting `/login` are NOT redirected to `/home` | Use explicit `hasCheckedAuth` boolean initialized to `false`; set to `true` AFTER first auth check completes. Applies to ALL frameworks (React Context, Vue/Pinia, Angular). See `frequent-mistakes.md` — AUTH-STATE-RACE-CONDITION. |
+| **FastAPI `APIRouter` with absolute prefix** | `APIRouter(prefix="/api/v1/auth")` + `app.include_router(prefix="/api/v1")` produces `/api/v1/api/v1/auth/login` → 404. Developers expect prefix to be absolute from app root (Flask/Express mental model), but FastAPI concatenates. | Use RELATIVE prefix on `APIRouter` (e.g., `prefix="/auth"`) when mounted with `app.include_router(prefix="/api/v1")`. Or omit app-level prefix and use absolute on router. See `frequent-mistakes.md` — FASTAPI-ROUTER-PREFIX-DOUBLE. |
 
 ---
 
