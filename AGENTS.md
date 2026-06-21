@@ -32,43 +32,11 @@
 **Child DOX:** `boilerplate/{java,python,nestjs,reactjs,quasar}/AGENTS.md` | `docs/AI_NAVIGATION.md`  
 > Human: `README.md` §Technology Stack. Deep-dive: `docs/01-agnostic/01-standards/XX-agents-*.md`.
 
-## 3. Context Engineering (Standard 28)
+## 3. Context Engineering
 
-Before assembling context:
+**Budget:** task=40%, retrieved=30%, working=20%, safety=5%. Index sources via `ctx_index` before `ctx_search`. See `docs/01-agnostic/01-standards/28-context-engineering.md` for full allocation tables.
 
-1. **Declare budget:** task=40%, retrieved=30%, working=20%, safety=5%
-2. **Index sources:** See `.agents.yml` `context_sources`
-3. **Query selectively:** `ctx_search(source: "...", queries: [...])`
-4. **Never dump docs:** Boilerplate AGENTS.md <500 tokens. Rest in indexed sources.
-
-**Context sources:**
-```python
-ctx_index(path="docs/01-agnostic/01-standards", source="architecture-standards")
-ctx_index(path="docs/04-sops", source="sops")
-ctx_index(path="boilerplate/java", source="java-boilerplate")
-ctx_index(path="boilerplate/python", source="python-boilerplate")
-ctx_index(path="boilerplate/nestjs", source="nestjs-boilerplate")
-ctx_index(path="boilerplate/reactjs", source="frontend-boilerplate")
-ctx_index(path="boilerplate/quasar", source="quasar-boilerplate")
-```
-
-### 3.5 Tool Dispatch: Docs vs Code
-
-**Rule of thumb:** `ctx_search` for prose docs; `serena` MCP for source code.
-
-| Need | Tool | Example |
-|---|---|---|
-| Standards, SOPs, ADRs, requirements | `ctx_search(source: "...")` | Query `architecture-standards` for layer rules |
-| Boilerplate code templates, configs | `ctx_search(source: "...")` | Query `java-boilerplate` for `pom.xml` deps |
-| **Library docs** (FastAPI, React, Quasar, Spring API) | **`neuledge-context`** (`get_docs`, `search_packages`) | Lookup `fastapi` `APIRouter` semantics |
-| **Internal fleet docs** (standards, prompts, ADRs) | **`ctx_index` + `ctx_search`** | Query `architecture-standards` for layer rules |
-| Live codebase: find class, method, ref | `serena` (`find_symbol`, `search_for_pattern`) | Verify service has no SQLModel imports |
-| Cross-service call chains, refactor scope | `serena` (`find_referencing_symbols`) | Who calls `FooService`? |
-| File structure, line counts, dir walk | `mcp_project_fs_*` | Count `.py` files in `domain/` |
-
-**Rule:** `neuledge-context` is for **published library documentation only** (npm/pip/cargo registries). It cannot index arbitrary markdown repos. For fleet standards, always use `ctx_index` + `ctx_search`.
-
-**Index-before-search rule:** Run `ctx_index(path=..., source=...)` once per source per session before any `ctx_search` against that source. First search against unindexed source returns empty results.
+**Tool dispatch:** `ctx_search` for prose/standards; `serena` MCP for code; `neuledge-context` for published library docs. See Standard 28 §3.5.
 
 ## 4. Architecture Rules
 
@@ -86,23 +54,9 @@ ctx_index(path="boilerplate/quasar", source="quasar-boilerplate")
 2. Include "Architecture: PASSED" in commit message
 3. Use GitHub Issues (no markdown reports in repo)
 
-## 5.1 Pre-Task (Standard 29 Phase 1)
+**Pre-task (Std 29 Phase 1):** Read Standards 27/28/29 → read stack AGENTS.md → declare budget → `ctx_index` sources → scope single feature. See `docs/01-agnostic/01-standards/29-harness-engineering.md` §3.
 
-- [ ] Read Standards 27/28/29 (prompt/context/harness)
-- [ ] Read stack-specific AGENTS.md
-- [ ] Budget declared: system=5%, task=___%, retrieved=___%, working=___%, safety=5%
-- [ ] **Index** context sources via `ctx_index(path=..., source=...)` BEFORE any `ctx_search` or deep file reads
-- [ ] Task scope clarified (single feature)
-
-## 5.2 Post-Task / Handoff (Standard 29 Phase 4)
-
-- [ ] Context budget respected (measured)
-- [ ] Standards cited in output (specific sections)
-- [ ] Handoff: file paths, line numbers, violations
-- [ ] No vague observations — every finding: WHAT, WHY, HOW
-- [ ] Multi-service → split into sub-tasks
-- [ ] No debug code left behind
-- [ ] Next agent succeeds without asking questions
+**Post-task handoff (Std 29 Phase 4):** Measure budget → cite standards → handoff with paths/lines/violations → no vague observations → split multi-service → clean debug code. See Standard 29 §4.
 
 ## 6. Verification
 
