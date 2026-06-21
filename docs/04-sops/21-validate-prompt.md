@@ -1,9 +1,11 @@
 ---
 name: "SOP: Validate Prompt via Throwaway App"
 type: "SOP"
-version: "1.0"
-status: "Draft"
+version: "1.1"
+status: "Active"
 owner: "@architecture-team"
+standard: "Standard 27 §6, Standard 30"
+sop_reference: "SOP-21, SOP-22"
 ---
 
 # SOP 21: Validate Prompt via Throwaway App
@@ -11,6 +13,8 @@ owner: "@architecture-team"
 ## Trigger
 
 A new prompt or feature spec needs validation. Rather than debating correctness in abstract, codify it as a **throwaway app** and exercise it.
+
+**This SOP implements Standard 30 §3 (Prompt Authorship) and Standard 30 §7 (Prompt Lifecycle State Machine).**
 
 ## Goal
 
@@ -24,9 +28,11 @@ When someone writes a prompt and wants to know if it's any good, we don't debate
 
 ## Pre-conditions
 
-- Prompt text is finalized and reviewed
-- Target stack is specified (see "Supported Stacks")
-- One session is allocated (do not mix prompt validation with other work)
+- **PRD exists** and has been handed off from babablacksheep (per Standard 30 §2)
+- **Prompt is derived from PRD** by archie (not invented from scratch)
+- **Contradiction scan (§Step 2b) completed** with zero findings OR human has approved resolution
+- **Target stack is specified** (see "Supported Stacks")
+- **One session is allocated** (do not mix prompt validation with other work)
 
 ## Procedure
 
@@ -79,6 +85,35 @@ Then, translate every sentence in the prompt into a `feature-list.json` entry:
 ```
 
 **Rule:** Every noun and verb in the prompt MUST map to at least one feature.
+
+### Step 2b: Contradiction Scan (2 min)
+
+**This is Standard 30 §5 implemented as a procedural gate. It MUST run before any code is written.**
+
+Scan the prompt for these contradiction patterns:
+
+| Pattern | Detection Question | If Found |
+|---------|-------------------|----------|
+| **Mutually Exclusive** (§5.1) | Does Requirement A prevent the trigger condition of Requirement B? | STOP → human checkpoint |
+| **Circular Dependency** (§5.2) | Trace dependency graph — is there a cycle? | STOP → human checkpoint |
+| **Scope Bleed** (§5.3) | Does any IN-scope feature depend on an OUT-of-scope item? | STOP → human checkpoint |
+| **Silent Preconditions** (§5.4) | Does any requirement assume a state that is never guaranteed? | STOP → add explicit fallback |
+| **Test Assertion Conflict** (§5.5) | Do any two ACs have contradictory trigger conditions? | STOP → consolidate ACs |
+
+**Quick scan checklist:**
+```
+□ Two requirements that say opposite things (disabled + clickable)
+□ Two requirements that depend on each other (circular)
+□ IN scope that needs OUT scope
+□ "Always true" assumptions that are never validated
+□ Two acceptance criteria testing the same thing differently
+```
+
+**If ANY box is checked → STOP. Do not proceed to Step 3.**
+Log the contradiction in `prompt-findings.md` and escalate per Standard 30 §6:
+- One contradiction → ask human: "A or B?"
+- Multiple contradictions → return to babablacksheep for PRD rewrite
+- Same contradiction found twice → rewrite PRD from scratch
 
 ### Step 3: Implement Features (variable — stop at 90 min)
 
