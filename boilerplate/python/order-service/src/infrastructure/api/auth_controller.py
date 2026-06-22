@@ -2,8 +2,8 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from .dependencies import get_authenticate_user_use_case, get_register_user_use_case, get_change_password_use_case, get_current_user_use_case, get_token_parser
-from ..application.dtos import LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
-from ..domain.models.user import UserId
+from application.dtos import LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
+from domain.models.user import UserId
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 security = HTTPBearer()

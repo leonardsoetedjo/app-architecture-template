@@ -28,7 +28,7 @@ class OrderMapper:
             for it in entity.items
         ]
         return Order(
-            id=OrderId(entity.id),
+            id=OrderId.from_string(entity.id),
             customer_id=entity.customer_id,
             items=items,
             status=entity.status,
@@ -47,7 +47,7 @@ class OrderMapper:
             for it in domain.items
         ]
         order_entity = OrderEntity(
-            id=domain.id.value,
+            id=str(domain.id.value),
             customer_id=domain.customer_id,
             status=domain.status,
             created_at=domain.created_at,

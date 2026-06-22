@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Optional
-from .models.user import User, UserId, Email
+from domain.models.user import User, UserId, Email
 
 class UserRepository(ABC):
     @abstractmethod

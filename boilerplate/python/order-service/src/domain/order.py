@@ -17,14 +17,14 @@ class Order:
     Identity equality via OrderId. Value objects are frozen.
     """
     id: OrderId
-    customer_id: UUID
+    customer_id: str
     items: List[OrderItem]
     status: str = "PENDING"
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     confirmed_at: datetime | None = None
 
     def __post_init__(self) -> None:
-        if self.customer_id is None:
+        if not self.customer_id:
             raise ValueError("Customer ID cannot be null")
         if not self.items:
             raise InvalidOrderException("Order must have at least one item")
@@ -35,7 +35,7 @@ class Order:
                 raise InvalidOrderException("Order items must have non-negative price")
 
     @staticmethod
-    def create(customer_id: UUID, items: List[OrderItem]) -> "Order":
+    def create(customer_id: str, items: List[OrderItem]) -> "Order":
         """Factory method to create a new Order with validation."""
         return Order(
             id=OrderId.generate(),

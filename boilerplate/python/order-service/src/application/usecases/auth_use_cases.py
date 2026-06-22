@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from .dtos import LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
-from ..domain.models.user import UserId
+from application.dtos import LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
+from domain.models.user import UserId
 
 class AuthenticateUserUseCase(ABC):
     @abstractmethod

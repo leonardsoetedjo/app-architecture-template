@@ -57,11 +57,9 @@ def get_db() -> Session:
 
 
 def init_db() -> None:
-    """Create all tables from SQLAlchemy models.
-
-    Call once at startup (or let Alembic handle it in production).
-    """
-    from .models import Base
+    """Create all tables from SQLAlchemy models."""
+    from .models import Base, OrderEntity, OrderItemEntity
+    from .sqlalchemy_user_repository import UserEntity
     Base.metadata.create_all(bind=get_engine())
 
 

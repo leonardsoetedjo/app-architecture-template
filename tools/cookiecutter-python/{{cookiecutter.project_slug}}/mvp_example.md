@@ -161,5 +161,5 @@ This MVP provides a foundation for:
 ## References
 
 - [Batch Job Status Architecture Guide](../../../docs/01-agnostic/01-standards/batch-job-status-architecture.md)
-- [Python Boilerplate AGENTS.md](../../AGENTS.md)
+- [Python Boilerplate AGENTS.md](../../../boilerplate/python/AGENTS.md)
 - [Clean Architecture Standards](../../../docs/01-agnostic/01-standards/13-agents.md)

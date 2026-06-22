@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import Optional
 from datetime import datetime, timedelta, timezone
 import jwt
-from ..domain.models.user import User, UserId
-from ..domain.ports.auth_ports import TokenGenerator, TokenParser
+from domain.models.user import User, UserId
+from domain.ports.auth_ports import TokenGenerator, TokenParser
 
 class JwtAuthService(TokenGenerator, TokenParser):
     def __init__(self, secret: str, access_token_ttl: int = 3600, refresh_token_ttl: int = 86400):

@@ -1,10 +1,10 @@
 from __future__ import annotations
 from .auth_use_cases import AuthenticateUserUseCase, RegisterUserUseCase, ChangePasswordUseCase, GetCurrentUserUseCase
-from .dtos import LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
-from ..domain.models.user import Email, Password, Role, User, UserId, AuthenticationException, USER_ROLE
+from application.dtos import LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
+from domain.models.user import Email, Password, Role, User, UserId, AuthenticationException, USER_ROLE
 
-from ..domain.events.user_events import UserLoggedIn, UserRegistered, PasswordChanged
-from ..domain.ports.auth_ports import UserRepository, PasswordHasher, TokenGenerator, EventPublisher
+from domain.events.user_events import UserLoggedIn, UserRegistered, PasswordChanged
+from domain.ports.auth_ports import UserRepository, PasswordHasher, TokenGenerator, EventPublisher
 import uuid
 
 class AuthenticateUserUseCaseImpl(AuthenticateUserUseCase):
@@ -30,14 +30,14 @@ class AuthenticateUserUseCaseImpl(AuthenticateUserUseCase):
         access_token = self.token_generator.generate_access_token(user)
         refresh_token = self.token_generator.generate_refresh_token(user)
 
-        self.event_publisher.publish(UserLoggedIn(user.id))
+        self.event_publisher.publish(UserLoggedIn(user_id=user.id))
 
         return LoginResult(
-            access_token=access_token,
-            refresh_token=refresh_token,
+            accessToken=access_token,
+            refreshToken=refresh_token,
             email=user.email.value,
-            roles=user.roles,
-            token_type="Bearer"
+            roles={r.code for r in user.roles},
+            tokenType="Bearer"
         )
 
 class RegisterUserUseCaseImpl(RegisterUserUseCase):
@@ -60,12 +60,12 @@ class RegisterUserUseCaseImpl(RegisterUserUseCase):
         user = User.create(email, password, roles)
         saved = self.user_repository.save(user)
 
-        self.event_publisher.publish(UserRegistered(saved.id, saved.email.value))
+        self.event_publisher.publish(UserRegistered(user_id=saved.id, email=saved.email.value))
 
         return RegisterResult(
-            user_id=str(saved.id.value),
+            userId=str(saved.id.value),
             email=saved.email.value,
-            roles=saved.roles
+            roles={r.code for r in saved.roles}
         )
 
 class ChangePasswordUseCaseImpl(ChangePasswordUseCase):
@@ -88,7 +88,7 @@ class ChangePasswordUseCaseImpl(ChangePasswordUseCase):
         user.change_password(Password(hashed))
         self.user_repository.save(user)
 
-        self.event_publisher.publish(PasswordChanged(user.id))
+        self.event_publisher.publish(PasswordChanged(user_id=user.id))
 
 class GetCurrentUserUseCaseImpl(GetCurrentUserUseCase):
     def __init__(self, user_repository: UserRepository):
@@ -100,10 +100,10 @@ class GetCurrentUserUseCaseImpl(GetCurrentUserUseCase):
             raise AuthenticationException("AUTH_USER_NOT_FOUND", "User not found")
 
         return UserProfileResult(
-            user_id=str(user.id.value),
+            userId=str(user.id.value),
             email=user.email.value,
-            roles=user.roles,
+            roles={r.code for r in user.roles},
             enabled=user.enabled,
-            created_at=user.created_at,
-            last_login_at=user.last_login_at
+            createdAt=user.created_at,
+            lastLoginAt=user.last_login_at
         )

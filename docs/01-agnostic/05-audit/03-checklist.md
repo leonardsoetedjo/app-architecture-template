@@ -154,7 +154,7 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
   - *Boilerplate reference*: [`OrderPlacementServiceTest.java`](../../../boilerplate/java/order-service/src/test/java/com/example/orderservice/domain/services/OrderPlacementServiceTest.java).
 - [ ] **Integration Tests**: Are service boundaries tested using Testcontainers or an in-memory DB?
 - [ ] **E2E Flow**: Is the critical user journey verified by a Playwright test?
-  - *Boilerplate reference*: [`frontend/e2e/api.spec.ts`](../../../boilerplate/reactjs/e2e/api.spec.ts).
+  - *Boilerplate reference*: [`frontend/e2e/login.spec.ts`](../../../boilerplate/reactjs/e2e/login.spec.ts).
 - [ ] **API Contract**: Does the API implementation match the OpenAPI/Swagger specification?
 - [ ] **Bruno Coverage**: Is there at least one `.bru` request for every exposed endpoint?
   - *Boilerplate reference*: [`tests/bruno/`](../../../boilerplate/tests/bruno/).

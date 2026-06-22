@@ -2,15 +2,15 @@ from __future__ import annotations
 from typing import Optional
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Boolean, DateTime, Text
-from sqlalchemy.orm import declarative_base, Session
-from ..domain.models.user import User, UserId, Email, Password, Role, USER_ROLE
-from ..domain.ports.auth_ports import UserRepository
+from sqlalchemy.orm import Session
+from domain.models.user import User, UserId, Email, Password, Role, USER_ROLE
+from domain.ports.auth_ports import UserRepository
+from infrastructure.persistence.models import Base
 
-Base = declarative_base()
 
 class UserEntity(Base):
     __tablename__ = "users"
-    
+
     id = Column(String, primary_key=True)
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
@@ -18,6 +18,7 @@ class UserEntity(Base):
     enabled = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), nullable=False)
     last_login_at = Column(DateTime(timezone=True), nullable=True)
+
 
 class SQLAlchemyUserRepository(UserRepository):
     def __init__(self, session_factory):
@@ -66,7 +67,6 @@ class SQLAlchemyUserRepository(UserRepository):
 
     def _to_domain(self, entity: UserEntity) -> User:
         roles = {Role(name=r.split(':')[0], code=r) for r in entity.roles.split(",")} if entity.roles else {USER_ROLE}
-        # In a real app we'd map Role codes back to full Role objects via a lookup
         return User(
             id=UserId(entity.id),
             email=Email(entity.email),

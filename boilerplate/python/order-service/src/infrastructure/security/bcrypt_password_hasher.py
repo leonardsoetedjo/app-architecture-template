@@ -1,5 +1,5 @@
 from __future__ import annotations
-from ..domain.ports.auth_ports import PasswordHasher
+from domain.ports.auth_ports import PasswordHasher
 import bcrypt
 
 class BCryptPasswordHasher(PasswordHasher):

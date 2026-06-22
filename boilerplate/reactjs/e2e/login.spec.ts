@@ -19,6 +19,9 @@ test.describe('Login E2E', () => {
     await page.click('button[type="submit"]');
     await page.waitForURL(/\/orders/, { timeout: 10000 });
     await expect(page.locator('h1:has-text("Orders")')).toBeVisible();
+    // Ensure orders data loaded — catch backend 500 / broken contract regressions
+    await expect(page.locator('text=Failed to load orders')).not.toBeVisible();
+    await page.screenshot({ path: 'e2e/screenshots/login-success.png', fullPage: true });
   });
 
   test('invalid password shows error', async ({ page }) => {

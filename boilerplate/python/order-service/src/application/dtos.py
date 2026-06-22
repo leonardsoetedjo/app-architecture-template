@@ -1,8 +1,13 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Optional, Set
+from typing import Optional, Set, List
 from datetime import datetime
-from ..domain.models.user import Role
+from decimal import Decimal
+from uuid import UUID
+
+from domain.models.user import Role
+
+# Auth DTOs
 
 @dataclass(frozen=True)
 class LoginCommand:
@@ -11,11 +16,11 @@ class LoginCommand:
 
 @dataclass(frozen=True)
 class LoginResult:
-    access_token: str
-    refresh_token: str
+    accessToken: str
+    refreshToken: str
     email: str
-    roles: Set[Role]
-    token_type: str = "Bearer"
+    roles: Set[str]
+    tokenType: str = "Bearer"
 
 @dataclass(frozen=True)
 class RegisterCommand:
@@ -25,9 +30,9 @@ class RegisterCommand:
 
 @dataclass(frozen=True)
 class RegisterResult:
-    user_id: str
+    userId: str
     email: str
-    roles: Set[Role]
+    roles: Set[str]
 
 @dataclass(frozen=True)
 class ChangePasswordCommand:
@@ -36,9 +41,30 @@ class ChangePasswordCommand:
 
 @dataclass(frozen=True)
 class UserProfileResult:
-    user_id: str
+    userId: str
     email: str
-    roles: Set[Role]
+    roles: Set[str]
     enabled: bool
+    createdAt: datetime
+    lastLoginAt: Optional[datetime]
+
+# Order DTOs
+
+@dataclass(frozen=True)
+class OrderItemDTO:
+    product_id: str
+    quantity: int
+    unit_price: Decimal
+
+
+@dataclass(frozen=True)
+class CreateOrderCommand:
+    customer_id: str
+    items: List[OrderItemDTO]
+
+
+@dataclass(frozen=True)
+class OrderResult:
+    order_id: UUID
+    status: str
     created_at: datetime
-    last_login_at: Optional[datetime]

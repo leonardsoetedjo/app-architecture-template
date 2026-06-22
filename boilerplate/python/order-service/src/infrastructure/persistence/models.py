@@ -15,8 +15,8 @@ class OrderEntity(Base):
     """SQLAlchemy entity for Order table."""
     __tablename__ = "orders"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
-    customer_id = Column(PGUUID(as_uuid=True), nullable=False)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    customer_id = Column(String(36), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     status = Column(String(20), nullable=False, default="PENDING")
     confirmed_at = Column(DateTime, nullable=True)
@@ -33,13 +33,13 @@ class OrderItemEntity(Base):
     """SQLAlchemy entity for OrderItem table."""
     __tablename__ = "order_items"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
     order_id = Column(
-        PGUUID(as_uuid=True),
+        String(36),
         ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False,
     )
-    product_id = Column(PGUUID(as_uuid=True), nullable=False)
+    product_id = Column(String(255), nullable=False)
     quantity = Column(Integer, nullable=False)
     unit_price = Column(Numeric(19, 4), nullable=False)
 

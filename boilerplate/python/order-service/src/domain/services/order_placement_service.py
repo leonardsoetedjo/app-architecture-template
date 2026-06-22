@@ -26,7 +26,7 @@ class OrderPlacementService:
         self._order_repository = order_repository
         self._event_publisher = event_publisher
 
-    def place_order(self, customer_id: UUID, items: List[OrderItem]) -> Order:
+    def place_order(self, customer_id: str, items: List[OrderItem]) -> Order:
         """Place a new order.
 
         1. Semantic validation

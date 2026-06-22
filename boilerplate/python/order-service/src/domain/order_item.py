@@ -10,7 +10,7 @@ class OrderItem:
     Frozen dataclass ensures immutability as a domain value object.
     Uses Decimal for unit_price to ensure financial calculations are precise.
     """
-    product_id: UUID
+    product_id: str
     quantity: int
     unit_price: Decimal
 
