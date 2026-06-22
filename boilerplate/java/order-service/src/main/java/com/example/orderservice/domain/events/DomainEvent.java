@@ -1,6 +1,7 @@
 package com.example.orderservice.domain.events;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 /**
@@ -19,7 +20,7 @@ public abstract class DomainEvent {
     
     protected DomainEvent(String eventType) {
         this.id = UUID.randomUUID();
-        this.occurredOn = OffsetDateTime.now();
+        this.occurredOn = OffsetDateTime.now(ZoneOffset.UTC);
         this.eventType = eventType;
     }
     

@@ -1,5 +1,6 @@
 package com.example.orderservice.infrastructure.persistence;
 
+import java.time.ZoneOffset;
 import com.example.orderservice.domain.models.*;
 import com.example.orderservice.domain.ports.OrderRepository;
 import org.springframework.data.domain.PageRequest;
@@ -94,7 +95,7 @@ public class JpaOrderRepository implements OrderRepository {
 
     @Override
     public void deleteById(OrderId id) {
-        jpaRepository.softDeleteById(id.getValue(), java.time.OffsetDateTime.now());
+        jpaRepository.softDeleteById(id.getValue(), java.time.OffsetDateTime.now(ZoneOffset.UTC));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.orderservice.infrastructure.security;
 
+import com.example.orderservice.infrastructure.logging.CorrelationIdFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,9 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CorrelationIdFilter correlationIdFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                         CorrelationIdFilter correlationIdFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.correlationIdFilter = correlationIdFilter;
     }
 
     @Bean
@@ -35,7 +39,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/**", "/actuator/health", "/error", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(correlationIdFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, CorrelationIdFilter.class)
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable);
         return http.build();

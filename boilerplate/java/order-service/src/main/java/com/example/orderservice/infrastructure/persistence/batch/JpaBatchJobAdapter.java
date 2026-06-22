@@ -6,6 +6,7 @@ import com.example.orderservice.domain.ports.batch.BatchJobPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
+import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,11 +50,11 @@ public class JpaBatchJobAdapter implements BatchJobPort {
         entity.setErrorMessage(errorMessage);
         
         if (status == BatchJobStatus.PROCESSING && entity.getStartTime() == null) {
-            entity.setStartTime(LocalDateTime.now());
+            entity.setStartTime(LocalDateTime.now(Clock.systemUTC()));
         }
         
         if (status == BatchJobStatus.COMPLETED || status == BatchJobStatus.FAILED || status == BatchJobStatus.CANCELLED) {
-            entity.setEndTime(LocalDateTime.now());
+            entity.setEndTime(LocalDateTime.now(Clock.systemUTC()));
         }
         
         BatchJobJpaEntity updated = repository.save(entity);

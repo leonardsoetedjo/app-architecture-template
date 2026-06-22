@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="{&quot;timestamp&quot;:&quot;%d{ISO8601}{UTC}&quot;,&quot;level&quot;:&quot;%p&quot;,&quot;logger&quot;:&quot;%c{1}&quot;,&quot;thread&quot;:&quot;%t&quot;,&quot;message&quot;:&quot;%enc{%m}{JSON}&quot;,&quot;traceId&quot;:&quot;%X{traceId}&quot;,&quot;userId&quot;:&quot;%X{userId}&quot;,&quot;errorCode&quot;:&quot;%X{errorCode}&quot;}%n"
+                           charset="UTF-8" disableAnsi="true"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger name="com.example.orderservice" level="debug"/>
+    </Loggers>
+</Configuration>

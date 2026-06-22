@@ -1,6 +1,7 @@
 package com.example.orderservice.domain.models;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class User {
         this.password = password;
         this.roles = new HashSet<>(roles);
         this.enabled = enabled;
-        this.createdAt = Objects.requireNonNullElse(createdAt, OffsetDateTime.now());
+        this.createdAt = Objects.requireNonNullElse(createdAt, OffsetDateTime.now(ZoneOffset.UTC));
     }
 
     public static User create(Email email, Password password, Set<Role> roles) {
@@ -46,7 +47,7 @@ public class User {
             password,
             roles,
             true,
-            OffsetDateTime.now()
+            OffsetDateTime.now(ZoneOffset.UTC)
         );
     }
 
@@ -62,7 +63,7 @@ public class User {
     }
 
     public void recordLogin() {
-        this.lastLoginAt = OffsetDateTime.now();
+        this.lastLoginAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public void changePassword(Password newPassword) {

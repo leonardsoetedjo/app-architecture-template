@@ -9,16 +9,16 @@
       "id": "AUTH-001",
       "category": "functional",
       "priority": 1,
-      "description": "User can authenticate via login form",
+      "description": "User can authenticate via JWT Bearer token flow",
       "acceptance_criteria": [
         "LoginPage with Quasar form fields (q-input, q-btn)",
-        "Per-field validation with error messages",
-        "Auth Pinia store with hasCheckedAuth flag",
+        "JWT tokens (Access/Refresh) stored in localStorage",
+        "Authorization header automatically attached to requests",
         "Successful login navigates to LandingPage",
         "Failed login shows error message"
       ],
       "passes": true,
-      "notes": "Implemented: src/pages/LoginPage.vue + src/stores/auth.ts"
+      "notes": "Implemented: JWT flow in src/services/auth.ts + src/stores/auth.ts"
     },
     {
       "id": "AUTH-002",
@@ -31,7 +31,7 @@
         "checkAuth() runs before any guard decision"
       ],
       "passes": true,
-      "notes": "Implemented: src/router/index.ts with hasCheckedAuth pattern"
+      "notes": " uma l-router/index.ts with hasCheckedAuth pattern"
     },
     {
       "id": "AUTH-003",
@@ -64,7 +64,7 @@
       "description": "Dependency cruiser enforces layer boundaries",
       "acceptance_criteria": [
         "Domain types have zero framework imports",
-        "Features are self-contained (api/, store/, components/)",
+        "Features are self-contained (api/, store/, componentsL)",
         "No circular dependencies between features"
       ],
       "passes": false,

@@ -6,10 +6,11 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import databaseConfig from './config/database.config';
 import { OrderEntity } from './infrastructure/persistence/order.entity';
 import { OutboxEvent } from './infrastructure/persistence/outbox-event.entity';
+import { UserEntity } from './infrastructure/persistence/user.entity';
 import { OrderTypeOrmRepository } from './infrastructure/persistence/order.typeorm-repository';
 import { OrderRepositoryPort } from './domain/ports/order-repository.port';
 import { CacheManager } from './domain/ports/cache-manager.port';
-import { EventPublisher } from './domain/ports/event-publisher.port';
+import { IEventPublisher } from './domain/ports/event-publisher.port';
 import { PlaceOrderUseCaseImpl } from './application/usecases/place-order.use-case.impl';
 import { PlaceOrderUseCase } from './application/usecases/place-order.use-case.interface';
 import { OrderApplicationService } from './application/services/order.application-service';
@@ -19,6 +20,7 @@ import { OrderController } from './infrastructure/api/order.controller';
 import { OrderStateController } from './infrastructure/api/order-state.controller';
 import { HealthController } from './infrastructure/health/health.controller';
 import { MetricsController } from './infrastructure/metrics/metrics.controller';
+import { AuthController } from './infrastructure/api/auth.controller';
 import { TerminusModule } from '@nestjs/terminus';
 import { CorrelationIdInterceptor } from './infrastructure/logging/correlation-id.interceptor';
 import { LoggingInterceptor } from './infrastructure/logging/logging.interceptor';
@@ -31,20 +33,17 @@ import { OutboxRelayService } from './infrastructure/events/outbox-relay.service
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { OrderEventListeners } from './infrastructure/events/order-event.listeners';
 import { OrderStateMachineService } from './application/services/order-state-machine.service';
-
-/**
- * Stub Redis client for the boilerplate.
- * In production, inject a real ioredis connection.
- */
-const RedisStub = {
-  get: async () => undefined,
-  set: async () => undefined,
-  del: async () => 0,
-  exists: async () => 0,
-  keys: async () => [],
-  flushdb: async () => undefined,
-  quit: async () => undefined,
-};
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { AuthenticateUserUseCaseImpl } from './application/usecases/authenticate-user.use-case.impl';
+import { IAuthenticateUserUseCase } from './application/usecases/authenticate-user.use-case.interface';
+import { BCryptPasswordHasher } from './infrastructure/security/bcrypt-password-hasher';
+import { IPasswordHasher } from './domain/ports/password-hasher.port';
+import { JwtTokenService } from './infrastructure/security/jwt-token.service';
+import { ITokenGenerator } from './domain/ports/token-generator.port';
+import { ITokenParser } from './domain/ports/token-parser.port';
+import { UserTypeOrmRepository } from './infrastructure/persistence/user.typeorm-repository';
+import { IUserRepository } from './domain/ports/user-repository.port';
 
 @Module({
   imports: [
@@ -57,12 +56,17 @@ const RedisStub = {
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('database'),
     }),
-    TypeOrmModule.forFeature([OrderEntity, OutboxEvent]),
+    TypeOrmModule.forFeature([OrderEntity, OutboxEvent, UserEntity]),
     TerminusModule,
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: 'super-secret-key',
+      signOptions: { expiresIn: '15m' },
+    }),
   ],
-  controllers: [OrderController, OrderStateController, HealthController, MetricsController],
+  controllers: [OrderController, OrderStateController, HealthController, MetricsController, AuthController],
   providers: [
     // Interceptors (global)
     {
@@ -92,8 +96,28 @@ const RedisStub = {
       useClass: RedisCacheAdapter,
     },
     {
-      provide: EventPublisher,
+      provide: IEventPublisher,
       useClass: EventEmitterPublisherAdapter,
+    },
+    {
+      provide: IUserRepository,
+      useClass: UserTypeOrmRepository,
+    },
+    {
+      provide: IPasswordHasher,
+      useClass: BCryptPasswordHasher,
+    },
+    {
+      provide: ITokenGenerator,
+      useClass: JwtTokenService,
+    },
+    {
+      provide: ITokenParser,
+      useClass: JwtTokenService,
+    },
+    {
+      provide: IAuthenticateUserUseCase,
+      useClass: AuthenticateUserUseCaseImpl,
     },
     // Services
     OrderApplicationService,

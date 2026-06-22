@@ -3,6 +3,7 @@ package com.example.orderservice.domain.events;
 import com.example.orderservice.domain.models.UserId;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 /**
@@ -16,7 +17,7 @@ public class UserLoggedIn extends DomainEvent {
     public UserLoggedIn(UserId userId) {
         super("UserLoggedIn");
         this.userId = userId;
-        this.loggedInAt = OffsetDateTime.now();
+        this.loggedInAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     @Override

@@ -1,13 +1,16 @@
 /**
- * DDD-DOMAIN-PURITY-QUASAR: Refactored Pinia store.
- * 
- * Uses the new domain-pure types from features/auth/types/.
- * HTTP is delegated to the service layer (QUASAR-API-ISOLATION).
+ * DDD-DOMAIN-PURITY-QUASAR: Refactored Pinia store for JWT Auth.
  */
 
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User, LoginCredentials, AuthResult } from '@/features/auth/types'
+import type { 
+  User, 
+  LoginCredentials, 
+  RegisterCredentials, 
+  AuthResult, 
+  RegisterResult 
+} from '@/features/auth/types'
 import { authPortInstance } from '@/services/auth'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -34,6 +37,22 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function register(username: string, email: string, password: string): Promise<boolean> {
+    loading.value = true
+    error.value = null
+    try {
+      const result: RegisterResult = await authPortInstance.register({ username, email, password })
+      if (result.success) {
+        // Usually redirect to login after registration
+        return true
+      }
+      error.value = result.error || 'Registration failed'
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function logout(): Promise<void> {
     await authPortInstance.logout()
     user.value = null
@@ -50,6 +69,22 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function refreshSession(): Promise<boolean> {
+    const refreshToken = localStorage.getItem('refreshToken')
+    if (!refreshToken) return false
+
+    try {
+      const result = await authPortInstance.refreshToken(refreshToken)
+      if (result.success) {
+        user.value = result.user ?? null
+        return true
+      }
+      return false
+    } catch {
+      return false
+    }
+  }
+
   return {
     user,
     loading,
@@ -57,7 +92,9 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     hasCheckedAuth,
     login,
+    register,
     logout,
     checkAuth,
+    refreshSession,
   }
 })

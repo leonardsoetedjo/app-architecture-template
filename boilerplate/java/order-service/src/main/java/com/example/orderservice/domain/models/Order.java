@@ -2,6 +2,7 @@ package com.example.orderservice.domain.models;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +53,7 @@ public class Order {
             OrderId.generate(),
             customerId,
             items,
-            OffsetDateTime.now(),
+            OffsetDateTime.now(ZoneOffset.UTC),
             OrderState.PENDING,
             null,
             null
@@ -94,7 +95,7 @@ public class Order {
     public void confirm() {
         assertCanTransitionTo(OrderState.CONFIRMED);
         this.status = OrderState.CONFIRMED;
-        this.confirmedAt = OffsetDateTime.now();
+        this.confirmedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public void markAsShipped() {
@@ -143,7 +144,7 @@ public class Order {
         if (isDeleted()) {
             throw new IllegalStateException("Order is already deleted");
         }
-        this.deletedAt = OffsetDateTime.now();
+        this.deletedAt = OffsetDateTime.now(ZoneOffset.UTC);
     }
 
     public void restore() {

@@ -40,6 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (userIdOpt.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserId userId = userIdOpt.get();
+            // Set userId as request attribute for downstream filters (e.g. CorrelationIdFilter MDC)
+            request.setAttribute("userId", userId.getValue().toString());
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 userId.getValue().toString(), null, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
             );

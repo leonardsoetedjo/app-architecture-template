@@ -4,6 +4,7 @@ import com.example.orderservice.domain.models.batch.BatchJobStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.time.Clock;
 
 /**
  * JPA entity for batch job persistence.
@@ -97,8 +98,8 @@ public class BatchJobJpaEntity {
      */
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now(Clock.systemUTC());
+        updatedAt = LocalDateTime.now(Clock.systemUTC());
     }
     
     /**
@@ -106,6 +107,6 @@ public class BatchJobJpaEntity {
      */
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now(Clock.systemUTC());
     }
 }
