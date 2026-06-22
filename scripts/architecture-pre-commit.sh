@@ -101,27 +101,43 @@ check_java_architecture() {
     return 0
   fi
   
-  # Check for forbidden imports in domain layer
-  DOMAIN_DIR="src/main/java"
-  if [ -d "$DOMAIN_DIR" ]; then
-    # Look for framework imports in domain packages
-    if grep -r "import org.springframework\|import jakarta.persistence\|import javax.persistence\|import lombok\." \
-       $(find $DOMAIN_DIR -path "*/domain/*" -name "*.java" 2>/dev/null) 2>/dev/null; then
-      echo "      ❌ FAIL: Domain layer has framework imports"
-      
-      # Log violation
-      if [ -f "scripts/log-architecture-violation.sh" ]; then
-        ./scripts/log-architecture-violation.sh "JAVA_DOMAIN_FRAMEWORK_IMPORT" "$DOMAIN_DIR" "Forbidden framework imports in domain layer" || true
+  # Check for forbidden imports in domain and application layers
+  for LAYER in domain application; do
+    LAYER_DIR="src/main/java"
+    if [ -d "$LAYER_DIR" ]; then
+      VIOLATIONS=$(find $LAYER_DIR -path "*/${LAYER}/*" -name "*.java" -exec grep -H "import org\.springframework\\|import jakarta\.persistence\\|import javax\.persistence\\|import lombok\." {} + 2>/dev/null || true)
+      if [ -n "$VIOLATIONS" ]; then
+        echo "      ❌ FAIL: ${LAYER} layer has forbidden framework imports"
+        echo "$VIOLATIONS" | head -20
+        
+        # Log violation
+        if [ -f "scripts/log-architecture-violation.sh" ]; then
+          ./scripts/log-architecture-violation.sh "JAVA_${LAYER^^}_FRAMEWORK_IMPORT" "$LAYER_DIR" "Forbidden framework imports in ${LAYER} layer" || true
+        fi
+        
+        return 1
       fi
-      
-      return 1
     fi
+  done
+  
+  # Check for MDC.clear() — catastrophic context wipe
+  if grep -r "MDC\.clear()" src/main/java/ 2>/dev/null | grep -v "// Never call MDC.clear" | grep -v "^Binary" | head -5; then
+    echo "      ❌ FAIL: MDC.clear() found in application code"
+    echo "      MDC.clear() wipes ALL context (traceId, userId) and breaks distributed tracing."
+    echo "      Use MDC.remove(key) for per-key cleanup instead."
+    
+    # Log violation
+    if [ -f "scripts/log-architecture-violation.sh" ]; then
+      ./scripts/log-architecture-violation.sh "JAVA_MDC_CLEAR" "src/main/java" "MDC.clear() found — use MDC.remove(key) instead" || true
+    fi
+    
+    return 1
   fi
   
   # Run fast ArchUnit tests if they exist
-  if [ -f "src/test/java/*/archunit/CleanArchitectureLayersTest.java" ]; then
+  if [ -f "src/test/java/com/example/orderservice/archunit/CleanArchitectureRulesTest.java" ]; then
     echo "      Running ArchUnit layer tests..."
-    if ! mvn test -Dtest=CleanArchitectureLayersTest -q 2>/dev/null; then
+    if ! ./mvnw test -Dtest=CleanArchitectureRulesTest -q 2>/dev/null; then
       echo "      ❌ FAIL: ArchUnit tests failed"
       
       # Log violation

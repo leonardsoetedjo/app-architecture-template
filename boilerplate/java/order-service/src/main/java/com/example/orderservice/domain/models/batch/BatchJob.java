@@ -1,70 +1,119 @@
 package com.example.orderservice.domain.models.batch;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Value;
 import java.time.LocalDateTime;
 
 /**
  * Domain entity representing a batch job execution.
  * Pure POJO - no Spring, Quartz, or JPA annotations.
- * 
+ *
  * This entity tracks the business status of batch jobs, separate from
  * technical scheduler statuses (Quartz TriggerState, Spring Batch JobExecution).
- * 
+ *
  * @see BatchJobStatus
  * @see <a href="https://github.com/leonardsoetedjo/app-architecture-template/blob/main/docs/01-agnostic/01-standards/batch-job-status-architecture.md">
  * Batch Job Status Architecture Guide</a>
  */
-@Getter
-@Value
-@Builder
 public class BatchJob {
-    
+
+    private final Long id;
+    private final String jobName;
+    private final String jobType;
+    private final BatchJobStatus businessStatus;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
+    private final int recordsProcessed;
+    private final int recordsFailed;
+    private final String errorMessage;
+
+    private BatchJob(Builder builder) {
+        this.id = builder.id;
+        this.jobName = builder.jobName;
+        this.jobType = builder.jobType;
+        this.businessStatus = builder.businessStatus;
+        this.startTime = builder.startTime;
+        this.endTime = builder.endTime;
+        this.recordsProcessed = builder.recordsProcessed;
+        this.recordsFailed = builder.recordsFailed;
+        this.errorMessage = builder.errorMessage;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    // --- Getters ---
+
+    public Long getId() { return id; }
+    public String getJobName() { return jobName; }
+    public String getJobType() { return jobType; }
+    public BatchJobStatus getBusinessStatus() { return businessStatus; }
+    public LocalDateTime getStartTime() { return startTime; }
+    public LocalDateTime getEndTime() { return endTime; }
+    public int getRecordsProcessed() { return recordsProcessed; }
+    public int getRecordsFailed() { return recordsFailed; }
+    public String getErrorMessage() { return errorMessage; }
+
     /**
-     * Unique identifier for the job execution.
+     * Fluent builder for constructing immutable BatchJob instances.
      */
-    Long id;
-    
-    /**
-     * Name of the batch job.
-     */
-    String jobName;
-    
-    /**
-     * Type/category of the batch job.
-     */
-    String jobType;
-    
-    /**
-     * Business status of the job (not technical scheduler status).
-     */
-    BatchJobStatus businessStatus;
-    
-    /**
-     * When the job started processing.
-     */
-    LocalDateTime startTime;
-    
-    /**
-     * When the job completed (successfully or failed).
-     */
-    LocalDateTime endTime;
-    
-    /**
-     * Number of records successfully processed.
-     */
-    @Builder.Default
-    Integer recordsProcessed = 0;
-    
-    /**
-     * Number of records that failed processing.
-     */
-    @Builder.Default
-    Integer recordsFailed = 0;
-    
-    /**
-     * Error message if the job failed.
-     */
-    String errorMessage;
+    public static class Builder {
+        private Long id;
+        private String jobName;
+        private String jobType;
+        private BatchJobStatus businessStatus;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+        private int recordsProcessed = 0;
+        private int recordsFailed = 0;
+        private String errorMessage;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder jobName(String jobName) {
+            this.jobName = jobName;
+            return this;
+        }
+
+        public Builder jobType(String jobType) {
+            this.jobType = jobType;
+            return this;
+        }
+
+        public Builder businessStatus(BatchJobStatus businessStatus) {
+            this.businessStatus = businessStatus;
+            return this;
+        }
+
+        public Builder startTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+            return this;
+        }
+
+        public Builder endTime(LocalDateTime endTime) {
+            this.endTime = endTime;
+            return this;
+        }
+
+        public Builder recordsProcessed(int recordsProcessed) {
+            this.recordsProcessed = recordsProcessed;
+            return this;
+        }
+
+        public Builder recordsFailed(int recordsFailed) {
+            this.recordsFailed = recordsFailed;
+            return this;
+        }
+
+        public Builder errorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+            return this;
+        }
+
+        public BatchJob build() {
+            return new BatchJob(this);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package com.example.orderservice.infrastructure.scheduler.jobs;
 
-import com.example.orderservice.application.services.batch.BatchJobService;
+import com.example.orderservice.infrastructure.services.batch.BatchJobService;
 import com.example.orderservice.domain.models.batch.BatchJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

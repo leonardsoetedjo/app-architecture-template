@@ -1,272 +1,374 @@
-# Boilerplate Parity Audit Report (Post-Refactor)
+# Architecture Audit — Boilerplate vs Standards
 
-> Generated: 2026-06-22
-> Baseline: `boilerplate/java/order-service` (Clean Architecture, JWT auth)
-> Targets: Python · NestJS · ReactJS · Quasar
-
----
-
-## 1. Executive Summary
-
-| Boilerplate | Pre-Refactor Score | Post-Refactor Score | Delta | Grade |
-|-------------|-------------------|---------------------|-------|-------|
-| **Python** | 13.7 | **72.3** | +58.6 | 🟡 B- |
-| **NestJS** | 4.8 | **68.1** | +63.3 | 🟡 B- |
-| **ReactJS** | 9.0 | **65.7** | +56.7 | 🟡 B- |
-| **Quasar** | 18.5 | **78.4** | +59.9 | 🟡 B |
-
-**Key achievement**: All four boilerplates now implement JWT authentication with structured auth types, service layers, and feature-list entries. No boilerplate was at zero in any dimension post-refactor.
+**Date:** 2026-06-22
+**Auditor:** Archie
+**Governing Standards:** `docs/01-agnostic/01-standards/` (Primary), `app-architecture-template` baseline
 
 ---
 
-## 2. Post-Refactor Dimension-by-Dimension Scorecard
+## Executive Summary
 
-### 2.1 Domain Layer Parity
+The Java/Spring Boot boilerplate has **significant layer-purity violations** in the application layer (Spring annotations leaking into use cases) and **critical MDC hygiene violations** in `SecurityAuditLogger`. The ReactJS boilerplate is mostly compliant with its design-system standard but has **stale AGENTS.md references** to technologies no longer in use. The NestJS boilerplate was not deeply inspected (no active test failures reported). A missing `AGENTS.md` in the Java boilerplate is a documentation gap that breaks agent dispatch.
 
-| Artefact | Java | Python | NestJS | ReactJS | Quasar |
-|----------|------|--------|--------|---------|--------|
-| `User` aggregate root | ✅ | ✅ | ✅ | N/A | N/A |
-| `UserId` / `Email` / `Password` VOs | ✅ | ✅ | ✅ | N/A | N/A |
-| Auth domain events | ✅ | ✅ | ⚠️ | N/A | N/A |
-| Auth ports (Repository, Hasher, Token) | ✅ | ✅ | ✅ | N/A | N/A |
-| Domain exception hierarchy | ✅ | ✅ | ✅ | N/A | N/A |
-| **Score** | **100** | **100** | **90** | **0** | **0** |
-
-¹ Python: Full User aggregate with Email/Password/UserId value objects, auth events, and ports.  
-² NestJS: Has User aggregate, VOs, ports, but missing some event types (UserRegistered, PasswordChanged not yet created).
+**Single most important thing to fix:** Application layer must not import Spring framework annotations — move them to infrastructure or use pure constructor injection.
 
 ---
 
-### 2.2 Application Layer Parity
+## Standards Applied
 
-| Artefact | Java | Python | NestJS | ReactJS | Quasar |
-|----------|------|--------|--------|---------|--------|
-| `AuthenticateUserUseCase` | ✅ | ✅ | ✅ | N/A | N/A |
-| `RegisterUserUseCase` | ✅ | ✅ | ✅ | N/A | N/A |
-| `ChangePasswordUseCase` | ✅ | ✅ | ⚠️ | N/A | N/A |
-| `GetCurrentUserUseCase` | ✅ | ✅ | ⚠️ | N/A | N/A |
-| Command/Result DTOs | ✅ | ✅ | ✅ | N/A | N/A |
-| Event publishing in use cases | ✅ | ✅ | ⚠️ | N/A | N/A |
-| **Score** | **100** | **100** | **75** | **0** | **0** |
-
----
-
-### 2.3 Infrastructure Layer Parity
-
-| Artefact | Java | Python | NestJS | ReactJS | Quasar |
-|----------|------|--------|--------|---------|--------|
-| Auth controller (REST API) | ✅ | ✅ | ✅ | N/A | N/A |
-| JWT filter / guard | ✅ | ⚠️ | ✅ | N/A | N/A |
-| Password hasher adapter | ✅ | ✅ | ✅ | N/A | N/A |
-| Token generator adapter | ✅ | ✅ | ✅ | N/A | N/A |
-| Token parser adapter | ✅ | ✅ | ✅ | N/A | N/A |
-| Persistence adapter (JPA/SQLAlchemy/TypeORM) | ✅ | ✅ | ✅ | N/A | N/A |
-| User entity | ✅ | ✅ | ✅ | N/A | N/A |
-| Security config | ✅ | ⚠️ | ✅ | N/A | N/A |
-| **Score** | **100** | **87** | **100** | **0** | **0** |
-
-¹ Python: JWT filter not yet wired as FastAPI dependency (auth controller validates via token parser directly).  
-² Python: SecurityConfig not yet separated into dedicated module.
+| Standard | File | Status |
+|---|---|---|
+| Frontend Design System | `31-frontend-design-system.md` | Applied to ReactJS |
+| Logging Standard | `32-logging-standards.md` | Applied to Java backend |
+| HTTP Verb Standard | `33-http-verb-standard.md` | Applied to controllers |
+| UTC Date Standard | `34-utc-date-standard.md` | Applied to domain models |
+| Error Response Standard | `35-error-response-standard.md` | Applied to exception handler |
+| Agent Dispatch (ReactJS) | `16-agents-reactjs.md` | Found stale refs |
+| Agent Dispatch (NestJS) | `26-agents-nestjs.md` | Reviewed |
+| Agent Session Harness | `18-agent-session-harness.md` | Java harness exists as `agent-harness.md` |
+| Clean Architecture | `02-architecture.md` | Layer violations found |
+| MDC Logging | `09-mdc-logging.md` | MDC.clear() violation found |
 
 ---
 
-### 2.4 Auth Mechanism Parity
+## Findings
 
-| Capability | Java | Python | NestJS | ReactJS | Quasar |
-|------------|------|--------|--------|---------|--------|
-| JWT (stateless, Bearer token) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `POST /api/v1/auth/register` | ✅ | ✅ | ⚠️ | N/A | N/A |
-| `POST /api/v1/auth/login` | ✅ | ✅ | ✅ | N/A | N/A |
-| `GET /api/v1/auth/me` | ✅ | ✅ | ✅ | N/A | N/A |
-| Password strength validation (domain rules) | ✅ | ✅ | ✅ | N/A | N/A |
-| Refresh token support | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Demo credentials for local dev | ✅ | ✅ | N/A | ✅ | ✅ |
-| Client-side JWT storage | N/A | N/A | N/A | ✅ (Zustand persist) | ✅ (localStorage) |
-| Client-side auto-refresh interceptor | N/A | N/A | N/A | ✅ | ⚠️ |
-| **Score** | **100** | **90** | **80** | **100** | **90** |
+### 🔴 Critical
 
-¹ NestJS: Only login endpoint implemented in controller; register/change-password endpoints need wiring.  
-² ReactJS: Full JWT client with Zustand persist, axios interceptors, auto-refresh, Bearer headers.  
-³ Quasar: JWT storage + Bearer headers + refresh method; auto-refresh interceptor not yet wired globally.
+#### [CRIT-1] Application layer imports Spring framework annotations
 
----
+**What was found:**
+- `application/usecases/GetOrderUseCase.java:7` → `import org.springframework.stereotype.Component;` + `@Component` on class
+- `application/services/batch/BatchJobService.java:6-7` → `import org.springframework.stereotype.Service;` + `import org.springframework.transaction.annotation.Transactional;`
+- `application/services/batch/SchedulerStatusMapper.java:4` → `import org.springframework.stereotype.Component;`
+- `application/usecases/GetOrderUseCaseImpl.java:10` → `import org.springframework.stereotype.Component;`
 
-### 2.5 Test Coverage Parity
+**Standard:** `02-architecture.md` § Layer Rules — "Application layer must NOT import framework annotations."
+**Standard:** `agent-harness.md` §5.1 — "Application | Cannot Import: `@RestController`, `@RequestMapping`, HTTP frameworks" (by extension, also Spring stereotype annotations).
 
-| Test Category | Java | Python | NestJS | ReactJS | Quasar |
-|---------------|------|--------|--------|---------|--------|
-| Domain model unit tests | ✅ 4 files | ⚠️ 1 file | ⚠️ 0 files | N/A | N/A |
-| Use case unit tests | ✅ 2 files | ⚠️ 0 files | ⚠️ 0 files | N/A | N/A |
-| Controller/integration tests | ✅ 1 file | ⚠️ 0 files | ⚠️ 0 files | N/A | N/A |
-| Architecture tests | ✅ 2 files | ✅ 3 files | ✅ 2 files | N/A | ✅ 1 file |
-| Frontend unit tests | N/A | N/A | N/A | ✅ 1 file | ⚠️ 0 files |
-| E2E / Playwright tests | N/A | ❌ | ❌ | ✅ | ✅ |
-| **Score** | **100** | **43** | **29** | **57** | **36** |
+**Why it matters:** Spring annotations in the application layer make unit testing impossible without the Spring context, violate Clean Architecture dependency rules, and prevent the layer from being portable.
+
+**Recommended action:**
+1. Remove `@Component` / `@Service` from all use case implementations.
+2. Register use cases as `@Bean` methods in an `@Configuration` class in `infrastructure/config/` (e.g., `UseCaseConfig.java`), or move implementations to `infrastructure/usecases/` and keep interfaces in `application/usecases/`.
+3. For `BatchJobService`, either move to `infrastructure/services/batch/` or inject via constructor in a config class.
+
+**Acceptance Criteria:**
+- [ ] `grep -r "org.springframework" src/main/java/com/example/orderservice/application/` returns zero matches
+- [ ] All use cases still instantiate correctly in Spring context (integration test passes)
+- [ ] `./mvnw test` passes (62/62)
 
 ---
 
-### 2.6 Feature-List Entry Parity
+#### [CRIT-2] `SecurityAuditLogger.logSecurityEvent()` calls `MDC.clear()`
 
-| Attribute | Java | Python | NestJS | ReactJS | Quasar |
-|-----------|------|--------|--------|---------|--------|
-| `AUTH-001` feature entry exists | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ≥4 acceptance criteria listed | ✅ (6) | ✅ (5) | ⚠️ (3) | ✅ (4) | ✅ (5) |
-| `passes: true` / `completed` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Mentions JWT / stateless auth | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Score** | **100** | **100** | **75** | **100** | **100** |
+**What was found:**
+`infrastructure/logging/SecurityAuditLogger.java:217`
+```java
+} finally {
+    MDC.clear();  // ❌ forbidden
+}
+```
 
----
+**Standard:** `32-logging-standards.md` §4.1 — "Clean up MDC in `finally` — remove only keys this filter owns. Never call `MDC.clear()`."
+**Standard:** `32-logging-standards.md` §8 Verification — "No `MDC.clear()` — `grep -r "MDC.clear" src/main/java` → zero"
 
-## 3. Aggregated Post-Refactor Scores
+**Why it matters:** `MDC.clear()` wipes ALL MDC keys, including `traceId` and `userId` set by `CorrelationIdFilter`. If `SecurityAuditLogger` is called mid-request, subsequent logs lose correlation context. This breaks distributed tracing.
 
-| Boilerplate | Domain | Application | Infrastructure | Auth Mech | Tests | Feature List | **Weighted** |
-|-------------|--------|-----------|--------------|-----------|-------|--------------|--------------|
-| **Java** | 100 | 100 | 100 | 100 | 100 | 100 | **100.0** |
-| **Python** | 100 | 100 | 87 | 90 | 43 | 100 | **86.7** |
-| **NestJS** | 90 | 75 | 100 | 80 | 29 | 75 | **74.8** |
-| **ReactJS**| 0 | 0 | 0 | 100 | 57 | 100 | **42.8** |
-| **Quasar** | 0 | 0 | 0 | 90 | 36 | 100 | **37.7** |
+**Recommended action:**
+Replace `MDC.clear()` with per-key removal:
+```java
+} finally {
+    MDC.remove("event_type");
+    MDC.remove("timestamp");
+    // do NOT remove traceId / userId — those belong to CorrelationIdFilter
+}
+```
 
-**Note on frontend scores**: ReactJS and Quasar are frontend SPAs with no backend domain/application/infrastructure layers. Their scores in those dimensions are structurally 0. When compared **only within frontend-relevant dimensions** (Auth Mechanism, Tests, Feature List), both score **85.7** (ReactJS) and **75.3** (Quasar).
-
----
-
-## 4. Remaining Gaps (Post-Refactor)
-
-### 4.1 Python 🟡 MINOR GAPS
-
-| Finding | Severity | Mitigation |
-|---------|----------|------------|
-| No dedicated `SecurityConfig` module | Low | FastAPI security handled inline in controller + dependencies |
-| No explicit JWT filter as dependency | Low | Token parsing happens in controller endpoints |
-| Pytest tests not yet runnable | Medium | Domain model tests exist but pytest not installed in env |
-| `main.py` wiring patch failed | Low | Factory manually includes auth_router; confirmed working |
-
-**Overall: Parity sufficient for code generation.**
+**Acceptance Criteria:**
+- [ ] `grep -r "MDC.clear" src/main/java` returns zero matches
+- [ ] Log output still contains `traceId` and `userId` after security audit events
 
 ---
 
-### 4.2 NestJS 🟡 MINOR GAPS
+#### [CRIT-3] Domain model `BatchJob` uses Lombok
 
-| Finding | Severity | Mitigation |
-|---------|----------|------------|
-| Compilation errors in existing tests (pre-existing) | Medium | 48 errors mostly from stale test imports, not auth code |
-| `app.module.ts` import fixes needed | Low | Fixed `IEventPublisher` / `IAuthenticateUserUseCase` mismatches |
-| Only `/auth/login` endpoint wired | Low | Register/change-password endpoints exist but not in controller |
-| Some event types missing | Low | `UserRegistered`, `PasswordChanged` not yet created |
-| No new auth tests added | Medium | Existing test suite pattern clear; tests straightforward to add |
+**What was found:**
+`domain/models/batch/BatchJob.java:19-22`
+```java
+@Getter
+@Value
+@Builder
+public class BatchJob {
+```
 
-**Overall: Core auth infrastructure present. Controller expansion and test coverage remain.**
+**Standard:** `agent-harness.md` §5.1 — "Domain | Cannot Import: `lombok.*`"
+**Standard:** `02-architecture.md` — Domain layer must be pure Java, no framework dependencies.
 
----
+**Why it matters:** Lombok is a compile-time framework that modifies bytecode. If the project ever drops Lombok, the domain layer breaks. It also makes the code opaque to static analysis tools.
 
-### 4.3 ReactJS 🟡 MINOR GAPS
+**Recommended action:**
+Rewrite `BatchJob` as a plain Java record or class with explicit getters, constructor, and builder (or a static factory method).
 
-| Finding | Severity | Mitigation |
-|---------|----------|------------|
-| Missing `node_modules` prevents tsc verification | Medium | Code structurally correct; install deps to verify |
-| `depcruise` not available in environment | Low | FSD layer structure is correct by construction |
-| Only 1 vitest test file | Low | Auth store test covers core JWT logic |
-| `AuthProvider.tsx` emptied but not deleted | Low | Legacy file harmless; can be removed on cleanup |
-
-**Overall: Full JWT client implementation with FSD auth slice.**
+**Acceptance Criteria:**
+- [ ] `domain/models/batch/BatchJob.java` has zero Lombok annotations
+- [ ] `BatchJobService` and `JpaBatchJobAdapter` still compile and tests pass
 
 ---
 
-### 4.4 Quasar 🟡 MINOR GAPS
+### 🟠 Major
 
-| Finding | Severity | Mitigation |
-|---------|----------|------------|
-| `architecture.test.ts` pre-existing errors | Low | Errors in test file, not in auth source |
-| `depcruise` binary missing from env | Low | Config exists; run after `npm install` |
-| No vitest tests added for auth | Medium | Store + service tests straightforward to add |
-| `RegisterPage.vue` escaped quotes fixed | Low | Rewrote file to remove escaped characters |
+#### [MAJOR-1] `GetOrderUseCase` shadows domain `OrderNotFoundException` with a non-domain inner class
 
-**Overall: Full JWT client with Pinia store, service layer, expanded types.**
+**What was found:**
+`application/usecases/GetOrderUseCase.java:77-81`
+```java
+public static class OrderNotFoundException extends RuntimeException {
+    public OrderNotFoundException(OrderId orderId) {
+        super("Order not found: " + orderId.getValue());
+    }
+}
+```
 
----
+A domain-level `OrderNotFoundException` already exists at `domain/models/OrderNotFoundException.java` and properly extends `DomainException`. The application layer redefines its own version that:
+- Does NOT extend `DomainException`
+- Does NOT carry an `errorCode`
+- Will be caught by the generic `Exception` handler in `GlobalExceptionHandler` instead of `DomainException`, returning `500` instead of `400`.
 
-## 5. What Was Delivered
+**Standard:** `35-error-response-standard.md` §3.2 — "All business-layer exceptions must carry an error code."
 
-### Python (17 new files)
-- `src/domain/models/user.py` — User aggregate, UserId, Email, Password, Role VOs
-- `src/domain/events/user_events.py` — UserRegistered, UserLoggedIn, PasswordChanged
-- `src/domain/ports/auth_ports.py` — UserRepository, PasswordHasher, TokenGenerator, TokenParser, EventPublisher
-- `src/application/dtos.py` — LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
-- `src/application/usecases/auth_use_cases.py` — Use case interfaces
-- `src/application/usecases/auth_use_case_impl.py` — Use case implementations
-- `src/infrastructure/persistence/sqlalchemy_user_repository.py` — SQLAlchemy adapter
-- `src/infrastructure/security/bcrypt_password_hasher.py` — BCrypt adapter
-- `src/infrastructure/security/jwt_auth_service.py` — JWT generate + parse
-- `src/infrastructure/api/auth_controller.py` — FastAPI router for auth
-- `src/infrastructure/api/dependencies.py` — DI wiring
-- `feature-list.json` — AUTH-001 entry
+**Recommended action:**
+Delete the inner `OrderNotFoundException` in `GetOrderUseCase` and import the domain one.
+Update `GetOrderUseCaseImpl` (and any other use case) to throw `com.example.orderservice.domain.models.OrderNotFoundException`.
 
-### NestJS (15 new files + 1 modified)
-- `src/domain/models/user.aggregate.ts` — User aggregate
-- `src/domain/models/user-id.value-object.ts` — UserId VO
-- `src/domain/models/email.value-object.ts` — Email VO
-- `src/domain/models/password.value-object.ts` — Password VO
-- `src/domain/ports/user-repository.port.ts` — IUserRepository
-- `src/domain/ports/password-hasher.port.ts` — IPasswordHasher
-- `src/domain/ports/token-generator.port.ts` — ITokenGenerator
-- `src/domain/ports/token-parser.port.ts` — ITokenParser
-- `src/domain/exceptions/auth.exception.ts` — Domain exceptions
-- `src/application/dtos/auth.dto.ts` — LoginCommand, LoginResult
-- `src/application/usecases/authenticate-user.use-case.*.ts` — Interface + impl
-- `src/infrastructure/security/bcrypt-password-hasher.ts` — BCrypt adapter
-- `src/infrastructure/security/jwt-token.service.ts` — JWT service
-- `src/infrastructure/persistence/user.entity.ts` — TypeORM entity
-- `src/infrastructure/persistence/user.typeorm-repository.ts` — TypeORM adapter
-- `src/infrastructure/api/auth.controller.ts` — Auth controller
-- `src/app.module.ts` — Wired auth providers
-- `feature-list.json` — AUTH-001 entry
-
-### ReactJS (12 new files + 4 modified)
-- `src/features/auth/types.ts` — AuthUser, AuthTokenResponse, LoginRequest, RegisterRequest
-- `src/features/auth/api.ts` — authApi (login/register/refresh/logout)
-- `src/features/auth/model.ts` — Zustand store with persist
-- `src/features/auth/hooks.ts` — useAuthActions hook
-- `src/features/auth/components/LoginForm.tsx` — Ant Design login form
-- `src/features/auth/components/RegisterForm.tsx` — Ant Design register form
-- `src/features/auth/__tests__/auth.test.ts` — Vitest store test
-- `src/pages/RegisterPage.tsx` — Registration page
-- `src/shared/api/client.ts` — Axios with Bearer + auto-refresh interceptor
-- `src/app/router.tsx` — ProtectedRoute + auth-aware routing
-- `src/app/providers.tsx` — Auth initialization
-- `feature-list.json` — AUTH-001 entry
-
-### Quasar (9 new/modified files)
-- `src/features/auth/types/user.ts` — Enhanced User type
-- `src/features/auth/types/tokens.ts` — Tokens, AccessToken, RefreshToken
-- `src/features/auth/types/credentials.ts` — LoginCredentials, RegisterCredentials
-- `src/features/auth/types/result.ts` — AuthResult, RegisterResult
-- `src/features/auth/types/index.ts` — Unified exports
-- `src/services/auth.ts` — JWT Bearer service with register/refresh/decode
-- `src/stores/auth.ts` — Pinia store with JWT + register + refreshSession
-- `src/pages/RegisterPage.vue` — Registration page
-- `src/router/index.ts` — Route guards with JWT check
-- `src/composables/useAuth.ts` — Updated to expose new capabilities
-- `package.json` — Added `jwt-decode` dependency
-- `feature-list.json` — Updated AUTH-001 to JWT flow
+**Acceptance Criteria:**
+- [ ] Inner `OrderNotFoundException` removed from `GetOrderUseCase.java`
+- [ ] All imports updated to domain `OrderNotFoundException`
+- [ ] Test verifying `404` or `400` response when order not found passes
 
 ---
 
-## 6. Verdict
+#### [MAJOR-2] Java boilerplate missing `AGENTS.md`
 
-**Pre-refactor**: No boilerplate had JWT auth with Clean Architecture parity.
-**Post-refactor**: All four boilerplates have functional JWT auth implementations aligned with the Java baseline.
+**What was found:**
+`boilerplate/java/order-service/` has `agent-harness.md` but no `AGENTS.md`.
+Both `boilerplate/reactjs/AGENTS.md` and `boilerplate/nestjs/AGENTS.md` exist and follow the standard dispatch format.
 
-| Boilerplate | Status | Blocks Cody? |
-|-------------|--------|--------------|
-| **Java** | ✅ Reference complete | No |
-| **Python** | ✅ Domain + App + Infra + API wired | No |
-| **NestJS** | ✅ Domain + App + Infra + API wired (compile fixes needed) | No — fixes are import renames |
-| **ReactJS** | ✅ Full FSD auth slice with JWT client | No |
-| **Quasar** | ✅ Full JWT client with Pinia + service layer | No |
+**Standard:** `16-agents-reactjs.md` / `26-agents-nestjs.md` — Every boilerplate stack must have an `AGENTS.md` dispatch document.
 
-The remaining work is **polish** (additional test files, compilation in environments with full dependencies) rather than **structural** (missing layers, missing auth mechanisms). All boilerplates are now fit for agent code generation and audit.
+**Why it matters:** AI agents dispatched to work on the Java boilerplate have no canonical task map, no golden rules table, and no pre-commit command reference. They must guess from `agent-harness.md`, which is session-oriented, not task-oriented.
+
+**Recommended action:**
+Create `boilerplate/java/order-service/AGENTS.md` following the exact format of `reactjs/AGENTS.md` and `nestjs/AGENTS.md`:
+- Task Map table (Rules, Layout, Feature, Template, Pre-commit)
+- Golden Rules table with IDs
+- Key Paths section
+- SOP Queries
+- Pre-Commit commands
+- Verification checklist
+
+**Acceptance Criteria:**
+- [ ] `AGENTS.md` exists in `boilerplate/java/order-service/`
+- [ ] Contains Golden Rules table with rule IDs
+- [ ] Contains Pre-Commit command block (`./mvnw compile && ./mvnw test`)
+- [ ] Contains `ctx_search` SOP query example
 
 ---
 
-*End of report.*
+#### [MAJOR-3] ReactJS `AGENTS.md` references obsolete technologies
+
+**What was found:**
+`boilerplate/reactjs/AGENTS.md` line 23-24:
+```markdown
+| State: Zustand (global), `useState` (local) | No prop drilling | REACT-STATE-PATTERN |
+| Ant Design > custom CSS | Prefer AntD | REACT-UI-PATTERN |
+```
+
+The actual codebase uses **Redux Toolkit** (not Zustand) and **Tailwind CSS** (not Ant Design).
+
+**Standard:** `31-frontend-design-system.md` — Tailwind is the CSS framework.
+**Standard:** Actual `package.json` — `@reduxjs/toolkit` and `react-redux` are dependencies; `zustand` and `antd` are absent.
+
+**Why it matters:** An AI agent dispatched to add a feature would follow AGENTS.md and attempt to use Zustand or Ant Design, producing non-compiling code.
+
+**Recommended action:**
+Update `AGENTS.md`:
+- Change "State: Zustand" → "State: Redux Toolkit (RTK Query for server state)"
+- Change "Ant Design > custom CSS" → "Tailwind CSS + custom `@layer components` primitives"
+- Update Pre-Commit to include `npx tsc --noEmit` (already there) and `npm run depcruise` (already there)
+
+**Acceptance Criteria:**
+- [ ] `AGENTS.md` Golden Rules match actual dependencies in `package.json`
+- [ ] No mention of Zustand or Ant Design
+
+---
+
+#### [MAJOR-4] ReactJS `dependency-cruiser.cjs` references non-existent paths
+
+**What was found:**
+`.dependency-cruiser.cjs` lines 11-15 and 22-26:
+```javascript
+from: { path: "^src/types" }
+to:   { path: "^(src/(hooks|services|store|components|pages)|src/[^/]+)" }
+
+from: { path: "^src/hooks" }
+to:   { path: "^src/services" }
+```
+
+The actual directory structure uses FSD: `app/`, `pages/`, `features/`, `entities/`, `widgets/`, `shared/`. There is no `src/types/`, `src/hooks/`, `src/services/`, `src/store/`, `src/components/`.
+
+**Standard:** `31-frontend-design-system.md` §2 — FSD structure with `app/`, `pages/`, `features/`, `entities/`, `widgets/`, `shared/`.
+
+**Why it matters:** `dependency-cruiser` rules that reference non-existent paths are silently ignored. The architecture validation gives a false sense of security while actual layer violations go undetected.
+
+**Recommended action:**
+Rewrite `.dependency-cruiser.cjs` to enforce FSD import rules:
+- `entities/` cannot import `features/`, `widgets/`, `pages/`, `app/`
+- `shared/` cannot import `entities/`, `features/`, `widgets/`, `pages/`, `app/`
+- `features/` can import `entities/` + `shared/`
+- `widgets/` can import `features/` + `entities/` + `shared/`
+- `pages/` can import `widgets/` + `features/` + `entities/` + `shared/`
+- `app/` can import everything
+- No circular dependencies
+
+**Acceptance Criteria:**
+- [ ] `npm run arch:test` (depcruise) passes with zero violations
+- [ ] Rules reference actual paths present in the codebase
+
+---
+
+### 🟡 Minor
+
+#### [MINOR-1] `application/dtos/` import `jakarta.validation` constraints
+
+**What was found:**
+`application/dtos/CreateOrderCommand.java:2-3` → `jakarta.validation.constraints.NotNull`, `NotEmpty`
+`application/dtos/LoginCommand.java:2-4` → `Email`, `NotBlank`, `NotNull`
+
+This is **technically acceptable** — Jakarta Bean Validation is a specification, not a web framework. However, the standard `agent-harness.md` §5.1 says application layer cannot import "HTTP frameworks". Jakarta validation is borderline.
+
+**Standard:** `02-architecture.md` — Application layer should be framework-agnostic.
+
+**Recommended action:** Move validation annotations to a separate `infrastructure/api/validation/` package or accept as documented divergence. No code change required if documented.
+
+**Acceptance Criteria:**
+- [ ] Document in `agent-harness.md` §5.1 that `jakarta.validation` is permitted in application DTOs
+
+---
+
+#### [MINOR-2] `presentation/api/` directory is empty
+
+**What was found:**
+`presentation/api/` has zero files.
+
+**Standard:** `02-architecture.md` — The presentation layer is a valid layer, but if unused, it should be removed or documented.
+
+**Recommended action:** Either populate with presentation-specific DTOs/mappers or remove the directory to reduce confusion.
+
+**Acceptance Criteria:**
+- [ ] `presentation/api/` either has content or is removed from tree
+
+---
+
+#### [MINOR-3] `DomainException.getCode()` vs standard `getErrorCode()`
+
+**What was found:**
+The standard (`35-error-response-standard.md` §3.2) shows:
+```java
+public String getErrorCode() { return errorCode; }
+```
+
+The actual code (`domain/models/DomainException.java:16`) has:
+```java
+public String getCode() { return code; }
+```
+
+`GlobalExceptionHandler.java:60` correctly calls `ex.getCode()`, so the code works. The method name just doesn't match the standard's example.
+
+**Standard:** `35-error-response-standard.md` §3.2
+
+**Recommended action:** Rename `getCode()` → `getErrorCode()` in `DomainException.java` and update `GlobalExceptionHandler.java`. Or document the divergence.
+
+**Acceptance Criteria:**
+- [ ] Method name matches standard OR documented as intentional override
+
+---
+
+#### [MINOR-4] OutboxEvent entity uses Lombok in infrastructure
+
+**What was found:**
+`infrastructure/persistence/OutboxEvent.java` uses `@Getter`, `@Setter`, `@NoArgsConstructor`, `@AllArgsConstructor`, `@Builder`.
+
+This is in the **infrastructure** layer, so Lombok is permitted. However, for consistency with the domain layer purity rule, consider reducing Lombok usage in infrastructure entities too.
+
+**Standard:** `agent-harness.md` §5.1 — "Infrastructure | *(none — can import all)*"
+
+**Recommended action:** None required. Mark as advisory.
+
+---
+
+## Compliance Matrix
+
+| Standard | File/Area | Status | Evidence |
+|---|---|---|---|
+| **Logging: log4j2 + ndjson** | `log4j2-spring.xml` | ✅ PASS | JSON pattern with traceId, userId, errorCode |
+| **Logging: MDC filter** | `CorrelationIdFilter.java` | ✅ PASS | OncePerRequestFilter, per-key cleanup, no `clear()` |
+| **Logging: AOP tracing** | `BusinessTransactionLoggingAspect.java` | ✅ PASS | Reads MDC traceId, logs TX_START/TX_END/TX_FAIL |
+| **Error Response: ProblemDetail** | `GlobalExceptionHandler.java` | ✅ PASS | @RestControllerAdvice, handles validation/auth/domain/generic |
+| **Error Response: errorCode field** | `DomainException.java` | ⚠️ PARTIAL | Method is `getCode()` not `getErrorCode()` |
+| **UTC Dates** | Domain models | ✅ PASS | `OffsetDateTime.now(ZoneOffset.UTC)` everywhere |
+| **HTTP Verbs** | `OrderController.java` | ✅ PASS | GET, POST, PATCH, DELETE used correctly |
+| **Layer Purity: Domain** | `domain/models/` | ✅ PASS | Zero Spring/Jakarta/Lombok imports (except BatchJob) |
+| **Layer Purity: Application** | `application/usecases/` | ❌ FAIL | `@Component`, `@Service`, `@Transactional` present |
+| **Layer Purity: Application DTOs** | `application/dtos/` | ⚠️ PARTIAL | `jakarta.validation` imports (borderline) |
+| **Agent Dispatch (Java)** | `AGENTS.md` | ❌ FAIL | File does not exist |
+| **Agent Dispatch (ReactJS)** | `AGENTS.md` | ❌ FAIL | Stale refs to Zustand, Ant Design |
+| **Agent Dispatch (NestJS)** | `AGENTS.md` | ✅ PASS | Correct, current |
+| **Frontend: Tailwind config** | `tailwind.config.js` | ✅ PASS | Brand colors, font family configured |
+| **Frontend: Component primitives** | `globals.css` | ✅ PASS | @layer components with btn-primary, card, input, badge |
+| **Frontend: Form validation** | `useFormValidation.ts` | ✅ PASS | Zod-based, per-field, touch tracking |
+| **Frontend: Button states** | `OrdersPage.tsx`, `LoginPage.tsx` | ✅ PASS | disabled={isLoading \|\| !isValid} |
+| **Frontend: Table sorting** | `OrdersPage.tsx` | ✅ PASS | ASC → DESC → none, aria-sort, keyboard |
+| **Frontend: dependency-cruiser** | `.dependency-cruiser.cjs` | ❌ FAIL | References non-existent paths |
+| **Frontend: No `any` type** | `src/` | ✅ PASS | `grep ": any"` returns zero |
+| **MDC.clear() prohibition** | `SecurityAuditLogger.java` | ❌ FAIL | Calls `MDC.clear()` in finally block |
+
+---
+
+## Strengths
+
+| Area | What the boilerplate does well |
+|---|---|
+| **Clean Architecture structure** | Clear `domain/`, `application/`, `infrastructure/` separation with ports/adapters |
+| **UTC date enforcement** | All domain models use `OffsetDateTime.now(ZoneOffset.UTC)` |
+| **Global exception handler** | `GlobalExceptionHandler` properly uses `ProblemDetail`, RFC 7807 |
+| **Correlation ID filter** | `CorrelationIdFilter` correctly generates trace IDs, writes response header, per-key MDC cleanup |
+| **Frontend form validation** | Zod-based `useFormValidation` hook with per-field errors and `isValid` gating |
+| **Frontend table UX** | Sorting (3-state), filtering, pagination, empty/error states, all accessible |
+| **Test coverage** | Backend: 62/62 pass. Frontend: 13/13 pass. MSW handlers present for mocking |
+| **Event publishing** | `SpringEventPublisher` adapter properly decouples domain events from infrastructure |
+| **Security config** | JWT filter + CorrelationIdFilter ordering is correct in `SecurityConfig` |
+
+---
+
+## Recommended Next Steps
+
+### Immediate (this sprint)
+1. **[CRIT-1]** Remove Spring annotations from application layer use cases → create `UseCaseConfig.java` in `infrastructure/config/`
+2. **[CRIT-2]** Fix `SecurityAuditLogger` — replace `MDC.clear()` with per-key `MDC.remove()`
+3. **[CRIT-3]** Remove Lombok from `BatchJob` domain model
+4. **[MAJOR-2]** Create `AGENTS.md` for Java boilerplate
+5. **[MAJOR-3]** Update ReactJS `AGENTS.md` to remove Zustand/Ant Design references
+
+### Short-term (next sprint)
+6. **[MAJOR-1]** Replace `GetOrderUseCase.OrderNotFoundException` inner class with domain `OrderNotFoundException`
+7. **[MAJOR-4]** Rewrite `.dependency-cruiser.cjs` for actual FSD paths
+8. **[MINOR-3]** Rename `DomainException.getCode()` → `getErrorCode()` or document divergence
+
+### Advisory (backlog)
+9. **[MINOR-1]** Document `jakarta.validation` as permitted in application DTOs
+10. **[MINOR-2]** Remove or populate empty `presentation/api/` directory
+
+---
+
+*End of audit report.*

@@ -27,7 +27,8 @@ class CleanArchitectureRulesTest {
                 "org.springframework..",
                 "jakarta.persistence..",
                 "jakarta.validation..",
-                "org.hibernate.."
+                "org.hibernate..",
+                "lombok.."
             )
             .check(new ClassFileImporter().importPackages(BASE));
     }
@@ -41,6 +42,21 @@ class CleanArchitectureRulesTest {
                 "org.springframework.web..",
                 "jakarta.servlet..",
                 "org.springframework.http.."
+            )
+            .check(new ClassFileImporter().importPackages(BASE));
+    }
+
+    @Test
+    void applicationLayerMustNotDependOnSpringStereotypes() {
+        ArchRuleDefinition.noClasses()
+            .that().resideInAPackage(BASE + ".application..")
+            .should().dependOnClassesThat()
+            .resideInAnyPackage(
+                "org.springframework.stereotype..",
+                "org.springframework.transaction..",
+                "org.springframework.context.annotation..",
+                "org.springframework.beans.factory.annotation..",
+                "org.springframework.scheduling.."
             )
             .check(new ClassFileImporter().importPackages(BASE));
     }

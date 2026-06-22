@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useAuth } from 'features/auth/useAuth';
 import { useFormValidation } from 'shared/lib/validation';
@@ -12,6 +12,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [values, setValues] = useState<LoginFormValues>({ email: '', password: '' });
   const [apiError, setApiError] = useState('');
   const { login, isLoading } = useAuth();
@@ -44,6 +45,7 @@ export const LoginPage: React.FC = () => {
       setApiError('');
       try {
         await login(values.email, values.password);
+        navigate('/orders');
       } catch {
         setApiError('Invalid email or password.');
       }

@@ -41,46 +41,44 @@ export const AppRouter: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/orders" replace />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route
-          path="/orders"
-          element={
-            <PrivateRoute>
-              <OrdersPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/orders/new"
-          element={
-            <PrivateRoute>
-              <CreateOrderPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/orders/:id"
-          element={
-            <PrivateRoute>
-              <OrderDetailPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <div className="text-center py-24">
-              <h1 className="text-6xl font-bold text-gray-300">404</h1>
-              <p className="mt-4 text-gray-500">Page not found.</p>
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Navigate to="/orders" replace />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route
+        path="/orders"
+        element={
+          <PrivateRoute>
+            <OrdersPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/orders/new"
+        element={
+          <PrivateRoute>
+            <CreateOrderPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/orders/:id"
+        element={
+          <PrivateRoute>
+            <OrderDetailPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <div className="text-center py-24">
+            <h1 className="text-6xl font-bold text-gray-300">404</h1>
+            <p className="mt-4 text-gray-500">Page not found.</p>
+          </div>
+        }
+      />
+    </Routes>
   );
 };
 

@@ -1,5 +1,6 @@
 package com.example.orderservice.infrastructure.config;
 
+import com.example.common.infrastructure.http.MTLSConfiguration;
 import com.example.orderservice.application.usecases.AuthenticateUserUseCase;
 import com.example.orderservice.application.usecases.AuthenticateUserUseCaseImpl;
 import com.example.orderservice.application.usecases.GetCurrentUserUseCase;
@@ -24,6 +25,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ApplicationConfig {
+
+    @Bean
+    public MTLSConfiguration mTLSConfiguration() {
+        return MTLSConfiguration.builder().build();
+    }
 
     @Bean
     public OrderPlacementService orderPlacementService(OrderRepository orderRepository) {

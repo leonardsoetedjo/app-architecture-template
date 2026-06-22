@@ -213,8 +213,22 @@ public class SecurityAuditLogger {
             }
             
         } finally {
-            // Clear MDC
-            MDC.clear();
+            // Remove only keys we own — never MDC.clear() which wipes traceId, userId
+            MDC.remove("event_type");
+            MDC.remove("event_timestamp");
+            MDC.remove("user_id");
+            MDC.remove("ip_address");
+            MDC.remove("session_id");
+            MDC.remove("user_agent");
+            MDC.remove("resource");
+            MDC.remove("action");
+            MDC.remove("data_type");
+            MDC.remove("record_id");
+            MDC.remove("config_type");
+            MDC.remove("old_value");
+            MDC.remove("new_value");
+            MDC.remove("reason");
+            MDC.remove("message");
         }
     }
     

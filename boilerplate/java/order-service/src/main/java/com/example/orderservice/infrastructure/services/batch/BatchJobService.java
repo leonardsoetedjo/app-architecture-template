@@ -1,4 +1,4 @@
-package com.example.orderservice.application.services.batch;
+package com.example.orderservice.infrastructure.services.batch;
 
 import com.example.orderservice.domain.models.batch.BatchJob;
 import com.example.orderservice.domain.models.batch.BatchJobStatus;
