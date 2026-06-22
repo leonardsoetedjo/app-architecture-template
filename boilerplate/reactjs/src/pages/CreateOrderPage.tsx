@@ -1,13 +1,41 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { z } from 'zod';
 import { useCreateOrderMutation } from 'entities/order/api';
+import { useFormValidation } from 'shared/lib/validation';
 import type { CreateOrderItemCommand } from 'entities/order';
+
+const itemSchema = z.object({
+  productId: z.string().min(1, 'Product ID is required'),
+  quantity: z.number().min(1, 'Quantity must be at least 1'),
+  unitPrice: z.string().min(1, 'Unit price is required'),
+});
+
+const createOrderSchema = z.object({
+  items: z.array(itemSchema).min(1, 'At least one item is required'),
+});
+
+function getFieldError(
+  errors: Record<string, string>,
+  touched: Record<string, boolean>,
+  path: string,
+): string | undefined {
+  if (!touched[path]) return undefined;
+  return errors[path];
+}
 
 export const CreateOrderPage: React.FC = () => {
   const navigate = useNavigate();
-  const [items, setItems] = useState<CreateOrderItemCommand[]>([{ productId: '', quantity: 1, unitPrice: '' }]);
-  const [error, setError] = useState('');
+  const [items, setItems] = useState<CreateOrderItemCommand[]>([
+    { productId: '', quantity: 1, unitPrice: '' },
+  ]);
+  const [apiError, setApiError] = useState('');
   const [createOrder, { isLoading }] = useCreateOrderMutation();
+
+  const { touched, errors, isValid, touchField, touchAll } = useFormValidation(
+    createOrderSchema,
+    { items },
+  );
 
   const addItem = useCallback(() => {
     setItems((prev) => [...prev, { productId: '', quantity: 1, unitPrice: '' }]);
@@ -31,21 +59,23 @@ export const CreateOrderPage: React.FC = () => {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      setError('');
-      const validItems = items.filter((i) => i.productId.trim() && i.quantity > 0 && i.unitPrice.trim());
-      if (validItems.length === 0) { setError('Please add at least one valid item.'); return; }
+      touchAll();
+      if (!isValid) return;
+      setApiError('');
       try {
         const result = await createOrder({
-          items: validItems.map((i) => ({
+          items: items.map((i) => ({
             productId: i.productId.trim(),
             quantity: Number(i.quantity),
             unitPrice: i.unitPrice.trim(),
           })),
         }).unwrap();
         navigate(`/orders/${result.orderId}`);
-      } catch { setError('Failed to create order. Please try again.'); }
+      } catch {
+        setApiError('Failed to create order. Please try again.');
+      }
     },
-    [items, createOrder, navigate],
+    [items, isValid, touchAll, createOrder, navigate],
   );
 
   return (
@@ -55,36 +85,92 @@ export const CreateOrderPage: React.FC = () => {
         <Link to="/orders" className="btn-secondary">Cancel</Link>
       </div>
 
-      {error && <div className="p-4 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
+      {apiError && (
+        <div role="alert" className="p-4 rounded-lg bg-red-50 text-red-700 text-sm">{apiError}</div>
+      )}
 
-      <form onSubmit={handleSubmit} className="card p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="card p-6 space-y-6" noValidate>
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">Items</h2>
-          {items.map((item, idx) => (
-            <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end p-4 rounded-lg bg-gray-50 border border-gray-200">
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Product ID</label>
-                <input type="text" required className="input" value={item.productId} onChange={(e) => updateItem(idx, 'productId', e.target.value)} placeholder="prod-001" />
+
+          {items.map((item, idx) => {
+            const pidPath = `items.${idx}.productId`;
+            const qtyPath = `items.${idx}.quantity`;
+            const pricePath = `items.${idx}.unitPrice`;
+            const pidErr = getFieldError(errors, touched, pidPath);
+            const qtyErr = getFieldError(errors, touched, qtyPath);
+            const priceErr = getFieldError(errors, touched, pricePath);
+
+            return (
+              <div
+                key={idx}
+                className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end p-4 rounded-lg bg-gray-50 border border-gray-200"
+              >
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Product ID</label>
+                  <input
+                    type="text"
+                    aria-invalid={!!pidErr}
+                    className={`input ${pidErr ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    value={item.productId}
+                    onChange={(e) => updateItem(idx, 'productId', e.target.value)}
+                    onBlur={() => touchField(pidPath)}
+                    placeholder="prod-001"
+                  />
+                  {pidErr && <p role="alert" className="text-red-600 text-xs mt-1">{pidErr}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Qty</label>
+                  <input
+                    type="number"
+                    min={1}
+                    aria-invalid={!!qtyErr}
+                    className={`input ${qtyErr ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    value={item.quantity}
+                    onChange={(e) => updateItem(idx, 'quantity', Number(e.target.value))}
+                    onBlur={() => touchField(qtyPath)}
+                  />
+                  {qtyErr && <p role="alert" className="text-red-600 text-xs mt-1">{qtyErr}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Unit Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    aria-invalid={!!priceErr}
+                    className={`input ${priceErr ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    value={item.unitPrice}
+                    onChange={(e) => updateItem(idx, 'unitPrice', e.target.value)}
+                    onBlur={() => touchField(pricePath)}
+                    placeholder="0.00"
+                  />
+                  {priceErr && <p role="alert" className="text-red-600 text-xs mt-1">{priceErr}</p>}
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(idx)}
+                    disabled={items.length === 1}
+                    className="btn-danger text-sm w-full"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Qty</label>
-                <input type="number" min={1} required className="input" value={item.quantity} onChange={(e) => updateItem(idx, 'quantity', Number(e.target.value))} />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Unit Price</label>
-                <input type="number" step="0.01" min="0" required className="input" value={item.unitPrice} onChange={(e) => updateItem(idx, 'unitPrice', e.target.value)} placeholder="0.00" />
-              </div>
-              <div>
-                <button type="button" onClick={() => removeItem(idx)} disabled={items.length === 1} className="btn-danger text-sm w-full">Remove</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <button type="button" onClick={addItem} className="btn-secondary w-full sm:w-auto">+ Add Item</button>
 
         <div className="border-t border-gray-200 pt-4">
-          <button type="submit" disabled={isLoading} className="btn-primary w-full">
+          <button
+            type="submit"
+            disabled={isLoading || !isValid}
+            aria-busy={isLoading}
+            className="btn-primary w-full"
+          >
             {isLoading ? 'Creating…' : 'Create Order'}
           </button>
         </div>

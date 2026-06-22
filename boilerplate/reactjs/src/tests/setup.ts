@@ -1,5 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { beforeAll, afterEach, afterAll } from 'vitest';
+import { server } from './mocks/server';
 
+// Start MSW before tests
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+
+// Reset handlers between tests
+afterEach(() => server.resetHandlers());
+
+// Close MSW after all tests
+afterAll(() => server.close());
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import '@testing-library/jest-dom';
 
 // Mock matchMedia for responsive tests

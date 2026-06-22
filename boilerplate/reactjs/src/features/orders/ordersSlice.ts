@@ -8,12 +8,16 @@ export interface OrdersFilter {
 export interface OrdersState {
   page: number;
   size: number;
+  sort: string | null;
+  direction: 'ASC' | 'DESC';
   filter: OrdersFilter;
 }
 
 const initialState: OrdersState = {
   page: 0,
   size: 20,
+  sort: null,
+  direction: 'DESC',
   filter: { status: null },
 };
 
@@ -31,12 +35,22 @@ const ordersSlice = createSlice({
       state.filter.status = action.payload;
       state.page = 0;
     },
+    setSort: (
+      state,
+      action: PayloadAction<{ sort: string | null; direction: 'ASC' | 'DESC' }>,
+    ) => {
+      state.sort = action.payload.sort;
+      state.direction = action.payload.direction;
+    },
     resetFilters: (state) => {
       state.page = 0;
+      state.sort = null;
+      state.direction = 'DESC';
       state.filter = { status: null };
     },
   },
 });
 
-export const { setPage, setSize, setFilterStatus, resetFilters } = ordersSlice.actions;
+export const { setPage, setSize, setFilterStatus, setSort, resetFilters } =
+  ordersSlice.actions;
 export default ordersSlice.reducer;

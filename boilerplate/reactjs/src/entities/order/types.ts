@@ -18,7 +18,7 @@ export interface OrderItem {
 
 export interface OrderListItem {
   orderId: string;
-  customerId: string;
+  customerId?: string;
   status: OrderStateLiteral;
   totalAmount: string;
   createdAt: string;

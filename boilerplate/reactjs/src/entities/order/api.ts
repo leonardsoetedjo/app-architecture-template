@@ -9,17 +9,31 @@ import type {
   OrderStateLiteral,
 } from './types';
 
+export type SortDirection = 'ASC' | 'DESC';
+
+export interface ListOrdersParams {
+  page?: number;
+  size?: number;
+  status?: OrderStateLiteral;
+  sort?: string;
+  direction?: SortDirection;
+}
+
 export const ordersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     listOrders: builder.query<
       PaginatedResult<OrderListItem>,
-      { page?: number; size?: number; status?: OrderStateLiteral }
+      ListOrdersParams
     >({
-      query: ({ page = 0, size = 20, status }) => ({
-        url: '/orders',
-        method: 'GET',
-        params: status ? { page, size, status } : { page, size },
-      }),
+      query: ({ page = 0, size = 20, status, sort, direction }) => {
+        const params: Record<string, string | number> = { page, size };
+        if (status) params.status = status;
+        if (sort) {
+          params.sort = sort;
+          params.direction = direction ?? 'DESC';
+        }
+        return { url: '/orders', method: 'GET', params };
+      },
       providesTags: (result) =>
         result
           ? [

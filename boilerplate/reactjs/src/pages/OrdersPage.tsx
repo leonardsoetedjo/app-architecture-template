@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setPage, setFilterStatus, resetFilters } from 'features/orders/ordersSlice';
+import {
+  setPage,
+  setFilterStatus,
+  setSort,
+  resetFilters,
+} from 'features/orders/ordersSlice';
 import { useListOrdersQuery, useDeleteOrderMutation } from 'entities/order/api';
 import { OrderBadge } from 'shared/ui/atoms/OrderBadge';
 import { formatCurrency, formatDate } from 'shared/lib/formatters';
@@ -19,13 +24,38 @@ const ORDER_STATES: { value: OrderStateLiteral | ''; label: string }[] = [
   { value: 'CANCELLED', label: 'Cancelled' },
 ];
 
+interface SortableColumn {
+  key: string;
+  label: string;
+  align?: 'left' | 'right';
+}
+
+const SORTABLE_COLUMNS: SortableColumn[] = [
+  { key: 'status', label: 'Status' },
+  { key: 'itemCount', label: 'Items' },
+  { key: 'totalAmount', label: 'Total', align: 'right' },
+  { key: 'createdAt', label: 'Created' },
+];
+
+function nextDirection(current: 'ASC' | 'DESC' | null): 'ASC' | 'DESC' | null {
+  if (current === null) return 'ASC';
+  if (current === 'ASC') return 'DESC';
+  return null; // third click removes sort
+}
+
 export const OrdersPage: React.FC = () => {
   const dispatch = useDispatch();
-  const { page, size, filter } = useSelector((state: RootState) => state.orders);
+  const { page, size, sort, direction, filter } = useSelector(
+    (state: RootState) => state.orders,
+  );
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const { data, isLoading, error, refetch } = useListOrdersQuery({
-    page, size, status: filter.status || undefined,
+    page,
+    size,
+    status: filter.status || undefined,
+    sort: sort || undefined,
+    direction: sort ? direction : undefined,
   });
 
   const [deleteOrder, { isLoading: isDeleting }] = useDeleteOrderMutation();
@@ -33,8 +63,11 @@ export const OrdersPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure? This will soft-delete the order.')) return;
     setDeletingId(id);
-    try { await deleteOrder(id).unwrap(); }
-    finally { setDeletingId(null); }
+    try {
+      await deleteOrder(id).unwrap();
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handlePageChange = (newPage: number) => {
@@ -42,6 +75,33 @@ export const OrdersPage: React.FC = () => {
       dispatch(setPage(newPage));
     }
   };
+
+  const handleSort = useCallback(
+    (columnKey: string) => {
+      const currentDir = sort === columnKey ? direction : null;
+      const nextDir = nextDirection(currentDir);
+      dispatch(
+        setSort({
+          sort: nextDir ? columnKey : null,
+          direction: nextDir ?? 'DESC',
+        }),
+      );
+    },
+    [sort, direction, dispatch],
+  );
+
+  const renderSortIndicator = (columnKey: string) => {
+    if (sort !== columnKey) {
+      return <span className="ml-1 text-gray-300 select-none">⇅</span>;
+    }
+    return (
+      <span className="ml-1 text-brand-600 select-none">
+        {direction === 'ASC' ? '▲' : '▼'}
+      </span>
+    );
+  };
+
+  const isSortActive = (columnKey: string) => sort === columnKey;
 
   return (
     <div className="space-y-6">
@@ -55,17 +115,31 @@ export const OrdersPage: React.FC = () => {
 
       <div className="card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex items-center space-x-2">
-          <label className="text-sm font-medium text-gray-700">Status:</label>
+          <label htmlFor="status-filter" className="text-sm font-medium text-gray-700">Status:</label>
           <select
+            id="status-filter"
             value={filter.status || ''}
-            onChange={(e) => dispatch(setFilterStatus((e.target.value as OrderStateLiteral) || null))}
+            onChange={(e) =>
+              dispatch(
+                setFilterStatus((e.target.value as OrderStateLiteral) || null),
+              )
+            }
             className="input w-auto min-w-[160px]"
           >
-            {ORDER_STATES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            {ORDER_STATES.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
           </select>
         </div>
-        <button onClick={() => dispatch(resetFilters())} className="btn-secondary text-sm">Reset</button>
-        <button onClick={refetch} className="btn-secondary text-sm">Refresh</button>
+        <button
+          onClick={() => dispatch(resetFilters())}
+          className="btn-secondary text-sm"
+        >
+          Reset
+        </button>
+        <button onClick={refetch} className="btn-secondary text-sm">
+          Refresh
+        </button>
       </div>
 
       <div className="card overflow-hidden">
@@ -73,35 +147,85 @@ export const OrdersPage: React.FC = () => {
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 font-semibold text-gray-700">Order ID</th>
-              <th className="px-6 py-3 font-semibold text-gray-700">Status</th>
-              <th className="px-6 py-3 font-semibold text-gray-700">Items</th>
-              <th className="px-6 py-3 font-semibold text-gray-700">Total</th>
-              <th className="px-6 py-3 font-semibold text-gray-700">Created</th>
+              {SORTABLE_COLUMNS.map((col) => (
+                <th
+                  key={col.key}
+                  scope="col"
+                  aria-sort={
+                    isSortActive(col.key)
+                      ? direction === 'ASC'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none'
+                  }
+                  onClick={() => handleSort(col.key)}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSort(col.key);
+                    }
+                  }}
+                  className={`px-6 py-3 font-semibold cursor-pointer select-none transition-colors ${
+                    col.align === 'right' ? 'text-right' : ''
+                  } ${
+                    isSortActive(col.key)
+                      ? 'text-brand-700 bg-brand-50'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <span className="inline-flex items-center">
+                    {col.label}
+                    {renderSortIndicator(col.key)}
+                  </span>
+                </th>
+              ))}
               <th className="px-6 py-3 font-semibold text-gray-700 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {isLoading && <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-400">Loading orders…</td></tr>}
+            {isLoading && (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
+                  Loading orders…
+                </td>
+              </tr>
+            )}
 
-            {error && <tr><td colSpan={6} className="px-6 py-12 text-center text-red-500">
-              Failed to load orders.{' '}
-              <button onClick={refetch} className="underline">Retry</button>
-            </td></tr>}
+            {error && (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center text-red-500">
+                  Failed to load orders.{' '}
+                  <button onClick={refetch} className="underline">Retry</button>
+                </td>
+              </tr>
+            )}
 
-            {!isLoading && !error && data?.content.length === 0 && <tr>
-              <td colSpan={6} className="px-6 py-12 text-center text-gray-400">No orders found.</td>
-            </tr>}
+            {!isLoading && !error && data?.content.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
+                  No orders found.
+                </td>
+              </tr>
+            )}
 
             {data?.content.map((order) => (
               <tr key={order.orderId} className="hover:bg-gray-50">
                 <td className="px-6 py-3">
-                  <Link to={`/orders/${order.orderId}`} className="text-brand-600 hover:underline font-mono">
+                  <Link
+                    to={`/orders/${order.orderId}`}
+                    className="text-brand-600 hover:underline font-mono"
+                  >
                     {order.orderId.slice(0, 8)}…
                   </Link>
                 </td>
-                <td className="px-6 py-3"><OrderBadge status={order.status} /></td>
+                <td className="px-6 py-3">
+                  <OrderBadge status={order.status} />
+                </td>
                 <td className="px-6 py-3 text-gray-600">{order.itemCount}</td>
-                <td className="px-6 py-3 text-gray-900 font-medium">{formatCurrency(order.totalAmount)}</td>
+                <td className="px-6 py-3 text-gray-900 font-medium text-right">
+                  {formatCurrency(order.totalAmount)}
+                </td>
                 <td className="px-6 py-3 text-gray-500">{formatDate(order.createdAt)}</td>
                 <td className="px-6 py-3 text-right">
                   <button
@@ -119,18 +243,24 @@ export const OrdersPage: React.FC = () => {
 
         {data && data.totalPages > 1 && (
           <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
-            <span className="text-sm text-gray-500">Page {data.page + 1} of {data.totalPages}</span>
+            <span className="text-sm text-gray-500">
+              Page {data.page + 1} of {data.totalPages}
+            </span>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => handlePageChange(data.page - 1)}
                 disabled={data.page === 0}
                 className="btn-secondary text-sm disabled:opacity-40"
-              >Previous</button>
+              >
+                Previous
+              </button>
               <button
                 onClick={() => handlePageChange(data.page + 1)}
                 disabled={data.page >= data.totalPages - 1}
                 className="btn-secondary text-sm disabled:opacity-40"
-              >Next</button>
+              >
+                Next
+              </button>
             </div>
           </div>
         )}
