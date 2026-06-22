@@ -18,7 +18,7 @@ function renderWithProviders(ui: React.ReactNode, preloadedState = {}) {
       [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(baseApi.middleware as unknown as never),
+      getDefaultMiddleware().concat(baseApi.middleware),
     preloadedState: {
       auth: {
         user: { id: 'u1', email: 'test@example.com', roles: ['USER'], enabled: true },
