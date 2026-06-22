@@ -10,6 +10,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.orderservice.domain.models.OrderState;
+
 @Entity
 @Table(name = "orders")
 @Getter
@@ -21,7 +23,13 @@ public class OrderEntity {
     private UUID id;
     private UUID customerId;
     private OffsetDateTime createdAt;
-    private String status;
+    private OffsetDateTime confirmedAt;
+    private OffsetDateTime deletedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private OrderState status;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> items;
 }

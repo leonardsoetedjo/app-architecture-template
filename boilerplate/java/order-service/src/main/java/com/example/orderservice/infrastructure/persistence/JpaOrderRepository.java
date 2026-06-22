@@ -2,6 +2,8 @@ package com.example.orderservice.infrastructure.persistence;
 
 import com.example.orderservice.domain.models.*;
 import com.example.orderservice.domain.ports.OrderRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -19,9 +21,20 @@ public class JpaOrderRepository implements OrderRepository {
     public Order save(Order order) {
         List<OrderItemEntity> itemEntities = new ArrayList<>();
         for (OrderItem item : order.getItems()) {
-            itemEntities.add(new OrderItemEntity(UUID.randomUUID(), null, item.getProductId(), item.getQuantity(), item.getUnitPrice()));
+            itemEntities.add(new OrderItemEntity(
+                UUID.randomUUID(), null,
+                item.getProductId(), item.getQuantity(), item.getUnitPrice()
+            ));
         }
-        OrderEntity entity = new OrderEntity(order.getId().getValue(), order.getCustomerId(), order.getCreatedAt(), order.getStatus(), itemEntities);
+        OrderEntity entity = new OrderEntity(
+            order.getId().getValue(),
+            order.getCustomerId(),
+            order.getCreatedAt(),
+            order.getConfirmedAt(),
+            order.getDeletedAt(),
+            order.getStatus(),
+            itemEntities
+        );
         for (OrderItemEntity i : entity.getItems()) {
             i.setOrder(entity);
         }
@@ -32,36 +45,66 @@ public class JpaOrderRepository implements OrderRepository {
 
     @Override
     public Optional<Order> findById(OrderId id) {
-        return jpaRepository.findById(id.getValue()).map(this::toDomain);
+        return jpaRepository.findByIdAndDeletedAtIsNull(id.getValue())
+            .map(this::toDomain);
+    }
+
+    @Override
+    public Optional<Order> findByIdIncludingDeleted(OrderId id) {
+        return jpaRepository.findById(id.getValue())
+            .map(this::toDomain);
     }
 
     @Override
     public List<Order> findAll() {
+        return jpaRepository.findAll().stream()
+            .filter(e -> e.getDeletedAt() == null)
+            .map(this::toDomain)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Order> findAllIncludingDeleted() {
         return jpaRepository.findAll().stream()
             .map(this::toDomain)
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<Order> findByCustomerId(UUID customerId) {
-        return jpaRepository.findByCustomerId(customerId).stream()
+    public List<Order> findByCustomerId(UUID customerId, OrderState status, int page, int size) {
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<OrderEntity> entities;
+        if (status != null) {
+            entities = jpaRepository.findByCustomerIdAndStatusAndDeletedAtIsNull(customerId, status, pageable);
+        } else {
+            entities = jpaRepository.findByCustomerIdAndDeletedAtIsNull(customerId, pageable);
+        }
+        return entities.stream()
             .map(this::toDomain)
             .collect(Collectors.toList());
     }
 
     @Override
+    public long countByCustomerId(UUID customerId, OrderState status) {
+        if (status != null) {
+            return jpaRepository.countByCustomerIdAndStatusAndDeletedAtIsNull(customerId, status);
+        }
+        return jpaRepository.countByCustomerIdAndDeletedAtIsNull(customerId);
+    }
+
+    @Override
     public void deleteById(OrderId id) {
-        jpaRepository.deleteById(id.getValue());
+        jpaRepository.softDeleteById(id.getValue(), java.time.OffsetDateTime.now());
     }
 
     @Override
     public long count() {
-        return jpaRepository.count();
+        return jpaRepository.countByDeletedAtIsNull();
     }
 
     @Override
     public boolean existsById(OrderId id) {
-        return jpaRepository.existsById(id.getValue());
+        return jpaRepository.existsByIdAndDeletedAtIsNull(id.getValue());
     }
 
     private Order toDomain(OrderEntity entity) {
@@ -72,7 +115,9 @@ public class JpaOrderRepository implements OrderRepository {
                 .map(i -> new OrderItem(i.getProductId(), i.getQuantity(), i.getUnitPrice()))
                 .toList(),
             entity.getCreatedAt(),
-            entity.getStatus()
+            entity.getStatus(),
+            entity.getConfirmedAt(),
+            entity.getDeletedAt()
         );
     }
 }

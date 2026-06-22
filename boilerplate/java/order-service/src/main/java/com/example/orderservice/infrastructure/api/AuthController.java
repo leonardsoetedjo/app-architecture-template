@@ -1,86 +1,63 @@
 package com.example.orderservice.infrastructure.api;
 
+import com.example.orderservice.application.dtos.*;
+import com.example.orderservice.application.usecases.AuthenticateUserUseCase;
+import com.example.orderservice.application.usecases.GetCurrentUserUseCase;
+import com.example.orderservice.application.usecases.RegisterUserUseCase;
+import com.example.orderservice.domain.models.UserId;
+import com.example.orderservice.domain.ports.TokenParser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.UUID;
 
-/**
- * Auth Controller — demonstrates login/logout boundary.
- *
- * Uses Spring Security's built-in session authentication.
- * Teams can replace this with JWT/OAuth without changing
- * the frontend contract: POST /login → 200 + profile, POST /logout → 204.
- */
 @RestController
 @RequestMapping("/api/v1/auth")
-@Tag(name = "Authentication", description = "Login and logout endpoints")
+@Tag(name = "Authentication", description = "Login, registration, and user profile")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticateUserUseCase authenticateUserUseCase;
+    private final RegisterUserUseCase registerUserUseCase;
+    private final GetCurrentUserUseCase getCurrentUserUseCase;
+    private final TokenParser tokenParser;
 
-    public AuthController(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public AuthController(
+            AuthenticateUserUseCase authenticateUserUseCase,
+            RegisterUserUseCase registerUserUseCase,
+            GetCurrentUserUseCase getCurrentUserUseCase,
+            TokenParser tokenParser) {
+        this.authenticateUserUseCase = authenticateUserUseCase;
+        this.registerUserUseCase = registerUserUseCase;
+        this.getCurrentUserUseCase = getCurrentUserUseCase;
+        this.tokenParser = tokenParser;
+    }
+
+    @PostMapping("/register")
+    @Operation(summary = "Register a new user")
+    public ResponseEntity<RegisterResult> register(@Valid @RequestBody RegisterCommand command) {
+        RegisterResult result = registerUserUseCase.execute(command);
+        return ResponseEntity.status(201).body(result);
     }
 
     @PostMapping("/login")
     @Operation(summary = "Authenticate user")
-    public ResponseEntity<?> login(
-            @RequestBody Map<String, String> credentials,
-            HttpServletRequest request,
-            HttpServletResponse response) {
-
-        String username = credentials.getOrDefault("username", "");
-        String password = credentials.getOrDefault("password", "");
-
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-            );
-            SecurityContextHolder.getContext().setAuthentication(auth);
-
-            return ResponseEntity.ok(Map.of(
-                "username", username,
-                "roles", "USER",
-                "message", "Authenticated successfully"
-            ));
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401).body(Map.of(
-                "error", "Invalid username or password"
-            ));
-        }
-    }
-
-    @PostMapping("/logout")
-    @Operation(summary = "Terminate session")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
-        SecurityContextHolder.clearContext();
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<LoginResult> login(@Valid @RequestBody LoginCommand command) {
+        LoginResult result = authenticateUserUseCase.execute(command);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/me")
     @Operation(summary = "Current user profile")
-    public ResponseEntity<?> me(Authentication authentication) {
+    public ResponseEntity<UserProfileResult> me(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
+            return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.ok(Map.of(
-            "username", authentication.getName(),
-            "roles", "USER"
-        ));
+        UserId userId = new UserId(UUID.fromString(authentication.getName()));
+        UserProfileResult result = getCurrentUserUseCase.execute(userId);
+        return ResponseEntity.ok(result);
     }
 }

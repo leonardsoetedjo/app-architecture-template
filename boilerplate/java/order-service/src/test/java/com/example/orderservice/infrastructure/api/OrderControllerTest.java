@@ -3,13 +3,21 @@ package com.example.orderservice.infrastructure.api;
 import com.example.orderservice.application.dtos.CreateOrderCommand;
 import com.example.orderservice.application.dtos.OrderItemDTO;
 import com.example.orderservice.application.dtos.OrderResult;
+import com.example.orderservice.domain.models.OrderState;
 import com.example.orderservice.application.usecases.PlaceOrderUseCase;
+import com.example.orderservice.application.usecases.ListOrdersUseCase;
+import com.example.orderservice.application.usecases.GetOrderUseCaseImpl;
+import com.example.orderservice.application.usecases.UpdateOrderStatusUseCaseImpl;
+import com.example.orderservice.application.usecases.SoftDeleteOrderUseCaseImpl;
+import com.example.orderservice.domain.ports.TokenParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class OrderControllerTest {
 
     @Autowired
@@ -29,6 +38,21 @@ class OrderControllerTest {
 
     @MockBean
     private PlaceOrderUseCase placeOrderUseCase;
+
+    @MockBean
+    private ListOrdersUseCase listOrdersUseCase;
+
+    @MockBean
+    private GetOrderUseCaseImpl getOrderUseCase;
+
+    @MockBean
+    private UpdateOrderStatusUseCaseImpl updateOrderStatusUseCase;
+
+    @MockBean
+    private SoftDeleteOrderUseCaseImpl softDeleteOrderUseCase;
+
+    @MockBean
+    private TokenParser tokenParser;
 
     private CreateOrderCommand createOrderCommand;
 

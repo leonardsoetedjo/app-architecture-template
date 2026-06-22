@@ -52,6 +52,6 @@ public class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
         );
         eventPublisher.publish(event);
         
-        return new OrderResult(order.getId().getValue(), order.getStatus(), order.getCreatedAt());
+        return new OrderResult(order.getId().getValue(), order.getStatus().name(), order.getCreatedAt());
     }
 }

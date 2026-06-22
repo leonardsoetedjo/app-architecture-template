@@ -1,5 +1,7 @@
 package com.example.orderservice.domain.models;
 
+import java.util.Set;
+
 /**
  * Permission enumeration for fine-grained access control.
  * 
@@ -87,5 +89,36 @@ public enum Permission {
         }
         
         return false;
+    }
+
+    /**
+     * Get all permissions associated with a role.
+     */
+    public static Set<Permission> valuesForRole(Role role) {
+        return switch (role) {
+            case ADMIN -> Set.of(values());
+            case MANAGER -> Set.of(
+                ORDER_READ, ORDER_UPDATE, ORDER_EXPORT, ORDER_APPROVE,
+                USER_READ, USER_UPDATE,
+                PRODUCT_READ, PRODUCT_UPDATE,
+                REPORT_READ, REPORT_EXPORT, REPORT_CREATE,
+                SETTINGS_READ, SETTINGS_UPDATE
+            );
+            case USER -> Set.of(
+                ORDER_CREATE, ORDER_READ, ORDER_UPDATE, ORDER_DELETE, ORDER_EXPORT,
+                PRODUCT_READ,
+                REPORT_READ, REPORT_CREATE
+            );
+            case GUEST -> Set.of(
+                PRODUCT_READ, REPORT_READ
+            );
+            case SERVICE -> Set.of(
+                ORDER_READ, ORDER_CREATE, ORDER_UPDATE,
+                USER_READ, USER_CREATE,
+                PRODUCT_READ, PRODUCT_CREATE, PRODUCT_UPDATE, PRODUCT_DELETE,
+                REPORT_READ, REPORT_EXPORT, REPORT_CREATE,
+                ADMIN_AUDIT
+            );
+        };
     }
 }

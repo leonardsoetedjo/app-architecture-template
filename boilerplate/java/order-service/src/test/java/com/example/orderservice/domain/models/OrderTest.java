@@ -34,7 +34,7 @@ class OrderTest {
             assertNotNull(order.getId());
             assertEquals(customerId, order.getCustomerId());
             assertEquals(2, order.getItems().size());
-            assertEquals("PENDING", order.getStatus());
+            assertEquals(OrderState.PENDING, order.getStatus());
             assertNotNull(order.getCreatedAt());
         }
 

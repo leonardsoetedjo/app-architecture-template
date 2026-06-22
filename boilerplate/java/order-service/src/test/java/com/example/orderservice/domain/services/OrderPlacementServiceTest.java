@@ -15,14 +15,23 @@ class OrderPlacementServiceTest {
         @Override public Optional<Order> findById(OrderId id) {
             return Optional.empty();
         }
+        @Override public Optional<Order> findByIdIncludingDeleted(OrderId id) {
+            return Optional.empty();
+        }
         @Override public Order save(Order order) {
             return order;
         }
         @Override public List<Order> findAll() {
             return List.of();
         }
-        @Override public List<Order> findByCustomerId(UUID customerId) {
+        @Override public List<Order> findAllIncludingDeleted() {
             return List.of();
+        }
+        @Override public List<Order> findByCustomerId(UUID customerId, OrderState status, int page, int size) {
+            return List.of();
+        }
+        @Override public long countByCustomerId(UUID customerId, OrderState status) {
+            return 0;
         }
         @Override public void deleteById(OrderId id) {
         }
@@ -48,7 +57,7 @@ class OrderPlacementServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getCustomerId()).isEqualTo(customerId);
         assertThat(result.getItems()).hasSize(1);
-        assertThat(result.getStatus()).isEqualTo("PENDING");
+        assertThat(result.getStatus()).isEqualTo(OrderState.PENDING);
     }
 
     @Test
