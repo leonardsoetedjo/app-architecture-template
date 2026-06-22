@@ -1,88 +1,79 @@
-/**
- * API Client - Base HTTP client with interceptors.
- * 
- * Shared infrastructure for all API calls.
- * Features:
- * - Base URL configuration
- * - Authentication token injection
- * - Error handling
- * - Request/response interceptors
- * - Correlation ID tracking
- */
+import axios from 'axios';
+import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
-
-/** API base URL from environment */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-
-/** Request timeout in milliseconds */
-const API_TIMEOUT = 30000;
-
-/** Generate unique correlation ID for request tracking */
 function generateCorrelationId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
-/** Create axios instance with default configuration */
-const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: API_TIMEOUT,
+function getStoredAuth():
+  | { accessToken?: string; refreshToken?: string; user?: unknown }
+  | null {
+  const raw = localStorage.getItem('auth-storage');
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as ReturnType<typeof getStoredAuth>;
+  } catch {
+    return null;
+  }
+}
+
+export const apiClient: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-/** Request interceptor - add auth token and correlation ID */
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Add correlation ID for tracing
-    const correlationId = generateCorrelationId();
-    config.headers.set('X-Correlation-ID', correlationId);
-    
-    // Add auth token if available
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      config.headers.set('Authorization', `Bearer ${token}`);
+    config.headers.set('X-Correlation-ID', generateCorrelationId());
+    const stored = getStoredAuth();
+    if (stored?.accessToken) {
+      config.headers.set('Authorization', `Bearer ${stored.accessToken}`);
     }
-    
     return config;
   },
-  (error) => {
-    console.error('[API Client] Request interceptor error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error),
 );
 
-/** Response interceptor - handle common errors */
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    // Log error with correlation ID for tracing
-    const correlationId = error.config?.headers?.['X-Correlation-ID'] || 'unknown';
-    console.error(`[API Client] Error [${correlationId}]:`, {
-      status: error.response?.status,
-      message: error.message,
-      url: error.config?.url,
-    });
-    
-    // Handle specific error codes
-    if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
-    } else if (error.response?.status === 403) {
-      // Forbidden
-      console.error('[API Client] Access forbidden');
-    } else if (error.response?.status === 404) {
-      // Not found
-      console.error('[API Client] Resource not found');
-    } else if (error.response?.status === 500) {
-      // Server error - show correlation ID to user
-      console.error(`[API Client] Server error. Correlation ID: ${correlationId}`);
-    }
-    
-    return Promise.reject(error);
-  }
-);
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
 
-export default apiClient;
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !(originalRequest as unknown as { _retry?: boolean })._retry
+    ) {
+      (originalRequest as unknown as { _retry: boolean })._retry = true;
+      try {
+        const stored = getStoredAuth();
+        if (!stored?.refreshToken) throw new Error('No refresh token');
+
+        const res = await axios.create({
+          baseURL: apiClient.defaults.baseURL,
+          timeout: 30000,
+        }).post('/auth/refresh', {
+          refreshToken: stored.refreshToken,
+        });
+        const data = res.data as { accessToken: string; refreshToken: string };
+
+        localStorage.setItem(
+          'auth-storage',
+          JSON.stringify({ ...stored, ...data }),
+        );
+
+        originalRequest.headers.set('Authorization', `Bearer ${data.accessToken}`);
+        return apiClient(originalRequest);
+      } catch (_refreshError) {
+        localStorage.removeItem('auth-storage');
+        window.location.href = '/login';
+        return Promise.reject(_refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);

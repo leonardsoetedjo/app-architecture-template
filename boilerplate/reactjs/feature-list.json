@@ -1,129 +1,32 @@
-{
-  "version": "1.0",
-  "project": "reactjs-frontend",
-  "generated_at": "2026-06-04T00:00:00Z",
-  "features": [
-    {
-      "id": "UI-001",
-      "category": "functional",
-      "priority": 1,
-      "description": "User can view list of orders",
-      "acceptance_criteria": [
-        "OrdersPage displays order list from API",
-        "Loading state shown during fetch",
-        "Error state displayed on failure",
-        "Empty state shown when no orders"
-      ],
-      "passes": true,
-      "notes": "Implemented in boilerplate. See OrdersPage.tsx + useOrders hook",
-      "page_affected": "OrdersPage",
-      "responsive_breakpoints": [320, 768, 1440]
-    },
-    {
-      "id": "UI-002",
-      "category": "functional",
-      "priority": 1,
-      "description": "User can create a new order via form",
-      "acceptance_criteria": [
-        "OrderForm component with validation",
-        "Ant Design form fields for items",
-        "Submit triggers API call",
-        "Success redirects to order list"
-      ],
-      "passes": true,
-      "notes": "Implemented in boilerplate. See OrderForm.tsx",
-      "page_affected": "OrderPage",
-      "responsive_breakpoints": [320, 768, 1440]
-    },
-    {
-      "id": "UI-003",
-      "category": "functional",
-      "priority": 2,
-      "description": "User can cancel an order",
-      "acceptance_criteria": [
-        "Cancel button visible on pending orders",
-        "Confirmation dialog before cancel",
-        "Order status updates in UI after cancel"
-      ],
-      "passes": false,
-      "notes": "TODO: implement cancel order feature",
-      "page_affected": "OrdersPage",
-      "components_affected": ["OrderList", "CancelOrderButton"]
-    },
-    {
-      "id": "COM-001",
-      "category": "component",
-      "priority": 1,
-      "description": "BaseButton component with variants",
-      "acceptance_criteria": [
-        "Component accepts variant, size, loading, disabled props",
-        "Renders Ant Design Button",
-        "Supports icon prop and children",
-        "No console warnings in Storybook"
-      ],
-      "passes": true,
-      "notes": "Implemented - BaseButton.tsx with 18 stories",
-      "component_affected": "BaseButton",
-      "story_required": true,
-      "visual_states": ["default", "loading", "disabled", "hover", "focus"]
-    },
-    {
-      "id": "COM-002",
-      "category": "component",
-      "priority": 1,
-      "description": "BaseInput component with states",
-      "acceptance_criteria": [
-        "Component accepts value, onChange, error, disabled props",
-        "Renders Ant Design Input",
-        "Supports prefix/suffix icons",
-        "Character counter option"
-      ],
-      "passes": true,
-      "notes": "Implemented - BaseInput.tsx with 17 stories",
-      "component_affected": "BaseInput",
-      "story_required": true,
-      "visual_states": ["default", "focused", "error", "disabled"]
-    },
-    {
-      "id": "STORY-001",
-      "category": "story",
-      "priority": 1,
-      "description": "Storybook stories for core UI components",
-      "acceptance_criteria": [
-        "Button component stories with variants",
-        "Input component stories with states",
-        "Form component stories with validation",
-        "Loading and error states documented",
-        "Widget stories for OrderList"
-      ],
-      "passes": true,
-      "notes": "Completed 2026-06-04 — BaseButton.stories.tsx (18 stories), BaseInput.stories.tsx (17 stories), SearchField.stories.tsx (12 stories), OrderList.stories.tsx (9 stories), OrderForm.stories.tsx (10 stories) = 66 total stories"
-    },
-    {
-      "id": "STORY-002",
-      "category": "testing",
-      "priority": 1,
-      "description": "Storybook integration with testing framework",
-      "acceptance_criteria": [
-        "Storybook tests run in CI pipeline",
-        "Visual regression tests configured with Playwright",
-        "Accessibility tests enabled"
-      ],
-      "passes": true,
-      "notes": "Completed 2026-06-04 — Added .github/workflows/storybook-ci.yml, playwright.config.ts, tests/storybook.spec.ts with 25+ visual regression tests across all component stories. CI workflow runs on PR and push to main."
-    },
-    {
-      "id": "E2E-001",
-      "category": "testing",
-      "priority": 1,
-      "description": "Playwright E2E tests for critical paths",
-      "acceptance_criteria": [
-        "User login flow tested",
-        "Order creation flow tested",
-        "Order list pagination tested"
-      ],
-      "passes": true,
-      "notes": "E2E tests exist in e2e/ directory"
-    }
-  ]
-}
+[
+  {
+    "id": "FE-001",
+    "title": "ReactJS Frontend Boilerplate",
+    "description": "React 18 + TypeScript + Vite + Tailwind CSS + Redux Toolkit + RTK Query",
+    "status": "completed"
+  },
+  {
+    "id": "FE-002",
+    "title": "Tailwind CSS Styling",
+    "description": "Utility-first CSS framework with custom theme, globals.css, badges, buttons, cards, inputs",
+    "status": "completed"
+  },
+  {
+    "id": "FE-003",
+    "title": "Redux Toolkit + RTK Query",
+    "description": "Centralized state management, API layer, auto-caching, tags invalidation",
+    "status": "completed"
+  },
+  {
+    "id": "FE-004",
+    "title": "JWT Authentication",
+    "description": "Access + refresh tokens, automatic token refresh on 401, secure localStorage",
+    "status": "completed"
+  },
+  {
+    "id": "FE-005",
+    "title": "Order Pages",
+    "description": "Login, Register, Orders List (paginated/filtered), Order Detail, Create Order",
+    "status": "completed"
+  }
+]

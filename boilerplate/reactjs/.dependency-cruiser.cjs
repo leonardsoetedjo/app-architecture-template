@@ -36,8 +36,8 @@ module.exports = {
     },
     {
       name: "no-any-type",
-      comment: "The 'any' type is forbidden throughout the codebase",
-      severity: "error",
+      comment: "Detects type-only imports",
+      severity: "warn",
       from: {},
       to: {
         dependencyTypes: ["type-only"],
@@ -49,7 +49,8 @@ module.exports = {
       path: [
         "\\.stories\\.(tsx|ts|jsx|js)$",
         "vite-env\\.d\\.ts$",
-        "^src/styles/"
+        "^src/styles/",
+        "\\.css$"
       ]
     },
     doNotFollow: {

@@ -2,22 +2,6 @@
 
 import '@testing-library/jest-dom';
 
-// Mock Intl APIs for testing
-const patchIntl = (): void => {
-  const originalIntl = (globalThis as any).Intl;
-  (globalThis as any).Intl = {
-    DateTimeFormat: originalIntl.DateTimeFormat,
-    NumberFormat: originalIntl.NumberFormat,
-    Collator: originalIntl.Collator,
-    PluralRules: originalIntl.PluralRules,
-    RelativeTimeFormat: originalIntl.RelativeTimeFormat,
-  };
-};
-
-beforeEach(() => {
-  patchIntl();
-});
-
 // Mock matchMedia for responsive tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
