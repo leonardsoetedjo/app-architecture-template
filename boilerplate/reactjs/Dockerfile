@@ -11,7 +11,7 @@ COPY . .
 RUN npm run build
 
 # ── Production serve ──
-FROM registry.access.redhat.com/ubi9/nginx-124:latest
+FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 

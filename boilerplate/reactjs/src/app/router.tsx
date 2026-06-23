@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from 'app/store';
 import { setInitialized } from 'features/auth/authSlice';
