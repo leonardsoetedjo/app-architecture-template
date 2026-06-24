@@ -8,6 +8,7 @@ import com.example.orderservice.domain.services.OrderPlacementService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
@@ -24,7 +25,7 @@ public class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
     }
 
     @Override
-    public OrderResult execute(CreateOrderCommand command) {
+    public OrderResult execute(UUID customerId, CreateOrderCommand command) {
         if (command == null) {
             throw new IllegalArgumentException("command must not be null");
         }
@@ -32,7 +33,7 @@ public class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
             .map(dto -> new OrderItem(dto.productId(), dto.quantity(), dto.unitPrice()))
             .collect(Collectors.toList());
         
-        Order order = orderPlacementService.placeOrder(command.customerId(), items);
+        Order order = orderPlacementService.placeOrder(customerId, items);
         
         // Publish domain event
         OrderPlaced.OrderItemEventData[] itemData = order.getItems().stream()

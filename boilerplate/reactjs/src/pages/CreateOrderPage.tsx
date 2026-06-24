@@ -65,7 +65,7 @@ export const CreateOrderPage: React.FC = () => {
       try {
         const result = await createOrder({
           items: items.map((i) => ({
-            productId: i.productId.trim(),
+            productId: crypto.randomUUID(),
             quantity: Number(i.quantity),
             unitPrice: i.unitPrice.trim(),
           })),

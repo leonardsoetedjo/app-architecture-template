@@ -44,8 +44,11 @@ public class OrderController {
 
     @Operation(summary = "Place a new order")
     @PostMapping
-    public ResponseEntity<OrderResult> createOrder(@Valid @RequestBody CreateOrderCommand command) {
-        OrderResult result = placeOrderUseCase.execute(command);
+    public ResponseEntity<OrderResult> createOrder(
+            @Valid @RequestBody CreateOrderCommand command,
+            Authentication authentication) {
+        UUID customerId = extractCustomerId(authentication);
+        OrderResult result = placeOrderUseCase.execute(customerId, command);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
