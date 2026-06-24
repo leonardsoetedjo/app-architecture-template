@@ -8,7 +8,7 @@ import { AppLayout } from 'shared/ui/templates/AppLayout';
 export const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <BrowserRouter basename="/order-react">
+      <BrowserRouter basename={import.meta.env.VITE_APP_BASENAME || '/'}>
         <AppLayout>
           <Suspense
             fallback={

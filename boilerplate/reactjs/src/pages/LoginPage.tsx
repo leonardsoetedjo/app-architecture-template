@@ -126,6 +126,12 @@ export const LoginPage: React.FC = () => {
           Don&apos;t have an account?{' '}
           <Link to="/register" className="text-brand-600 hover:underline font-medium">Register</Link>
         </p>
+
+        <div className="mt-6 p-3 rounded-lg bg-blue-50 text-blue-700 text-sm">
+          <p className="font-semibold mb-1">Test credentials</p>
+          <p>Email: <code className="font-mono bg-blue-100 px-1 rounded">demo@example.com</code></p>
+          <p>Password: <code className="font-mono bg-blue-100 px-1 rounded">DemoPass1!</code></p>
+        </div>
       </div>
     </div>
   );

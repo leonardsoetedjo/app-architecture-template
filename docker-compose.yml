@@ -88,7 +88,7 @@ services:
   nginx:
     image: app-architecture-frontend:latest
     build:
-      context: ./boilerplate/frontend
+      context: ./boilerplate/reactjs
       dockerfile: Dockerfile
     networks:
       - app-network
