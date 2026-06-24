@@ -1,5 +1,11 @@
 # Multi-stage build for the React + TypeScript + Ant Design frontend
 FROM node:20 AS builder
+ARG VITE_APP_BASE
+ARG VITE_APP_BASENAME
+ARG VITE_API_BASE_URL
+ENV VITE_APP_BASE=${VITE_APP_BASE:-/}
+ENV VITE_APP_BASENAME=${VITE_APP_BASENAME:-/}
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL:-}
 WORKDIR /app
 
 # Copy package files first (best cache layer)
