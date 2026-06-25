@@ -9,8 +9,8 @@ export class User {
     @Column({ unique: true })
     email: string;
 
-    @Column()
-    password: string;
+    @Column({ name: 'password_hash' })
+    passwordHash: string;
 
     @Column('simple-array')
     roles: Role[];
@@ -18,9 +18,9 @@ export class User {
     @Column({ default: true })
     enabled: boolean;
 
-    @CreateDateColumn()
+    @Column({ name: 'created_at' })
     createdAt: Date;
 
-    @Column({ nullable: true })
+    @Column({ name: 'last_login_at', nullable: true })
     lastLoginAt: Date;
 }

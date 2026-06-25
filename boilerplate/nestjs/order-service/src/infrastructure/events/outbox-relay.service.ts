@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
-import { OutboxEvent } from './outbox-event.entity';
-import { EventPublisher } from '@domain/ports/event-publisher.port';
+import { OutboxEvent } from '../persistence/outbox-event.entity';
+import { IEventPublisher } from '@domain/ports/event-publisher.port';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 /**
@@ -20,7 +20,7 @@ export class OutboxRelayService {
   constructor(
     @InjectRepository(OutboxEvent)
     private readonly outboxRepo: Repository<OutboxEvent>,
-    private readonly publisher: EventPublisher,
+    private readonly publisher: IEventPublisher,
   ) {}
 
   @Cron(CronExpression.EVERY_10_SECONDS)

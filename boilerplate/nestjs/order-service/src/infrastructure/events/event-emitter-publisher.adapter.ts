@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EventPublisher } from '@domain/ports/event-publisher.port';
+import { IEventPublisher } from '@domain/ports/event-publisher.port';
 import { EventPublishException } from '@domain/exceptions/event-publish.exception';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -13,7 +13,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
  * about NestJS or any message broker.
  */
 @Injectable()
-export class EventEmitterPublisherAdapter implements EventPublisher {
+export class EventEmitterPublisherAdapter implements IEventPublisher {
   constructor(private readonly emitter: EventEmitter2) {}
 
   async publish(event: unknown): Promise<void> {

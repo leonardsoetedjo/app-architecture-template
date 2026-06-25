@@ -15,6 +15,12 @@ const routes = [
     meta: { requiresGuest: true },
   },
   {
+    path: '/orders',
+    name: 'orders',
+    component: () => import('../pages/OrdersPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/landing',
     name: 'landing',
     component: () => import('../pages/LandingPage.vue'),

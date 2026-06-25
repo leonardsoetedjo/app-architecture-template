@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  order-service-nestjs:
+    image: order-service-nestjs:local
+    container_name: order-service-nestjs
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=order-service-db
+      - DB_PORT=5432
+      - DB_NAME=orderdb
+      - DB_USER=orderuser
+      - DB_PASSWORD=orderpass
+      - REDIS_HOST=order-service-redis
+      - REDIS_PORT=6379
+      - SERVER_PORT=3000
+    networks:
+      - order-service_default
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order-nestjs.rule=Host(`hermes.piranha-broadnose.ts.net`) && PathPrefix(`/order-nestjs`)"
+      - "traefik.http.routers.order-nestjs.entrypoints=websecure"
+      - "traefik.http.routers.order-nestjs.tls=true"
+      - "traefik.http.services.order-nestjs.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.order-nestjs-strip.stripprefix.prefixes=/order-nestjs"
+      - "traefik.http.routers.order-nestjs.middlewares=order-nestjs-strip"
+    restart: unless-stopped
+
+networks:
+  order-service_default:
+    external: true
+    name: order-service_default
+  traefik-net:
+    external: true
+    name: traefik-net

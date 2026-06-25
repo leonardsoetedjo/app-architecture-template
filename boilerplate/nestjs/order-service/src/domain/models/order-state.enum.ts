@@ -4,13 +4,13 @@
  * Maps to Java OrderState enum.
  */
 export enum OrderState {
-  PENDING='***',
-  CONFIRMED='***',
-  PROCESSING='***',
-  SHIPPED='***',
-  DELIVERED='***',
-  COMPLETED='COMPLETED',
-  CANCELLED='***',
-  RETURNED='***',
-  REFUNDED='***',
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  PROCESSING = 'PROCESSING',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'DELIVERED',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  RETURNED = 'RETURNED',
+  REFUNDED = 'REFUNDED',
 }

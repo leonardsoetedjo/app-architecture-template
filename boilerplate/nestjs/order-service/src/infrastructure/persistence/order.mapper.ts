@@ -6,15 +6,20 @@ import { OrderStatus } from '@domain/models/order-status.enum';
 import { OrderEntity } from './order.entity';
 import { Decimal } from 'decimal.js';
 
+import { OrderItemEntity } from './order-item.entity';
+
 export class OrderMapper {
   static toEntity(order: Order): OrderEntity {
     const entity = new OrderEntity();
     entity.id = order.id.value;
-    entity.items = order.items.map((item) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      unitPrice: item.unitPrice.toString(),
-    }));
+    entity.items = order.items.map((item) => {
+      const itemEntity = new OrderItemEntity();
+      itemEntity.productId = item.productId;
+      itemEntity.quantity = item.quantity;
+      itemEntity.unitPrice = item.unitPrice.toString();
+      itemEntity.order = entity;
+      return itemEntity;
+    });
     entity.status = order.status;
     entity.createdAt = order.createdAt;
     return entity;
@@ -23,7 +28,7 @@ export class OrderMapper {
   static toDomain(entity: OrderEntity): Order {
     return new Order(
       new OrderId(entity.id),
-      entity.items.map(
+      (entity.items || []).map(
         (item) => new OrderItem(item.productId, item.quantity, new Decimal(item.unitPrice)),
       ),
       entity.status as OrderStatus,

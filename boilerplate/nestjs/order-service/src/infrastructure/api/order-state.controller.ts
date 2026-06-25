@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, BadRequestException, Inject } from '@nestjs/common';
 import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
 import { OrderId } from '@domain/models/order-id.value-object';
 import { OrderStateMachine } from '@domain/services/order-state-machine.service';
@@ -8,7 +8,9 @@ import { SecurityAuditLogger } from '@infrastructure/logging/security-audit-logg
 @Controller('api/v1/orders/:orderId/state')
 export class OrderStateController {
   constructor(
+    @Inject('OrderRepositoryPort')
     private readonly orderRepo: OrderRepositoryPort,
+    @Inject(SecurityAuditLogger)
     private readonly auditLogger: SecurityAuditLogger,
   ) {}
 

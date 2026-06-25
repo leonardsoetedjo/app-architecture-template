@@ -1,5 +1,5 @@
 // application/usecases/place-order.use-case.impl.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { PlaceOrderUseCase } from './place-order.use-case.interface';
 import { PlaceOrderDto } from '../dtos/place-order.dto';
 import { OrderResponseDto } from '../dtos/order-response.dto';
@@ -12,7 +12,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
-  constructor(private readonly orderRepository: OrderRepositoryPort) {}
+  constructor(
+    @Inject('OrderRepositoryPort')
+    private readonly orderRepository: OrderRepositoryPort,
+  ) {}
 
   async execute(dto: PlaceOrderDto): Promise<OrderResponseDto> {
     const items = dto.items.map(

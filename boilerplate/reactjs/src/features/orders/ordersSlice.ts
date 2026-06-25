@@ -15,7 +15,7 @@ export interface OrdersState {
 
 const initialState: OrdersState = {
   page: 0,
-  size: 20,
+  size: 10,
   sort: null,
   direction: 'DESC',
   filter: { status: null },

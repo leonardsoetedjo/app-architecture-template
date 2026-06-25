@@ -9,6 +9,7 @@ const mockRepo: jest.Mocked<OrderRepositoryPort> = {
   save: jest.fn().mockResolvedValue(undefined),
   findById: jest.fn().mockResolvedValue(null),
   findAll: jest.fn().mockResolvedValue([]),
+  countAll: jest.fn().mockResolvedValue(0),
 };
 
 describe('PlaceOrderUseCase', () => {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { IAuthenticateUserUseCase } from './authenticate-user.use-case.interface';
 import { LoginCommand, LoginResult } from '../dtos/auth.dto';
 import { IUserRepository } from '../../domain/ports/user-repository.port';
@@ -12,9 +12,13 @@ import { UserLoggedInEvent } from '../../domain/events/user-logged-in.event';
 @Injectable()
 export class AuthenticateUserUseCaseImpl implements IAuthenticateUserUseCase {
     constructor(
+        @Inject('IUserRepository')
         private readonly userRepository: IUserRepository,
+        @Inject('IPasswordHasher')
         private readonly passwordHasher: IPasswordHasher,
+        @Inject('ITokenGenerator')
         private readonly tokenGenerator: ITokenGenerator,
+        @Inject('IEventPublisher')
         private readonly eventPublisher: IEventPublisher,
     ) {}
 

@@ -21,12 +21,34 @@ export class OrderTypeOrmRepository implements OrderRepositoryPort {
   }
 
   async findById(id: OrderId): Promise<Order | null> {
-    const entity = await this.repository.findOne({ where: { id: id.value } });
+    const entity = await this.repository.findOne({ 
+      where: { id: id.value },
+      relations: ['items'],
+    });
     return entity ? OrderMapper.toDomain(entity) : null;
   }
 
-  async findAll(): Promise<Order[]> {
-    const entities = await this.repository.find();
+  async findAll(options?: {
+    skip?: number;
+    take?: number;
+    sort?: { field: string; direction: 'ASC' | 'DESC' };
+  }): Promise<Order[]> {
+    const { skip, take, sort } = options || {};
+    const findOptions: any = {
+      skip,
+      take,
+      relations: ['items'],
+    };
+
+    if (sort) {
+      findOptions.order = { [sort.field]: sort.direction };
+    }
+
+    const entities = await this.repository.find(findOptions);
     return entities.map((entity) => OrderMapper.toDomain(entity));
+  }
+
+  async countAll(): Promise<number> {
+    return this.repository.count();
   }
 }

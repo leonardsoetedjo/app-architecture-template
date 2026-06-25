@@ -1,7 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpException, HttpStatus } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { SecurityAuditLogger } from './security-audit-logger.service';
+import { SecurityAuditLogger } from '../logging/security-audit-logger.service';
 
 interface RateLimitRule {
   pathPrefix: string;

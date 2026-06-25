@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { User as UserEntity } from './user.entity';
 import { IUserRepository } from '../../domain/ports/user-repository.port';
 import { User } from '../../domain/models/user.aggregate';
@@ -10,7 +11,10 @@ import { Role } from '../../domain/models/role';
 
 @Injectable()
 export class UserTypeOrmRepository implements IUserRepository {
-    constructor(private readonly repo: Repository<UserEntity>) {}
+    constructor(
+        @InjectRepository(UserEntity)
+        private readonly repo: Repository<UserEntity>,
+    ) {}
 
     async save(user: User): Promise<User> {
         const entity = this.mapToEntity(user);
@@ -45,7 +49,7 @@ export class UserTypeOrmRepository implements IUserRepository {
         return this.repo.create({
             id: user.id.getValue(),
             email: user.email.getValue(),
-            password: user.password.getHashedValue(),
+            passwordHash: user.password.getHashedValue(),
             roles: Array.from(user.roles),
             enabled: user.enabled,
             createdAt: user.createdAt,
@@ -57,7 +61,7 @@ export class UserTypeOrmRepository implements IUserRepository {
         return new User(
             new UserId(entity.id),
             new Email(entity.email),
-            new Password(entity.password),
+            new Password(entity.passwordHash),
             new Set(entity.roles),
             entity.enabled,
             entity.createdAt,

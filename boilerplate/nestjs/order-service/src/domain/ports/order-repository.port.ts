@@ -5,5 +5,10 @@ import { OrderId } from '../models/order-id.value-object';
 export interface OrderRepositoryPort {
   save(order: Order): Promise<void>;
   findById(id: OrderId): Promise<Order | null>;
-  findAll(): Promise<Order[]>;
+  findAll(options?: {
+    skip?: number;
+    take?: number;
+    sort?: { field: string; direction: 'ASC' | 'DESC' };
+  }): Promise<Order[]>;
+  countAll(): Promise<number>;
 }

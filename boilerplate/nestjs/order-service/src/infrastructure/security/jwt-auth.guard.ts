@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { CanActivate, ExecutionContext, Injectable as NestInjectable } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ITokenParser } from '../../domain/ports/token-parser.port';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-    constructor(private readonly tokenParser: ITokenParser) {}
+    constructor(
+        @Inject('ITokenParser')
+        private readonly tokenParser: ITokenParser,
+    ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
