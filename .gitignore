@@ -22,6 +22,9 @@ logs/
 # Session artifacts
 state_handoff.md
 
+# Cache
+.cache/
+
 # OS
 .DS_Store
 Thumbs.db
