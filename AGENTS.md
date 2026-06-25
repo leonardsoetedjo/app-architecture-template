@@ -47,6 +47,7 @@
 2. Use cases → Interface in `application/usecases/`, impl alongside
 3. Entities → Pure POJOs/dataclasses in `domain/models/`, no framework annotations
 4. Pre-commit → Run stack's architecture validation before ANY commit
+5. **Playwright → All web app E2E testing uses Playwright. Built-in browser automation (`browser_click` etc.) never a substitute without user escalation.**
 
 ## 5. Compliance
 

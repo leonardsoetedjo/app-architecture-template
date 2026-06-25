@@ -24,6 +24,7 @@
 | Ant Design > custom CSS | Prefer AntD | REACT-UI-PATTERN |
 | Business logic in hooks | No logic in `.tsx` render | REACT-BUSINESS-LOGIC |
 | dependency-cruiser zero violations | `npm run depcruise` | DDD-DEPENDENCY-CHECK |
+| Playwright-first E2E testing | No built-in browser automation without user escalation | PLAYWRIGHT-FIRST-POLICY |
 
 ## 2. Key Paths (FSD + MVVM)
 
