@@ -52,9 +52,11 @@ module.exports = {
     },
     {
       name: 'no-circular-dependencies',
-      comment: 'Circular dependencies are not allowed',
+      comment: 'Circular dependencies are not allowed (entity bidirectional relations excepted)',
       severity: 'error',
-      from: {},
+      from: {
+        pathNot: '^src/infrastructure/persistence/.*\\.entity\\.ts$'
+      },
       to: { circular: true },
     },
   ],

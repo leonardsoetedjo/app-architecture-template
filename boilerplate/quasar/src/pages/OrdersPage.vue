@@ -31,8 +31,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { ordersPortInstance } from 'src/services/orders';
-import type { Order } from 'src/features/orders/types';
+import { ordersPortInstance } from '../services/orders';
+import type { Order } from '../features/orders/types';
 
 const columns = [
   { 

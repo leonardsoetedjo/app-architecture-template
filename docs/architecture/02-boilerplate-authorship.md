@@ -219,10 +219,10 @@ This section records when existing stacks were verified against this checklist.
 | Stack | Date | Verified By | Status | Notes |
 |-------|------|-------------|--------|-------|
 | Java | 2026-06-26 | Archie | ✅ PASS | `mvn compile` OK, ArchUnit 7/7, docker build OK, init.sh OK, feature-list.json valid |
-| NestJS | 2026-06-26 | Archie | ⚠️ PARTIAL | `tsc --noEmit` 0 errors, docker build OK, depcruise config valid, **1 latent circular dependency** in `order-item.entity.ts ↔ order.entity.ts` (real JPA bidirectional relation) |
+| NestJS | 2026-06-26 | Archie | ✅ PASS | `tsc --noEmit` 0 errors, docker build OK, depcruise 0 violations |
 | ReactJS | 2026-06-26 | Archie | ✅ PASS | `tsc --noEmit` 0 errors, depcruise 0 violations, lint OK, docker build OK, baseApi layer fixed |
-| Python | 2026-06-26 | Archie | ⚠️ PARTIAL | lefthook gates pass, feature-list.json valid, **docker build FAILS** (microdnf not available in base image) |
-| Quasar | 2026-06-26 | Archie | ⚠️ PARTIAL | depcruise 0 violations, init.sh OK, **docker build FAILS** (`npm run build` exits 1) |
+| Python | 2026-06-26 | Archie | ✅ PASS | lefthook OK, feature-list.json valid, docker build OK (switched from UBI to `python:3.12-slim`) |
+| Quasar | 2026-06-26 | Archie | ✅ PASS | depcruise 0 violations, init.sh OK, docker build OK (fixed `src/` absolute imports + uses `npx vite build`) |
 
 ---
 

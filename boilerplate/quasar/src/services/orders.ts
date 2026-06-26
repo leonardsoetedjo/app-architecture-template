@@ -1,4 +1,4 @@
-import { Order, OrdersResponse } from 'src/features/orders/types';
+import { Order, OrdersResponse } from '../features/orders/types';
 import axios from 'axios';
 
 export interface OrdersPort {

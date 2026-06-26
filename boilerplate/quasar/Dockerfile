@@ -1,15 +1,15 @@
-# Multi-stage build for the React + TypeScript + Ant Design frontend
+# Multi-stage build for the Vue + TypeScript + Quasar frontend
 FROM node:20 AS builder
 ARG GIT_COMMIT=unknown
 WORKDIR /app
 
 # Copy package files first (best cache layer)
-COPY package.json ./
-RUN npm install --color=never --no-audit --no-fund
+COPY package.json package-lock.json ./
+RUN npm ci --color=never --no-audit --no-fund
 
-# Copy source and build
+# Copy source and build with Vite (not quasar CLI — project uses Vite plugin)
 COPY . .
-RUN npm run build
+RUN npx vite build
 
 # ── Production serve ──
 FROM registry.access.redhat.com/ubi9/nginx-124:latest
