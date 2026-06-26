@@ -75,7 +75,7 @@ commit-msg:
   commands:
     conventional-commit:
       run: |
-        if ! grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\([a-z0-9-]+\))?: .{1,100}" "$1"; then
+        if ! grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\([a-z0-9#-]+\))?: .{1,100}" {1}; then
           echo "❌ Invalid commit message format!"
           echo "Expected: type(scope): description"
           echo "Example:  feat(order-service): add payment validation"
@@ -83,7 +83,7 @@ commit-msg:
         fi
     architecture-evidence:
       run: |
-        if ! grep -qi "Architecture:" "$1"; then
+        if ! grep -qi "Architecture:" {1}; then
           echo "❌ Commit message missing architecture compliance evidence!"
           echo "Required: include 'Architecture: PASSED' or 'Architecture: SKIPPED (reason)'"
           exit 1
