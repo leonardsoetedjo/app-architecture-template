@@ -2,6 +2,16 @@
  * DDD-DOMAIN-PURITY-QUASAR: Refactored Pinia store for JWT Auth.
  */
 
+/**
+ * ⚠️ SECURITY WARNING: This file currently stores tokens in localStorage.
+ *
+ * localStorage is accessible to any JavaScript on the page, including
+ * malicious scripts injected via XSS. This is a KNOWN VULNERABILITY.
+ *
+ * See docs/01-agnostic/03-guidelines/03-auth-flow.md §3.1 for migration path.
+ * TODO: Remove localStorage after migration to httpOnly cookies.
+ */
+
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { 

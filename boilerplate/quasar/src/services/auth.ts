@@ -5,6 +5,16 @@
  * This service handles Bearer token authentication.
  */
 
+/**
+ * ⚠️ SECURITY WARNING: This file currently stores tokens in localStorage.
+ *
+ * localStorage is accessible to any JavaScript on the page, including
+ * malicious scripts injected via XSS. This is a KNOWN VULNERABILITY.
+ *
+ * See docs/01-agnostic/03-guidelines/03-auth-flow.md §3.1 for migration path.
+ * TODO: Remove localStorage after migration to httpOnly cookies.
+ */
+
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
 import type { 

@@ -1,9 +1,11 @@
 package com.example.orderservice.infrastructure.api;
 
-import com.example.orderservice.application.dtos.*;
 import com.example.orderservice.application.usecases.AuthenticateUserUseCase;
 import com.example.orderservice.application.usecases.GetCurrentUserUseCase;
 import com.example.orderservice.application.usecases.RegisterUserUseCase;
+import com.example.orderservice.application.usecases.RefreshTokenUseCase;
+import com.example.orderservice.application.usecases.LogoutUseCase;
+import com.example.orderservice.application.dtos.*;
 import com.example.orderservice.domain.models.UserId;
 import com.example.orderservice.domain.ports.TokenParser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,16 +25,22 @@ public class AuthController {
     private final AuthenticateUserUseCase authenticateUserUseCase;
     private final RegisterUserUseCase registerUserUseCase;
     private final GetCurrentUserUseCase getCurrentUserUseCase;
+    private final RefreshTokenUseCase refreshTokenUseCase;
+    private final LogoutUseCase logoutUseCase;
     private final TokenParser tokenParser;
 
     public AuthController(
             AuthenticateUserUseCase authenticateUserUseCase,
             RegisterUserUseCase registerUserUseCase,
             GetCurrentUserUseCase getCurrentUserUseCase,
+            RefreshTokenUseCase refreshTokenUseCase,
+            LogoutUseCase logoutUseCase,
             TokenParser tokenParser) {
         this.authenticateUserUseCase = authenticateUserUseCase;
         this.registerUserUseCase = registerUserUseCase;
         this.getCurrentUserUseCase = getCurrentUserUseCase;
+        this.refreshTokenUseCase = refreshTokenUseCase;
+        this.logoutUseCase = logoutUseCase;
         this.tokenParser = tokenParser;
     }
 
@@ -48,6 +56,23 @@ public class AuthController {
     public ResponseEntity<LoginResult> login(@Valid @RequestBody LoginCommand command) {
         LoginResult result = authenticateUserUseCase.execute(command);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token")
+    public ResponseEntity<RefreshTokenResult> refresh(@Valid @RequestBody RefreshTokenCommand command) {
+        RefreshTokenResult result = refreshTokenUseCase.execute(command);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Invalidate tokens and logout")
+    public ResponseEntity<Void> logout(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String userId = authentication.getName();
+            logoutUseCase.execute(new UserId(UUID.fromString(userId)));
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")
