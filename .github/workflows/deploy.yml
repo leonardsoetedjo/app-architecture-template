@@ -1,0 +1,62 @@
+name: Deploy with Freshness Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'docker-compose*.yml'
+      - '**/Dockerfile*'
+      - 'scripts/deploy.sh'
+      - 'scripts/verify-container-freshness.sh'
+
+jobs:
+  deploy:
+    name: Build, Deploy & Verify Freshness
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Export GIT_COMMIT
+        run: echo "GIT_COMMIT=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build images with commit label
+        run: |
+          docker compose -f docker-compose.yml build \
+            --build-arg GIT_COMMIT="$GIT_COMMIT"
+
+      - name: Deploy (dry-run / verify labels)
+        run: |
+          # Start containers
+          docker compose -f docker-compose.yml up -d
+          # Wait for containers to start
+          sleep 5
+          # Verify freshness
+          ./scripts/verify-container-freshness.sh order-service-java "$GIT_COMMIT" || true
+          ./scripts/verify-container-freshness.sh nginx "$GIT_COMMIT" || true
+
+      - name: Fail on stale containers
+        run: |
+          FAIL=0
+          for svc in order-service-java nginx; do
+            CID=$(docker compose -f docker-compose.yml ps -q "$svc" | head -1)
+            if [ -n "$CID" ]; then
+              NAME=$(docker inspect --format='{{.Name}}' "$CID" | sed 's/^\///')
+              if ! ./scripts/verify-container-freshness.sh "$NAME" "$GIT_COMMIT"; then
+                FAIL=1
+              fi
+            fi
+          done
+          if [ $FAIL -ne 0 ]; then
+            echo "::error::Container freshness check failed. Images are stale."
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.yml down

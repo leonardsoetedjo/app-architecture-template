@@ -1,6 +1,6 @@
 # Build stage
 FROM registry.access.redhat.com/ubi9/python-312:latest AS builder
-
+ARG GIT_COMMIT=unknown
 WORKDIR /build
 
 # Install build dependencies (UBI uses microdnf)
@@ -15,6 +15,8 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # Runtime stage
 # ──────────────────────────────────────────────
 FROM registry.access.redhat.com/ubi9/python-312:latest
+ARG GIT_COMMIT=unknown
+LABEL commit="$GIT_COMMIT"
 
 WORKDIR /app
 

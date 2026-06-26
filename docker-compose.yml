@@ -4,6 +4,8 @@ services:
     build:
       context: ./boilerplate/java/order-service
       dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/order_db
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -90,6 +92,8 @@ services:
     build:
       context: ./boilerplate/reactjs
       dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
     networks:
       - app-network
 

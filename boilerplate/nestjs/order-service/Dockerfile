@@ -1,5 +1,6 @@
 # ---- Build stage ----
 FROM node:20-alpine AS builder
+ARG GIT_COMMIT=unknown
 
 WORKDIR /app
 
@@ -13,6 +14,8 @@ RUN npm run build
 
 # ---- Runtime stage ----
 FROM node:20-alpine
+ARG GIT_COMMIT=unknown
+LABEL commit="$GIT_COMMIT"
 
 WORKDIR /app
 

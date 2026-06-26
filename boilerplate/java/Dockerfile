@@ -1,6 +1,7 @@
 # Multi-stage build for the order-service Spring Boot application
 # Builder: Maven + JDK 21 | Runtime: Red Hat UBI-minimal + JRE 21
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
+ARG GIT_COMMIT=unknown
 WORKDIR /app
 
 # Copy pom files first for Docker layer caching
@@ -21,6 +22,8 @@ RUN mvn -f common/pom.xml clean install -DskipTests -q 2>&1 | tail -5 && \
 
 # ── Runtime ──
 FROM registry.access.redhat.com/ubi9/openjdk-21-runtime:latest
+ARG GIT_COMMIT=unknown
+LABEL commit="$GIT_COMMIT"
 WORKDIR /app
 
 COPY --from=builder /app/order-service/target/order-service-*.jar app.jar

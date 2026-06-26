@@ -29,6 +29,8 @@ services:
     build:
       context: ./boilerplate/java
       dockerfile: Dockerfile.backend
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
     container_name: e2e-backend
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -58,6 +60,8 @@ services:
     build:
       context: ./boilerplate/reactjs
       dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
     container_name: e2e-frontend
     ports:
       - "3000:80"

@@ -1,5 +1,6 @@
 # Multi-stage build for the React + TypeScript + Ant Design frontend
 FROM node:20 AS builder
+ARG GIT_COMMIT=unknown
 ARG VITE_APP_BASE
 ARG VITE_APP_BASENAME
 ARG VITE_API_BASE_URL
@@ -18,6 +19,8 @@ RUN npm run build
 
 # ── Production serve ──
 FROM nginx:alpine
+ARG GIT_COMMIT=unknown
+LABEL commit="$GIT_COMMIT"
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 

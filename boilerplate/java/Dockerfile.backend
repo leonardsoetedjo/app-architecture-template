@@ -1,5 +1,6 @@
 # Multi-module build: common → order-service
 FROM eclipse-temurin:21-jdk-alpine AS builder
+ARG GIT_COMMIT=unknown
 WORKDIR /build
 
 # Copy both modules
@@ -17,6 +18,8 @@ RUN cd order-service && ./mvnw -B package -DskipTests
 
 # ── Production runtime ──
 FROM eclipse-temurin:21-jre-alpine
+ARG GIT_COMMIT=unknown
+LABEL commit="$GIT_COMMIT"
 WORKDIR /app
 COPY --from=builder /build/order-service/target/*.jar app.jar
 EXPOSE 8080
