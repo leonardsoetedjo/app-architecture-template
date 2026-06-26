@@ -1,0 +1,32 @@
+meta {
+  name: Get Orders
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/orders?page=0&size=10
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.content: isDefined
+  res.body.totalElements: isDefined
+  res.body.totalPages: isDefined
+  res.body.page: isDefined
+  res.body.size: isDefined
+}

@@ -50,8 +50,26 @@ mvn test -Dtest=CleanArchitectureLayersTest   # Architecture
 mvn compile -q                                 # Compile
 ```
 
-## 5. Verification
+## 5. Smoke Test (Bruno)
+
+Run after `docker compose up` to verify backend + frontend integration:
+
+```bash
+cd boilerplate/tests/bruno
+bru run --env java-local
+```
+
+| Test | What it catches |
+|------|-----------------|
+| `health-check.bru` | Service not started, wrong port |
+| `login.bru` | Auth mismatch, JWT shape drift |
+| `get-orders.bru` | Pagination API contract violation |
+
+> **Why Bruno?** Smoke test runs in ~10s. If it fails, Playwright (2–3 min) is guaranteed to fail too — catch proxy/port/config errors fast. See #217 for full rationale.
+
+## 6. Verification
 
 - [ ] ArchUnit passes
+- [ ] Bruno smoke tests pass (`bru run --env java-local`)
 - [ ] No Spring/JPA/Lombok imports in `domain/`
 - [ ] Commit message includes "Architecture: ArchUnit PASSED"

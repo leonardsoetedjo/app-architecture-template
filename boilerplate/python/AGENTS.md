@@ -56,8 +56,26 @@ ruff check src/              # Lint
 pyright src/                 # Type check
 ```
 
-## 5. Verification
+## 5. Smoke Test (Bruno)
+
+Run after `docker compose up` to verify backend + frontend integration:
+
+```bash
+cd boilerplate/tests/bruno
+bru run --env python-local
+```
+
+| Test | What it catches |
+|------|-----------------|
+| `health-check.bru` | Service not started, wrong port |
+| `login.bru` | Auth mismatch, JWT shape drift |
+| `get-orders.bru` | Pagination API contract violation |
+
+> **Why Bruno?** Smoke test runs in ~10s. If it fails, Playwright (2–3 min) is guaranteed to fail too — catch proxy/port/config errors fast. See #217 for full rationale.
+
+## 6. Verification
 
 - [ ] pytest-archon passes
+- [ ] Bruno smoke tests pass (`bru run --env python-local`)
 - [ ] No framework imports in `domain/`
 - [ ] Commit message includes "Architecture: pytest PASSED"

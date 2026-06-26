@@ -1,0 +1,185 @@
+name: Smoke Test
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'boilerplate/**'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  JAVA_VERSION: '21'
+  REGISTRY: ghcr.io
+
+jobs:
+  smoke-test-nestjs:
+    name: NestJS + ReactJS Smoke Test
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.changed_files, 'boilerplate/nestjs/') || contains(github.event.pull_request.changed_files, 'boilerplate/reactjs/') || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Build NestJS Docker image
+        working-directory: ./boilerplate/nestjs/order-service
+        run: docker build -t order-service-nestjs:latest .
+
+      - name: Build ReactJS Docker image
+        working-directory: ./boilerplate/reactjs
+        run: docker build -t order-frontend:latest .
+
+      - name: Install Bruno CLI
+        run: npm install -g @usebruno/cli
+
+      - name: Start services via docker compose
+        working-directory: .
+        run: |
+          docker compose up -d postgres order-service-nestjs nginx
+          # Wait for PostgreSQL
+          until docker compose exec -T postgres pg_isready -U postgres -d order_db 2>/dev/null; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+          echo "PostgreSQL ready"
+          # Wait for NestJS health endpoint
+          until curl -sf http://localhost:8082/actuator/health 2>/dev/null; do
+            echo "Waiting for NestJS..."
+            sleep 2
+          done
+          echo "NestJS ready"
+
+      - name: Run Bruno smoke tests
+        working-directory: ./boilerplate/tests/bruno
+        run: bru run --env local
+        timeout-minutes: 2
+
+      - name: Run Playwright E2E tests
+        working-directory: ./boilerplate/reactjs
+        run: |
+          npx playwright install chromium
+          npx playwright test --project=chromium
+        env:
+          CI: true
+          PLAYWRIGHT_BROWSERS_PATH: /tmp/pw-browsers
+        timeout-minutes: 5
+
+      - name: Verify container image freshness
+        run: |
+          COMMIT_SHA=$(git rev-parse HEAD)
+          NESTJS_LABEL=$(docker inspect --format='{{index .Config.Labels "org.opencontainers.image.revision"}}' order-service-nestjs:latest)
+          if [ "$NESTJS_LABEL" != "$COMMIT_SHA" ]; then
+            echo "::warning::NestJS image label ($NESTJS_LABEL) does not match current commit ($COMMIT_SHA)"
+          fi
+          echo "Container labels verified"
+
+      - name: Tear down services
+        if: always()
+        run: docker compose down --volumes
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-smoke-test
+          path: ./boilerplate/reactjs/playwright-report/
+          retention-days: 7
+
+  smoke-test-java:
+    name: Java + ReactJS Smoke Test
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.changed_files, 'boilerplate/java/') || contains(github.event.pull_request.changed_files, 'boilerplate/reactjs/') || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Build Java Docker image
+        working-directory: ./boilerplate/java/order-service
+        run: docker build -t order-service-java:latest .
+
+      - name: Build ReactJS Docker image
+        working-directory: ./boilerplate/reactjs
+        run: docker build -t order-frontend:latest .
+
+      - name: Install Bruno CLI
+        run: npm install -g @usebruno/cli
+
+      - name: Start Java services via docker compose
+        working-directory: .
+        run: |
+          docker compose up -d postgres order-service-java nginx
+          # Wait for PostgreSQL
+          until docker compose exec -T postgres pg_isready -U postgres -d order_db 2>/dev/null; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+          echo "PostgreSQL ready"
+          # Wait for Java health endpoint
+          until curl -sf http://localhost:8080/actuator/health 2>/dev/null; do
+            echo "Waiting for Java service..."
+            sleep 2
+          done
+          echo "Java service ready"
+
+      - name: Run Bruno smoke tests (Java env)
+        working-directory: ./boilerplate/tests/bruno
+        run: bru run --env java-local
+        timeout-minutes: 2
+
+      - name: Run Playwright E2E tests
+        working-directory: ./boilerplate/reactjs
+        run: |
+          npx playwright install chromium
+          npx playwright test --project=chromium
+        env:
+          CI: true
+          PLAYWRIGHT_BROWSERS_PATH: /tmp/pw-browsers
+        timeout-minutes: 5
+
+      - name: Verify container image freshness
+        run: |
+          COMMIT_SHA=$(git rev-parse HEAD)
+          JAVA_LABEL=$(docker inspect --format='{{index .Config.Labels "org.opencontainers.image.revision"}}' order-service-java:latest)
+          if [ "$JAVA_LABEL" != "$COMMIT_SHA" ]; then
+            echo "::warning::Java image label ($JAVA_LABEL) does not match current commit ($COMMIT_SHA)"
+          fi
+          echo "Container labels verified"
+
+      - name: Tear down services
+        if: always()
+        run: docker compose down --volumes
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-smoke-test-java
+          path: ./boilerplate/reactjs/playwright-report/
+          retention-days: 7
