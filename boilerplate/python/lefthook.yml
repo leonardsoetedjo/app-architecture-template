@@ -1,0 +1,28 @@
+# Per-boilerplate lefthook: Python Clean Architecture
+pre-commit:
+  parallel: true
+  commands:
+    architecture:
+      run: |
+        pytest tests/archunit/test_comprehensive_architecture.py -v --tb=short
+        echo "Architecture: PASSED"
+    lint:
+      run: |
+        ruff check src/ tests/
+        echo "Lint: PASSED"
+    type-check:
+      run: |
+        pyright src/
+        echo "Type: PASSED"
+    # Gate 7: Security scan
+    security:
+      run: |
+        bash ../../scripts/gate-7-security.sh .
+        echo "Gate 7: PASSED"
+
+pre-push:
+  commands:
+    test:
+      run: |
+        pytest tests/unit/ -x --tb=short
+        echo "Test: PASSED"

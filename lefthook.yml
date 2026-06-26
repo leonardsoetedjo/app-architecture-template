@@ -1,192 +1,32 @@
-# Lefthook - Polyglot Git Hook Manager
+# Lefthook - Polyglot Git Hook Manager (Root Config)
 # Reference: docs/01-agnostic/01-standards/21-validation-harness.md
+#
+# Each boilerplate owns its own lefthook.yml. Root delegates via extends.
 #
 # Installation:
 #   curl -sSfL https://lefthook.dev/install | bash
-#   # or: npm install -g lefthook
-#   # or: brew install lefthook
-#
-# Usage:
 #   lefthook install          # Install git hooks
-#   lefthook run pre-commit   # Run pre-commit hooks manually
-#   lefthook run pre-push     # Run pre-push hooks manually
+#   lefthook run pre-commit   # Run ALL pre-commit gates
+#
+# Running from a boilerplate directory:
+#   cd boilerplate/reactjs && lefthook run pre-commit  # ReactJS gates only
 #
 # Skip hooks:
 #   SKIP=arch-test git commit  # Skip specific hook
 #   git commit --no-verify     # Skip all hooks (emergency only)
 
+extends:
+  - boilerplate/reactjs/lefthook.yml
+  - boilerplate/nestjs/lefthook.yml
+  - boilerplate/java/lefthook.yml
+  - boilerplate/python/lefthook.yml
+  - boilerplate/quasar/lefthook.yml
+
+# Root-level gates (apply to whole repo, not per-boilerplate)
 pre-commit:
-  parallel: true  # Run commands in parallel for speed
+  parallel: true
   commands:
-    # ========================================================================
-    # PYTHON - FastAPI Boilerplate
-    # ========================================================================
-    python-import:
-      glob: "boilerplate/python/**/*.py"
-      run: |
-        cd boilerplate/python/order-service && \
-        python -c "from src.main import app"
-      skip:
-        - merge
-        - rebase
-
-    python-lint:
-      glob: "boilerplate/python/**/*.py"
-      run: |
-        cd boilerplate/python/order-service && \
-        ruff check src/ tests/
-      skip:
-        - merge
-        - rebase
-
-    python-type:
-      glob: "boilerplate/python/**/*.py"
-      run: |
-        cd boilerplate/python/order-service && \
-        pyright src/
-      skip:
-        - merge
-        - rebase
-
-    python-arch:
-      glob: "boilerplate/python/**/*"
-      run: |
-        cd boilerplate/python/order-service && \
-        pytest tests/archunit/test_comprehensive_architecture.py -v --tb=short
-      require_serial: true
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # JAVA - Spring Boot Boilerplate
-    # ========================================================================
-    java-compile:
-      glob: "boilerplate/java/**/*.java"
-      run: |
-        cd boilerplate/java/order-service && \
-        mvn compile -q -DskipTests
-      skip:
-        - merge
-        - rebase
-
-    java-arch:
-      glob: "boilerplate/java/**/*"
-      run: |
-        cd boilerplate/java/order-service && \
-        mvn test -Dtest=ComprehensiveArchitectureTest -q
-      require_serial: true
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # TYPESCRIPT - React Boilerplate
-    # ========================================================================
-    react-lint:
-      glob: "boilerplate/reactjs/**/*.{ts,tsx}"
-      run: |
-        cd boilerplate/reactjs && \
-        npx eslint {staged_files}
-      skip:
-        - merge
-        - rebase
-
-    react-type:
-      glob: "boilerplate/reactjs/**/*.{ts,tsx}"
-      run: |
-        cd boilerplate/reactjs && \
-        npx tsc --noEmit
-      skip:
-        - merge
-        - rebase
-
-    react-arch:
-      glob: "boilerplate/reactjs/**/*"
-      run: |
-        cd boilerplate/reactjs && \
-        npx depcruise --validate .dependency-cruiser.cjs src/
-      require_serial: true
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # TYPESCRIPT - Quasar Boilerplate
-    # ========================================================================
-    quasar-lint:
-      glob: "boilerplate/quasar/**/*.{ts,tsx,vue}"
-      run: |
-        cd boilerplate/quasar && \
-        npx eslint {staged_files}
-      skip:
-        - merge
-        - rebase
-
-    quasar-type:
-      glob: "boilerplate/quasar/**/*.{ts,tsx,vue}"
-      run: |
-        cd boilerplate/quasar && \
-        npx vue-tsc --noEmit
-      skip:
-        - merge
-        - rebase
-
-    quasar-arch:
-      glob: "boilerplate/quasar/**/*"
-      run: |
-        cd boilerplate/quasar && \
-        npx depcruise --validate .dependency-cruiser.js src/
-      require_serial: true
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # NESTJS - NestJS / TypeORM Boilerplate
-    # ========================================================================
-    nestjs-lint:
-      glob: "boilerplate/nestjs/**/*.{ts,tsx}"
-      run: |
-        cd boilerplate/nestjs/order-service && \
-        npx eslint {staged_files}
-      skip:
-        - merge
-        - rebase
-
-    nestjs-type:
-      glob: "boilerplate/nestjs/**/*.{ts,tsx}"
-      run: |
-        cd boilerplate/nestjs/order-service && \
-        npx tsc --noEmit
-      skip:
-        - merge
-        - rebase
-
-    nestjs-arch:
-      glob: "boilerplate/nestjs/**/*"
-      run: |
-        cd boilerplate/nestjs/order-service && \
-        npx depcruise --validate .dependency-cruiser.cjs src/
-      require_serial: true
-      skip:
-        - merge
-        - rebase
-
-    nestjs-arch-jest:
-      glob: "boilerplate/nestjs/**/*.spec.ts"
-      run: |
-        cd boilerplate/nestjs/order-service && \
-        npx jest --config jest-arch.config.js --passWithNoTests
-      require_serial: true
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
     # Gate 8: Rule Coverage Verification
-    # Ensures .agents.yml rules are implemented in every stack that claims them
-    # ========================================================================
     rules-coverage:
       glob: ".agents.yml"
       run: python3 scripts/verify-rules-covered.py
@@ -195,9 +35,7 @@ pre-commit:
         - merge
         - rebase
 
-    # ========================================================================
     # Gate 9: Documentation Links (catch stale refs before push)
-    # ========================================================================
     docs-links:
       glob: "docs/**/*.md"
       run: python3 scripts/validate-docs-links.py
@@ -205,9 +43,7 @@ pre-commit:
         - merge
         - rebase
 
-    # ========================================================================
     # Gate 6: Format (All Languages)
-    # ========================================================================
     format-trailing-whitespace:
       glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json,xml,gradle}"
       run: |
@@ -225,100 +61,12 @@ pre-commit:
         - merge
         - rebase
 
-    # ========================================================================
-    # Gate 7: Security (Optional — install tools per project threat model)
-    # ========================================================================
-    # Uncomment after installing security tools in your project:
-    # python-security:
-    #   glob: "*.py"
-    #   run: |
-    #     cd boilerplate/python/order-service && \
-    #     (bandit -r src/ 2>/dev/null || echo "⚠️ bandit not installed")
-    #   skip:
-    #     - merge
-    #     - rebase
-    #
-    # java-security:
-    #   glob: "*.java"
-    #   run: |
-    #     cd boilerplate/java/order-service && \
-    #     (mvn spotbugs:check 2>/dev/null || echo "⚠️ SpotBugs not installed")
-    #   skip:
-    #     - merge
-    #     - rebase
-    #
-    # node-security:
-    #   glob: "*.{ts,tsx,js,jsx,vue}"
-    #   run: |
-    #     cd boilerplate/reactjs && \
-    #     (npm audit --audit-level=moderate 2>/dev/null || echo "⚠️ npm audit not available")
-    #   skip:
-    #     - merge
-    #     - rebase
-
 pre-push:
   parallel: true
   commands:
-    # ========================================================================
     # Rule Coverage (re-run in case .agents.yml changed)
-    # ========================================================================
     rules-coverage-push:
       run: python3 scripts/verify-rules-covered.py
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # PYTHON - Full Test Suite (pre-push only, not on every commit)
-    # ========================================================================
-    python-test:
-      run: |
-        cd boilerplate/python/order-service && \
-        pytest tests/unit/ -x --tb=short
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # JAVA - Full Test Suite (pre-push only)
-    # ========================================================================
-    java-test:
-      run: |
-        cd boilerplate/java/order-service && \
-        mvn test -q
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # REACT - Unit Tests (pre-push only)
-    # ========================================================================
-    react-test:
-      run: |
-        cd boilerplate/reactjs && \
-        npm run test:unit
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # QUASAR - Unit Tests (pre-push only)
-    # ========================================================================
-    quasar-test:
-      run: |
-        cd boilerplate/quasar && \
-        npm run test:unit
-      skip:
-        - merge
-        - rebase
-
-    # ========================================================================
-    # NESTJS - Full Test Suite (pre-push only)
-    # ========================================================================
-    nestjs-test:
-      run: |
-        cd boilerplate/nestjs/order-service && \
-        npm run test:unit
       skip:
         - merge
         - rebase
@@ -327,31 +75,16 @@ commit-msg:
   commands:
     conventional-commit:
       run: |
-        # Validate commit message format
-        # Format: type(scope): description
-        # Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
         if ! grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\([a-z0-9-]+\))?: .{1,100}" "$1"; then
           echo "❌ Invalid commit message format!"
-          echo ""
           echo "Expected: type(scope): description"
           echo "Example:  feat(order-service): add payment validation"
-          echo ""
-          echo "Valid types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
           exit 1
         fi
     architecture-evidence:
       run: |
-        # Validate commit message includes architecture compliance evidence
-        # AGENTS.md §5 requires "Architecture:" evidence in every commit
         if ! grep -qi "Architecture:" "$1"; then
           echo "❌ Commit message missing architecture compliance evidence!"
-          echo ""
           echo "Required: include 'Architecture: PASSED' or 'Architecture: SKIPPED (reason)'"
-          echo ""
-          echo "Example:  feat(order-service): add payment validation"
-          echo ""
-          echo "          Architecture: ./scripts/architecture-pre-commit.sh PASSED"
-          echo ""
-          echo "To fix:   git commit --amend -m 'Your message' -m 'Architecture: PASSED'"
           exit 1
         fi

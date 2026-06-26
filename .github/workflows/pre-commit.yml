@@ -1,0 +1,75 @@
+name: Pre-commit Gates
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  lefthook-pre-commit:
+    name: Run Lefthook Pre-Commit Gates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install lefthook
+        run: |
+          curl -sSfL https://lefthook.dev/install | bash
+          lefthook --version
+
+      # Java setup (for Java boilerplate gates)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Node.js setup (for ReactJS, NestJS, Quasar gates)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Python setup (for Python gates)
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        working-directory: boilerplate/python/order-service
+        run: |
+          pip install poetry
+          poetry install
+
+      - name: Install Node dependencies (ReactJS)
+        working-directory: boilerplate/reactjs
+        run: npm ci
+
+      - name: Install Node dependencies (NestJS)
+        working-directory: boilerplate/nestjs/order-service
+        run: npm ci
+
+      - name: Install Node dependencies (Quasar)
+        working-directory: boilerplate/quasar
+        run: npm ci
+
+      - name: Run lefthook pre-commit
+        run: lefthook run pre-commit
+
+      - name: Block on violations
+        if: failure()
+        run: |
+          echo "::error::Lefthook pre-commit gates failed. PR cannot merge."
+          echo ""
+          echo "To fix locally:"
+          echo "  1. cd boilerplate/<stack>"
+          echo "  2. Run the failing gate command from lefthook.yml"
+          echo "  3. Commit with architecture evidence: 'Architecture: PASSED'"
+          exit 1

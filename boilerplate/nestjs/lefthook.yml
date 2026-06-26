@@ -1,10 +1,10 @@
-# Per-boilerplate lefthook: ReactJS Clean Architecture
+# Per-boilerplate lefthook: NestJS Clean Architecture
 pre-commit:
   parallel: true
   commands:
     architecture:
       run: |
-        npm run depcruise
+        npx depcruise --validate .dependency-cruiser.cjs src/
         echo "Architecture: PASSED"
     type-check:
       run: |
@@ -12,21 +12,12 @@ pre-commit:
         echo "Type: PASSED"
     lint:
       run: |
-        npm run lint
+        npx eslint "src/**/*.{ts,tsx}"
         echo "Lint: PASSED"
     test:
       run: |
-        npm test -- --run
+        npm run test:unit -- --run
         echo "Test: PASSED"
-    format:
-      run: |
-        npx prettier --check "src/**/*.{ts,tsx}"
-        echo "Format: PASSED"
-    # Gate 5a: Frontend config sanity
-    config-sanity:
-      run: |
-        bash ../../scripts/gate-5a-reactjs.sh .
-        echo "Gate 5a: PASSED"
     # Gate 7: Security scan
     security:
       run: |

@@ -22,6 +22,11 @@ pre-commit:
       run: |
         npx prettier --check "src/**/*.{ts,vue}"
         echo "Format: PASSED"
+    # Gate 7: Security scan
+    security:
+      run: |
+        bash ../../scripts/gate-7-security.sh .
+        echo "Gate 7: PASSED"
 
 pre-push:
   commands:

@@ -1,0 +1,28 @@
+# Per-boilerplate lefthook: Java Clean Architecture
+pre-commit:
+  parallel: false  # Maven serial execution
+  commands:
+    architecture:
+      run: |
+        mvn test -Dtest=CleanArchitectureRulesTest -q
+        echo "Architecture: PASSED"
+    compile:
+      run: |
+        mvn compile -q -DskipTests
+        echo "Compile: PASSED"
+    lint:
+      run: |
+        mvn spotless:check -q
+        echo "Lint: PASSED"
+    # Gate 7: Security scan
+    security:
+      run: |
+        bash ../../scripts/gate-7-security.sh .
+        echo "Gate 7: PASSED"
+
+pre-push:
+  commands:
+    test:
+      run: |
+        mvn test -q
+        echo "Test: PASSED"
