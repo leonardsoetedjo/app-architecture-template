@@ -36,7 +36,17 @@ if echo "$FILE_PATH" | grep -q "/domain/\|\\\\domain\\\\"; then
       FORBIDDEN_PATTERN="import org\.springframework|import jakarta\.persistence|import javax\.persistence|import lombok\."
       ;;
     py)
-      FORBIDDEN_PATTERN="import fastapi|import sqlalchemy|from fastapi|from sqlalchemy|from pydantic"
+      echo "   Checking Python file via AST..."
+      python3 "$SCRIPT_DIR/check_python_architecture.py" --json "$FILE_PATH" 2>/dev/null | python3 -c "
+    import json,sys
+    data=json.load(sys.stdin)
+    if data['summary']['total'] > 0:
+    for v in data['violations']:
+      print(f\"  ❌ {v['file']}:{v['line']} {v['kind']} → {v['module']}\")
+    sys.exit(1)
+    print('  ✅ Python architecture OK')
+    "
+      exit $?
       ;;
     ts|tsx|js|jsx|vue)
       FORBIDDEN_PATTERN="from.*infrastructure|import.*infrastructure"
