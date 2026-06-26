@@ -14,10 +14,6 @@ headers {
   Content-Type: application/json
 }
 
-auth {
-  mode: bearer
-}
-
 auth:bearer {
   token: {{accessToken}}
 }
@@ -29,4 +25,9 @@ assert {
   res.body.totalPages: isDefined
   res.body.page: isDefined
   res.body.size: isDefined
+  res.body.content[0].orderId: isDefined
+  res.body.content[0].status: isDefined
+  res.body.content[0].totalAmount: isDefined
+  res.body.content[0].createdAt: isDefined
+  res.body.content[0].itemCount: isDefined
 }

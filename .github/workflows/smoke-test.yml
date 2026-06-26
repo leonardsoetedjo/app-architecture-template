@@ -79,12 +79,12 @@ jobs:
 
       - name: Verify container image freshness
         run: |
-          COMMIT_SHA=$(git rev-parse HEAD)
-          NESTJS_LABEL=$(docker inspect --format='{{index .Config.Labels "org.opencontainers.image.revision"}}' order-service-nestjs:latest)
-          if [ "$NESTJS_LABEL" != "$COMMIT_SHA" ]; then
-            echo "::warning::NestJS image label ($NESTJS_LABEL) does not match current commit ($COMMIT_SHA)"
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          CID=$(docker compose ps -q order-service-nestjs | head -1)
+          if [ -n "$CID" ]; then
+            NAME=$(docker inspect --format='{{.Name}}' "$CID" | sed 's/^\///')
+            ./scripts/verify-container-freshness.sh "$NAME" "$COMMIT_SHA" || true
           fi
-          echo "Container labels verified"
 
       - name: Tear down services
         if: always()
@@ -165,12 +165,12 @@ jobs:
 
       - name: Verify container image freshness
         run: |
-          COMMIT_SHA=$(git rev-parse HEAD)
-          JAVA_LABEL=$(docker inspect --format='{{index .Config.Labels "org.opencontainers.image.revision"}}' order-service-java:latest)
-          if [ "$JAVA_LABEL" != "$COMMIT_SHA" ]; then
-            echo "::warning::Java image label ($JAVA_LABEL) does not match current commit ($COMMIT_SHA)"
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          CID=$(docker compose ps -q order-service-java | head -1)
+          if [ -n "$CID" ]; then
+            NAME=$(docker inspect --format='{{.Name}}' "$CID" | sed 's/^\///')
+            ./scripts/verify-container-freshness.sh "$NAME" "$COMMIT_SHA" || true
           fi
-          echo "Container labels verified"
 
       - name: Tear down services
         if: always()
@@ -183,3 +183,75 @@ jobs:
           name: playwright-report-smoke-test-java
           path: ./boilerplate/reactjs/playwright-report/
           retention-days: 7
+
+  contract-validation:
+    name: Cross-Stack API Contract Validation
+    runs-on: ubuntu-latest
+    needs: [smoke-test-nestjs, smoke-test-java]
+    if: always() && (needs.smoke-test-nestjs.result == 'success' || needs.smoke-test-java.result == 'success')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Bruno CLI
+        run: npm install -g @usebruno/cli
+
+      - name: Start Java backend (reference)
+        working-directory: ./boilerplate/java/order-service
+        run: |
+          docker build -t order-service-java:latest .
+          docker compose up -d postgres order-service-java
+          until curl -sf http://localhost:8080/actuator/health 2>/dev/null; do
+            echo "Waiting for Java..."
+            sleep 2
+          done
+
+      - name: Capture Java responses
+        working-directory: ./boilerplate/tests/bruno
+        run: bru run --env java-local > /tmp/java-contract.log 2>&1 || true
+
+      - name: Start NestJS backend (candidate)
+        working-directory: ./boilerplate/nestjs/order-service
+        run: |
+          docker build -t order-service-nestjs:latest .
+          docker compose up -d order-service-nestjs
+          until curl -sf http://localhost:8082/actuator/health 2>/dev/null; do
+            echo "Waiting for NestJS..."
+            sleep 2
+          done
+
+      - name: Capture NestJS responses
+        working-directory: ./boilerplate/tests/bruno
+        run: bru run --env local > /tmp/nestjs-contract.log 2>&1 || true
+
+      - name: Compare contract shapes
+        run: |
+          echo "=== Java contract output ==="
+          cat /tmp/java-contract.log
+          echo ""
+          echo "=== NestJS contract output ==="
+          cat /tmp/nestjs-contract.log
+          echo ""
+          if grep -q "FAIL" /tmp/java-contract.log || grep -q "FAIL" /tmp/nestjs-contract.log; then
+            echo "::error::Contract validation failed — one or more backends returned errors"
+            exit 1
+          fi
+          echo "PASS: Both backends pass Bruno contract assertions"
+
+      - name: Tear down services
+        if: always()
+        run: docker compose down --volumes
