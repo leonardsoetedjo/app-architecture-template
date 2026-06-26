@@ -61,6 +61,33 @@ npm run depcruise && npx tsc --noEmit && npm run lint && npm test
 - [ ] No `: any` in `src/`
 - [ ] Commit: "Architecture: depcruise PASSED"
 
-## 6. Critical Patterns
+## 6. API Type Generation
+
+### Generate from OpenAPI
+
+ReactJS types are auto-generated from backend OpenAPI specs. Do NOT manually edit `src/generated/api.ts`.
+
+```bash
+# Start backend (Java/NestJS/Python) on localhost:8080
+cd boilerplate/reactjs
+npm run generate:api-types     # Fetches /v3/api-docs → src/generated/api.ts
+```
+
+### Check freshness (CI gate)
+
+```bash
+npm run check:api-types        # Fails if backend spec has drifted
+```
+
+### Using generated types
+
+```typescript
+import type { components } from '../generated/api';
+
+// components["schemas"]["OrderResponse"] is the canonical type
+export type OrderDetail = components["schemas"]["OrderResponse"];
+```
+
+## 7. Critical Patterns
 
 Auth `hasCheckedAuth` flag required (guards skip redirect on `null`→frequent-mistakes.md). Playwright cache path: `PLAYWRIGHT_BROWSERS_PATH=/tmp/pw-browsers`.

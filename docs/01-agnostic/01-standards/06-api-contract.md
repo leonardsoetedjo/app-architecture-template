@@ -57,3 +57,50 @@ api_router.include_router(portfolio.router, prefix="/portfolio")  # ← MUST reg
 
 ## 3. Distribution
 The generated OpenAPI spec is published to a central portal (e.g., Swagger Hub or a shared internal page) as part of the deployment pipeline to allow consumers to generate type-safe clients.
+
+## 4. Frontend Type Synchronization
+
+### Problem
+Backend generates OpenAPI, but frontend TypeScript types are manually maintained. They diverge silently — backend adds a field, frontend doesn't know, runtime crash.
+
+### Solution: OpenAPI → TypeScript Generation
+
+**Tool**: `openapi-typescript` (npm package)  
+**Source**: Backend `/v3/api-docs` endpoint  
+**Target**: Frontend `src/generated/api.ts`
+
+**Workflow (developer)**:
+```bash
+# 1. Start backend
+# 2. Generate types
+cd boilerplate/reactjs   # or boilerplate/quasar
+npm run generate:api-types   # Fetches OpenAPI → src/generated/api.ts
+# 3. Commit the updated types
+```
+
+**Workflow (CI)**:
+```yaml
+# On backend PR merge → generate types → commit to frontend repo
+# On frontend PR → npm run check:api-types → fails if stale
+```
+
+### Standards
+- `src/generated/api.ts` is **auto-generated** — never edit manually
+- Frontend imports must use `components["schemas"]["SchemaName"]` for type safety
+- If `npm run check:api-types` fails, regenerate before committing
+- Breaking backend changes require frontend PR with regenerated types
+
+### Tooling
+| File | Purpose |
+|------|---------|
+| `scripts/generate-api-types.sh` | Fetches OpenAPI JSON, runs `openapi-typescript`, adds header |
+| `scripts/check-api-types.sh` | Compares current types against live backend; fails on drift |
+| `npm run generate:api-types` | Frontend package.json script |
+| `npm run check:api-types` | CI gate script |
+
+### Integration Checklist
+- [ ] `openapi-typescript` in frontend `devDependencies`
+- [ ] `npm run generate:api-types` script in `package.json`
+- [ ] `npm run check:api-types` script in `package.json` (CI gate)
+- [ ] `.gitattributes` marks `src/generated/api.ts` as generated (optional but recommended)
+- [ ] CI workflow runs `check:api-types` on frontend PRs
