@@ -49,6 +49,24 @@ The app will be available at `http://localhost:5173`
 pnpm build
 ```
 
+### Pre-commit Hooks
+
+Install [lefthook](https://lefthook.dev) for architecture validation:
+
+```bash
+# Install lefthook globally
+npm install -g lefthook
+# or use npx
+npx lefthook install
+```
+
+Then run gates:
+
+```bash
+lefthook run pre-commit   # All pre-commit gates
+lefthook run pre-push     # All pre-push gates
+```
+
 ### Testing
 
 ```bash

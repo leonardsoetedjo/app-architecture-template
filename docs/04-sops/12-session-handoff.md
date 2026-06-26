@@ -58,7 +58,7 @@ pytest
 npm test
 
 # 3. Architecture compliance
-./scripts/architecture-pre-commit.sh
+lefthook run pre-commit
 
 # 4. Feature acceptance criteria
 # Run the specific verification for your feature

@@ -228,28 +228,15 @@ architecture_rules:
     enforced_by: dependency-cruiser / code review
 # -----------------------------------------------------------------------
 # Forbidden import patterns by layer
-# DEPRECATED: Use architecture_rules[].pre_commit_pattern instead.
-# Kept minimal for legacy pre-commit hooks that haven't migrated yet.
-# These IDs MUST NOT duplicate entries in architecture_rules[].
+# DEPRECATED: These legacy rules were for the old architecture-pre-commit.sh script.
+# They are superseded by:
+#   - Java: ArchUnit CleanArchitectureRulesTest + MdcHygieneRulesTest + OptimisticLockingRulesTest
+#   - Python: pytest tests/archunit/
+#   - Frontend: dependency-cruiser --validate
+#   - All stacks: lefthook pre-commit gates (Gate 5a, Gate 7)
+# Kept as stubs to avoid breaking consumers that reference by ID. Will be removed in v2.0.
 # -----------------------------------------------------------------------
-forbidden_patterns:
-  - id: LEGACY-PYTHON-IMPORT-GREP
-    name: domain_framework_imports_python
-    pattern: "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)"
-    path_regex: "src/domain/.*\\.py$"
-    message: "Domain layer must not import frameworks"
-    rationale: "Domain logic is framework-agnostic. Coupling to FastAPI/SQLAlchemy/Pydantic makes testing impossible and prevents stack swaps."
-    severity: error
-    stacks: [python]
-
-  - id: LEGACY-JAVA-IMPORT-GREP
-    name: domain_framework_imports_java
-    pattern: "^(import)\\s+(org\\.springframework|javax\\.persistence|lombok)"
-    path_regex: "src/main/java/.*/domain/.*\\.java$"
-    message: "Domain layer must not import frameworks"
-    rationale: "Domain logic is framework-agnostic. Coupling to Spring/JPA/Lombok makes testing impossible and prevents stack swaps."
-    severity: error
-    stacks: [java]
+forbidden_patterns: []
 
 # -----------------------------------------------------------------------
 # Project boilerplate linkage
@@ -296,7 +283,7 @@ index: docs/.index.json
 # Pre-commit command
 # Agents MUST run this before claiming any task complete.
 # -----------------------------------------------------------------------
-pre_commit: ./scripts/architecture-pre-commit.sh
+pre_commit: lefthook run pre-commit
 
 # -----------------------------------------------------------------------
 # Quick reference — valid in any stack

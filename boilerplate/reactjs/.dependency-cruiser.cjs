@@ -2,29 +2,31 @@
 module.exports = {
   extends: "dependency-cruiser/configs/recommended-strict",
   forbidden: [
-    // Rules enforced: DDD-DEPENDENCY-CHECK (module dependency validation)
+    // Rule: domain-cannot-depend-on-higher-layers (FSD: entities → shared only)
     {
       name: "domain-cannot-depend-on-higher-layers",
-      comment: "Domain layer must be pure — no imports from application or infrastructure",
+      comment: "Entities (domain layer) must not import from features, pages, widgets, or app layers",
       severity: "error",
       from: {
-        path: "^src/types"
+        path: "^src/entities/"
       },
       to: {
-        path: "^(src/(hooks|services|store|components|pages)|src/[^/]+)"
+        path: "^(src/(features|pages|widgets|app))"
       }
     },
+    // Rule: features-cannot-depend-on-pages-or-widgets (app is OK for typed hooks)
     {
-      name: "hooks-cannot-import-services-directly",
-      comment: "Hooks (application layer) should receive services via DI, not import them directly",
+      name: "features-cannot-depend-on-pages-or-widgets",
+      comment: "Features (application layer) must not import from pages or widgets",
       severity: "error",
       from: {
-        path: "^src/hooks"
+        path: "^src/features/"
       },
       to: {
-        path: "^src/services",
+        path: "^(src/(pages|widgets))"
       }
     },
+    // Rule: no-circular-dependencies
     {
       name: "no-circular-dependencies",
       comment: "No circular dependencies between modules",
@@ -34,15 +36,6 @@ module.exports = {
         circular: true
       }
     },
-    {
-      name: "no-any-type",
-      comment: "Detects type-only imports",
-      severity: "warn",
-      from: {},
-      to: {
-        dependencyTypes: ["type-only"],
-      }
-    }
   ],
   options: {
     exclude: {

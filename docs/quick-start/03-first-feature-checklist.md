@@ -109,9 +109,9 @@ public interface GetOrderById {
 ```java
 @ApplicationService  // Your framework's annotation
 public class GetOrderByIdImpl implements GetOrderById {
-    
+
     private final OrderRepository repository;
-    
+
     @Override
     public Order execute(UUID id) {
         return repository.findById(id)
@@ -120,7 +120,7 @@ public class GetOrderByIdImpl implements GetOrderById {
 }
 ```
 
-**✅ Verify:** 
+**✅ Verify:**
 - No HTTP framework imports
 - No database framework imports
 - Only domain and application layer imports
@@ -135,15 +135,15 @@ public class GetOrderByIdImpl implements GetOrderById {
 ```java
 @Repository  // NOW you can use framework annotations
 public class JpaOrderRepository implements OrderRepository {
-    
+
     private final JpaOrderEntityRepository entityRepository;
-    
+
     @Override
     public Optional<Order> findById(UUID id) {
         return entityRepository.findById(id)
             .map(entity -> entity.toDomain());  // Entity → Domain mapping
     }
-    
+
     @Override
     public Order save(Order order) {
         var entity = JpaOrderEntity.fromDomain(order);
@@ -152,7 +152,7 @@ public class JpaOrderRepository implements OrderRepository {
 }
 ```
 
-**✅ Verify:** 
+**✅ Verify:**
 - Framework imports ONLY in infrastructure layer
 - Proper domain ↔ entity mapping
 
@@ -163,9 +163,9 @@ public class JpaOrderRepository implements OrderRepository {
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    
+
     private final GetOrderById getOrderById;
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable UUID id) {
         try {
@@ -178,7 +178,7 @@ public class OrderController {
 }
 ```
 
-**✅ Verify:** 
+**✅ Verify:**
 - Controller is in `infrastructure/web/` (NOT in application layer)
 - Dependency injection of use case interface (not implementation)
 
@@ -200,7 +200,7 @@ void order_creation_with_valid_data_should_succeed() {
         new Money("100.00", "USD"),
         Instant.now()
     );
-    
+
     assertThat(order.id()).isNotNull();
     assertThat(order.customerId()).isEqualTo("customer-123");
 }
@@ -216,17 +216,17 @@ void order_creation_with_valid_data_should_succeed() {
 void execute_with_existing_id_should_return_order() {
     var order = createTestOrder();
     when(repository.findById(order.id())).thenReturn(Optional.of(order));
-    
+
     var result = useCase.execute(order.id());
-    
+
     assertThat(result).isEqualTo(order);
 }
 
 @Test
 void execute_with_missing_id_should_throw() {
     when(repository.findById(any())).thenReturn(Optional.empty());
-    
-    assertThrows(OrderNotFoundException.class, () -> 
+
+    assertThrows(OrderNotFoundException.class, () ->
         useCase.execute(UUID.randomUUID())
     );
 }
@@ -241,30 +241,30 @@ void execute_with_missing_id_should_throw() {
 @SpringBootTest
 @AutoConfigureTestcontainers
 class OrderControllerIntegrationTest {
-    
+
     @Autowired private TestRestTemplate restTemplate;
     @Autowired private OrderRepository repository;
-    
+
     @Test
     void get_order_by_id_should_return_200() {
         var order = repository.save(createTestOrder());
-        
+
         var response = restTemplate.getForEntity(
-            "/orders/" + order.id(), 
+            "/orders/" + order.id(),
             OrderResponse.class
         );
-        
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().id()).isEqualTo(order.id());
     }
-    
+
     @Test
     void get_order_by_missing_id_should_return_404() {
         var response = restTemplate.getForEntity(
-            "/orders/" + UUID.randomUUID(), 
+            "/orders/" + UUID.randomUUID(),
             Void.class
         );
-        
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }
@@ -279,7 +279,7 @@ class OrderControllerIntegrationTest {
 ### 5.1 Run Pre-Commit Check
 ```bash
 cd boilerplate/java
-../../scripts/architecture-pre-commit.sh
+../.lefthook run pre-commit
 ```
 
 **Expected output:**
@@ -329,7 +329,7 @@ git commit -m "feat: add GET /orders/{id} endpoint (#92)
 - Added unit tests (domain + use case)
 - Added integration test with Testcontainers
 
-Architecture: ./scripts/architecture-pre-commit.sh PASSED
+Architecture: lefthook run pre-commit PASSED
   - Duration: 2340ms
   - Java architecture: OK
   - Python architecture: OK
@@ -400,7 +400,7 @@ Before marking feature complete:
 
 ### Architecture Evidence (REQUIRED in commit message)
 ```
-Architecture: ./scripts/architecture-pre-commit.sh PASSED
+Architecture: lefthook run pre-commit PASSED
   - Duration: <5000ms
   - Java architecture: OK
   - Python architecture: OK
@@ -447,7 +447,7 @@ import org.springframework.data.annotation.Id;
 
 ---
 
-**Time elapsed:** ~10 minutes  
+**Time elapsed:** ~10 minutes
 **Feature complete with 100% architecture compliance!** 🎉
 
 For next features, repeat this checklist. Patterns become faster with practice.

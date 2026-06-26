@@ -211,12 +211,12 @@ All validation gates MUST be executable via a single command:
 
 ```bash
 # Run all gates
-./scripts/architecture-pre-commit.sh
+lefthook run pre-commit
 
 # Run specific gates
-./scripts/architecture-pre-commit.sh --gates 1,2,3    # Import, Type, Lint only
-./scripts/architecture-pre-commit.sh --gates 4        # Architecture only
-./scripts/architecture-pre-commit.sh --gates 8,9      # Prompt Test, Context Fit
+lefthook run pre-commit --gates 1,2,3    # Import, Type, Lint only
+lefthook run pre-commit --gates 4        # Architecture only
+lefthook run pre-commit --gates 8,9      # Prompt Test, Context Fit
 ```
 
 ### Gate Dependencies

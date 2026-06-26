@@ -49,7 +49,7 @@ order-service/
 │   ├── application/                         # Application integration tests
 │   ├── infrastructure/                      # Infrastructure tests
 │   └── archunit/                            # ArchUnit architectural tests
-│       ├── CleanArchitectureLayersTest.java
+│       ├── CleanArchitectureRulesTest.java
 │       ├── DependencyRulesTest.java
 │       └── DomainRulesTest.java
 └── src/main/resources/
@@ -313,7 +313,7 @@ mcp_sequential_thinking_think(
 
 ```bash
 # 1. Run ArchUnit architecture tests
-mvn test -pl boilerplate/java/order-service -Dtest=CleanArchitectureLayersTest
+mvn test -pl boilerplate/java/order-service -Dtest=CleanArchitectureRulesTest
 
 # 2. Check for forbidden imports in domain layer
 grep -r "org.springframework\|javax.persistence\|lombok" \
@@ -370,7 +370,7 @@ find boilerplate/java/order-service/src/main/java/domain \
 
 ```bash
 # Run ArchUnit
-mvn test -Dtest=CleanArchitectureLayersTest
+mvn test -Dtest=CleanArchitectureRulesTest
 
 # Check domain imports
 grep -r "org.springframework" src/main/java/domain/ && exit 1

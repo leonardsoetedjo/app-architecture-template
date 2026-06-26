@@ -44,7 +44,7 @@ Delete before marking done.
 
 ## Imperative 6: Architecture Compliance Before Commit
 
-Run `./scripts/architecture-pre-commit.sh` (or stack equivalent) before ANY commit.
+Run `lefthook run pre-commit` (or stack equivalent) before ANY commit.
 
 ## Imperative 7: GitHub Issues for Tracking
 
@@ -141,7 +141,7 @@ For any task touching `pyproject.toml`, `package.json`, `Dockerfile`, or TypeScr
 4. **Run the validation harness** (Standard 21):
    - Pre-commit hooks: `pre-commit run --all-files` (runs automatically on commit)
    - Import validation: `python -c "from app.main import app"` (Python) or equivalent
-   - Architecture tests: `pytest tests/archunit/` (Python) or `mvn test -Dtest=CleanArchitectureLayersTest` (Java)
+   - Architecture tests: `pytest tests/archunit/` (Python) or `mvn test -Dtest=CleanArchitectureRulesTest` (Java)
 5. **Only after all pass**, proceed to `docker compose build` or runtime testing.
 
 If any validation fails, the task is not done. Do not discover package name errors or missing binaries during `docker compose build`.

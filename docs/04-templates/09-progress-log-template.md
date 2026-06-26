@@ -124,7 +124,7 @@ Every `agent-progress.md` must follow this structure:
 - [x] Unit: `PlaceOrderUseCaseTest` passes (5/5)
 - [x] Integration: `OrderControllerIT` passes (3/3)
 - [x] Smoke: `curl -X POST http://localhost:8080/api/v1/orders -d '{...}'` → 201
-- [x] Architecture: `./scripts/architecture-pre-commit.sh` passes
+- [x] Architecture: `lefthook run pre-commit` passes
 - [x] `git status` clean
 
 ### Notes

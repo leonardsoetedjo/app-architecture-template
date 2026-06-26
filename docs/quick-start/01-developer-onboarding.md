@@ -91,7 +91,7 @@ curl https://hermes.piranha-broadnose.ts.net/order-python/docs
 ### Java
 ```bash
 cd boilerplate/java
-mvn test -pl order-service -Dtest=CleanArchitectureLayersTest
+mvn test -pl order-service -Dtest=CleanArchitectureRulesTest
 ```
 
 **Expected output:**
@@ -203,7 +203,7 @@ npm test -- --verbose  # Frontend
 
 ---
 
-**Time elapsed:** ~5 minutes  
+**Time elapsed:** ~5 minutes
 **You're ready to code!** 🚀
 
 For detailed patterns, see your boilerplate's AGENTS.md:

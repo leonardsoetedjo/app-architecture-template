@@ -152,7 +152,7 @@ mvn test -Dtest=SampleBatchIntegrationTest
 
 ```bash
 # Run ArchUnit tests
-mvn test -Dtest=CleanArchitectureLayersTest
+mvn test -Dtest=CleanArchitectureRulesTest
 
 # Expected output:
 # [OK] Domain layer has no framework imports

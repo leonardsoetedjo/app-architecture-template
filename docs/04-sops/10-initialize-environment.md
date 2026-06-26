@@ -79,12 +79,12 @@ Set up the environment so that every subsequent coding agent session can:
 2. Commit with descriptive message:
    ```
    feat: scaffold agent session harness for ${ISSUE_NUMBER}
-   
+
    - feature-list.json: ${N} features decomposed from issue
    - init.sh: dev environment startup + smoke test
    - agent-progress.md: session log initialized
-   
-   Architecture: ./scripts/architecture-pre-commit.sh PASSED
+
+   Architecture: lefthook run pre-commit PASSED
    ```
 
 3. Push to a branch:
@@ -131,7 +131,7 @@ The environment is set up for multi-session agent work.
 3. `agent-progress.md` exists with Session 1 entry
 4. All features have `passes: false`
 5. `git status` is clean
-6. `./scripts/architecture-pre-commit.sh` passes
+6. `lefthook run pre-commit` passes
 
 ## Files & Locations
 

@@ -8,7 +8,7 @@ owner: "@architecture-team"
 
 # Architecture Standards
 
-### 1.1 Forbidden Imports by Layer\n\nTo maintain the integrity of the Clean Architecture dependency rule, the following imports are strictly prohibited:\n\n| Layer | Cannot Import (Python) | Cannot Import (Java) |\n|-------|------------------------|----------------------|\n| **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` |\n| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks |\n| **Infrastructure** | *(none — can import all)* | *(none — can import all)* |\n\n**Verification**: Run `./scripts/architecture-pre-commit.sh` or manually check using:\n- Python: `grep -r \"fastapi\\|sqlalchemy\" src/domain/`\n- Java: Check for prohibited packages in domain source files.\n\n---\n
+### 1.1 Forbidden Imports by Layer\n\nTo maintain the integrity of the Clean Architecture dependency rule, the following imports are strictly prohibited:\n\n| Layer | Cannot Import (Python) | Cannot Import (Java) |\n|-------|------------------------|----------------------|\n| **Domain** | `fastapi`, `sqlalchemy`, `pydantic` | `org.springframework`, `javax.persistence`, `lombok` |\n| **Application** | `fastapi`, `sqlalchemy` | `@RestController`, HTTP frameworks |\n| **Infrastructure** | *(none — can import all)* | *(none — can import all)* |\n\n**Verification**: Run `lefthook run pre-commit` or manually check using:\n- Python: `grep -r \"fastapi\\|sqlalchemy\" src/domain/`\n- Java: Check for prohibited packages in domain source files.\n\n---\n
 
 ### Dependency Flow Diagram
 ```plantuml
@@ -477,12 +477,12 @@ DATABASE_DRIVER=
 public class OrderEntity {
     @Id
     private UUID id;  // Standard Java UUID - works on all databases
-    
+
     private UUID customerId;
-    
+
     @Column(nullable = false)
     private OffsetDateTime createdAt;
-    
+
     @Column(nullable = false, length = 20)
     private String status;
 }
@@ -498,7 +498,7 @@ Base = declarative_base()
 
 class OrderSqlModel(Base):
     __tablename__ = "orders"
-    
+
     id = Column(Uuid(), primary_key=True)  # SQLAlchemy 2.0+ cross-database UUID
     customer_id = Column(Uuid(), nullable=False)
     created_at = Column(DateTime, nullable=False)

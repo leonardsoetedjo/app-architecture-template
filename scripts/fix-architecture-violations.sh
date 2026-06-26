@@ -178,8 +178,8 @@ run_validation() {
   echo ""
   echo "[6/6] Running architecture validation..."
   
-  if [ -f "scripts/architecture-pre-commit.sh" ]; then
-    if ./scripts/architecture-pre-commit.sh; then
+  if [ -f "lefthook run pre-commit" ]; then
+    if lefthook run pre-commit; then
       echo ""
       echo "✅ All architecture checks pass!"
     else
@@ -215,7 +215,7 @@ if [ $MANUAL_COUNT -gt 0 ]; then
   echo "  - JPA entities → Move to infrastructure"
   echo "  - Repository interfaces → Extract to domain/ports/"
   echo ""
-  echo "Tip: Run './scripts/architecture-pre-commit.sh' to see remaining violations"
+  echo "Tip: Run 'lefthook run pre-commit' to see remaining violations"
 fi
 
 exit 0

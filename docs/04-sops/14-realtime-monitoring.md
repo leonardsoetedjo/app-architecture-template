@@ -107,11 +107,11 @@ delegate_task(
     MANDATORY WORKFLOW:
     1. Start architecture monitor before coding:
        python scripts/architecture-monitor.py &
-    
-    2. Before ANY code change: run ./scripts/architecture-pre-commit.sh
+
+    2. Before ANY code change: run lefthook run pre-commit
     3. Paste output in response
     4. If fails: fix violations BEFORE proceeding
-    
+
     Real-time monitor will:
     - Watch your file changes
     - Auto-revert violations
@@ -121,7 +121,7 @@ delegate_task(
     # Auto-validate after each code change
     validation=[
         './scripts/check-file-architecture.sh <changed_file>',
-        './scripts/architecture-pre-commit.sh'
+        'lefthook run pre-commit'
     ],
     # Block on validation failure
     validation_mode='blocking'
@@ -334,5 +334,5 @@ git status
 
 ---
 
-**Last Updated:** 2026-05-27  
+**Last Updated:** 2026-05-27
 **Status:** Implemented

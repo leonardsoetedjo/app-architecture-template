@@ -57,7 +57,7 @@ Every reference to [`boilerplate/`](../../../boilerplate/) in this checklist poi
 ### 0.3 Test-First & Self-Audit
 - [ ] **Test-First Evidence**: The earliest commit in the PR branch is a test commit (or test file timestamps predate implementation files).
   - *Reference*: [`03-workflow.md`](../01-standards/03-workflow.md) §4
-- [ ] **Self-Audit Run**: Developer confirms `./scripts/architecture-pre-commit.sh` (or equivalent) passed locally before PR submission.
+- [ ] **Self-Audit Run**: Developer confirms `lefthook run pre-commit` (or equivalent) passed locally before PR submission.
   - *Reference*: [`21-validation-harness.md`](../01-standards/21-validation-harness.md)
 - [ ] **Performance Sanity**: For data-intensive changes, developer confirmed no N+1 queries or unindexed columns via `EXPLAIN ANALYZE`.
 

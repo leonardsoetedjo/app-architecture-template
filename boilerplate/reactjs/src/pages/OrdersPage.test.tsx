@@ -7,7 +7,7 @@ import { http, HttpResponse } from 'msw';
 import { server } from '@tests/mocks/server';
 import authReducer from 'features/auth/authSlice';
 import ordersReducer from 'features/orders/ordersSlice';
-import { baseApi } from 'features/api/baseApi';
+import { baseApi } from 'shared/api/baseApi';
 import OrdersPage from 'pages/OrdersPage';
 
 function renderWithProviders(ui: React.ReactNode, preloadedState = {}) {

@@ -48,7 +48,7 @@ status: "Active"
 | **Session handoff** | `04-sops/12-session-handoff.md` | Update `agent-progress.md` |
 | **Deploy (Traefik)** | `01-agnostic/03-guidelines/01-deployment.md` + `docker-compose.traefik.yml` | `terminal` |
 | **Deploy (standalone)** | `01-agnostic/03-guidelines/01-deployment.md` + `docker-compose.standalone.yml` | `terminal` |
-| **Compliance check** | `scripts/architecture-pre-commit.sh` | `terminal` |
+| **Compliance check** | `lefthook run pre-commit` | `terminal` |
 | **Debug failing test** | `01-agnostic/01-standards/10-testing.md` | `systematic-debugging` |
 | **Plan feature** | `01-agnostic/03-guidelines/02-design.md` | `writing-plans` |
 
@@ -56,7 +56,7 @@ status: "Active"
 
 | Stack | AGENTS.md | Key SOPs | Pre-Commit |
 |-------|-----------|----------|------------|
-| Java / Spring Boot | `boilerplate/java/AGENTS.md` | 01, 02, 04 | `mvn test -Dtest=CleanArchitectureLayersTest` |
+| Java / Spring Boot | `boilerplate/java/AGENTS.md` | 01, 02, 04 | `mvn test -Dtest=CleanArchitectureRulesTest` |
 | Python / FastAPI | `boilerplate/python/AGENTS.md` | 01, 02, 16 | `pytest tests/archunit/ -v` |
 | NestJS / TypeORM | `boilerplate/nestjs/AGENTS.md` | 01, 02, 16 | `npx depcruise --validate .dependency-cruiser.cjs src/` |
 | React / TypeScript | `boilerplate/reactjs/AGENTS.md` | 03 | `npm run depcruise` |

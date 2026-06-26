@@ -287,9 +287,9 @@
       "message": "Domain layer must not import frameworks"
     }
   ],
-  "pre_commit": "./scripts/architecture-pre-commit.sh",
+  "pre_commit": "lefthook run pre-commit",
   "scripts": {
-    "architecture_pre_commit": "scripts/architecture-pre-commit.sh",
+    "architecture_pre_commit": "lefthook run pre-commit",
     "doc_lint": "scripts/doc-lint.py"
   }
 }

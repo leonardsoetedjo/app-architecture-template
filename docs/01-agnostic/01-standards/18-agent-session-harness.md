@@ -136,7 +136,7 @@ Use JSON — the model is less likely to corrupt JSON than Markdown.
 - [x] Unit tests: PlaceOrderUseCaseTest passes
 - [x] Integration: OrderControllerIT passes
 - [x] Smoke: `init.sh && curl` passes
-- [x] Architecture: `./scripts/architecture-pre-commit.sh` passes
+- [x] Architecture: `lefthook run pre-commit` passes
 
 ### Notes
 - Used BigDecimal for unit_price per standard

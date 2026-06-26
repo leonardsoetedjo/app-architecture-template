@@ -1,4 +1,4 @@
-import { baseApi } from '../../features/api/baseApi';
+import { baseApi } from 'shared/api/baseApi';
 import type {
   OrderListItem,
   OrderDetail,

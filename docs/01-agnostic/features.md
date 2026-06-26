@@ -21,7 +21,7 @@
 | Feature | Description | Location |
 |---------|-------------|----------|
 | **Clean Architecture Boilerplate** | Verified layer structure (Domain, Application, Infrastructure, Interface) for Java, Python, React, Quasar | [`boilerplate/*/`](../../boilerplate/) |
-| **Forbidden Import Enforcement** | Pre-commit hooks prevent layer violations (domain can't import Spring/JPA/FastAPI) | [`scripts/architecture-pre-commit.sh`](../../scripts/architecture-pre-commit.sh) |
+| **Forbidden Import Enforcement** | Pre-commit hooks prevent layer violations (domain can't import Spring/JPA/FastAPI) | [`lefthook.yml`](../../lefthook.yml) |
 | **TDD Enforcement** | Test-driven development workflow with RED-GREEN-REFACTOR patterns | Skills: `test-driven-development`, `systematic-debugging` |
 | **AI Agent Tooling Integration** | Serena MCP (code navigation), Context-Mode (doc search), Superpowers (workflow enforcement) | Built-in MCP clients |
 | **Dependency Cruiser** | Frontend architecture validation (Feature-Sliced Design enforcement) | [`boilerplate/reactjs/.depcruise*`](../../boilerplate/reactjs/), `npm run depcruise` |
@@ -38,7 +38,7 @@
 | **Multi-Stack Test Matrix** | Parallel testing for Java (Maven/ArchUnit), Python (pytest), Frontend (depcruise) | [`.github/workflows/architecture-gate.yml`](../../.github/workflows/architecture-gate.yml) |
 | **Testcontainers Integration** | Integration testing with real PostgreSQL in Docker | [`boilerplate/java/*/src/test/`](../../boilerplate/java/), [`boilerplate/python/*/tests/`](../../boilerplate/python/) |
 | **Coverage Reporting** | HTML coverage reports uploaded as CI artifacts | [`.github/workflows/architecture-gate.yml`](../../.github/workflows/architecture-gate.yml) |
-| **Pre-Commit Validation Suite** | 4-stage architecture check (Java, Python, Frontend, Commit Message) | [`scripts/architecture-pre-commit.sh`](../../scripts/architecture-pre-commit.sh) |
+| **Pre-Commit Validation Suite** | 4-stage architecture check (Java, Python, Frontend, Commit Message) | [`lefthook.yml`](../../lefthook.yml) |
 | **Commit Message Validation** | Enforces architecture evidence in commit messages | [`scripts/validate-commit-message.sh`](../../scripts/validate-commit-message.sh), [`.git/hooks/commit-msg`](../../.git/hooks/) |
 
 ---

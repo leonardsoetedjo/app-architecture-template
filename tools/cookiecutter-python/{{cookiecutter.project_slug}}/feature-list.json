@@ -43,7 +43,7 @@
         "Domain layer has no FastAPI/SQLAlchemy imports",
         "Application layer has no HTTP framework imports",
         "pytest-archunit tests pass",
-        "./scripts/architecture-pre-commit.sh passes"
+        "lefthook run pre-commit passes"
       ],
       "passes": true,
       "notes": "Boilerplate structure enforces Clean Architecture"

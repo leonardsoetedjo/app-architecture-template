@@ -131,7 +131,7 @@ Standard structure:
 
 | Language | Tool | Test Files |
 |----------|------|------------|
-| Java | ArchUnit | `CleanArchitectureLayersTest.java`, `DependencyRulesTest.java`, `DomainRulesTest.java` |
+| Java | ArchUnit | `CleanArchitectureRulesTest.java`, `DependencyRulesTest.java`, `DomainRulesTest.java` |
 | Python | pytest-archon | `test_architecture.py`, `test_layer_dependencies.py` |
 | ReactJS | dependency-cruiser | `.dependency-cruiser.js`, `npm run depcruise` |
 | Quasar | dependency-cruiser | `.dependency-cruiser.js`, `npm run depcruise` |

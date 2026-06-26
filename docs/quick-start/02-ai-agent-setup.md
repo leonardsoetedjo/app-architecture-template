@@ -153,7 +153,7 @@ ctx_search(queries: ["architecture monitor"], source: "compliance-scripts-full")
 3. ✅ Use Serena for symbol navigation
 
 ### Before Claiming Complete
-1. ✅ Run `./scripts/architecture-pre-commit.sh`
+1. ✅ Run `lefthook run pre-commit`
 2. ✅ Verify zero forbidden imports (Serena)
 3. ✅ All tests passing
 4. ✅ No temporary files in repo (`git status`)
@@ -161,7 +161,7 @@ ctx_search(queries: ["architecture monitor"], source: "compliance-scripts-full")
 
 **Evidence format (required in commit message):**
 ```
-Architecture: ./scripts/architecture-pre-commit.sh PASSED
+Architecture: lefthook run pre-commit PASSED
   - Duration: <5000ms
   - Java architecture: OK
   - Python architecture: OK
@@ -198,7 +198,7 @@ Architecture: ./scripts/architecture-pre-commit.sh PASSED
 ### Essential Commands
 ```bash
 # Architecture validation
-./scripts/architecture-pre-commit.sh
+lefthook run pre-commit
 
 # Check single file
 ./scripts/check-file-architecture.sh path/to/file.py
@@ -255,7 +255,7 @@ Before considering setup complete:
 
 ---
 
-**Time elapsed:** ~2 minutes  
+**Time elapsed:** ~2 minutes
 **You're ready to work with AI agents!** 🤖
 
 For language-specific patterns, see boilerplate AGENTS.md files:

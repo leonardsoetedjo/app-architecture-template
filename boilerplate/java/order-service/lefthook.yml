@@ -11,7 +11,7 @@ pre-commit:
         echo "Compile: PASSED"
     architecture:
       run: |
-        mvn test -Dtest=CleanArchitectureLayersTest -q
+        mvn test -Dtest=CleanArchitectureRulesTest -q
         echo "Architecture: PASSED"
     lint:
       run: |

@@ -1,9 +1,9 @@
 # AGENTS.md — app-architecture-template
 
-> **🤖 AGENTS ONLY.** Humans → `README.md` + `docs/`  
-> **Budget:** <500 tokens here. Stack details in boilerplate AGENTS.md.  
-> **Machine-readable config:** `.agents.yml`  
-> **Task dispatch:** `docs/AI_NAVIGATION.md`  
+> **🤖 AGENTS ONLY.** Humans → `README.md` + `docs/`
+> **Budget:** <500 tokens here. Stack details in boilerplate AGENTS.md.
+> **Machine-readable config:** `.agents.yml`
+> **Task dispatch:** `docs/AI_NAVIGATION.md`
 > **Find stuff:** `ctx_search(source: ...)` for docs; `serena` MCP for code. See §3.5.
 
 ## 1. What Stack?
@@ -26,10 +26,10 @@
 
 **Budget-aware traversal:**
 1. Root AGENTS.md (this file) — <200 tokens
-2. Stack AGENTS.md — <500 tokens  
+2. Stack AGENTS.md — <500 tokens
 3. **STOP.** Use `ctx_search` for any deeper lookup.
 
-**Child DOX:** `boilerplate/{java,python,nestjs,reactjs,quasar}/AGENTS.md` | `docs/AI_NAVIGATION.md`  
+**Child DOX:** `boilerplate/{java,python,nestjs,reactjs,quasar}/AGENTS.md` | `docs/AI_NAVIGATION.md`
 > Human: `README.md` §Technology Stack. Deep-dive: `docs/01-agnostic/01-standards/XX-agents-*.md`.
 
 ## 3. Context Engineering
@@ -51,7 +51,7 @@
 
 ## 5. Compliance
 
-1. Run `./scripts/architecture-pre-commit.sh`
+1. Run `lefthook run pre-commit`
 2. Commit message must pass `lefthook run commit-msg` (conventional format + `Architecture:` evidence)
 3. Use GitHub Issues (no markdown reports in repo)
 
@@ -80,5 +80,5 @@
 | No Docker/CI/IDE tips | `grep -i -c "docker.*dev\|devcontainer\|vscode\|intellij" boilerplate/*/AGENTS.md` | 0 matches |
 | Canonical links present | `grep -c "Canonical:" boilerplate/*/AGENTS.md` | All ≥1 match |
 
-**Version:** Clean Architecture v2.1  
+**Version:** Clean Architecture v2.1
 **Last Updated:** 2026-06-21

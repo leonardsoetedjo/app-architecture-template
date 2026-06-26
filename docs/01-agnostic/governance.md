@@ -98,7 +98,7 @@ $ git commit -m "feat: add order validation"
     - Import: import org.springframework.stereotype.Component
 
 Commit blocked. Fix violations and re-run:
-  ./scripts/architecture-pre-commit.sh
+  lefthook run pre-commit
 ```
 
 ---
@@ -110,7 +110,7 @@ $ git commit -m "feat: add order validation (#123)" -m "
 - Added OrderValidator in domain layer
 - Created validation use case in application layer
 
-Architecture: ./scripts/architecture-pre-commit.sh PASSED
+Architecture: lefthook run pre-commit PASSED
   - Duration: 2340ms
   - Java architecture: OK
   - Python architecture: OK
@@ -123,7 +123,7 @@ Architecture: ./scripts/architecture-pre-commit.sh PASSED
 
 ## Enforcement Mechanisms
 
-### 1. Pre-Commit Hook (`scripts/architecture-pre-commit.sh`)
+### 1. Pre-Commit Hook (`lefthook run pre-commit`)
 
 **What it checks:**
 - Java: Forbidden imports in domain layer, ArchUnit tests
@@ -132,15 +132,14 @@ Architecture: ./scripts/architecture-pre-commit.sh PASSED
 
 **Installation:**
 ```bash
-cp scripts/architecture-pre-commit.sh .git/hooks/pre-commit
-chmod +x .git/hooks/pre-commit
+lefthook install
 ```
 
 ### 2. Commit Message Hook (`scripts/validate-commit-message.sh`)
 
 **What it checks:**
 - Architecture compliance evidence in commit message
-- Format: `Architecture: ./scripts/architecture-pre-commit.sh PASSED`
+- Format: `Architecture: lefthook run pre-commit PASSED`
 - Duration and stack status
 
 **Installation:**
@@ -206,7 +205,7 @@ python scripts/generate-dashboard.py metrics.json dashboard/index.html
 
 - [Features Overview](features.md) — Complete list of 40+ template features
 - [Architecture Standards](01-standards/02-architecture.md) — Clean Architecture rules
-- [Pre-Commit Hook Source](../../scripts/architecture-pre-commit.sh) — Hook implementation
+- [Pre-Commit Hook Source](../../lefthook.yml) — Hook implementation
 - [Architecture Gate Workflow](../../.github/workflows/architecture-gate.yml) — CI/CD configuration
 
 ---

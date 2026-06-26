@@ -24,7 +24,7 @@
 
 ### 0.3 Test-First & Self-Audit
 - [ ] **Test-First Evidence**: The earliest commit in the PR branch is a test commit (or test file timestamps predate implementation files).
-- [ ] **Self-Audit Run**: Developer confirms `./scripts/architecture-pre-commit.sh` (or equivalent) passed locally before PR submission.
+- [ ] **Self-Audit Run**: Developer confirms `lefthook run pre-commit` (or equivalent) passed locally before PR submission.
 - [ ] **Performance Sanity**: For data-intensive changes, developer confirmed no N+1 queries or unindexed columns via `EXPLAIN ANALYZE`.
 
 ---

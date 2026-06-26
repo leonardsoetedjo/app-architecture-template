@@ -68,7 +68,7 @@ grep -r "import org.springframework" target/src/main/java/**/domain/
 ```bash
 # Run architecture audit on existing project
 cd your-project
-curl -s https://raw.githubusercontent.com/leonardsoetedjo/app-architecture-template/main/scripts/architecture-pre-commit.sh | bash
+curl -s https://raw.githubusercontent.com/leonardsoetedjo/app-architecture-template/main/lefthook run pre-commit | bash
 
 # Generate compliance report
 python scripts/collect-architecture-metrics.py > audit-report.json
@@ -180,7 +180,7 @@ ctx_search(queries: ["use case implementation"], source: "java-boilerplate")
 ```
 
 **Mandatory compliance before task completion:**
-1. Run `./scripts/architecture-pre-commit.sh`
+1. Run `lefthook run pre-commit`
 2. Include "Architecture: PASSED" in commit message
 3. Use GitHub Issues (no markdown reports in repo)
 
@@ -194,7 +194,7 @@ This template enforces **mandatory compliance gates** between SDLC stages:
 
 | Gate | Mechanism | Bypassable? |
 |------|-----------|-------------|
-| Pre-commit | `./scripts/architecture-pre-commit.sh` | ❌ No |
+| Pre-commit | `lefthook run pre-commit` | ❌ No |
 | Commit message | Must include architecture evidence | ❌ No |
 | CI/CD | Architecture Gate workflow | ❌ No |
 
@@ -217,6 +217,6 @@ For maintainers:
 
 ---
 
-**Last Updated:** 2026-05-28  
-**Template Version:** Clean Architecture v2.1 with Phase 2 Ironclad Guardrails  
+**Last Updated:** 2026-05-28
+**Template Version:** Clean Architecture v2.1 with Phase 2 Ironclad Guardrails
 **Active Issues:** [#87-#91](https://github.com/leonardsoetedjo/app-architecture-template/issues) (Documentation enhancements)

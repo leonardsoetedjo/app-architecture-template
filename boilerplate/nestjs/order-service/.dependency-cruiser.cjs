@@ -11,16 +11,12 @@
 module.exports = {
   forbidden: [
     {
-      // Rule: DDD-DEPENDENCY-CHECK
       name: 'no-domain-imports-application-or-infra',
       comment:
         'Domain layer must not depend on application or infrastructure layers',
       severity: 'error',
       from: { path: '^src/domain/' },
-      to: [
-        { path: '^src/application/' },
-        { path: '^src/infrastructure/' },
-      ],
+      to: { path: '^src/(application|infrastructure)/' },
     },
     {
       name: 'no-application-imports-infra',
@@ -28,23 +24,15 @@ module.exports = {
         'Application layer must not depend on infrastructure layer',
       severity: 'error',
       from: { path: '^src/application/' },
-      to: [{ path: '^src/infrastructure/' }],
+      to: { path: '^src/infrastructure/' },
     },
     {
       name: 'no-framework-in-domain',
-      // Rule: DDD-DOMAIN-PURITY-NESTJS
       comment:
         'Domain layer must not import NestJS, TypeORM, or class-validator',
       severity: 'error',
       from: { path: '^src/domain/' },
-      to: [
-        { path: 'node_modules/@nestjs/' },
-        { path: 'node_modules/typeorm/' },
-        { path: 'node_modules/class-validator/' },
-        { path: 'node_modules/class-transformer/' },
-        { path: 'node_modules/rxjs/' },
-        { path: 'node_modules/reflect-metadata/' },
-      ],
+      to: { path: 'node_modules/(@nestjs|typeorm|class-validator|class-transformer|rxjs|reflect-metadata)/' },
     },
     {
       name: 'no-typeorm-in-application',
@@ -52,10 +40,7 @@ module.exports = {
         'Application layer must not import TypeORM',
       severity: 'error',
       from: { path: '^src/application/' },
-      to: [
-        { path: 'node_modules/typeorm/' },
-        { path: 'node_modules/@nestjs/typeorm/' },
-      ],
+      to: { path: 'node_modules/(typeorm|@nestjs/typeorm)/' },
     },
     {
       name: 'no-nestjs-platform-in-application',
@@ -63,10 +48,7 @@ module.exports = {
         'Application layer must not import platform-express or platform-fastify',
       severity: 'error',
       from: { path: '^src/application/' },
-      to: [
-        { path: 'node_modules/@nestjs/platform-express/' },
-        { path: 'node_modules/@nestjs/platform-fastify/' },
-      ],
+      to: { path: 'node_modules/@nestjs/platform-(express|fastify)/' },
     },
     {
       name: 'no-circular-dependencies',

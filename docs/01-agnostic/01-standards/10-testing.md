@@ -28,17 +28,17 @@ Every test case must be documented using the following structure. This ensures c
 ---
 
 ### 📝 Example Test Case
-**ID**: `ORDER-001`  
-**Intent**: Verify that an order cannot be created with an empty items list.  
-**Actor**: `pytest automation`  
+**ID**: `ORDER-001`
+**Intent**: Verify that an order cannot be created with an empty items list.
+**Actor**: `pytest automation`
 **Steps**:
 1. Authenticate as a valid user.
 2. Send a `POST /api/v1/orders` request with a valid `customer_id` but an empty `items` array.
-3. Capture the response.  
-**Expected Result**: 
+3. Capture the response.
+**Expected Result**:
 - HTTP Status: `422 Unprocessable Entity`.
 - Response Body: Contains a semantic error message: `"Order must have at least one item"`.
-- Database: No record is created in the `orders` table.  
+- Database: No record is created in the `orders` table.
 **Remarks**: This tests the semantic validation in the `PlaceOrderUseCase`.
 
 ## 2. AI Agent Directives
@@ -60,7 +60,7 @@ When working in a multi-session agent harness (see `docs/01-agnostic/01-standard
 - **Smoke test**: Run `./init.sh --verify` to confirm the environment is consistent.
 - **Unit tests**: All new and existing unit tests pass.
 - **Integration tests**: All new and existing integration tests pass.
-- **Architecture check**: Run `./scripts/architecture-pre-commit.sh` and document results in the commit message.
+- **Architecture check**: Run `lefthook run pre-commit` and document results in the commit message.
 
 This ensures the next agent can start work immediately without reverse-engineering the state.
 

@@ -1,7 +1,7 @@
 # Agent Session Harness — order-service (Java/Spring Boot)
 
-**Version**: 1.0  
-**Last Updated**: 2026-06-04  
+**Version**: 1.0
+**Last Updated**: 2026-06-04
 **Related Standard**: `docs/01-agnostic/01-standards/18-agent-session-harness.md`
 
 ---
@@ -98,7 +98,7 @@ Pick the highest-priority feature with `passes: false` from `feature-list.json`.
 ./mvnw test -pl order-service -Dtest=*ArchitectureTest
 
 # Run pre-commit checks (if script exists)
-../../scripts/architecture-pre-commit.sh
+../.lefthook run pre-commit
 ```
 
 ### 3.3 Database
@@ -193,7 +193,7 @@ Fixes: #100
 class OrderControllerIT {
 
     @Container
-    static PostgreSQLContainer<?> postgres = 
+    static PostgreSQLContainer<?> postgres =
         new PostgreSQLContainer<>("postgres:14-alpine");
 
     @DynamicPropertySource

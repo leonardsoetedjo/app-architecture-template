@@ -1,7 +1,7 @@
 # SOP #18 — Agent Session Harness Standard
 
-**Version**: 1.0  
-**Last Updated**: 2026-06-04  
+**Version**: 1.0
+**Last Updated**: 2026-06-04
 **Applies To**: All boilerplates (Java, Python, ReactJS, Quasar)
 
 ---
@@ -179,7 +179,7 @@ trap "kill $APP_PID 2>/dev/null || true; exit 0" INT TERM EXIT
 
 ## Architecture Enforcement
 
-The `architecture-pre-commit.sh` script verifies:
+The lefthook pre-commit gates verify:
 
 ```bash
 # Check harness artifacts exist
@@ -219,7 +219,7 @@ cat feature-list.json | jq '.features[] | select(.passes == false)'
 
 # 4. Pick a TODO feature and implement
 # 5. Update feature-list.json: set "passes": true
-# 6. Run architecture-pre-commit.sh
+# 6. Run lefthook run pre-commit
 # 7. Commit with evidence
 ```
 

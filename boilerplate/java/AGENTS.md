@@ -1,7 +1,7 @@
 # Java Agent Dispatch
 
-> **Budget:** <500 tokens. Read only the section matching your task.  
-> **Canonical:** `docs/01-agnostic/01-standards/14-agents-java.md`  
+> **Budget:** <500 tokens. Read only the section matching your task.
+> **Canonical:** `docs/01-agnostic/01-standards/14-agents-java.md`
 > **Source:** `boilerplate/java/order-service/`
 
 ## Task Map
@@ -46,7 +46,7 @@ ctx_search(queries: ["SOP-04 flyway migration"], source: "sops")
 
 ```bash
 cd boilerplate/java/order-service
-mvn test -Dtest=CleanArchitectureLayersTest   # Architecture
+mvn test -Dtest=CleanArchitectureRulesTest   # Architecture
 mvn compile -q                                 # Compile
 ```
 

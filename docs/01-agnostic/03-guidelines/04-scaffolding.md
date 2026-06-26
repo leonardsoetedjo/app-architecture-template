@@ -17,7 +17,7 @@ Whenever a new feature is requested or a new service needs to be created, follow
 ### Phase 1: Discovery & Design (Agnostic)
 Before writing any code, define the boundaries.
 1. **Bounded Context Identification**: Determine which microservice owns the logic. If it spans multiple, identify the primary "Orchestrator" service.
-2. **Domain Modeling**: Define the Entities, Value Objects, and Aggregate Roots. 
+2. **Domain Modeling**: Define the Entities, Value Objects, and Aggregate Roots.
 3. **Event Mapping**: Identify the Domain Events that must be published (Outbox pattern).
 4. **Contract Definition**: Define the OpenAPI spec (REST) or AsyncAPI spec (Events) for the new functionality.
 5. **Saga Design**: If the feature involves a distributed transaction, document the choreography or orchestration flow and the compensation logic.
@@ -250,7 +250,7 @@ If scaffolding manually (without generators), follow this checklist:
 
 After scaffolding (automated or manual), verify:
 
-1. **Architecture Compliance**: Run `./scripts/architecture-pre-commit.sh`
+1. **Architecture Compliance**: Run `lefthook run pre-commit`
 2. **No Forbidden Imports**: Domain layer has no framework imports
 3. **Test Coverage**: All layers have unit tests
 4. **Migration Script**: Database changes are versioned

@@ -55,6 +55,23 @@ npm run test:unit   # Vitest unit tests
 npm run test:e2e    # Playwright E2E tests
 ```
 
+### Pre-commit Hooks
+
+Install [lefthook](https://lefthook.dev) for architecture validation:
+
+```bash
+npm install -g lefthook
+# or
+npx lefthook install
+```
+
+Then run gates:
+
+```bash
+lefthook run pre-commit   # All pre-commit gates
+lefthook run pre-push     # All pre-push gates
+```
+
 ## Project Structure
 
 ```

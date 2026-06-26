@@ -96,7 +96,7 @@
         "Domain layer has no Spring/JPA annotations",
         "Application layer has no HTTP framework imports",
         "ArchUnit tests pass",
-        "./scripts/architecture-pre-commit.sh passes"
+        "lefthook run pre-commit passes"
       ],
       "passes": true,
       "notes": "Boilerplate structure enforces Clean Architecture"

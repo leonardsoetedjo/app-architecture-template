@@ -4,7 +4,7 @@ pre-commit:
   commands:
     architecture:
       run: |
-        npm run depcruise
+        npm run arch:test
         echo "Architecture: PASSED"
     type-check:
       run: |

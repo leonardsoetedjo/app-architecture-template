@@ -892,7 +892,7 @@ docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d
 
 3. **Run architecture validation:**
    \`\`\`bash
-   ./scripts/architecture-pre-commit.sh
+   lefthook run pre-commit
    \`\`\`
 
 4. **Start development:**

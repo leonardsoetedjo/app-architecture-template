@@ -62,10 +62,10 @@ If `./init.sh --verify` fails:
    ```python
    # Java
    ctx_search(queries: ["use case implementation"], source: "java-boilerplate")
-   
+
    # Python
    ctx_search(queries: ["repository pattern SQLAlchemy"], source: "python-boilerplate")
-   
+
    # Frontend
    ctx_search(queries: ["feature-sliced design"], source: "frontend-boilerplate")
    ```
@@ -108,7 +108,7 @@ Run the full verification checklist:
 # Frontend: npm run test:e2e
 
 # 4. Architecture compliance
-./scripts/architecture-pre-commit.sh
+lefthook run pre-commit
 
 # 5. The feature's acceptance criteria
 curl -X POST http://localhost:8080/api/v1/orders -H "Content-Type: application/json" -d '{...}'
@@ -167,7 +167,7 @@ Before ending the session, verify:
 - [ ] No uncommitted changes (`git status` clean)
 - [ ] No temporary files, debug logs, or commented-out code
 - [ ] Smoke test passes (`./init.sh --verify`)
-- [ ] Architecture compliance passes (`./scripts/architecture-pre-commit.sh`)
+- [ ] Architecture compliance passes (`lefthook run pre-commit`)
 - [ ] `feature-list.json` updated with `passes: true`
 - [ ] `agent-progress.md` has new session entry
 
@@ -224,7 +224,7 @@ ${What the next agent should do instead}
 2. `git log --oneline -3` shows the feature commit
 3. `cat feature-list.json | grep '"passes": true'` includes ${FEATURE_ID}
 4. `tail -50 agent-progress.md` shows the session entry
-5. `./scripts/architecture-pre-commit.sh` passes
+5. `lefthook run pre-commit` passes
 
 ## Files & Locations
 

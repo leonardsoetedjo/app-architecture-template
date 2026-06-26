@@ -4,7 +4,7 @@ pre-commit:
   commands:
     architecture:
       run: |
-        mvn test -Dtest=CleanArchitectureRulesTest -q
+        mvn test -Dtest='*RulesTest' -q
         echo "Architecture: PASSED"
     compile:
       run: |

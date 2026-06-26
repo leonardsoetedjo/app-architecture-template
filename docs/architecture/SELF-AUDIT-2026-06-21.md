@@ -40,7 +40,7 @@ The template fails its own DOX Tier budget gates and rule coverage verification.
 **Evidence:**
 - `find generators/ -name "*.ejs" | wc -l` → 30+
 - `lefthook.yml` has no gate under `generators/`
-- `scripts/architecture-pre-commit.sh` skips generators
+- `lefthook run pre-commit` skips generators
 **Standard:** `docs/01-agnostic/01-standards/21-validation-harness.md` § "Every artifact that produces code must be proven to produce passing code."
 **Action:** Add a `generator-validate` lefthook gate that runs each generator into a tmp dir and executes the stack's pre-commit suite.
 

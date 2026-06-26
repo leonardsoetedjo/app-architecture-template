@@ -46,6 +46,24 @@ uvicorn src.main:app --host 0.0.0.0 --port 8080
 pytest tests/ -v
 ```
 
+### Pre-commit Hooks
+
+Install [lefthook](https://lefthook.dev) for architecture validation:
+
+```bash
+pip install lefthook
+# or via binary
+curl -sSfL https://lefthook.dev/install | bash
+lefthook install
+```
+
+Then run gates:
+
+```bash
+lefthook run pre-commit   # All pre-commit gates
+lefthook run pre-push     # All pre-push gates
+```
+
 ## Docker
 
 ### Build and Run
