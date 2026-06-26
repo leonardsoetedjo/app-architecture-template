@@ -38,6 +38,24 @@
 
 **Tool dispatch:** `ctx_search` for prose/standards; `serena` MCP for code; `neuledge-context` for published library docs. See Standard 28 §3.5.
 
+### 3.1 Documentation Index Maintenance
+
+**Before starting work:**
+```bash
+# Check if .index.json is stale (>7 days old)
+./scripts/auto-index.sh  # Regenerates docs/.index.json from .agents.yml
+```
+
+**When to regenerate:**
+- ✅ After adding new docs
+- ✅ After modifying `.agents.yml`
+- ✅ If `ctx_search()` misses expected results
+- ✅ Weekly (every Monday)
+
+**Why:** `.index.json` is the machine-readable source map for `ctx_search()`. Stale index = AI agents miss new/changed docs.
+
+**Related:** Issue #235 (automate regeneration via CI)
+
 ## 4. Architecture Rules
 
 **Forbidden imports by layer:** `ctx_search(queries:["forbidden imports"], source:"architecture-standards")`
