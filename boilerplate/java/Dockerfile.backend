@@ -20,6 +20,7 @@ RUN cd order-service && ./mvnw -B package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 ARG GIT_COMMIT=unknown
 LABEL commit="$GIT_COMMIT"
+RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=builder /build/order-service/target/*.jar app.jar
 EXPOSE 8080

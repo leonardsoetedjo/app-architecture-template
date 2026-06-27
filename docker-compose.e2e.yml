@@ -50,7 +50,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O- http://localhost:8080/actuator/health | grep UP || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 15
@@ -62,12 +62,45 @@ services:
       dockerfile: Dockerfile
       args:
         GIT_COMMIT: ${GIT_COMMIT:-unknown}
+        VITE_API_BASE_URL: http://localhost:8080/api/v1
     container_name: e2e-frontend
+    environment:
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx/conf.d
     ports:
       - "3000:80"
     depends_on:
       backend:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.44.0-jammy
+    container_name: e2e-playwright
+    working_dir: /tests
+    environment:
+      - FRONTEND_URL=http://frontend:80
+      - API_BASE_URL=http://backend:8080
+      - CI=true
+    volumes:
+      - ./boilerplate/reactjs:/tests:ro
+      - ./boilerplate/tests/playwright/e2e:/tests/e2e-fullstack:ro
+      - playwright-results:/tests/test-results
+    depends_on:
+      frontend:
+        condition: service_healthy
+    command: >
+      sh -c "npm install -g pnpm &&
+             pnpm install @playwright/test &&
+             pnpm exec playwright install-deps chromium &&
+             pnpm exec playwright test e2e-fullstack --project=chromium"
+    networks:
+      - default
 
 volumes:
   pgdata:
+  playwright-results:

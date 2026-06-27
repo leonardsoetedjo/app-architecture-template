@@ -1,0 +1,95 @@
+name: E2E Full-Stack Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'boilerplate/java/**'
+      - 'boilerplate/reactjs/**'
+      - 'boilerplate/tests/playwright/**'
+      - 'docker-compose.e2e.yml'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  JAVA_VERSION: '21'
+
+jobs:
+  e2e-fullstack:
+    name: Full-Stack E2E (Java + ReactJS + PostgreSQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('boilerplate/java/**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build Java backend image
+        working-directory: ./boilerplate/java
+        run: docker build -f Dockerfile.backend -t app-architecture-java:latest .
+
+      - name: Build ReactJS frontend image
+        working-directory: ./boilerplate/reactjs
+        run: docker build -t app-architecture-frontend:latest .
+
+      - name: Start E2E stack
+        working-directory: .
+        run: |
+          docker compose -f docker-compose.e2e.yml up -d db redis backend frontend
+          # Wait for DB
+          until docker compose -f docker-compose.e2e.yml exec -T db pg_isready -U orderuser -d orderdb 2>/dev/null; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+          echo "PostgreSQL ready"
+          # Wait for backend
+          until curl -sf http://localhost:8080/actuator/health 2>/dev/null; do
+            echo "Waiting for Java backend..."
+            sleep 5
+          done
+          echo "Java backend ready"
+          # Wait for frontend
+          until curl -sf http://localhost:3000/ 2>/dev/null; do
+            echo "Waiting for ReactJS frontend..."
+            sleep 2
+          done
+          echo "ReactJS frontend ready"
+
+      - name: Run Playwright full-stack tests
+        working-directory: ./boilerplate/tests/playwright
+        run: |
+          npm install
+          npx playwright install chromium
+          FRONTEND_URL=http://localhost:3000 API_BASE_URL=http://localhost:8080 npx playwright test --config=playwright.fullstack.config.ts --project=chromium
+        env:
+          CI: true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-e2e
+          path: ./boilerplate/tests/playwright/test-results/
+          retention-days: 7
+
+      - name: Tear down
+        if: always()
+        run: docker compose -f docker-compose.e2e.yml down --volumes
