@@ -20,8 +20,10 @@ class Settings(BaseSettings):
     debug: bool = False
     enable_metrics: bool = True
 
-    # Database
-    database_url: str = "postgresql://postgres:postgres@localhost:5432/order_db"
+    # Database - use environment variable with sensible default for local dev
+    # In Docker: postgresql://postgres:password@postgres:5432/order_db
+    # In local: postgresql://postgres:password@localhost:5432/order_db
+    database_url: str = "postgresql://postgres:password@localhost:5432/order_db"
 
     # JWT
     jwt_secret: str = "change-me-in-production"

@@ -26,19 +26,36 @@ order-service-python/
 ## Running Locally
 
 ### Prerequisites
-- Python 3.10+
-- pip
+- Python 3.11+
+- Poetry (https://python-poetry.org)
 
 ### Setup
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
-pip install -r requirements-dev.txt  # For development/testing
+poetry install
 
 # Run the application
-uvicorn src.main:app --host 0.0.0.0 --port 8080
+poetry run uvicorn src.main:app --host 0.0.0.0 --port 8080
 ```
+
+### Managing Dependencies
+
+```bash
+# Add a new dependency
+poetry add <package-name>
+
+# Add a dev dependency
+poetry add --group dev <package-name>
+
+# Update dependencies
+poetry update
+
+# Show dependency tree
+poetry show
+```
+
+**Note:** Poetry is the required dependency manager. Do not use `requirements.txt` — it has been removed. The `pyproject.toml` and `poetry.lock` files are the single source of truth for dependencies.
 
 ### Run Tests
 

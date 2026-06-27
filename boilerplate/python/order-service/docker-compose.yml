@@ -9,6 +9,8 @@ services:
       - "8080:8080"
     environment:
       - PYTHONUNBUFFERED=1
+      - ORDER_SERVICE_DATABASE_URL=postgresql://order_user:order_pass@postgres:5432/orders
+      - ORDER_SERVICE_JWT_SECRET=change-me-in-production
     depends_on:
       - postgres
 
