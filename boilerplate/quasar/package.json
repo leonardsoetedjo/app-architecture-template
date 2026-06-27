@@ -27,6 +27,7 @@
     "jwt-decode": "^4.0.0",
     "pinia": "^2.1.7",
     "quasar": "^2.14.2",
+    "decimal.js": "^10.4.3",
     "vue": "^3.4.0",
     "vue-router": "^4.2.5"
   },
