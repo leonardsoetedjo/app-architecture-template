@@ -41,6 +41,9 @@ class AuthControllerTest {
     @MockBean RegisterUserUseCase registerUserUseCase;
     @MockBean GetCurrentUserUseCase getCurrentUserUseCase;
     @MockBean TokenParser tokenParser;
+    @MockBean com.example.orderservice.application.usecases.RefreshTokenUseCase refreshTokenUseCase;
+    @MockBean com.example.orderservice.application.usecases.LogoutUseCase logoutUseCase;
+    @MockBean com.example.orderservice.domain.ports.TokenBlacklist tokenBlacklist;
 
     @Test
     void shouldRegisterUser() throws Exception {

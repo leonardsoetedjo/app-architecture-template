@@ -11,6 +11,7 @@ import com.example.orderservice.domain.ports.TokenParser;
 import com.example.orderservice.domain.ports.TokenBlacklist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -71,15 +72,23 @@ public class AuthController {
 
     @PostMapping("/logout")
     @Operation(summary = "Invalidate tokens and logout")
-    public ResponseEntity<Void> logout(Authentication authentication) {
+    public ResponseEntity<Void> logout(Authentication authentication, HttpServletRequest request) {
         if (authentication != null && authentication.isAuthenticated()) {
             String userId = authentication.getName();
-            logoutUseCase.execute(new UserId(UUID.fromString(userId)));
+            String token = extractBearerToken(request);
+            if (token != null) {
+                logoutUseCase.execute(new UserId(UUID.fromString(userId)), token);
+            }
         }
-        // Note: Actual token blacklisting is handled by LogoutUseCase via TokenBlacklist port.
-        // The auth filter (JwtAuthenticationFilter) should check tokenBlacklist.isBlacklisted()
-        // on every request. See InMemoryTokenBlacklist for dev; use Redis in production.
         return ResponseEntity.noContent().build();
+    }
+
+    private String extractBearerToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 
     @GetMapping("/me")

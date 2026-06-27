@@ -1,6 +1,7 @@
 package com.example.orderservice.infrastructure.security;
 
 import com.example.orderservice.domain.models.UserId;
+import com.example.orderservice.domain.ports.TokenBlacklist;
 import com.example.orderservice.domain.ports.TokenParser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,9 +22,11 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenParser tokenParser;
+    private final TokenBlacklist tokenBlacklist;
 
-    public JwtAuthenticationFilter(TokenParser tokenParser) {
+    public JwtAuthenticationFilter(TokenParser tokenParser, TokenBlacklist tokenBlacklist) {
         this.tokenParser = tokenParser;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
     @Override
@@ -38,15 +41,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         Optional<UserId> userIdOpt = tokenParser.parseUserId(token);
 
-        if (userIdOpt.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserId userId = userIdOpt.get();
-            // Set userId as request attribute for downstream filters (e.g. CorrelationIdFilter MDC)
-            request.setAttribute("userId", userId.getValue().toString());
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                userId.getValue().toString(), null, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
-            );
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        if (userIdOpt.isPresent()) {
+            if (tokenBlacklist.isBlacklisted(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"Token has been revoked\"}");
+                return;
+            }
+
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserId userId = userIdOpt.get();
+                // Set userId as request attribute for downstream filters (e.g. CorrelationIdFilter MDC)
+                request.setAttribute("userId", userId.getValue().toString());
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    userId.getValue().toString(), null, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
+                );
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
         }
 
         filterChain.doFilter(request, response);

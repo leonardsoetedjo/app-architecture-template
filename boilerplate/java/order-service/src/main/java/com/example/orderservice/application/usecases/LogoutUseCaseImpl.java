@@ -17,9 +17,8 @@ public class LogoutUseCaseImpl implements LogoutUseCase {
     }
 
     @Override
-    public void execute(UserId userId) {
-        // Tokens are blacklisted via the tokenBlacklist port
-        // In production, this delegates to Redis with TTL matching token expiry
-        // For now, InMemoryTokenBlacklist is used (single-node only)
+    public void execute(UserId userId, String token) {
+        // Blacklist the token with TTL matching access token expiry (default 3600s)
+        tokenBlacklist.blacklist(token, 3600);
     }
 }

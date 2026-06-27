@@ -31,5 +31,10 @@ We will use **HttpOnly, Secure, and SameSite=Strict Cookies** for storing JWTs.
 
 ## Consequences
 - **Positive**: Maximum protection against token theft via XSS.
+- **Positive**: Token blacklist (ADR #225) is consulted on every request via `JwtAuthenticationFilter`, ensuring logged-out tokens are immediately invalidated.
 - **Negative**: Requires a bit more configuration on the backend to read cookies and handle CSRF protection.
 - **Trade-off**: We accept a slightly more complex implementation in exchange for significantly higher security.
+
+## Related
+- ADR-04 (Token Blacklist) — token revocation mechanism
+- SOP-21 (Prompt Validation) — security testing procedures
