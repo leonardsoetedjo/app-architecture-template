@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { normalizeError } from './errorHandler';
 
 function generateCorrelationId(): string {
   return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
@@ -42,6 +43,7 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
 
+    // Token refresh on 401 (unchanged)
     if (
       error.response?.status === 401 &&
       originalRequest &&
@@ -74,6 +76,8 @@ apiClient.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error);
+    // Normalize all other errors to AppError
+    const appError = normalizeError(error);
+    return Promise.reject(appError);
   },
 );
