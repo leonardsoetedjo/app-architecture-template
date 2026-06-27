@@ -104,3 +104,124 @@ npm run generate:api-types   # Fetches OpenAPI → src/generated/api.ts
 - [ ] `npm run check:api-types` script in `package.json` (CI gate)
 - [ ] `.gitattributes` marks `src/generated/api.ts` as generated (optional but recommended)
 - [ ] CI workflow runs `check:api-types` on frontend PRs
+
+---
+
+## 5. Contract Testing (Pact)
+
+### 5.1 What Is Contract Testing?
+
+Contract testing validates that backend API implementations match frontend expectations **at runtime**, not just in types. Unlike type generation (§4), contract testing validates:
+
+| Aspect | Type Generation (§4) | Contract Testing (§5) |
+|--------|---------------------|----------------------|
+| Field names | ✅ | ✅ |
+| Field types | ✅ | ✅ |
+| Enum values | ❌ | ✅ |
+| HTTP status codes | ❌ | ✅ |
+| Error response shapes | ❌ | ✅ |
+| Actual vs. expected | ❌ | ✅ |
+
+### 5.2 How It Works
+
+```
+Frontend (Consumer)              Backend (Provider)
+┌──────────────────┐             ┌──────────────────┐
+│ 1. Define contract │             │                  │
+│ 2. Run test →      │ ─────┐      │                  │
+│    generates PACT   │      │      │                  │
+│    file             │      │      │                  │
+└──────────────────┘      │      └──────────────────┘
+                          │
+                          ▼
+                   PACT file shared
+                   via VCS or broker
+                          │
+                          ▼
+                          │      ┌──────────────────┐
+                          └─────▶│ 3. Start app     │
+                                 │ 4. Send requests   │
+                                 │    from PACT file  │
+                                 │ 5. Assert responses│
+                                 │    match contract  │
+                                 └──────────────────┘
+```
+
+### 5.3 Tools
+
+| Stack | Consumer | Provider | Artifact |
+|-------|----------|----------|----------|
+| **ReactJS** | `@pact-foundation/pact` (PactV3) | — | `tests/pact/contracts/*.json` |
+| **Java** | — | `au.com.dius.pact.provider:junit5spring` | Reads contract from `../reactjs/tests/pact/contracts` |
+
+### 5.4 Running Contract Tests
+
+**Consumer (ReactJS):**
+```bash
+cd boilerplate/reactjs
+npm run test:pact    # Runs orders.pact.test.ts → generates contract JSON
+```
+
+**Provider (Java):**
+```bash
+cd boilerplate/java/order-service
+mvn test -Dtest=OrderContractVerificationTest
+```
+
+### 5.5 CI Integration
+
+```yaml
+# .github/workflows/contract-testing.yml
+name: Contract Testing
+
+on: [pull_request]
+
+jobs:
+  consumer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: cd boilerplate/reactjs && npm ci && npm run test:pact
+
+  provider:
+    runs-on: ubuntu-latest
+    needs: consumer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin' }
+      - run: cd boilerplate/java/order-service && mvn test -Dtest=OrderContractVerificationTest
+```
+
+### 5.6 When Contract Tests Fail
+
+| Failure Mode | Meaning | Fix |
+|-------------|---------|-----|
+| Consumer test fails | Frontend expectations changed | Update contract, re-run consumer |
+| Provider test fails | Backend no longer matches contract | Fix backend OR update contract with coordination |
+| Enum mismatch | Backend added/removed enum value | Update both sides |
+| Status code mismatch | Backend returns 200 instead of 201 | Fix backend or update contract |
+
+### 5.7 Best Practices
+
+1. **Consumer drives** — Frontend defines what it expects; backend verifies it can satisfy.
+2. **Version contracts** — Pact file is committed to VCS; provider always tests against latest.
+3. **@State methods** — Provider `@State` annotations seed test data before verification.
+4. **Stub states** — Current boilerplate has stub `@State` methods; implement data seeding per-project.
+
+### 5.8 Verification Checklist
+
+- [ ] `@pact-foundation/pact` installed in ReactJS `devDependencies`
+- [ ] `npm run test:pact` script in `package.json`
+- [ ] Consumer tests cover happy path + error cases (404, 422)
+- [ ] Contract JSON committed to `tests/pact/contracts/`
+- [ ] `au.com.dius.pact.provider:junit5spring` in Java `pom.xml`
+- [ ] `OrderContractVerificationTest.java` reads from `@PactFolder("../reactjs/tests/pact/contracts")`
+- [ ] `@State` methods defined for each provider state
+- [ ] CI workflow runs consumer → provider verification on PR
+
+---
+
+*Last updated: 2026-06-27 | Template v2.3*

@@ -27,6 +27,6 @@
       "@tests/*": ["./src/tests/*"]
     }
   },
-  "include": ["src", "vite.config.ts"],
+  "include": ["src", "tests", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
