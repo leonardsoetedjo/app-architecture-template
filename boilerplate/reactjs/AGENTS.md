@@ -13,6 +13,7 @@
 | Feature | SOP index | `ctx_search(source:"sops")` |
 | Template | Source tree | `ctx_search(source:"frontend-boilerplate")` |
 | Pre-commit | §4 | Inline |
+| Deploy | §8 | Inline |
 
 ## 1. Golden Rules
 
@@ -91,3 +92,26 @@ export type OrderDetail = components["schemas"]["OrderResponse"];
 ## 7. Critical Patterns
 
 Auth `hasCheckedAuth` flag required (guards skip redirect on `null`→frequent-mistakes.md). Playwright cache path: `PLAYWRIGHT_BROWSERS_PATH=/tmp/pw-browsers`.
+
+## 8. Deployment Modes
+
+### A. Standalone (Local Dev)
+
+Use when running outside the `hermes-design` fleet.
+
+- `VITE_API_BASE_URL` is a **build arg** in the Dockerfile, NOT a runtime env var
+- Frontend accesses backend via nginx proxy on the same origin
+- Host port forwarding: `localhost:8082` → nginx → backend
+
+**docker-compose.yml** uses `build.args.VITE_API_BASE_URL`, not `environment`.
+
+### B. Fleet Mode (Traefik + Tailscale)
+
+Use when deployed inside the `hermes-design` runtime.
+
+- Services attach to `traefik-net` (external Docker network)
+- Traefik routes HTTPS traffic via Tailscale hostname
+- **Port mappings removed** — Traefik handles all routing
+- The `Host()` rule is injected by the fleet runtime, never hardcoded in project repos
+
+**Critical:** `VITE_API_BASE_URL` must be set at **build time** (Dockerfile `ARG`), not runtime. Vite bundles the value into the SPA; nginx cannot override it at runtime.

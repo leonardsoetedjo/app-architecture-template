@@ -112,5 +112,40 @@
 | No Docker/CI/IDE tips | `grep -i -c "docker.*dev\|devcontainer\|vscode\|intellij" boilerplate/*/AGENTS.md` | 0 matches |
 | Canonical links present | `grep -c "Canonical:" boilerplate/*/AGENTS.md` | All ≥1 match |
 
+## 8. Deployment Modes
+
+This template supports **two** deployment modes. The project repo is deployment-agnostic.
+
+| Mode | File | Network | Routing | Use When |
+|------|------|---------|---------|----------|
+| **Standalone** | `docker-compose.yml` | Internal bridge (`internal`) | Host port forwarding (`localhost:8081`, `localhost:8082`) | Local dev, CI, no fleet |
+| **Fleet** | `docker-compose.yml` + `docker-compose.traefik.yml` | `traefik-net` (external) | Traefik + Tailscale DNS | Inside `hermes-design` runtime |
+
+### Rules
+
+1. **Standalone `docker-compose.yml` NEVER contains:**
+   - `traefik.enable` labels
+   - `traefik-net` references
+   - `TS_HOSTNAME` hardcoded values
+
+2. **Fleet `docker-compose.traefik.yml` ONLY contains:**
+   - Network override (`traefik-net`)
+   - Traefik labels (`PathPrefix` only — `Host()` is injected by fleet runtime)
+   - Port mapping removals (empty `ports: []`)
+
+3. **Vite env vars (`VITE_API_BASE_URL`) are build args**, not runtime env vars. Set them in `Dockerfile` or `docker-compose.yml` under `build.args`, never under `environment`.
+
+4. **Projects declare `PathPrefix` only.** The actual `Host()` rule comes from `TS_HOSTNAME` at deploy time via `hermes-design`.
+
+### Switching Modes
+
+```bash
+# Standalone
+docker compose up -d --build
+
+# Fleet (Traefik + Tailscale)
+docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d --build
+```
+
 **Version:** Clean Architecture v2.1
 **Last Updated:** 2026-06-21

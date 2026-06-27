@@ -13,6 +13,7 @@
 | Add feature | SOP index | `ctx_search(source: "sops")` |
 | Code template | Source tree | `ctx_search(source: "java-boilerplate")` |
 | Pre-commit | §4 below | Inline |
+| Deploy | §7 below | Inline |
 
 ## 1. Golden Rules
 
@@ -73,3 +74,33 @@ bru run --env java-local
 - [ ] Bruno smoke tests pass (`bru run --env java-local`)
 - [ ] No Spring/JPA/Lombok imports in `domain/`
 - [ ] Commit message includes "Architecture: ArchUnit PASSED"
+
+## 7. Deployment Modes
+
+This boilerplate supports **two** deployment modes:
+
+### A. Standalone (Local Dev / No Traefik)
+
+Use when running outside the `hermes-design` fleet.
+
+```bash
+docker compose up -d --build
+```
+
+- Services exposed via **host port forwarding** (`localhost:8081`, `localhost:8082`)
+- No Traefik labels, no `traefik-net`
+- Database and Redis included
+
+### B. Fleet Mode (Traefik + Tailscale)
+
+Use when deployed inside the `hermes-design` runtime.
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d --build
+```
+
+- Services attach to **`traefik-net`** (external Docker network managed by `hermes-design`)
+- Traefik routes via Tailscale hostname (`TS_HOSTNAME`)
+- **Port mappings removed** — Traefik handles all routing
+
+**Critical:** Do NOT put Traefik labels or `traefik-net` in the standalone `docker-compose.yml`. Projects declare `PathPrefix` only; `Host()` is injected by the fleet runtime.
