@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-06-27",
+  "prompts": {
+    "add-domain-entity.md": {
+      "file": "add-domain-entity.md",
+      "name": "Add Domain Entity",
+      "type": "Task Prompt",
+      "validated": false,
+      "validation_report": null
+    },
+    "add-endpoint.md": {
+      "file": "add-endpoint.md",
+      "name": "Add Endpoint",
+      "type": "Task Prompt",
+      "validated": false,
+      "validation_report": null
+    },
+    "PROMPT-001": {
+      "file": "build-login-java.md",
+      "name": "Build Login Java",
+      "type": "Validation Prompt",
+      "validated": true,
+      "validation_report": null
+    },
+    "PROMPT-002": {
+      "file": "build-login-python.md",
+      "name": "Build Login Python",
+      "type": "Validation Prompt",
+      "validated": true,
+      "validation_report": "validation/PROMPT-002-validation-report.md"
+    },
+    "refactor-service.md": {
+      "file": "refactor-service.md",
+      "name": "Refactor Service",
+      "type": "Task Prompt",
+      "validated": false,
+      "validation_report": null
+    }
+  },
+  "gaps": [
+    "database-migration-prompt",
+    "testing-prompt",
+    "deployment-prompt",
+    "monitoring-prompt"
+  ]
+}

@@ -54,15 +54,28 @@ Each template is a markdown file with this structure:
 
 ## Templates
 
-| Template | Task | Status | Front Matter |
-|----------|------|--------|-------------|
-| `build-login-java.md` | Build a simple login app with React + Java | ✅ Active v1.4 | `type: "Validation Prompt"`, `validated: true` |
-| `build-login-python.md` | Build a simple login app with Quasar + Python | ✅ Active v1.4 | `type: "Validation Prompt"`, `validated: true` |
-| `add-endpoint.md` | Generate Clean Architecture REST endpoint | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
-| `add-domain-entity.md` | Add domain entity with port + tests | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
-| `refactor-service.md` | Refactor into correct CA layers | ✅ Active v1.0.0 | `type: "Task Prompt"`, `validated: true` |
+| Template | Task | Status | Validated |
+|----------|------|--------|-----------|
+| `build-login-java.md` | Build a simple login app with React + Java | ✅ Active v1.4 | ✅ Yes |
+| `build-login-python.md` | Build a simple login app with Quasar + Python | ✅ Active v1.4 | ✅ Yes |
+| `add-endpoint.md` | Generate Clean Architecture REST endpoint | ✅ Active v1.0.0 | ❌ Pending |
+| `add-domain-entity.md` | Add domain entity with port + tests | ✅ Active v1.0.0 | ❌ Pending |
+| `refactor-service.md` | Refactor into correct CA layers | ✅ Active v1.0.0 | ❌ Pending |
 | `write-architecture-test.md` | Write ArchUnit/dependency-cruiser test | TODO | — |
 | `audit-imports.md` | Audit forbidden imports by layer | TODO | — |
+
+## Validation Reports
+
+Validation reports for prompts are stored in the `validation/` subdirectory:
+
+- **PROMPT-001** (`build-login-java.md`): [`validation/PROMPT-001-validation-report.md`](validation/PROMPT-001-validation-report.md)
+- **PROMPT-002** (`build-login-python.md`): [`validation/PROMPT-002-validation-report.md`](validation/PROMPT-002-validation-report.md)
+
+Unvalidated prompts (add-endpoint.md, add-domain-entity.md, refactor-service.md) are tracked in issue #262.
+
+## Index
+
+A machine-readable index is available at [`.index.json`](.index.json) for programmatic access.
 
 ## Adding a New Template
 
