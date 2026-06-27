@@ -1,0 +1,19 @@
+{
+  "name": "playwright-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:fullstack": "playwright test --config=playwright.fullstack.config.ts --project=chromium",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint e2e e2e-fullstack utils --ext .ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.3.3"
+  }
+}

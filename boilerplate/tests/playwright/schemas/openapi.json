@@ -1,0 +1,254 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Order Service API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/orders": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Paginated list of orders",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaginatedOrderResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetail" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateOrderRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrderResult" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetail" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/orders/{orderId}": {
+      "get": {
+        "parameters": [
+          { "name": "orderId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order detail",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OrderDetailResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetail" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetail" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OrderDetailResponse": {
+        "type": "object",
+        "required": ["orderId", "customerId", "status", "totalAmount", "currency", "items", "createdAt", "updatedAt"],
+        "properties": {
+          "orderId": { "type": "string", "format": "uuid", "example": "550e8400-e29b-41d4-a716-446655440000" },
+          "customerId": { "type": "string", "format": "uuid" },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "REFUNDED"]
+          },
+          "totalAmount": { "type": "string", "pattern": "^\\d+\\.\\d{2}$", "description": "Monetary amount as string (e.g. \"99.99\")" },
+          "currency": { "type": "string", "enum": ["USD", "EUR", "GBP", "JPY"], "example": "USD" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrderItemResult" }
+          },
+          "discountAmount": { "type": "string", "pattern": "^\\d+\\.\\d{2}$", "nullable": true },
+          "shippingAddress": { "type": "string", "nullable": true },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "OrderItemResult": {
+        "type": "object",
+        "required": ["productId", "productName", "quantity", "unitPrice", "lineTotal"],
+        "properties": {
+          "productId": { "type": "string", "format": "uuid" },
+          "productName": { "type": "string", "minLength": 1, "maxLength": 255 },
+          "quantity": { "type": "integer", "minimum": 1 },
+          "unitPrice": { "type": "string", "pattern": "^\\d+\\.\\d{2}$" },
+          "lineTotal": { "type": "string", "pattern": "^\\d+\\.\\d{2}$" }
+        }
+      },
+      "OrderResult": {
+        "type": "object",
+        "required": ["orderId", "status", "totalAmount", "createdAt"],
+        "properties": {
+          "orderId": { "type": "string", "format": "uuid" },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "REFUNDED"]
+          },
+          "totalAmount": { "type": "string", "pattern": "^\\d+\\.\\d{2}$" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "PaginatedOrderResponse": {
+        "type": "object",
+        "required": ["content", "page", "size", "totalElements", "totalPages", "last"],
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrderListItemResult" }
+          },
+          "page": { "type": "integer", "minimum": 0 },
+          "size": { "type": "integer", "minimum": 1 },
+          "totalElements": { "type": "integer", "minimum": 0 },
+          "totalPages": { "type": "integer", "minimum": 0 },
+          "last": { "type": "boolean" }
+        }
+      },
+      "OrderListItemResult": {
+        "type": "object",
+        "required": ["orderId", "customerId", "status", "totalAmount", "createdAt"],
+        "properties": {
+          "orderId": { "type": "string", "format": "uuid" },
+          "customerId": { "type": "string", "format": "uuid" },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", "REFUNDED"]
+          },
+          "totalAmount": { "type": "string", "pattern": "^\\d+\\.\\d{2}$" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreateOrderRequest": {
+        "type": "object",
+        "required": ["customerId", "items"],
+        "properties": {
+          "customerId": { "type": "string", "format": "uuid" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CreateOrderItemRequest" },
+            "minItems": 1
+          },
+          "shippingAddress": { "type": "string", "nullable": true }
+        }
+      },
+      "CreateOrderItemRequest": {
+        "type": "object",
+        "required": ["productId", "quantity", "unitPrice"],
+        "properties": {
+          "productId": { "type": "string", "format": "uuid" },
+          "quantity": { "type": "integer", "minimum": 1 },
+          "unitPrice": { "type": "number", "minimum": 0, "exclusiveMinimum": true }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "minLength": 8 }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "required": ["accessToken", "tokenType", "expiresIn"],
+        "properties": {
+          "accessToken": { "type": "string" },
+          "tokenType": { "type": "string", "example": "Bearer" },
+          "expiresIn": { "type": "integer", "minimum": 0 },
+          "refreshToken": { "type": "string", "nullable": true }
+        }
+      },
+      "ProblemDetail": {
+        "type": "object",
+        "required": ["type", "title", "status"],
+        "properties": {
+          "type": { "type": "string", "format": "uri" },
+          "title": { "type": "string" },
+          "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true },
+          "fieldErrors": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "required": ["field", "message"],
+              "properties": {
+                "field": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
