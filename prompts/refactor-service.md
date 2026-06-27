@@ -1,12 +1,15 @@
+---
+prompt_id: "PROMPT-005"
+name: "Refactor Service Layers"
+type: "Task Prompt"
+version: "1.0.0"
+stack: "all"
+standard: "Standard 27"
+sop_reference: "SOP-11"
+validated: false
+---
+
 # Task: Refactor Into Clean Architecture Layers
-
-## Version
-1.0.0 — 2026-06-20
-
-## Changelog
-
-### 1.0.0 — 2026-06-20
-- Initial template for refactoring code that violates Clean Architecture layer rules
 
 ## Prompt Template
 

@@ -1,12 +1,15 @@
+---
+prompt_id: "PROMPT-004"
+name: "Add REST Endpoint"
+type: "Task Prompt"
+version: "1.0.0"
+stack: "all"
+standard: "Standard 27"
+sop_reference: "SOP-02"
+validated: false
+---
+
 # Task: Add REST Endpoint
-
-## Version
-1.0.0 — 2026-06-20
-
-## Changelog
-
-### 1.0.0 — 2026-06-20
-- Initial template for adding FastAPI/NestJS/Spring endpoints following Clean Architecture
 
 ## Prompt Template
 

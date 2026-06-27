@@ -2,38 +2,49 @@
   "version": "1.0",
   "generated_at": "2026-06-27",
   "prompts": {
-    "add-domain-entity.md": {
-      "file": "add-domain-entity.md",
-      "name": "Add Domain Entity",
-      "type": "Task Prompt",
-      "validated": false,
-      "validation_report": null
-    },
-    "add-endpoint.md": {
-      "file": "add-endpoint.md",
-      "name": "Add Endpoint",
-      "type": "Task Prompt",
-      "validated": false,
-      "validation_report": null
-    },
     "PROMPT-001": {
       "file": "build-login-java.md",
-      "name": "Build Login Java",
+      "name": "Authentication Test App - Java + React",
       "type": "Validation Prompt",
+      "stack": [
+        "java",
+        "reactjs"
+      ],
       "validated": true,
-      "validation_report": null
+      "validation_report": "validation/PROMPT-001-validation-report.md"
     },
     "PROMPT-002": {
       "file": "build-login-python.md",
-      "name": "Build Login Python",
+      "name": "Authentication Test App - Python + Quasar",
       "type": "Validation Prompt",
+      "stack": [
+        "python",
+        "quasar"
+      ],
       "validated": true,
       "validation_report": "validation/PROMPT-002-validation-report.md"
     },
-    "refactor-service.md": {
-      "file": "refactor-service.md",
-      "name": "Refactor Service",
+    "PROMPT-003": {
+      "file": "add-domain-entity.md",
+      "name": "Add Domain Entity",
       "type": "Task Prompt",
+      "stack": "all",
+      "validated": false,
+      "validation_report": null
+    },
+    "PROMPT-004": {
+      "file": "add-endpoint.md",
+      "name": "Add REST Endpoint",
+      "type": "Task Prompt",
+      "stack": "all",
+      "validated": false,
+      "validation_report": null
+    },
+    "PROMPT-005": {
+      "file": "refactor-service.md",
+      "name": "Refactor Service Layers",
+      "type": "Task Prompt",
+      "stack": "all",
       "validated": false,
       "validation_report": null
     }

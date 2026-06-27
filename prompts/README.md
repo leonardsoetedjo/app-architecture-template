@@ -54,15 +54,22 @@ Each template is a markdown file with this structure:
 
 ## Templates
 
-| Template | Task | Status | Validated |
-|----------|------|--------|-----------|
-| `build-login-java.md` | Build a simple login app with React + Java | ✅ Active v1.4 | ✅ Yes |
-| `build-login-python.md` | Build a simple login app with Quasar + Python | ✅ Active v1.4 | ✅ Yes |
-| `add-endpoint.md` | Generate Clean Architecture REST endpoint | ✅ Active v1.0.0 | ❌ Pending |
-| `add-domain-entity.md` | Add domain entity with port + tests | ✅ Active v1.0.0 | ❌ Pending |
-| `refactor-service.md` | Refactor into correct CA layers | ✅ Active v1.0.0 | ❌ Pending |
-| `write-architecture-test.md` | Write ArchUnit/dependency-cruiser test | TODO | — |
-| `audit-imports.md` | Audit forbidden imports by layer | TODO | — |
+| Template | Task | Type | Validated |
+|----------|------|------|-----------|
+| `build-login-java.md` | Build login app (Java+React) | Validation | ✅ Yes |
+| `build-login-python.md` | Build login app (Python+Quasar) | Validation | ✅ Yes |
+| `add-endpoint.md` | Add REST endpoint | Task | ❌ Pending |
+| `add-domain-entity.md` | Add domain entity | Task | ❌ Pending |
+| `refactor-service.md` | Refactor service layers | Task | ❌ Pending |
+
+## Future Prompts
+
+The following prompts are planned but not yet implemented:
+
+- `write-architecture-test.md` - ArchUnit/dependency-cruiser test generation
+- `audit-imports.md` - Forbidden imports auditor
+
+These are tracked in issue #266 (Add missing prompt categories).
 
 ## Validation Reports
 

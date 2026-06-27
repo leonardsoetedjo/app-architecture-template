@@ -1,12 +1,15 @@
+---
+prompt_id: "PROMPT-003"
+name: "Add Domain Entity"
+type: "Task Prompt"
+version: "1.0.0"
+stack: "all"
+standard: "Standard 27"
+sop_reference: "SOP-01, SOP-07"
+validated: false
+---
+
 # Task: Add Domain Entity
-
-## Version
-1.0.0 — 2026-06-20
-
-## Changelog
-
-### 1.0.0 — 2026-06-20
-- Initial template for adding domain entities following Clean Architecture purity rules
 
 ## Prompt Template
 
