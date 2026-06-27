@@ -2,68 +2,48 @@
 
 This directory contains reusable prompt templates for common AI agent tasks. Every template follows Standard 27: Prompt Engineering.
 
-## Structure
+## Organization by Complexity
 
-Each template is a markdown file with this structure:
+Prompts are organized by estimated completion time and complexity:
 
-```markdown
-# Task: [Name]
+### Basic (30-60 min)
+Simple, focused tasks with minimal dependencies.
 
-## Version
-[semver] — [date]
+| Template | Task | Validated |
+|----------|------|-----------|
+| [`basic/add-domain-entity.md`](basic/add-domain-entity.md) | Add domain entity | ❌ Pending |
+| [`basic/add-endpoint.md`](basic/add-endpoint.md) | Add REST endpoint | ❌ Pending |
 
-## Changelog
+### Intermediate (60-90 min)
+Multi-step tasks requiring coordination between layers.
 
-### [version] — [date]
-- [change description]
+| Template | Task | Validated |
+|----------|------|-----------|
+| [`intermediate/add-database-migration.md`](intermediate/add-database-migration.md) | Add database migration | ❌ Pending |
+| [`intermediate/refactor-service.md`](intermediate/refactor-service.md) | Refactor service layers | ❌ Pending |
+| [`intermediate/write-unit-tests.md`](intermediate/write-unit-tests.md) | Write unit tests | ❌ Pending |
 
-## Prompt Template
+### Advanced (90+ min)
+Complex flows with multiple components and validation.
 
-### Role
-[persona definition]
+| Template | Task | Validated |
+|----------|------|-----------|
+| [`advanced/build-login-java.md`](advanced/build-login-java.md) | Build login app (Java+React) | ✅ Yes |
+| [`advanced/build-login-python.md`](advanced/build-login-python.md) | Build login app (Python+Quasar) | ✅ Yes |
+| [`advanced/write-e2e-tests.md`](advanced/write-e2e-tests.md) | Write E2E tests | ❌ Pending |
 
-### Context
-[what the model needs to know]
+## Validation Reports
 
-### Task
-[what the model must do]
+Validation reports for prompts are stored in the `validation/` subdirectory:
 
-### Constraints
-- [constraint 1]
-- [constraint 2]
+- **PROMPT-001** (`advanced/build-login-java.md`): [`validation/PROMPT-001-validation-report.md`](validation/PROMPT-001-validation-report.md)
+- **PROMPT-002** (`advanced/build-login-python.md`): [`validation/PROMPT-002-validation-report.md`](validation/PROMPT-002-validation-report.md)
 
-### Output Format
-[expected response structure]
+Unvalidated prompts are tracked in issue #262.
 
-## Few-Shot Examples
+## Index
 
-### Example 1: [Happy Path]
-#### Input
-[input]
-
-#### Output
-[expected output]
-
-### Example 2: [Edge Case]
-#### Input
-[input]
-
-#### Output
-[expected output]
-```
-
-## Templates
-
-| Template | Task | Type | Validated |
-|----------|------|------|-----------|
-| `build-login-java.md` | Build login app (Java+React) | Validation | ✅ Yes |
-| `build-login-python.md` | Build login app (Python+Quasar) | Validation | ✅ Yes |
-| `add-endpoint.md` | Add REST endpoint | Task | ❌ Pending |
-| `add-domain-entity.md` | Add domain entity | Task | ❌ Pending |
-| `refactor-service.md` | Refactor service layers | Task | ❌ Pending |
-| `add-database-migration.md` | Add database migration | Task | ❌ Pending |
-| `write-unit-tests.md` | Write unit tests | Task | ❌ Pending |
-| `write-e2e-tests.md` | Write E2E tests | Task | ❌ Pending |
+A machine-readable index is available at [`.index.json`](.index.json) for programmatic access.
 
 ## Future Prompts
 
@@ -74,29 +54,18 @@ The following prompts are planned but not yet implemented:
 - `implement-security.md` — RBAC, rate limiting, secrets rotation
 - `optimize-performance.md` — Caching, query optimization
 
-These are tracked in issue #266 (Add missing prompt categories).
-
-## Validation Reports
-
-Validation reports for prompts are stored in the `validation/` subdirectory:
-
-- **PROMPT-001** (`build-login-java.md`): [`validation/PROMPT-001-validation-report.md`](validation/PROMPT-001-validation-report.md)
-- **PROMPT-002** (`build-login-python.md`): [`validation/PROMPT-002-validation-report.md`](validation/PROMPT-002-validation-report.md)
-
-Unvalidated prompts (add-endpoint.md, add-domain-entity.md, refactor-service.md) are tracked in issue #262.
-
-## Index
-
-A machine-readable index is available at [`.index.json`](.index.json) for programmatic access.
+These are tracked in issue #266.
 
 ## Adding a New Template
 
-1. Copy this structure into a new file
-2. Fill in all sections following Standard 27
-3. Include at least 2 few-shot examples
-4. Run the Prompt Testing Gate (Standard 27, Section 5)
-5. Add entry to the table above
-6. Commit with message: `docs(prompts): add [name] template v1.0.0`
+1. Determine complexity level (basic/intermediate/advanced)
+2. Copy structure into new file in appropriate subdirectory
+3. Fill in all sections following Standard 27
+4. Include at least 2 few-shot examples
+5. Run the Prompt Testing Gate (Standard 27, Section 5)
+6. Add entry to the table above
+7. Update `.index.json` with `python scripts/generate-prompts-index.py`
+8. Commit with message: `docs(prompts): add [name] template v1.0.0`
 
 ## Versioning
 
