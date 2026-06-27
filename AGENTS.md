@@ -20,6 +20,20 @@
 
 **Rule:** Read root AGENTS.md once per session. Read stack-specific AGENTS.md once per task. Then `ctx_search` for everything else.
 
+**Before starting work:**
+```bash
+# Check if .index.json is stale (>7 days old)
+./scripts/auto-index.sh  # Regenerates docs/.index.json from .agents.yml
+```
+
+**When to regenerate:**
+- After adding new docs
+- After modifying `.agents.yml`
+- If `ctx_search()` misses expected results
+- Weekly (every Monday)
+
+**Related:** Issue #235 (automate via CI)
+
 ## 2. DOX Hierarchy
 
 `AGENTS.md` is **AI-agent exclusive**. Humans: see `README.md` and `docs/`.

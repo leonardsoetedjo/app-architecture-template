@@ -98,7 +98,6 @@ while IFS='|' read -r name path extensions; do
   
   if time_check "$full_path" "$name"; then
     echo "  🔄 Indexing: $name → $path"
-    # Call ctx_index via python
     python3 -c "
 # Simulated ctx_index call — replace with actual tool invocation
 print(f'  Indexed: {\"$name\"} (\"$path\")')
