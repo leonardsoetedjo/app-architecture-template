@@ -1,7 +1,7 @@
 {
-  "version": "1.0",
-  "schema": "app-architecture-template-index",
+  "version": "2.0",
   "generated_at": "2026-06-27",
+  "generator": "scripts/generate-doc-index.py",
   "categories": {
     "standards": {
       "path": "docs/01-agnostic/01-standards",
@@ -22,22 +22,6 @@
     "sops": {
       "path": "docs/04-sops",
       "description": "Standard Operating Procedures"
-    },
-    "boilerplate-java": {
-      "path": "boilerplate/java",
-      "description": "Spring Boot DDD boilerplate"
-    },
-    "boilerplate-python": {
-      "path": "boilerplate/python",
-      "description": "FastAPI + SQLAlchemy DDD boilerplate"
-    },
-    "boilerplate-reactjs": {
-      "path": "boilerplate/reactjs",
-      "description": "React + TypeScript + Ant Design boilerplate"
-    },
-    "boilerplate-quasar": {
-      "path": "boilerplate/quasar",
-      "description": "Quasar + Vue 3 + TypeScript boilerplate"
     }
   },
   "sources": {
@@ -54,70 +38,6 @@
         ".md"
       ],
       "description": "All standard operating procedures"
-    },
-    "java-boilerplate": {
-      "path": "boilerplate/java",
-      "extensions": [
-        ".md",
-        ".java",
-        ".xml",
-        ".yml",
-        ".yaml",
-        ".properties"
-      ],
-      "description": "Java Spring boilerplate"
-    },
-    "python-boilerplate": {
-      "path": "boilerplate/python",
-      "extensions": [
-        ".md",
-        ".py",
-        ".toml",
-        ".ini",
-        ".sh"
-      ],
-      "description": "Python FastAPI boilerplate"
-    },
-    "frontend-boilerplate": {
-      "path": "boilerplate/reactjs",
-      "extensions": [
-        ".md",
-        ".ts",
-        ".tsx",
-        ".js",
-        ".json",
-        ".css"
-      ],
-      "description": "ReactJS frontend boilerplate"
-    },
-    "quasar-boilerplate": {
-      "path": "boilerplate/quasar",
-      "extensions": [
-        ".md",
-        ".ts",
-        ".vue",
-        ".js",
-        ".json",
-        ".css"
-      ],
-      "description": "Quasar frontend boilerplate"
-    },
-    "scripts": {
-      "path": "scripts",
-      "extensions": [
-        ".sh",
-        ".py"
-      ],
-      "description": "Automation and validation scripts"
-    },
-    "docker-compose-files": {
-      "path": ".",
-      "extensions": [
-        ".yml",
-        ".yaml"
-      ],
-      "file_glob": "docker-compose*.yml",
-      "description": "Docker Compose configurations"
     }
   },
   "navigation": {
@@ -180,91 +100,126 @@
     "security_architecture_review": "docs/01-agnostic/01-standards/49-security-architecture-review.md"
   },
   "sops": {
+    "00": {
+      "file": "docs/04-sops/00-index.md",
+      "task": "Standard Operating Procedures (SOPs)",
+      "layer": "unknown"
+    },
     "01": {
       "file": "docs/04-sops/01-add-new-aggregate-root.md",
-      "task": "Add new aggregate root",
-      "layer": "domain"
+      "task": "SOP: Add New Aggregate Root",
+      "layer": "unknown"
     },
     "02": {
       "file": "docs/04-sops/02-add-new-rest-endpoint.md",
-      "task": "Add REST endpoint",
-      "layer": "application"
+      "task": "SOP: Add New REST Endpoint",
+      "layer": "unknown"
     },
     "03": {
       "file": "docs/04-sops/03-add-new-frontend-page.md",
-      "task": "Add frontend page",
-      "layer": "frontend"
+      "task": "SOP: Add New Frontend Page",
+      "layer": "unknown"
     },
     "04": {
       "file": "docs/04-sops/04-add-flyway-migration.md",
-      "task": "Add Flyway migration",
-      "layer": "infrastructure",
-      "stack": "java"
+      "task": "SOP: Add Flyway Migration",
+      "layer": "unknown"
     },
     "05": {
       "file": "docs/04-sops/05-publish-domain-event.md",
-      "task": "Publish domain event",
-      "layer": "domain"
+      "task": "SOP: Publish Domain Event",
+      "layer": "unknown"
     },
     "06": {
       "file": "docs/04-sops/06-configure-external-service.md",
-      "task": "Configure external service",
-      "layer": "application"
+      "task": "SOP: Configure External HTTP Service",
+      "layer": "unknown"
     },
     "07": {
       "file": "docs/04-sops/07-add-new-use-case.md",
-      "task": "Add new use case",
-      "layer": "application"
+      "task": "SOP: Add New Use Case",
+      "layer": "unknown"
     },
     "08": {
       "file": "docs/04-sops/08-add-new-domain-event.md",
-      "task": "Add new domain event (detailed)",
-      "layer": "domain"
+      "task": "SOP: Add New Domain Event",
+      "layer": "unknown"
     },
     "09": {
       "file": "docs/04-sops/09-add-new-batch-job.md",
-      "task": "Add new batch job",
-      "layer": "infrastructure"
+      "task": "SOP: Add New Batch Job",
+      "layer": "unknown"
     },
     "10": {
       "file": "docs/04-sops/10-initialize-environment.md",
-      "task": "Initialize environment (agent)",
-      "layer": "agent"
+      "task": "SOP: Initialize Environment for Multi-Session Agent Work",
+      "layer": "unknown"
     },
     "11": {
       "file": "docs/04-sops/11-implement-feature.md",
-      "task": "Implement feature (agent)",
-      "layer": "agent"
+      "task": "SOP: Implement Feature as Coding Agent",
+      "layer": "unknown"
     },
     "12": {
       "file": "docs/04-sops/12-session-handoff.md",
-      "task": "Session handoff (agent)",
-      "layer": "agent"
+      "task": "SOP: End Session and Hand Off to Next Agent",
+      "layer": "unknown"
     },
     "13": {
       "file": "docs/04-sops/13-configure-branch-protection.md",
-      "task": "Configure branch protection",
-      "layer": "devops"
+      "task": "GitHub Branch Protection Configuration Guide",
+      "layer": "unknown"
     },
     "14": {
       "file": "docs/04-sops/14-realtime-monitoring.md",
-      "task": "Set up real-time monitoring",
-      "layer": "devops"
+      "task": "Real-time Architecture Monitoring",
+      "layer": "unknown"
     },
     "15": {
       "file": "docs/04-sops/15-dual-version-secrets.md",
-      "task": "Manage dual-version secrets",
-      "layer": "devops"
+      "task": "Dual-Version Secret Management - Implementation Examples",
+      "layer": "unknown"
+    },
+    "16": {
+      "file": "docs/04-sops/16-add-alembic-migration.md",
+      "task": "SOP: Add Alembic Migration",
+      "layer": "unknown"
+    },
+    "17": {
+      "file": "docs/04-sops/17-migrate-service-to-repository-pattern.md",
+      "task": "Migrate Service to Repository Pattern",
+      "layer": "unknown"
+    },
+    "18": {
+      "file": "docs/04-sops/18-agent-session-harness.md",
+      "task": "Agent Session Harness",
+      "layer": "unknown"
+    },
+    "19": {
+      "file": "docs/04-sops/19-decision-interview-protocol.md",
+      "task": "Decision Interview Protocol",
+      "layer": "unknown"
+    },
+    "20": {
+      "file": "docs/04-sops/20-standard-version-review.md",
+      "task": "Standard Version Review",
+      "layer": "unknown"
+    },
+    "21": {
+      "file": "docs/04-sops/21-validate-prompt.md",
+      "task": "SOP: Validate Prompt via Throwaway App",
+      "layer": "unknown"
+    },
+    "22": {
+      "file": "docs/04-sops/22-playwright-e2e-prompt-validation.md",
+      "task": "SOP: Write Playwright E2E Tests for Prompt Validation",
+      "layer": "unknown"
     }
   },
   "adr_gaps": {
     "09": {
       "status": "intentionally_skipped",
-      "reason": "Security decisions documented in standalone guides",
-      "documents": [
-        "docs/01-agnostic/03-guidelines/rate-limiting.md",
-        "docs/01-agnostic/03-guidelines/rbac.md"
-      ]
+      "reason": "Security decisions documented in standalone guides"
     }
   },
   "sop_gaps": {
@@ -272,54 +227,6 @@
       "status": "planned",
       "tracking_issue": 126,
       "description": "Python Alembic migration SOP"
-    },
-    "value-object": {
-      "status": "planned",
-      "description": "Add new value object SOP"
-    },
-    "api-version": {
-      "status": "planned",
-      "description": "Add new API version SOP"
-    },
-    "reusable-frontend-component": {
-      "status": "planned",
-      "description": "Add reusable frontend component SOP"
     }
-  },
-  "skills": {
-    "auto_load": [
-      "architecture-auditing",
-      "test-driven-development",
-      "verification-before-completion"
-    ],
-    "on_demand": [
-      "systematic-debugging",
-      "writing-plans",
-      "requesting-code-review"
-    ]
-  },
-  "mcp_servers": [
-    "serena",
-    "context-mode",
-    "sequential-thinking"
-  ],
-  "forbidden_patterns": [
-    {
-      "name": "domain_framework_imports_python",
-      "pattern": "^(import|from)\\s+(fastapi|sqlalchemy|pydantic)",
-      "path_regex": "src/domain/.*\\.py$",
-      "message": "Domain layer must not import frameworks"
-    },
-    {
-      "name": "domain_framework_imports_java",
-      "pattern": "^(import)\\s+(org\\.springframework|javax\\.persistence|lombok)",
-      "path_regex": "src/main/java/.*/domain/.*\\.java$",
-      "message": "Domain layer must not import frameworks"
-    }
-  ],
-  "pre_commit": "lefthook run pre-commit",
-  "scripts": {
-    "architecture_pre_commit": "lefthook run pre-commit",
-    "doc_lint": "scripts/doc-lint.py"
   }
 }

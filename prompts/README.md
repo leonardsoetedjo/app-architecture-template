@@ -61,13 +61,18 @@ Each template is a markdown file with this structure:
 | `add-endpoint.md` | Add REST endpoint | Task | ❌ Pending |
 | `add-domain-entity.md` | Add domain entity | Task | ❌ Pending |
 | `refactor-service.md` | Refactor service layers | Task | ❌ Pending |
+| `add-database-migration.md` | Add database migration | Task | ❌ Pending |
+| `write-unit-tests.md` | Write unit tests | Task | ❌ Pending |
+| `write-e2e-tests.md` | Write E2E tests | Task | ❌ Pending |
 
 ## Future Prompts
 
 The following prompts are planned but not yet implemented:
 
-- `write-architecture-test.md` - ArchUnit/dependency-cruiser test generation
-- `audit-imports.md` - Forbidden imports auditor
+- `deploy-to-docker.md` — Dockerize a service
+- `setup-monitoring.md` — Structured logging, metrics endpoints
+- `implement-security.md` — RBAC, rate limiting, secrets rotation
+- `optimize-performance.md` — Caching, query optimization
 
 These are tracked in issue #266 (Add missing prompt categories).
 

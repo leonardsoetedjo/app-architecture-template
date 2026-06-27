@@ -47,12 +47,36 @@
       "stack": "all",
       "validated": false,
       "validation_report": null
+    },
+    "PROMPT-006": {
+      "file": "add-database-migration.md",
+      "name": "Add Database Migration",
+      "type": "Task Prompt",
+      "stack": "all",
+      "validated": false,
+      "validation_report": null
+    },
+    "PROMPT-007": {
+      "file": "write-unit-tests.md",
+      "name": "Write Unit Tests",
+      "type": "Task Prompt",
+      "stack": "all",
+      "validated": false,
+      "validation_report": null
+    },
+    "PROMPT-008": {
+      "file": "write-e2e-tests.md",
+      "name": "Write E2E Tests",
+      "type": "Task Prompt",
+      "stack": "all",
+      "validated": false,
+      "validation_report": null
     }
   },
   "gaps": [
-    "database-migration-prompt",
-    "testing-prompt",
     "deployment-prompt",
-    "monitoring-prompt"
+    "monitoring-prompt",
+    "security-prompt",
+    "performance-prompt"
   ]
 }
