@@ -1,3 +1,10 @@
+---
+title: "Standard 30: Prompt Lifecycle & Contradiction Prevention"
+number: "32"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # Standard 30: Prompt Lifecycle & Contradiction Prevention
 
 > **Status:** Active v1.0.0  

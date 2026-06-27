@@ -1,3 +1,9 @@
+---
+title: "Migration to Red Hat UBI-minimal"
+type: "Guideline"
+created: "2026-06-27"
+status: "active"
+---
 # Migration to Red Hat UBI-minimal
 
 **Date**: 2026-05-25  

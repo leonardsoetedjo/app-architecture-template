@@ -1,3 +1,9 @@
+---
+title: "Dev Containers Guide"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Dev Containers Guide
 
 This document describes the Dev Containers configuration for the app-architecture-template project.

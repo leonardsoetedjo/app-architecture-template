@@ -1,3 +1,9 @@
+---
+title: "Architecture Audit — app-architecture-template"
+type: "Architecture Document"
+created: "2026-06-27"
+status: "active"
+---
 # Architecture Audit — app-architecture-template
 **Date:** 2026-06-21
 **Auditor:** Archie

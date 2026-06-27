@@ -1,3 +1,9 @@
+---
+title: "Template Features Overview"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Template Features Overview
 
 **40+ verified features** across the entire SDLC for Clean Architecture polyglot services.

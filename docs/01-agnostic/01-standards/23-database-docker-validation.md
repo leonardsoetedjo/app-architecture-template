@@ -1,3 +1,10 @@
+---
+title: "Database & Docker Validation Harness"
+number: "23"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # Database & Docker Validation Harness
 
 > **Quick Start**: Add migration linting and Docker validation to your lefthook.yml

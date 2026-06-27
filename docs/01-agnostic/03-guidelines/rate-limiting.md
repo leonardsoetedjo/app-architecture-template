@@ -1,3 +1,9 @@
+---
+title: "Rate Limiting Implementation Guide"
+type: "Guideline"
+created: "2026-06-27"
+status: "active"
+---
 # Rate Limiting Implementation Guide
 
 **Status**: ✅ **Complete** (2026-05-25)  

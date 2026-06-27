@@ -1,3 +1,9 @@
+---
+title: "API Documentation"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # API Documentation
 
 This document describes the REST API endpoints available in the Order Service.

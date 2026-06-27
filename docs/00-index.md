@@ -1,3 +1,10 @@
+---
+title: "Documentation Index"
+number: "00"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Documentation Index
 
 This index serves as the primary discovery map for both human developers and AI agents. Use this file to locate specific standards, architectural decisions, and guidelines.

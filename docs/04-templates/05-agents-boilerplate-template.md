@@ -1,3 +1,10 @@
+---
+title: "Boilerplate AGENTS.md Template"
+number: "05"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Boilerplate AGENTS.md Template
 
 > **Purpose**: This template defines the standard structure for all boilerplate AGENTS.md files. Every boilerplate (Java, Python, ReactJS, Quasar) must follow this structure for consistency.

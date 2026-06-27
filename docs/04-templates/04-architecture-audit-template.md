@@ -1,3 +1,10 @@
+---
+title: "Architecture Audit Template"
+number: "04"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Architecture Audit Template
 
 > **Purpose**: Standard template for architecture audit checklists across all boilerplates (Java, Python, ReactJS, Quasar).

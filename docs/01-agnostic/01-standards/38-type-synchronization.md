@@ -1,3 +1,10 @@
+---
+title: "SOP-36: Synchronize Backend/Frontend Domain Types"
+number: "38"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # SOP-36: Synchronize Backend/Frontend Domain Types
 
 **Standard ID:** 36  

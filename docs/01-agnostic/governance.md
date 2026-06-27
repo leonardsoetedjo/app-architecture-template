@@ -1,3 +1,9 @@
+---
+title: "Governance Model: Phase Gate Guardrails"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Governance Model: Phase Gate Guardrails
 
 **Mandatory compliance checks between every SDLC stage.** Code cannot progress without passing each gate.

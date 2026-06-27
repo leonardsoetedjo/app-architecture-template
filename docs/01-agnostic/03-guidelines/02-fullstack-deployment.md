@@ -1,3 +1,10 @@
+---
+title: "Full-stack Deployment Topology"
+number: "02"
+type: "Guideline"
+created: "2026-06-27"
+status: "active"
+---
 # Full-stack Deployment Topology
 
 > **Version:** 1.0  

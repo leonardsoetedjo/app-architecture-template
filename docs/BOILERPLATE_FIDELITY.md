@@ -1,3 +1,9 @@
+---
+title: "Boilerplate Fidelity Comparison"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Boilerplate Fidelity Comparison
 
 > **Purpose**: Track feature parity and implementation depth across all boilerplate stacks (Java, Python, React, Quasar).

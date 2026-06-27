@@ -1,3 +1,10 @@
+---
+title: "Batch Job Status Architecture"
+number: "47"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # Batch Job Status Architecture
 
 ## ⚠️ CRITICAL: Separate Business Status from Scheduler Status

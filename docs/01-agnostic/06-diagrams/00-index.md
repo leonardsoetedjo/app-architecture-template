@@ -1,3 +1,10 @@
+---
+title: "Diagram Index"
+number: "00"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Diagram Index
 
 **Purpose**: Central catalog of all architecture diagrams with rendered previews and usage guidance.

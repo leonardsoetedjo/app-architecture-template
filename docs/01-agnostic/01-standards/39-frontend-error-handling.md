@@ -1,3 +1,10 @@
+---
+title: "SOP-37: Frontend Error Handling"
+number: "39"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # SOP-37: Frontend Error Handling
 
 **Standard ID:** 37  

@@ -1,3 +1,10 @@
+---
+title: "Boilerplate Integration Checklist"
+number: "02"
+type: "Architecture Document"
+created: "2026-06-27"
+status: "active"
+---
 # Boilerplate Integration Checklist
 
 **Version**: 1.0

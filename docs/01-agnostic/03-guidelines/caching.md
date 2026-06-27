@@ -1,3 +1,9 @@
+---
+title: "Distributed Caching Layer (Redis)"
+type: "Guideline"
+created: "2026-06-27"
+status: "active"
+---
 # Distributed Caching Layer (Redis)
 
 **Status**: ✅ **Complete** (2026-05-25)  

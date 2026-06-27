@@ -1,3 +1,10 @@
+---
+title: "First Feature Checklist (10 Minutes)"
+number: "03"
+type: "Quick Start Guide"
+created: "2026-06-27"
+status: "active"
+---
 # First Feature Checklist (10 Minutes)
 
 **Goal:** Complete end-to-end implementation of a simple REST endpoint following all architecture rules.

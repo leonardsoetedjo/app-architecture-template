@@ -1,3 +1,10 @@
+---
+title: "Developer Onboarding (5 Minutes)"
+number: "01"
+type: "Quick Start Guide"
+created: "2026-06-27"
+status: "active"
+---
 # Developer Onboarding (5 Minutes)
 
 **Goal:** Get you coding in this template within 5 minutes.

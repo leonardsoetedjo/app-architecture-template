@@ -1,3 +1,10 @@
+---
+title: "Complete Testing Harness Guide"
+number: "24"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # Complete Testing Harness Guide
 
 > **Version:** 1.0 | **Date:** 2026-06-14 | **Status:** Active

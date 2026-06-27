@@ -1,3 +1,10 @@
+---
+title: "Document Frontmatter Template"
+number: "03"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Document Frontmatter Template
 
 All documentation files must include YAML frontmatter at the top of the file.

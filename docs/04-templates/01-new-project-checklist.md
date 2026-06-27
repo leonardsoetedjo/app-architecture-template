@@ -1,3 +1,10 @@
+---
+title: "New Project Setup Checklist"
+number: "01"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # New Project Setup Checklist
 
 > **Purpose**: Use this checklist when forking/cloning `app-architecture-template` to create a new project.

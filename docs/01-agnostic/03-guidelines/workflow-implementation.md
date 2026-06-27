@@ -1,3 +1,9 @@
+---
+title: "Order State Machine Implementation Guide"
+type: "Guideline"
+created: "2026-06-27"
+status: "active"
+---
 # Order State Machine Implementation Guide
 
 **Status**: 🟡 **In Progress** (2026-05-25)  

@@ -1,3 +1,10 @@
+---
+title: "Decision Interview Protocol (DIP)"
+number: "19"
+type: "SOP"
+created: "2026-06-27"
+status: "active"
+---
 # Decision Interview Protocol (DIP)
 
 Agent interviews the product owner before handing work to Cody.

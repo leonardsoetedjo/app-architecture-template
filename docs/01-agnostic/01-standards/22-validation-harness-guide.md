@@ -1,3 +1,10 @@
+---
+title: "Validation Harness - Comprehensive Guide"
+number: "22"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # Validation Harness - Comprehensive Guide
 
 > **Purpose**: This document defines the validation harness architecture for all boilerplates in the template. It specifies the tools, configuration, and procedures for enforcing code quality and architecture boundaries at commit time.

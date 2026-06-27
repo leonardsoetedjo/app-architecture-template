@@ -1,3 +1,9 @@
+---
+title: "Quarterly Documentation Audit Procedure"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Quarterly Documentation Audit Procedure
 
 ## Purpose

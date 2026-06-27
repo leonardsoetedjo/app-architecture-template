@@ -1,3 +1,10 @@
+---
+title: "AI Agent Setup (2 Minutes)"
+number: "02"
+type: "Quick Start Guide"
+created: "2026-06-27"
+status: "active"
+---
 # AI Agent Setup (2 Minutes)
 
 **Goal:** Configure your AI agent tools for maximum productivity in this template.

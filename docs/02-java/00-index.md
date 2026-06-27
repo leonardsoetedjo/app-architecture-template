@@ -1,3 +1,10 @@
+---
+title: "Java — Spring Boot / React"
+number: "00"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Java — Spring Boot / React
 
 > Platform-specific guidance for the Java + Spring Boot + React stack.

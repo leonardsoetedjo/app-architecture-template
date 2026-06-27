@@ -1,3 +1,10 @@
+---
+title: "Template: Feature List (`feature-list.json`)"
+number: "08"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Template: Feature List (`feature-list.json`)
 
 > **Purpose**: Starter template for the `feature-list.json` artifact used by the Agent Session Harness.

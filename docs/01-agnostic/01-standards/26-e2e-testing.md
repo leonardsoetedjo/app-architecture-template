@@ -1,3 +1,10 @@
+---
+title: "Testing Standards — End-to-End (E2E)"
+number: "26"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # Testing Standards — End-to-End (E2E)
 
 ## Overview

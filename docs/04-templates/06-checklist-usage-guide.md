@@ -1,3 +1,10 @@
+---
+title: "Project Setup Checklists — Usage Guide"
+number: "06"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Project Setup Checklists — Usage Guide
 
 > **Quick Reference**: How to use the project setup checklists effectively.

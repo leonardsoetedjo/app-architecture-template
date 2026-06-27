@@ -1,3 +1,10 @@
+---
+title: "Python — FastAPI / Quasar"
+number: "00"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Python — FastAPI / Quasar
 
 > Platform-specific guidance for the Python + FastAPI + Quasar stack.

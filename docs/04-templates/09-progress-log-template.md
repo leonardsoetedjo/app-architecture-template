@@ -1,3 +1,10 @@
+---
+title: "Template: Agent Progress Log (`agent-progress.md`)"
+number: "09"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Template: Agent Progress Log (`agent-progress.md`)
 
 > **Purpose**: Starter template for the `agent-progress.md` artifact used by the Agent Session Harness.

@@ -1,3 +1,10 @@
+---
+title: "Validation Harness Standard"
+number: "21"
+type: "Standard"
+created: "2026-06-27"
+status: "active"
+---
 # Validation Harness Standard
 
 **Type:** Standard  

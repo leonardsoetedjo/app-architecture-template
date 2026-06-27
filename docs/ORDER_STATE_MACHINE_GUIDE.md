@@ -1,3 +1,9 @@
+---
+title: "Order State Machine Implementation Guide"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Order State Machine Implementation Guide
 
 ## Overview

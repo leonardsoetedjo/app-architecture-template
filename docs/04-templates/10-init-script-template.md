@@ -1,3 +1,10 @@
+---
+title: "Template: Init Script (`init.sh`)"
+number: "10"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Template: Init Script (`init.sh`)
 
 > **Purpose**: Starter template for the `init.sh` artifact used by the Agent Session Harness.

@@ -1,3 +1,9 @@
+---
+title: "Start Here — app-architecture-template"
+type: "Documentation"
+created: "2026-06-27"
+status: "active"
+---
 # Start Here — app-architecture-template
 
 Welcome to the architecture template repository! This is your one-stop guide to get oriented quickly.

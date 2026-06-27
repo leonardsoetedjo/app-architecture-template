@@ -1,3 +1,10 @@
+---
+title: "Quick Project Setup — Interactive Checklist"
+number: "02"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # Quick Project Setup — Interactive Checklist
 
 > **Quick Start**: Use this for rapid project initialization. For comprehensive planning, see [`01-new-project-checklist.md`](01-new-project-checklist.md).

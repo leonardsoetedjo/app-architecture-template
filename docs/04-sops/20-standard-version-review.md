@@ -1,3 +1,10 @@
+---
+title: "SOP-20: Monthly Standard Version Review"
+number: "20"
+type: "SOP"
+created: "2026-06-27"
+status: "active"
+---
 # SOP-20: Monthly Standard Version Review
 
 ## Purpose

@@ -1,3 +1,9 @@
+---
+title: "Gap Analysis: app-architecture-template"
+type: "Architecture Document"
+created: "2026-06-27"
+status: "active"
+---
 # Gap Analysis: app-architecture-template
 ## Prompt Engineering, Context Engineering, Harness Engineering
 

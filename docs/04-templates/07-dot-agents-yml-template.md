@@ -1,3 +1,10 @@
+---
+title: ".agents.yml — forex-trading-app (example)"
+number: "07"
+type: "Template"
+created: "2026-06-27"
+status: "active"
+---
 # .agents.yml — forex-trading-app (example)
 # Copy this template from app-architecture-template/.agents.yml
 # Fill in all values before first commit.

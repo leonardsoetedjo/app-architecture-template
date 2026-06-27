@@ -1,3 +1,10 @@
+---
+title: "SOP #18 — Agent Session Harness Standard"
+number: "18"
+type: "SOP"
+created: "2026-06-27"
+status: "active"
+---
 # SOP #18 — Agent Session Harness Standard
 
 **Version**: 1.0

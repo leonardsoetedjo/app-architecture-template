@@ -1,3 +1,9 @@
+---
+title: "Order State Machine Design"
+type: "Guideline"
+created: "2026-06-27"
+status: "active"
+---
 # Order State Machine Design
 
 **Status**: ✅ **Complete** (2026-05-25)  
