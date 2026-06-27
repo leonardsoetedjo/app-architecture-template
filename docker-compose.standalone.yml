@@ -5,6 +5,12 @@ services:
     labels:
       - "traefik.enable=false"
 
+  order-service-nestjs:
+    ports:
+      - "127.0.0.1:8082:3000"
+    labels:
+      - "traefik.enable=false"
+
   order-service-python:
     ports:
       - "127.0.0.1:8081:8080"

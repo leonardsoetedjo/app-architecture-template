@@ -9,6 +9,16 @@ services:
       - "traefik.http.middlewares.order-java-strip.stripprefix.prefixes=/order-java"
       - "traefik.http.routers.order-java.middlewares=order-java-strip"
 
+  order-service-nestjs:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.order-nestjs.rule=Host(`${TRAEFIK_HOST:-hermes.piranha-broadnose.ts.net}`) && PathPrefix(`/order-nestjs`)"
+      - "traefik.http.routers.order-nestjs.entrypoints=websecure"
+      - "traefik.http.routers.order-nestjs.tls=true"
+      - "traefik.http.services.order-nestjs.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.order-nestjs-strip.stripprefix.prefixes=/order-nestjs"
+      - "traefik.http.routers.order-nestjs.middlewares=order-nestjs-strip"
+
   order-service-python:
     labels:
       - "traefik.enable=true"

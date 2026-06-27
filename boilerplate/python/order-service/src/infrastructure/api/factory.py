@@ -90,6 +90,11 @@ def create_app() -> FastAPI:
     # Exception handlers
     setup_exception_handlers(app)
 
+    # Health check endpoint
+    @app.get("/health", tags=["health"])
+    def health_check():
+        return {"status": "UP"}
+
     # CORS
     app.add_middleware(
         CORSMiddleware,

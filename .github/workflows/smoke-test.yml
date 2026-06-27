@@ -16,7 +16,6 @@ jobs:
   smoke-test-nestjs:
     name: NestJS + ReactJS Smoke Test
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.changed_files, 'boilerplate/nestjs/') || contains(github.event.pull_request.changed_files, 'boilerplate/reactjs/') || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -56,7 +55,7 @@ jobs:
           done
           echo "PostgreSQL ready"
           # Wait for NestJS health endpoint
-          until curl -sf http://localhost:8082/actuator/health 2>/dev/null; do
+          until curl -sf http://localhost:8082/health 2>/dev/null; do
             echo "Waiting for NestJS..."
             sleep 2
           done
@@ -101,7 +100,6 @@ jobs:
   smoke-test-java:
     name: Java + ReactJS Smoke Test
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.changed_files, 'boilerplate/java/') || contains(github.event.pull_request.changed_files, 'boilerplate/reactjs/') || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -229,7 +227,7 @@ jobs:
         run: |
           docker build -t order-service-nestjs:latest .
           docker compose up -d order-service-nestjs
-          until curl -sf http://localhost:8082/actuator/health 2>/dev/null; do
+          until curl -sf http://localhost:8082/health 2>/dev/null; do
             echo "Waiting for NestJS..."
             sleep 2
           done

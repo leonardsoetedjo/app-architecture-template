@@ -7,86 +7,103 @@ services:
       args:
         GIT_COMMIT: ${GIT_COMMIT:-unknown}
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/order_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:postgres@postgres:5432/order_db
+    - SPRING_DATASOURCE_USERNAME=postgres
+    - SPRING_DATASOURCE_PASSWORD=postgres
+    - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+    - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+    - SPRING_FLYWAY_ENABLED=true
+    - SPRING_FLYWAY_LOCATIONS=classpath:db/migration
+    - JWT_SECRET=change-me-in-production
+    - JWT_EXPIRE_MINUTES=60
+    - ORDER_SERVICE_PORT=8080
+    - ORDER_SERVICE_DEBUG=false
     depends_on:
-      - postgres
+    - postgres
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 60s
-    networks:
-      - app-network
-
-  order-service-python:
-    image: app-architecture-python:latest
-    build:
-      context: ./boilerplate/python/order-service/order-service-python
-      dockerfile: Dockerfile
-    environment:
-      - ORDER_SERVICE_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/order_db
-      - ORDER_SERVICE_PORT=8080
-      - ORDER_SERVICE_DEBUG=false
-      - PYTHONUNBUFFERED=1
-      - PYTHONPATH=/app/src
-    depends_on:
-      - postgres
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/actuator/health')"]
+      test:
+      - CMD-SHELL
+      - curl -f http://localhost:8080/actuator/health || exit 1
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 5s
     networks:
-      - app-network
-
+    - app-network
+  order-service-python:
+    image: app-architecture-python:latest
+    build:
+      context: ./boilerplate/python/order-service
+      dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
+    environment:
+    - PYTHONPATH=/app/src
+    - DB_HOST=postgres
+    - DB_PORT=5432
+    - DB_NAME=order_db
+    - DB_USER=postgres
+    - DB_PASSWORD=postgres
+    - PORT=8080
+    ports:
+    - 8081:8080
+    depends_on:
+    - postgres
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -q --spider http://localhost:8080/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+    - app-network
   postgres:
     image: postgres:14
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=order_db
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_DB=order_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+    - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d order_db"]
+      test:
+      - CMD-SHELL
+      - pg_isready -U postgres -d order_db
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - app-network
-
+    - app-network
   redis:
     image: redis:7-alpine
     command: redis-server --appendonly yes
     volumes:
-      - redis_data:/data
+    - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test:
+      - CMD
+      - redis-cli
+      - ping
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - app-network
-
+    - app-network
   flyway:
     image: flyway/flyway:11
     volumes:
-      - ./boilerplate/java/order-service/src/main/resources/db/migration:/flyway/sql
+    - ./boilerplate/java/order-service/src/main/resources/db/migration:/flyway/sql
     environment:
-      - FLYWAY_URL=jdbc:postgresql://postgres:5432/order_db
-      - FLYWAY_USER=postgres
-      - FLYWAY_PASSWORD=postgres
+    - FLYWAY_URL=jdbc:postgresql://postgres:5432/order_db
+    - FLYWAY_USER=postgres
+    - FLYWAY_PASSWORD=postgres
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - app-network
-
+    - app-network
   nginx:
     image: app-architecture-frontend:latest
     build:
@@ -95,11 +112,38 @@ services:
       args:
         GIT_COMMIT: ${GIT_COMMIT:-unknown}
     networks:
-      - app-network
-
+    - app-network
+  order-service-nestjs:
+    image: app-architecture-nestjs:latest
+    build:
+      context: ./boilerplate/nestjs/order-service
+      dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
+    environment:
+    - NODE_ENV=production
+    - DB_HOST=postgres
+    - DB_PORT=5432
+    - DB_NAME=order_db
+    - DB_USER=postgres
+    - DB_PASSWORD=postgres
+    - PORT=3000
+    ports:
+    - 8082:3000
+    depends_on:
+    - postgres
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - wget -q --spider http://localhost:3000/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+    - app-network
 networks:
-  app-network:
-
+  app-network: null
 volumes:
-  postgres_data:
-  redis_data:
+  postgres_data: null
+  redis_data: null
