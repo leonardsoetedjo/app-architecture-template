@@ -13,6 +13,8 @@ from application.usecases.auth_use_case_impl import (
     RegisterUserUseCaseImpl,
     ChangePasswordUseCaseImpl,
     GetCurrentUserUseCaseImpl,
+    RefreshTokenUseCaseImpl,
+    LogoutUseCaseImpl,
 )
 from application.usecases.place_order_use_case_impl import PlaceOrderUseCaseImpl
 from domain.services.order_placement_service import OrderPlacementService
@@ -52,6 +54,11 @@ class Container:
         )
         self.get_current_user_use_case = GetCurrentUserUseCaseImpl(self.user_repository)
         self.token_parser = self.token_service
+
+        self.refresh_token_use_case = RefreshTokenUseCaseImpl(
+            self.token_parser, self.token_service, self.user_repository
+        )
+        self.logout_use_case = LogoutUseCaseImpl()
 
         placement_service = OrderPlacementService(self.order_repository, self.event_publisher)
         self.place_order_use_case = PlaceOrderUseCaseImpl(placement_service)

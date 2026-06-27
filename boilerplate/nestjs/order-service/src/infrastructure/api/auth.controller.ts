@@ -3,6 +3,8 @@ import { Response } from 'express';
 import { IAuthenticateUserUseCase } from '../../application/usecases/authenticate-user.use-case.interface';
 import { IRegisterUserUseCase } from '../../application/usecases/register-user.use-case.interface';
 import { IGetCurrentUserUseCase } from '../../application/usecases/get-current-user.use-case.interface';
+import { IRefreshTokenUseCase } from '../../application/usecases/refresh-token.use-case.interface';
+import { ILogoutUseCase } from '../../application/usecases/logout.use-case.interface';
 import { ITokenParser } from '../../domain/ports/token-parser.port';
 import { LoginCommand, LoginResult } from '../../application/dtos/auth.dto';
 import { RefreshTokenCommand, RefreshTokenResult } from '../../application/dtos/refresh-token.dto';
@@ -19,6 +21,10 @@ export class AuthController {
         private readonly registerUserUseCase: IRegisterUserUseCase,
         @Inject('IGetCurrentUserUseCase')
         private readonly getCurrentUserUseCase: IGetCurrentUserUseCase,
+        @Inject('IRefreshTokenUseCase')
+        private readonly refreshTokenUseCase: IRefreshTokenUseCase,
+        @Inject('ILogoutUseCase')
+        private readonly logoutUseCase: ILogoutUseCase,
         @Inject('ITokenParser')
         private readonly tokenParser: ITokenParser,
     ) {}
@@ -36,7 +42,7 @@ export class AuthController {
         @Res({ passthrough: true }) response: Response,
     ): Promise<LoginResult> {
         const result = await this.authenticateUserUseCase.execute(command);
-        // Set httpOnly cookies for token storage
+        // Set httpOnly cookies for token storage (XSS prevention)
         response.cookie('access_token', result.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -58,30 +64,38 @@ export class AuthController {
         @Body() command: RefreshTokenCommand,
         @Res({ passthrough: true }) response: Response,
     ): Promise<RefreshTokenResult> {
-        // TODO: Implement RefreshTokenUseCase
-        // For now, return a placeholder that passes through the command
-        const result: RefreshTokenResult = {
-            accessToken: 'new-access-token-placeholder',
-            refreshToken: command.refreshToken,
-            email: '',
-            roles: [],
-            tokenType: 'Bearer',
-        };
+        const result = await this.refreshTokenUseCase.execute(command);
+        // Rotate cookies with new token pair
         response.cookie('access_token', result.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             maxAge: 3600 * 1000,
         });
+        response.cookie('refresh_token', result.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 24 * 3600 * 1000,
+        });
         return result;
     }
 
     @Post('logout')
     @HttpCode(HttpStatus.NO_CONTENT)
-    async logout(@Res({ passthrough: true }) response: Response): Promise<void> {
+    async logout(
+        @Headers('authorization') authHeader: string,
+        @Res({ passthrough: true }) response: Response,
+    ): Promise<void> {
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1];
+            const userId = this.tokenParser.parseUserId(token);
+            if (userId) {
+                await this.logoutUseCase.execute(userId);
+            }
+        }
         response.clearCookie('access_token');
         response.clearCookie('refresh_token');
-        // TODO: Add token blacklist / Redis revocation
     }
 
     @Get('me')

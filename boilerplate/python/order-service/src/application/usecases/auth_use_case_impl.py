@@ -3,6 +3,10 @@ from .auth_use_cases import AuthenticateUserUseCase, RegisterUserUseCase, Change
 from application.dtos import LoginCommand, LoginResult, RegisterCommand, RegisterResult, ChangePasswordCommand, UserProfileResult
 from domain.models.user import Email, Password, Role, User, UserId, AuthenticationException, USER_ROLE
 
+from application.usecases.auth_use_cases import (
+    AuthenticateUserUseCase, RegisterUserUseCase, ChangePasswordUseCase,
+    GetCurrentUserUseCase, RefreshTokenUseCase, LogoutUseCase,
+)
 from domain.events.user_events import UserLoggedIn, UserRegistered, PasswordChanged
 from domain.ports.auth_ports import UserRepository, PasswordHasher, TokenGenerator, EventPublisher
 import uuid
@@ -107,3 +111,42 @@ class GetCurrentUserUseCaseImpl(GetCurrentUserUseCase):
             createdAt=user.created_at,
             lastLoginAt=user.last_login_at
         )
+
+class RefreshTokenUseCaseImpl(RefreshTokenUseCase):
+    def __init__(self, token_parser, token_generator, user_repository):
+        self.token_parser = token_parser
+        self.token_generator = token_generator
+        self.user_repository = user_repository
+
+    def execute(self, refresh_token: str) -> LoginResult:
+        if not refresh_token:
+            raise AuthenticationException("AUTH_INVALID_TOKEN", "Refresh token is required")
+
+        user_id = self.token_parser.parse_user_id(refresh_token)
+        if not user_id:
+            raise AuthenticationException("AUTH_INVALID_TOKEN", "Invalid or expired refresh token")
+
+        user = self.user_repository.find_by_id(user_id)
+        if not user:
+            raise AuthenticationException("AUTH_USER_NOT_FOUND", "User not found")
+
+        # Token rotation: generate new pair
+        access_token = self.token_generator.generate_access_token(user)
+        new_refresh_token = self.token_generator.generate_refresh_token(user)
+
+        return LoginResult(
+            accessToken=access_token,
+            refreshToken=new_refresh_token,
+            email=user.email.value,
+            roles={r.code for r in user.roles},
+            tokenType="Bearer"
+        )
+
+class LogoutUseCaseImpl(LogoutUseCase):
+    def __init__(self):
+        pass
+
+    def execute(self, user_id: UserId) -> None:
+        # TODO: Add token to Redis blacklist with TTL matching token expiry
+        # For now, tokens expire naturally via JWT expiration
+        pass

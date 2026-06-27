@@ -22,3 +22,13 @@ class GetCurrentUserUseCase(ABC):
     @abstractmethod
     def execute(self, user_id: UserId) -> UserProfileResult:
         pass
+
+class RefreshTokenUseCase(ABC):
+    @abstractmethod
+    def execute(self, refresh_token: str) -> LoginResult:
+        pass
+
+class LogoutUseCase(ABC):
+    @abstractmethod
+    def execute(self, user_id: UserId) -> None:
+        pass

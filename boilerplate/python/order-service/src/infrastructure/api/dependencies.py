@@ -30,3 +30,11 @@ def get_current_user_use_case(container: Any = Depends(_get_container)):
 
 def get_token_parser(container: Any = Depends(_get_container)):
     return container.token_parser
+
+
+def get_refresh_token_use_case(container: Any = Depends(_get_container)):
+    return container.refresh_token_use_case
+
+
+def get_logout_use_case(container: Any = Depends(_get_container)):
+    return container.logout_use_case
