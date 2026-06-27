@@ -71,6 +71,19 @@ services:
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
 ```
 
+## 3.3 Full-Stack Deployment
+
+For backend + frontend combinations, see the dedicated guide:
+
+**`docs/01-agnostic/03-guidelines/02-fullstack-deployment.md`**
+
+This covers:
+- nginx reverse proxy (serving React/Quasar static files + proxying `/api`)
+- Traefik fleet mode with full-stack routing
+- Docker Compose service dependencies and health checks
+- SSL termination options
+- Per-stack configuration (Java/React, NestJS/Quasar, etc.)
+
 ## 4. Deployment Workflow
 1. **Build**: Build images using `docker-compose build`.
 2. **Up**: Start services with `docker-compose up -d`.

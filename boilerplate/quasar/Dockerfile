@@ -16,7 +16,16 @@ FROM registry.access.redhat.com/ubi9/nginx-124:latest
 ARG GIT_COMMIT=unknown
 LABEL commit="$GIT_COMMIT"
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf.template
+
+# Substitute BACKEND_URL env var into nginx config at runtime
+# Write to /tmp because UBI9 runs as non-root and / may be read-only
+RUN echo '#!/bin/sh' > /tmp/docker-entrypoint.sh && \
+    echo 'sed "s|PLACEHOLDER_BACKEND_URL|${BACKEND_URL}|g" /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf' >> /tmp/docker-entrypoint.sh && \
+    echo 'exec nginx -g "daemon off;"' >> /tmp/docker-entrypoint.sh && \
+    chmod +x /tmp/docker-entrypoint.sh
+
+ENTRYPOINT ["/tmp/docker-entrypoint.sh"]
 
 EXPOSE 80
 

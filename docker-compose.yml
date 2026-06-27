@@ -111,8 +111,14 @@ services:
       dockerfile: Dockerfile
       args:
         GIT_COMMIT: ${GIT_COMMIT:-unknown}
+        VITE_API_BASE_URL: /api
+    environment:
+      - BACKEND_URL=http://order-service-java:8080
+    depends_on:
+      order-service-java:
+        condition: service_healthy
     networks:
-    - app-network
+      - app-network
   order-service-nestjs:
     image: app-architecture-nestjs:latest
     build:
