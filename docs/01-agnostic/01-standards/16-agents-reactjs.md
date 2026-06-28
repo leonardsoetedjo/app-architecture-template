@@ -340,24 +340,9 @@ ctx_search(queries: ["Ant Design table examples"])
 ctx_search(queries: ["TypeScript strict mode rules"])
 ```
 
-### Sequential-Thinking for Frontend Architecture
+### Reasoning Tools for Frontend Architecture
 
-```python
-# Before creating new feature
-mcp_sequential_thinking_think(
-  thread_purpose="Adding new Order feature",
-  thought="Determining if this needs new feature slice or existing",
-  thought_index=1,
-  tool_recommendation="ctx_search(queries: ['feature-sliced design rules'])",
-  left_to_be_done="1. Check existing features, 2. Determine component structure, 3. Plan state management"
-)
-
-mcp_sequential_thinking_think(
-  thought="Deciding between Zustand vs local state",
-  thought_index=2,
-  tool_recommendation="ctx_search(queries: ['Zustand vs useState pattern'])"
-)
-```
+Use `clarify` for ambiguous decisions, `delegate_task` for parallel analysis, and `ctx_search` for pattern discovery. Break multi-step reasoning into explicit tool calls rather than monolithic prompts.
 
 ### Superpowers Skills for Frontend Development
 

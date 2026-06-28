@@ -209,18 +209,9 @@ ctx_search(queries: ["{framework} dependency injection"])
 ctx_search(queries: ["Architecture tests"])
 ```
 
-### Sequential-Thinking for {Language} Architecture
+### Reasoning Tools for {Language} Architecture
 
-```python
-# Before adding new domain entity
-mcp_sequential_thinking_think(
-  thread_purpose="Adding new aggregate root",
-  thought="Determining if this is an aggregate root or value object",
-  thought_index=1,
-  tool_recommendation="ctx_search(queries: ['existing aggregate roots {language}'])",
-  left_to_be_done="1. Check ADR-01, 2. Find similar {language} patterns, 3. Determine layer"
-)
-```
+Use `clarify` for ambiguous decisions, `delegate_task` for parallel analysis, and `ctx_search` for pattern discovery. Break multi-step reasoning into explicit tool calls rather than monolithic prompts.
 
 ### Superpowers Skills for {Language} Development
 
