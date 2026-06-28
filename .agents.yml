@@ -46,7 +46,6 @@ skills:
 mcp_servers:
   - serena
   - context-mode
-  - sequential-thinking
 
 # -----------------------------------------------------------------------
 # Context-Mode source definitions

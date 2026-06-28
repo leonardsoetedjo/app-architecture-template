@@ -32,7 +32,6 @@ status: "Active"
 | **Playwright E2E validation** | `04-sops/22-playwright-e2e-prompt-validation.md` | `playwright` |
 | **ADR decision interview** | `04-sops/19-decision-interview-protocol.md` | `requesting-code-review` |
 | **Agent session harness** | `01-agnostic/01-standards/18-agent-session-harness.md` | `terminal` (run `./init.sh`) |
-| **Aggregate root** | `04-sops/01-add-new-aggregate-root.md` | `sequential-thinking` |
 | **REST endpoint** | `04-sops/02-add-new-rest-endpoint.md` | `serena`, `writing-plans` |
 | **Frontend page** | `04-sops/03-add-new-frontend-page.md` | `serena`, `writing-plans` |
 | **DB migration (TypeORM)** | `04-sops/16-add-typeorm-migration.md` | `terminal` |
@@ -40,7 +39,6 @@ status: "Active"
 | **DB migration (Alembic)** | `04-sops/16-add-alembic-migration.md` | `terminal` |
 | **Domain event** | `04-sops/05-publish-domain-event.md` | `ctx_search` |
 | **External service** | `04-sops/06-configure-external-service.md` | `ctx_search` |
-| **Use case / interactor** | `04-sops/07-add-new-use-case.md` | `sequential-thinking` |
 | **Monitoring** | `04-sops/14-realtime-monitoring.md` | `ctx_search` |
 | **Batch job** | `04-sops/09-add-new-batch-job.md` | `writing-plans`, `terminal` |
 | **Init environment** | `04-sops/10-initialize-environment.md` | `terminal` |
