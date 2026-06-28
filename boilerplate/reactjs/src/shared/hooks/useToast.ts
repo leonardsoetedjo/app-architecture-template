@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { AppError } from '../api/errorHandler';
 
-interface Toast {
+export interface Toast {
   id: string;
   message: string;
   type: 'error' | 'success' | 'warning' | 'info';
