@@ -2,6 +2,6 @@
 export class DomainException extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'DomainException';
+    this.name = "DomainException";
   }
 }

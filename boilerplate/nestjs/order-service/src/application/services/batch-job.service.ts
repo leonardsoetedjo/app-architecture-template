@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Injectable } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
 /**
  * NestJS batch job demonstration.
@@ -12,7 +12,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
  */
 interface BatchJobStatus {
   jobId: string;
-  status: 'SCHEDULED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+  status: "SCHEDULED" | "RUNNING" | "COMPLETED" | "FAILED";
   recordsProcessed: number;
   recordsFailed: number;
   errorMessage?: string;
@@ -31,7 +31,7 @@ export class BatchJobService {
   startJob(jobId: string): void {
     this.jobs.set(jobId, {
       jobId,
-      status: 'RUNNING',
+      status: "RUNNING",
       recordsProcessed: 0,
       recordsFailed: 0,
       startedAt: new Date(),
@@ -41,7 +41,7 @@ export class BatchJobService {
   completeJob(jobId: string, processed: number, failed: number): void {
     const j = this.jobs.get(jobId);
     if (!j) return;
-    j.status = 'COMPLETED';
+    j.status = "COMPLETED";
     j.recordsProcessed = processed;
     j.recordsFailed = failed;
     j.completedAt = new Date();
@@ -50,7 +50,7 @@ export class BatchJobService {
   failJob(jobId: string, errorMessage: string): void {
     const j = this.jobs.get(jobId);
     if (!j) return;
-    j.status = 'FAILED';
+    j.status = "FAILED";
     j.errorMessage = errorMessage;
     j.completedAt = new Date();
   }

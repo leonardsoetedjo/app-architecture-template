@@ -1,3 +1,6 @@
 export class UserLoggedInEvent {
-    constructor(public readonly userId: string, public readonly occurredAt: Date = new Date()) {}
+  constructor(
+    public readonly userId: string,
+    public readonly occurredAt: Date = new Date(),
+  ) {}
 }

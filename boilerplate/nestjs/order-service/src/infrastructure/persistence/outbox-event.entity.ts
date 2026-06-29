@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Index,
+} from "typeorm";
 
 /**
  * Outbox pattern entity.
@@ -10,36 +16,36 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Index } from 
  *
  * Parity with Java/Pythоn outbox implementations.
  */
-@Entity('outbox_events')
-@Index(['status', 'createdAt'])
+@Entity("outbox_events")
+@Index(["status", "createdAt"])
 export class OutboxEvent {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ type: 'varchar', length: 128 })
+  @Column({ type: "varchar", length: 128 })
   aggregateType!: string;
 
-  @Column({ type: 'varchar', length: 256 })
+  @Column({ type: "varchar", length: 256 })
   aggregateId!: string;
 
-  @Column({ type: 'varchar', length: 128 })
+  @Column({ type: "varchar", length: 128 })
   eventType!: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: "jsonb" })
   payload!: Record<string, unknown>;
 
-  @Column({ type: 'varchar', length: 32, default: 'PENDING' })
-  status!: 'PENDING' | 'SENT' | 'FAILED';
+  @Column({ type: "varchar", length: 32, default: "PENDING" })
+  status!: "PENDING" | "SENT" | "FAILED";
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: "int", default: 0 })
   retryCount!: number;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   errorMessage?: string;
 
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: "timestamptz", nullable: true })
   sentAt?: Date;
 }

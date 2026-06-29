@@ -1,6 +1,11 @@
 // application/dtos/place-order.dto.ts
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsArray, ArrayMinSize, ValidateNested } from 'class-validator';
+import { Type } from "class-transformer";
+import {
+  IsNotEmpty,
+  IsArray,
+  ArrayMinSize,
+  ValidateNested,
+} from "class-validator";
 
 class OrderItemDto {
   @IsNotEmpty()

@@ -1,5 +1,5 @@
 // domain/events/order-placed.event.ts
-import { OrderId } from '../models/order-id.value-object';
+import { OrderId } from "../models/order-id.value-object";
 
 export class OrderPlaced {
   readonly occurredOn: Date;

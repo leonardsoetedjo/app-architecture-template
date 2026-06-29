@@ -1,10 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject } from "@nestjs/common";
 
-import { OrderId } from '@domain/models/order-id.value-object';
-import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
+import { OrderId } from "@domain/models/order-id.value-object";
+import { OrderRepositoryPort } from "@domain/ports/order-repository.port";
 
-import { OrderResponseDto } from '../dtos/order-response.dto';
-import { PaginationDto } from '../dtos/pagination.dto';
+import { OrderResponseDto } from "../dtos/order-response.dto";
+import { PaginationDto } from "../dtos/pagination.dto";
 
 export interface PaginatedResponse<T> {
   content: T[];
@@ -17,7 +17,7 @@ export interface PaginatedResponse<T> {
 @Injectable()
 export class OrderApplicationService {
   constructor(
-    @Inject('OrderRepositoryPort')
+    @Inject("OrderRepositoryPort")
     private readonly orderRepository: OrderRepositoryPort,
   ) {}
 
@@ -32,9 +32,11 @@ export class OrderApplicationService {
     };
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<PaginatedResponse<OrderResponseDto>> {
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<PaginatedResponse<OrderResponseDto>> {
     // Frontend uses 0-based page numbers; Java backend also uses 0-based
-    const { page = 0, size = 10, sort, direction = 'DESC' } = paginationDto;
+    const { page = 0, size = 10, sort, direction = "DESC" } = paginationDto;
 
     const skip = page * size;
 

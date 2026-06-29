@@ -1,28 +1,37 @@
 // infrastructure/persistence/order.entity.ts
-import { Entity, Column, PrimaryColumn, CreateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  OneToMany,
+} from "typeorm";
 
-import { OrderItemEntity } from './order-item.entity';
+import { OrderItemEntity } from "./order-item.entity";
 
-@Entity('orders')
+@Entity("orders")
 export class OrderEntity {
-  @PrimaryColumn('uuid')
+  @PrimaryColumn("uuid")
   id: string;
 
-  @Column({ name: 'customer_id', type: 'uuid', nullable: true })
+  @Column({ name: "customer_id", type: "uuid", nullable: true })
   customerId: string;
 
-  @Column({ name: 'status', type: 'varchar', nullable: false })
+  @Column({ name: "status", type: "varchar", nullable: false })
   status: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ name: 'confirmed_at', type: 'timestamptz', nullable: true })
+  @Column({ name: "confirmed_at", type: "timestamptz", nullable: true })
   confirmedAt: Date | null;
 
-  @Column({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt: Date | null;
 
-  @OneToMany(() => OrderItemEntity, (item) => item.order, { cascade: true, orphanedRowAction: 'delete' })
+  @OneToMany(() => OrderItemEntity, (item) => item.order, {
+    cascade: true,
+    orphanedRowAction: "delete",
+  })
   items: OrderItemEntity[];
 }

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
-import { EventPublishException } from '@domain/exceptions/event-publish.exception';
-import { IEventPublisher } from '@domain/ports/event-publisher.port';
+import { EventPublishException } from "@domain/exceptions/event-publish.exception";
+import { IEventPublisher } from "@domain/ports/event-publisher.port";
 
 /**
  * In-memory event publisher adapter.
@@ -20,9 +20,9 @@ export class EventEmitterPublisherAdapter implements IEventPublisher {
   async publish(event: unknown): Promise<void> {
     try {
       const evt = event as { eventType?: string };
-      this.emitter.emit(evt?.eventType ?? 'domain.event', event);
+      this.emitter.emit(evt?.eventType ?? "domain.event", event);
     } catch (e) {
-      throw new EventPublishException('Failed to publish event', e);
+      throw new EventPublishException("Failed to publish event", e);
     }
   }
 

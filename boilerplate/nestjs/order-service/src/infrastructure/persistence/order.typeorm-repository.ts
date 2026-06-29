@@ -1,14 +1,14 @@
 // infrastructure/persistence/order.typeorm-repository.ts
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
-import { OrderId } from '@domain/models/order-id.value-object';
-import { Order } from '@domain/models/order.aggregate';
-import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
+import { OrderId } from "@domain/models/order-id.value-object";
+import { Order } from "@domain/models/order.aggregate";
+import { OrderRepositoryPort } from "@domain/ports/order-repository.port";
 
-import { OrderEntity } from './order.entity';
-import { OrderMapper } from './order.mapper';
+import { OrderEntity } from "./order.entity";
+import { OrderMapper } from "./order.mapper";
 
 @Injectable()
 export class OrderTypeOrmRepository implements OrderRepositoryPort {
@@ -25,7 +25,7 @@ export class OrderTypeOrmRepository implements OrderRepositoryPort {
   async findById(id: OrderId): Promise<Order | null> {
     const entity = await this.repository.findOne({
       where: { id: id.value },
-      relations: ['items'],
+      relations: ["items"],
     });
     return entity ? OrderMapper.toDomain(entity) : null;
   }
@@ -33,13 +33,13 @@ export class OrderTypeOrmRepository implements OrderRepositoryPort {
   async findAll(options?: {
     skip?: number;
     take?: number;
-    sort?: { field: string; direction: 'ASC' | 'DESC' };
+    sort?: { field: string; direction: "ASC" | "DESC" };
   }): Promise<Order[]> {
     const { skip, take, sort } = options || {};
     const findOptions: any = {
       skip,
       take,
-      relations: ['items'],
+      relations: ["items"],
     };
 
     if (sort) {

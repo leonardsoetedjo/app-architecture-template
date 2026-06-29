@@ -1,5 +1,5 @@
-import { Injectable, Module, Controller, Get } from '@nestjs/common';
-import { register } from 'prom-client';
+import { Injectable, Controller, Get } from "@nestjs/common";
+import { register } from "prom-client";
 
 /**
  * Prometheus metrics controller.
@@ -12,7 +12,7 @@ import { register } from 'prom-client';
  *   orders_created_total
  *   orders_failed_total
  */
-@Controller('metrics')
+@Controller("metrics")
 @Injectable()
 export class MetricsController {
   @Get()

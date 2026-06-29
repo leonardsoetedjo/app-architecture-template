@@ -1,12 +1,12 @@
 // infrastructure/health/health.controller.ts
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
 import {
   HealthCheck,
   HealthCheckService,
   TypeOrmHealthIndicator,
-} from '@nestjs/terminus';
+} from "@nestjs/terminus";
 
-@Controller('health')
+@Controller("health")
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
@@ -16,8 +16,6 @@ export class HealthController {
   @Get()
   @HealthCheck()
   check() {
-    return this.health.check([
-      () => this.db.pingCheck('database'),
-    ]);
+    return this.health.check([() => this.db.pingCheck("database")]);
   }
 }

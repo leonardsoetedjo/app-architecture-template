@@ -1,22 +1,21 @@
 // application/usecases/place-order.use-case.impl.ts
-import { Injectable, Inject } from '@nestjs/common';
-import { Decimal } from 'decimal.js';
-import { v4 as uuidv4 } from 'uuid';
+import { Injectable, Inject } from "@nestjs/common";
+import { Decimal } from "decimal.js";
+import { v4 as uuidv4 } from "uuid";
 
-import { OrderId } from '@domain/models/order-id.value-object';
-import { OrderItem } from '@domain/models/order-item.value-object';
-import { Order } from '@domain/models/order.aggregate';
-import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
+import { OrderId } from "@domain/models/order-id.value-object";
+import { OrderItem } from "@domain/models/order-item.value-object";
+import { Order } from "@domain/models/order.aggregate";
+import { OrderRepositoryPort } from "@domain/ports/order-repository.port";
 
-import { PlaceOrderUseCase } from './place-order.use-case.interface';
-import { OrderResponseDto } from '../dtos/order-response.dto';
-import { PlaceOrderDto } from '../dtos/place-order.dto';
-
+import { PlaceOrderUseCase } from "./place-order.use-case.interface";
+import { OrderResponseDto } from "../dtos/order-response.dto";
+import { PlaceOrderDto } from "../dtos/place-order.dto";
 
 @Injectable()
 export class PlaceOrderUseCaseImpl implements PlaceOrderUseCase {
   constructor(
-    @Inject('OrderRepositoryPort')
+    @Inject("OrderRepositoryPort")
     private readonly orderRepository: OrderRepositoryPort,
   ) {}
 

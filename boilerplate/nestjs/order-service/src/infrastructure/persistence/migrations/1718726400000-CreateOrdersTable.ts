@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Initial migration: create orders table.
@@ -7,7 +7,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * and Python Alembic 001_create_orders.py
  */
 export class CreateOrdersTable1718726400000 implements MigrationInterface {
-  name = 'CreateOrdersTable1718726400000';
+  name = "CreateOrdersTable1718726400000";
 
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`

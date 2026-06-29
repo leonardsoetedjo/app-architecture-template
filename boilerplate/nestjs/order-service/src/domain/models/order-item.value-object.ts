@@ -1,7 +1,7 @@
 // domain/models/order-item.value-object.ts
-import { Decimal } from 'decimal.js';
+import { Decimal } from "decimal.js";
 
-import { DomainException } from '../exceptions/domain.exception';
+import { DomainException } from "../exceptions/domain.exception";
 
 export class OrderItem {
   readonly productId: string;
@@ -10,13 +10,13 @@ export class OrderItem {
 
   constructor(productId: string, quantity: number, unitPrice: Decimal) {
     if (!productId || productId.trim().length === 0) {
-      throw new DomainException('Product ID cannot be null or empty');
+      throw new DomainException("Product ID cannot be null or empty");
     }
     if (quantity <= 0) {
-      throw new DomainException('Quantity must be greater than zero');
+      throw new DomainException("Quantity must be greater than zero");
     }
     if (unitPrice.lessThanOrEqualTo(0)) {
-      throw new DomainException('Unit price must be greater than zero');
+      throw new DomainException("Unit price must be greater than zero");
     }
 
     this.productId = productId;

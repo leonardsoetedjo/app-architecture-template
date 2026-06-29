@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
+import { Injectable } from "@nestjs/common";
+import axios, { AxiosInstance } from "axios";
 
 /**
  * External HTTP client with resilience.
@@ -25,16 +25,20 @@ export class ResilientHttpClient {
     this.http = axios.create({
       baseURL,
       timeout: 5000,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   async get<T>(path: string, correlationId?: string): Promise<T> {
-    return this.request<T>('GET', path, undefined, correlationId);
+    return this.request<T>("GET", path, undefined, correlationId);
   }
 
-  async post<T>(path: string, body: unknown, correlationId?: string): Promise<T> {
-    return this.request<T>('POST', path, body, correlationId);
+  async post<T>(
+    path: string,
+    body: unknown,
+    correlationId?: string,
+  ): Promise<T> {
+    return this.request<T>("POST", path, body, correlationId);
   }
 
   private async request<T>(
@@ -48,12 +52,12 @@ export class ResilientHttpClient {
         this.circuitOpen = false;
         this.failureCount = 0;
       } else {
-        throw new Error('Circuit breaker is OPEN');
+        throw new Error("Circuit breaker is OPEN");
       }
     }
 
     const headers: Record<string, string> = {};
-    if (correlationId) headers['x-correlation-id'] = correlationId;
+    if (correlationId) headers["x-correlation-id"] = correlationId;
 
     let lastError: unknown;
     for (let attempt = 0; attempt < 3; attempt++) {

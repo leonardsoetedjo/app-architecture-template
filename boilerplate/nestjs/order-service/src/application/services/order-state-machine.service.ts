@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
-import { DomainException } from '@domain/exceptions/domain.exception';
-import { OrderEvent } from '@domain/models/order-event.enum';
-import { OrderState } from '@domain/models/order-state.enum';
-import { OrderStateMachine } from '@domain/services/order-state-machine.service';
+import { DomainException } from "@domain/exceptions/domain.exception";
+import { OrderEvent } from "@domain/models/order-event.enum";
+import { OrderState } from "@domain/models/order-state.enum";
+import { OrderStateMachine } from "@domain/services/order-state-machine.service";
 
 /**
  * Order state machine service.
@@ -13,7 +13,10 @@ import { OrderStateMachine } from '@domain/services/order-state-machine.service'
  */
 @Injectable()
 export class OrderStateMachineService {
-  getState(current: OrderState): { state: OrderState; allowedEvents: OrderEvent[] } {
+  getState(current: OrderState): {
+    state: OrderState;
+    allowedEvents: OrderEvent[];
+  } {
     return {
       state: current,
       allowedEvents: OrderStateMachine.getAllowedEvents(current),

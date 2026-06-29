@@ -1,6 +1,6 @@
 // domain/ports/order-repository.port.ts
-import { OrderId } from '../models/order-id.value-object';
-import { Order } from '../models/order.aggregate';
+import { OrderId } from "../models/order-id.value-object";
+import { Order } from "../models/order.aggregate";
 
 export interface OrderRepositoryPort {
   save(order: Order): Promise<void>;
@@ -8,7 +8,7 @@ export interface OrderRepositoryPort {
   findAll(options?: {
     skip?: number;
     take?: number;
-    sort?: { field: string; direction: 'ASC' | 'DESC' };
+    sort?: { field: string; direction: "ASC" | "DESC" };
   }): Promise<Order[]>;
   countAll(): Promise<number>;
 }

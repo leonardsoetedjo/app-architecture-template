@@ -4,9 +4,9 @@
  * Mirrors Java Spring State Machine and Python transitions dict.
  * No framework dependencies.
  */
-import { DomainException } from '../exceptions/domain.exception';
-import { OrderEvent } from '../models/order-event.enum';
-import { OrderState } from '../models/order-state.enum';
+import { DomainException } from "../exceptions/domain.exception";
+import { OrderEvent } from "../models/order-event.enum";
+import { OrderState } from "../models/order-state.enum";
 
 export class OrderStateMachine {
   private static readonly TRANSITIONS = new Map<
@@ -61,9 +61,7 @@ export class OrderStateMachine {
   static transition(current: OrderState, event: OrderEvent): OrderState {
     const next = this.TRANSITIONS.get(current)?.get(event);
     if (!next) {
-      throw new DomainException(
-        `Invalid transition: ${current} → ${event}`,
-      );
+      throw new DomainException(`Invalid transition: ${current} → ${event}`);
     }
     return next;
   }

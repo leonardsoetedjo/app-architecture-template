@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 /**
  * Order Creation Saga — orchestration pattern.
@@ -33,7 +33,11 @@ export class OrderCreationSaga {
     private readonly payment: PaymentService,
   ) {}
 
-  async execute(orderId: string, amount: number, productIds: string[]): Promise<boolean> {
+  async execute(
+    orderId: string,
+    amount: number,
+    productIds: string[],
+  ): Promise<boolean> {
     try {
       // Step 1: Reserve inventory
       const reserved = await this.inventory.reserveItems(orderId, productIds);

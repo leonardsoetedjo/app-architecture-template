@@ -1,13 +1,16 @@
 export class DomainException extends Error {
-    constructor(public readonly code: string, message: string) {
-        super(message);
-        this.name = 'DomainException';
-    }
+  constructor(
+    public readonly code: string,
+    message: string,
+  ) {
+    super(message);
+    this.name = "DomainException";
+  }
 }
 
 export class AuthenticationException extends DomainException {
-    constructor(code: string = 'AUTH_ERROR', message: string) {
-        super(code, message);
-        this.name = 'AuthenticationException';
-    }
+  constructor(code: string = "AUTH_ERROR", message: string) {
+    super(code, message);
+    this.name = "AuthenticationException";
+  }
 }

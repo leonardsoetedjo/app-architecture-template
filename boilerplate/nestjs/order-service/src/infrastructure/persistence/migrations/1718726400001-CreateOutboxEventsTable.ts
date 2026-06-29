@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Create outbox_events table for reliable event publishing.
@@ -6,7 +6,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * Maps to Java/Python outbox pattern tables.
  */
 export class CreateOutboxEventsTable1718726400001 implements MigrationInterface {
-  name = 'CreateOutboxEventsTable1718726400001';
+  name = "CreateOutboxEventsTable1718726400001";
 
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`

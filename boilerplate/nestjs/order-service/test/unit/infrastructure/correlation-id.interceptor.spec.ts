@@ -1,17 +1,16 @@
-import { ExecutionContext, CallHandler } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { of } from 'rxjs';
+import { ExecutionContext, CallHandler } from "@nestjs/common";
+import { of } from "rxjs";
 
-import { CorrelationIdInterceptor } from '../../src/infrastructure/logging/correlation-id.interceptor';
+import { CorrelationIdInterceptor } from "../../src/infrastructure/logging/correlation-id.interceptor";
 
-describe('CorrelationIdInterceptor', () => {
+describe("CorrelationIdInterceptor", () => {
   let interceptor: CorrelationIdInterceptor;
 
   beforeEach(() => {
     interceptor = new CorrelationIdInterceptor();
   });
 
-  it('should inject x-correlation-id when absent', (done) => {
+  it("should inject x-correlation-id when absent", (done) => {
     const req = { headers: {} };
     const res = { setHeader: jest.fn(), getHeader: jest.fn() };
 
@@ -22,17 +21,22 @@ describe('CorrelationIdInterceptor', () => {
       }),
     } as unknown as ExecutionContext;
 
-    interceptor.intercept(context, { handle: () => of(true) } as CallHandler).subscribe({
-      next: () => {
-        expect(req).toHaveProperty('correlationId');
-        expect(res.setHeader).toHaveBeenCalledWith('x-correlation-id', expect.any(String));
-        done();
-      },
-    });
+    interceptor
+      .intercept(context, { handle: () => of(true) } as CallHandler)
+      .subscribe({
+        next: () => {
+          expect(req).toHaveProperty("correlationId");
+          expect(res.setHeader).toHaveBeenCalledWith(
+            "x-correlation-id",
+            expect.any(String),
+          );
+          done();
+        },
+      });
   });
 
-  it('should propagate existing x-correlation-id', (done) => {
-    const req = { headers: { 'x-correlation-id': 'existing-123' } };
+  it("should propagate existing x-correlation-id", (done) => {
+    const req = { headers: { "x-correlation-id": "existing-123" } };
     const res = { setHeader: jest.fn(), getHeader: jest.fn() };
 
     const context = {
@@ -42,12 +46,17 @@ describe('CorrelationIdInterceptor', () => {
       }),
     } as unknown as ExecutionContext;
 
-    interceptor.intercept(context, { handle: () => of(true) } as CallHandler).subscribe({
-      next: () => {
-        expect(req.correlationId).toBe('existing-123');
-        expect(res.setHeader).toHaveBeenCalledWith('x-correlation-id', 'existing-123');
-        done();
-      },
-    });
+    interceptor
+      .intercept(context, { handle: () => of(true) } as CallHandler)
+      .subscribe({
+        next: () => {
+          expect(req.headers["x-correlation-id"]).toBe("existing-123");
+          expect(res.setHeader).toHaveBeenCalledWith(
+            "x-correlation-id",
+            "existing-123",
+          );
+          done();
+        },
+      });
   });
 });

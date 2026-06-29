@@ -1,26 +1,36 @@
-import { Controller, Get, Post, Body, Param, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  BadRequestException,
+  Inject,
+} from "@nestjs/common";
 
-import { OrderEvent } from '@domain/models/order-event.enum';
-import { OrderId } from '@domain/models/order-id.value-object';
-import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
-import { OrderStateMachine } from '@domain/services/order-state-machine.service';
+import { OrderEvent } from "@domain/models/order-event.enum";
+import { OrderId } from "@domain/models/order-id.value-object";
+import { OrderRepositoryPort } from "@domain/ports/order-repository.port";
+import { OrderStateMachine } from "@domain/services/order-state-machine.service";
 
-import { SecurityAuditLogger } from '@infrastructure/logging/security-audit-logger.service';
+import { SecurityAuditLogger } from "@infrastructure/logging/security-audit-logger.service";
 
-@Controller('api/v1/orders/:orderId/state')
+@Controller("api/v1/orders/:orderId/state")
 export class OrderStateController {
   constructor(
-    @Inject('OrderRepositoryPort')
+    @Inject("OrderRepositoryPort")
     private readonly orderRepo: OrderRepositoryPort,
     @Inject(SecurityAuditLogger)
     private readonly auditLogger: SecurityAuditLogger,
   ) {}
 
   @Get()
-  async getState(@Param('orderId') orderId: string): Promise<{ state: string; allowedEvents: string[] }> {
+  async getState(
+    @Param("orderId") orderId: string,
+  ): Promise<{ state: string; allowedEvents: string[] }> {
     const order = await this.orderRepo.findById(new OrderId(orderId));
     if (!order) {
-      throw new BadRequestException('Order not found');
+      throw new BadRequestException("Order not found");
     }
     return {
       state: order.status,
@@ -30,12 +40,12 @@ export class OrderStateController {
 
   @Post()
   async triggerEvent(
-    @Param('orderId') orderId: string,
-    @Body('event') eventStr: string,
+    @Param("orderId") orderId: string,
+    @Body("event") eventStr: string,
   ): Promise<{ state: string }> {
     const order = await this.orderRepo.findById(new OrderId(orderId));
     if (!order) {
-      throw new BadRequestException('Order not found');
+      throw new BadRequestException("Order not found");
     }
 
     const event = eventStr as OrderEvent;
@@ -50,7 +60,7 @@ export class OrderStateController {
 
     await this.orderRepo.save(order);
 
-    this.auditLogger.logSensitiveDataAccess('system', 'order-state', orderId);
+    this.auditLogger.logSensitiveDataAccess("system", "order-state", orderId);
 
     return { state: newState };
   }

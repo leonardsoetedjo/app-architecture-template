@@ -1,27 +1,27 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column } from "typeorm";
 
-import { Role } from '../../domain/models/role';
+import { Role } from "../../domain/models/role";
 
-@Entity('users')
+@Entity("users")
 export class User {
-    @PrimaryColumn()
-    id: string;
+  @PrimaryColumn()
+  id: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column({ name: 'password_hash' })
-    passwordHash: string;
+  @Column({ name: "password_hash" })
+  passwordHash: string;
 
-    @Column('simple-array')
-    roles: Role[];
+  @Column("simple-array")
+  roles: Role[];
 
-    @Column({ default: true })
-    enabled: boolean;
+  @Column({ default: true })
+  enabled: boolean;
 
-    @Column({ name: 'created_at' })
-    createdAt: Date;
+  @Column({ name: "created_at" })
+  createdAt: Date;
 
-    @Column({ name: 'last_login_at', nullable: true })
-    lastLoginAt: Date;
+  @Column({ name: "last_login_at", nullable: true })
+  lastLoginAt: Date;
 }

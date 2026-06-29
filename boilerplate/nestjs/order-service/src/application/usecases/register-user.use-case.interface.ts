@@ -1,5 +1,5 @@
-import { RegisterCommand, RegisterResult } from '../dtos/user-order.dto';
+import { RegisterCommand, RegisterResult } from "../dtos/user-order.dto";
 
 export interface IRegisterUserUseCase {
-    execute(command: RegisterCommand): Promise<RegisterResult>;
+  execute(command: RegisterCommand): Promise<RegisterResult>;
 }

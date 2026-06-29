@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
+import { Injectable } from "@nestjs/common";
+import { OnEvent } from "@nestjs/event-emitter";
 
-import { CacheInvalidationService } from '../cache/cache-invalidation.service';
-import { SecurityAuditLogger } from '../logging/security-audit-logger.service';
+import { CacheInvalidationService } from "../cache/cache-invalidation.service";
+import { SecurityAuditLogger } from "../logging/security-audit-logger.service";
 
 /**
  * Domain event listeners.
@@ -22,18 +22,24 @@ export class OrderEventListeners {
     private readonly auditLogger: SecurityAuditLogger,
   ) {}
 
-  @OnEvent('order.placed')
-  async handleOrderPlaced(payload: { orderId: string; customerId: string }): Promise<void> {
+  @OnEvent("order.placed")
+  async handleOrderPlaced(payload: {
+    orderId: string;
+    customerId: string;
+  }): Promise<void> {
     await this.cacheInvalidation.onOrderCreated(payload.orderId);
     this.auditLogger.logSensitiveDataAccess(
       payload.customerId,
-      'order',
+      "order",
       payload.orderId,
     );
   }
 
-  @OnEvent('order.cancelled')
-  async handleOrderCancelled(payload: { orderId: string; reason: string }): Promise<void> {
+  @OnEvent("order.cancelled")
+  async handleOrderCancelled(payload: {
+    orderId: string;
+    reason: string;
+  }): Promise<void> {
     await this.cacheInvalidation.onOrderDeleted(payload.orderId);
   }
 }

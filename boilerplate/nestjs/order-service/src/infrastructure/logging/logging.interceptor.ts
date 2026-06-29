@@ -1,6 +1,11 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
 
 /**
  * Request/response logging interceptor.
@@ -19,7 +24,7 @@ export class LoggingInterceptor implements NestInterceptor {
         const res = context.switchToHttp().getResponse();
         const ms = Date.now() - start;
         console.log(
-          `${req.method} ${req.url} — ${res.statusCode} — ${ms}ms [${req.correlationId || 'no-cid'}]`,
+          `${req.method} ${req.url} — ${res.statusCode} — ${ms}ms [${req.correlationId || "no-cid"}]`,
         );
       }),
     );

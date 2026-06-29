@@ -5,8 +5,8 @@
  * Supports TOTP, SMS, EMAIL, WEBAUTHN.
  */
 export enum MfaMethod {
-  TOTP = 'TOTP',
-  SMS = 'SMS',
-  EMAIL = 'EMAIL',
-  WEBAUTHN = 'WEBAUTHN',
+  TOTP = "TOTP",
+  SMS = "SMS",
+  EMAIL = "EMAIL",
+  WEBAUTHN = "WEBAUTHN",
 }

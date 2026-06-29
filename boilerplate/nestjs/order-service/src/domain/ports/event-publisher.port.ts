@@ -1,3 +1,3 @@
 export interface IEventPublisher {
-    publish(event: any): Promise<void>;
+  publish(event: any): Promise<void>;
 }

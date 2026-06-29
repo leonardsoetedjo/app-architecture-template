@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
-import { CacheManager } from '@domain/ports/cache-manager.port';
+import { CacheManager } from "@domain/ports/cache-manager.port";
 
 /**
  * Cache invalidation service.
@@ -14,17 +14,17 @@ export class CacheInvalidationService {
 
   async onOrderCreated(orderId: string): Promise<void> {
     await this.cache.evict(`order:${orderId}:full`);
-    await this.cache.clearPattern('order:list:*');
+    await this.cache.clearPattern("order:list:*");
   }
 
   async onOrderUpdated(orderId: string): Promise<void> {
     await this.cache.evict(`order:${orderId}:full`);
     await this.cache.evict(`order:${orderId}:summary`);
-    await this.cache.clearPattern('order:list:*');
+    await this.cache.clearPattern("order:list:*");
   }
 
   async onOrderDeleted(orderId: string): Promise<void> {
     await this.cache.evict(`order:${orderId}:*`);
-    await this.cache.clearPattern('order:list:*');
+    await this.cache.clearPattern("order:list:*");
   }
 }

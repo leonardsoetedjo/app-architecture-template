@@ -1,6 +1,6 @@
 // application/dtos/pagination.dto.ts
-import { Type } from 'class-transformer';
-import { IsOptional, IsInt, IsString, IsIn } from 'class-validator';
+import { Type } from "class-transformer";
+import { IsOptional, IsInt, IsString, IsIn } from "class-validator";
 
 export class PaginationDto {
   @IsOptional()
@@ -18,6 +18,6 @@ export class PaginationDto {
   sort?: string;
 
   @IsOptional()
-  @IsIn(['ASC', 'DESC'])
-  direction?: 'ASC' | 'DESC' = 'DESC';
+  @IsIn(["ASC", "DESC"])
+  direction?: "ASC" | "DESC" = "DESC";
 }

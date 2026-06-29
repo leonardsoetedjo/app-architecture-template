@@ -1,7 +1,7 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from "@nestjs/common";
 
-import { CacheException } from '@domain/exceptions/cache.exception';
-import { CacheManager } from '@domain/ports/cache-manager.port';
+import { CacheException } from "@domain/exceptions/cache.exception";
+import { CacheManager } from "@domain/ports/cache-manager.port";
 
 /**
  * Redis implementation of CacheManager.
@@ -29,7 +29,7 @@ export class RedisCacheAdapter implements CacheManager, OnModuleDestroy {
   async put<T>(key: string, value: T, ttlMs?: number): Promise<void> {
     try {
       const json = JSON.stringify(value);
-      await this.redis.set(key, json, 'PX', ttlMs ?? this.DEFAULT_TTL_MS);
+      await this.redis.set(key, json, "PX", ttlMs ?? this.DEFAULT_TTL_MS);
     } catch (e) {
       throw new CacheException(`Failed to put cache key: ${key}`, e);
     }
@@ -67,12 +67,12 @@ export class RedisCacheAdapter implements CacheManager, OnModuleDestroy {
     try {
       await this.redis.flushdb();
     } catch (e) {
-      throw new CacheException('Failed to clear all cache', e);
+      throw new CacheException("Failed to clear all cache", e);
     }
   }
 
   async onModuleDestroy(): Promise<void> {
-    if (typeof this.redis.quit === 'function') {
+    if (typeof this.redis.quit === "function") {
       await this.redis.quit();
     }
   }

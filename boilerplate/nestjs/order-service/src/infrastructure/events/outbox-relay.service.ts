@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, LessThan } from "typeorm";
 
-import { IEventPublisher } from '@domain/ports/event-publisher.port';
+import { IEventPublisher } from "@domain/ports/event-publisher.port";
 
-import { OutboxEvent } from '../persistence/outbox-event.entity';
+import { OutboxEvent } from "../persistence/outbox-event.entity";
 
 /**
  * Outbox relay service.
@@ -29,24 +29,24 @@ export class OutboxRelayService {
   async processOutbox(): Promise<void> {
     const pending = await this.outboxRepo.find({
       where: [
-        { status: 'PENDING' },
-        { status: 'FAILED', retryCount: LessThan(this.MAX_RETRIES) },
+        { status: "PENDING" },
+        { status: "FAILED", retryCount: LessThan(this.MAX_RETRIES) },
       ],
-      order: { createdAt: 'ASC' },
+      order: { createdAt: "ASC" },
       take: this.BATCH_SIZE,
     });
 
     for (const event of pending) {
       try {
         await this.publisher.publish(event.payload);
-        event.status = 'SENT';
+        event.status = "SENT";
         event.sentAt = new Date();
       } catch (e) {
         event.retryCount += 1;
         event.errorMessage = (e as Error).message;
         if (event.retryCount >= this.MAX_RETRIES) {
           // In production: move to dead-letter table
-          event.status = 'FAILED';
+          event.status = "FAILED";
         }
       }
     }
