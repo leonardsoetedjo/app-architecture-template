@@ -22,6 +22,16 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional, Dict, Any
 
+# Import correlation ID context vars
+try:
+    from .correlation_id_middleware import get_correlation_id, get_user_id
+except ImportError:
+    # Fallback for tests
+    def get_correlation_id() -> str:
+        return ""
+    def get_user_id() -> Optional[str]:
+        return None
+
 
 class SecurityEventType(str, Enum):
     """Security event types for audit logging."""
@@ -88,10 +98,16 @@ class SecurityAuditLogger:
             event_data: Event data dictionary
             level: Logging level (INFO, WARNING, ERROR)
         """
-        # Build log entry
+        # Add correlation ID and user ID from context
+        correlation_id = get_correlation_id()
+        context_user_id = get_user_id()
+        
+        # Build log entry with MDC context
         log_entry = {
             "eventType": event_type.value,
             "timestamp": datetime.now(timezone.utc).isoformat(),
+            "traceId": correlation_id if correlation_id else None,
+            "userId": context_user_id if context_user_id else self.context.get("user_id"),
             **self.context,
             **event_data
         }

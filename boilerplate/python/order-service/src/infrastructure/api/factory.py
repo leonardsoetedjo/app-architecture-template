@@ -76,12 +76,16 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Order Service")
 
     from ..persistence import get_sessionmaker
+    from ..logging.correlation_id_middleware import CorrelationIdMiddleware
 
     session_factory = get_sessionmaker()
 
     global _container
     _container = Container(session_factory)
     app.state.container = _container
+
+    # Add correlation ID middleware FIRST (must be before other middleware)
+    app.add_middleware(CorrelationIdMiddleware)
 
     # Mount routers with prefix
     app.include_router(auth_router, prefix="/api/v1")
