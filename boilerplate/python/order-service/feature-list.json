@@ -1,10 +1,51 @@
-[
-  {
-    "id": "AUTH-001",
-    "title": "JWT Authentication System",
-    "description": "Implement full Clean Architecture JWT authentication including registration, login, and profile management, with parity to Java implementation.",
-    "status": "completed",
-    "priority": "high",
-    "tags": ["auth", "security", "clean-architecture"]
-  }
-]
+{
+  "version": "1.0",
+  "project": "order-service-python",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "features": [
+    {
+      "id": "AUTH-001",
+      "category": "functional",
+      "priority": 1,
+      "description": "JWT Authentication with BCrypt hashing",
+      "acceptance_criteria": [
+        "POST /api/v1/auth/register returns 201 with user ID",
+        "POST /api/v1/auth/login returns 200 with access and refresh tokens",
+        "GET /api/v1/auth/me returns user profile when authenticated",
+        "401 returned for invalid credentials or missing token",
+        "Password validation rejects weak passwords",
+        "JWT middleware protects authenticated endpoints"
+      ],
+      "passes": true,
+      "notes": "Complete - Full Clean Architecture JWT auth with BCrypt hashing, Token Generation/Parsing, and User Domain Model."
+    },
+    {
+      "id": "ORD-001",
+      "category": "functional",
+      "priority": 1,
+      "description": "User can create an order with at least one item",
+      "acceptance_criteria": [
+        "POST /api/v1/orders returns 201 with order ID",
+        "Order appears in database with PENDING status",
+        "OrderPlaced event published",
+        "Validation returns 400 for empty items list"
+      ],
+      "passes": true,
+      "notes": "Implemented with PlaceOrderUseCase"
+    },
+    {
+      "id": "ARCH-001",
+      "category": "non-functional",
+      "priority": 1,
+      "description": "Clean Architecture compliance",
+      "acceptance_criteria": [
+        "Domain layer has no FastAPI/SQLAlchemy imports",
+        "Application layer has no HTTP framework imports",
+        "pytest-archon validation passes",
+        "lefthook run pre-commit passes"
+      ],
+      "passes": true,
+      "notes": "Boilerplate structure enforces Clean Architecture"
+    }
+  ]
+}
