@@ -53,6 +53,46 @@ def scan_standards(docs_root):
     
     return standards
 
+def scan_adrs(docs_root):
+    """Scan ADRs directory and build index."""
+    adrs_path = os.path.join(docs_root, '01-agnostic/02-adrs')
+    files = sorted(glob.glob(os.path.join(adrs_path, '[0-9][0-9]-*.md')))
+    
+    adrs = {}
+    for f in files:
+        basename = os.path.basename(f)
+        num = basename.split('-')[0]
+        name = basename.replace(f'{num}-', '').replace('.md', '')
+        adrs[num] = f"docs/01-agnostic/02-adrs/{basename}"
+    
+    return adrs
+
+def scan_guidelines(docs_root):
+    """Scan guidelines directory and build index."""
+    guidelines_path = os.path.join(docs_root, '01-agnostic/03-guidelines')
+    files = sorted(glob.glob(os.path.join(guidelines_path, '*.md')))
+    
+    guidelines = {}
+    for f in files:
+        basename = os.path.basename(f)
+        key = basename.replace('.md', '').replace('-', '_')
+        guidelines[key] = f"docs/01-agnostic/03-guidelines/{basename}"
+    
+    return guidelines
+
+def scan_templates(docs_root):
+    """Scan templates directory and build index."""
+    templates_path = os.path.join(docs_root, '01-agnostic/04-templates')
+    files = sorted(glob.glob(os.path.join(templates_path, '*.md')))
+    
+    templates = {}
+    for f in files:
+        basename = os.path.basename(f)
+        key = basename.replace('.md', '').replace('-', '_')
+        templates[key] = f"docs/01-agnostic/04-templates/{basename}"
+    
+    return templates
+
 def scan_sops(docs_root):
     """Scan SOPs directory and build index."""
     sops_path = os.path.join(docs_root, '04-sops')
@@ -74,6 +114,16 @@ def scan_sops(docs_root):
         }
     
     return sops
+
+def scan_boilerplate_agents():
+    """Scan boilerplate AGENTS.md files."""
+    import glob as glob_module
+    boilerplate_agents = {}
+    for stack in ['java', 'python', 'nestjs', 'reactjs', 'quasar']:
+        path = f"boilerplate/{stack}/AGENTS.md"
+        if os.path.exists(path):
+            boilerplate_agents[stack] = path
+    return boilerplate_agents
 
 def main():
     """Generate documentation index."""
@@ -130,7 +180,11 @@ def main():
             'root_index': 'docs/00-index.md'
         },
         'standards': scan_standards(docs_root),
+        'adrs': scan_adrs(docs_root),
+        'guidelines': scan_guidelines(docs_root),
+        'templates': scan_templates(docs_root),
         'sops': scan_sops(docs_root),
+        'boilerplate_agents': scan_boilerplate_agents(),
         'adr_gaps': {
             '09': {
                 'status': 'intentionally_skipped',
@@ -152,8 +206,10 @@ def main():
     
     print(f"✓ Generated {output_path}")
     print(f"  - {len(index['standards'])} standards")
+    print(f"  - {len(index['adrs'])} ADRs")
+    print(f"  - {len(index['guidelines'])} guidelines")
+    print(f"  - {len(index['templates'])} templates")
     print(f"  - {len(index['sops'])} SOPs")
-    print(f"  - {len(index['categories'])} categories")
     
     return 0
 

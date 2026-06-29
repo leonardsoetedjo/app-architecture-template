@@ -66,7 +66,6 @@
     "agents_python": "docs/01-agnostic/01-standards/15-agents-python.md",
     "agents_reactjs": "docs/01-agnostic/01-standards/16-agents-reactjs.md",
     "agents_quasar": "docs/01-agnostic/01-standards/17-agents-quasar.md",
-    "agent_session_harness": "docs/01-agnostic/01-standards/18-agent-session-harness.md",
     "agent_imperatives": "docs/01-agnostic/01-standards/19-agent-imperatives.md",
     "frontend_agent_harness": "docs/01-agnostic/01-standards/20-frontend-agent-harness.md",
     "validation_harness": "docs/01-agnostic/01-standards/21-validation-harness.md",
@@ -98,6 +97,48 @@
     "batch_job_status_architecture": "docs/01-agnostic/01-standards/47-batch-job-status-architecture.md",
     "frequent_mistakes": "docs/01-agnostic/01-standards/48-frequent-mistakes.md",
     "security_architecture_review": "docs/01-agnostic/01-standards/49-security-architecture-review.md"
+  },
+  "adrs": {
+    "00": "docs/01-agnostic/02-adrs/00-adr-index.md",
+    "01": "docs/01-agnostic/02-adrs/01-clean-architecture.md",
+    "02": "docs/01-agnostic/02-adrs/02-eda-outbox.md",
+    "03": "docs/01-agnostic/02-adrs/03-batch-idempotency.md",
+    "04": "docs/01-agnostic/02-adrs/04-api-idempotency.md",
+    "05": "docs/01-agnostic/02-adrs/05-frontend-architecture.md",
+    "06": "docs/01-agnostic/02-adrs/06-migration-strategy.md",
+    "07": "docs/01-agnostic/02-adrs/07-structured-logging.md",
+    "08": "docs/01-agnostic/02-adrs/08-port-adapter.md",
+    "10": "docs/01-agnostic/02-adrs/10-resilience-patterns.md",
+    "11": "docs/01-agnostic/02-adrs/11-factory-pattern.md",
+    "12": "docs/01-agnostic/02-adrs/12-docker-dev-mode.md"
+  },
+  "guidelines": {
+    "01_deployment": "docs/01-agnostic/03-guidelines/01-deployment.md",
+    "02_design": "docs/01-agnostic/03-guidelines/02-design.md",
+    "02_fullstack_deployment": "docs/01-agnostic/03-guidelines/02-fullstack-deployment.md",
+    "03_auth_flow": "docs/01-agnostic/03-guidelines/03-auth-flow.md",
+    "03_patterns": "docs/01-agnostic/03-guidelines/03-patterns.md",
+    "04_scaffolding": "docs/01-agnostic/03-guidelines/04-scaffolding.md",
+    "05_testing_api": "docs/01-agnostic/03-guidelines/05-testing-api.md",
+    "06_testing_e2e": "docs/01-agnostic/03-guidelines/06-testing-e2e.md",
+    "07_frontend_design": "docs/01-agnostic/03-guidelines/07-frontend-design.md",
+    "08_openapi_standards": "docs/01-agnostic/03-guidelines/08-openapi-standards.md",
+    "09_configuration": "docs/01-agnostic/03-guidelines/09-configuration.md",
+    "10_database_best_practices": "docs/01-agnostic/03-guidelines/10-database-best-practices.md",
+    "11_fleet_workflow": "docs/01-agnostic/03-guidelines/11-fleet-workflow.md",
+    "caching": "docs/01-agnostic/03-guidelines/caching.md",
+    "rate_limiting": "docs/01-agnostic/03-guidelines/rate-limiting.md",
+    "traefik_tailscale_deployment": "docs/01-agnostic/03-guidelines/traefik-tailscale-deployment.md",
+    "ubi_migration": "docs/01-agnostic/03-guidelines/ubi-migration.md",
+    "workflow_implementation": "docs/01-agnostic/03-guidelines/workflow-implementation.md",
+    "workflow_state_machine": "docs/01-agnostic/03-guidelines/workflow-state-machine.md"
+  },
+  "templates": {
+    "01_adr_template": "docs/01-agnostic/04-templates/01-adr-template.md",
+    "02_standard_template": "docs/01-agnostic/04-templates/02-standard-template.md",
+    "03_sop_template": "docs/01-agnostic/04-templates/03-sop-template.md",
+    "04_guideline_template": "docs/01-agnostic/04-templates/04-guideline-template.md",
+    "05_audit_report_template": "docs/01-agnostic/04-templates/05-audit-report-template.md"
   },
   "sops": {
     "00": {
@@ -215,6 +256,13 @@
       "task": "SOP: Write Playwright E2E Tests for Prompt Validation",
       "layer": "unknown"
     }
+  },
+  "boilerplate_agents": {
+    "java": "boilerplate/java/AGENTS.md",
+    "python": "boilerplate/python/AGENTS.md",
+    "nestjs": "boilerplate/nestjs/AGENTS.md",
+    "reactjs": "boilerplate/reactjs/AGENTS.md",
+    "quasar": "boilerplate/quasar/AGENTS.md"
   },
   "adr_gaps": {
     "09": {

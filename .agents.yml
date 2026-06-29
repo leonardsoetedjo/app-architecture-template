@@ -61,6 +61,11 @@ context_sources:
     path: docs/04-sops
     extensions: [".md"]
     description: "Standard Operating Procedures"
+  boilerplate-agents:
+    path: boilerplate
+    include: ["*/AGENTS.md"]
+    extensions: [".md"]
+    description: "Boilerplate AGENTS.md files (dispatch docs)"
   java-boilerplate:
     path: boilerplate/java
     extensions: [".md", ".java", ".xml", ".yml", ".yaml", ".properties"]
