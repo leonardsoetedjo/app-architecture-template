@@ -28,12 +28,18 @@ def validate_links(root_dir):
     return broken_links
 
 if __name__ == "__main__":
-    root = "/opt/data/profiles/archie/workspace/app-architecture-template"
-    broken = validate_links(root)
+    # Auto-detect root: script is in scripts/, docs are in ../docs/
+    root = Path(__file__).parent.parent
+    broken = validate_links(root / 'docs')
     if broken:
         print(f"Found {len(broken)} broken links:")
         for src, label, target in broken:
-            print(f"FILE: {src}\nLABEL: {label}\nTARGET: {target}\n---")
+            # Make path relative to repo root for cleaner output
+            rel_src = src.relative_to(root)
+            print(f"FILE: {rel_src}")
+            print(f"LABEL: {label}")
+            print(f"TARGET: {target}")
+            print("---")
         exit(1)
     else:
         print("All documentation links are valid.")
