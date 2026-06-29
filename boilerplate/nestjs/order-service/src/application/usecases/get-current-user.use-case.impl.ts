@@ -1,9 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
+
 import { IGetCurrentUserUseCase } from './get-current-user.use-case.interface';
-import { UserProfileResult } from '../dtos/user-order.dto';
+import { AuthenticationException } from '../../domain/exceptions/auth.exception';
 import { UserId } from '../../domain/models/user-id.value-object';
 import { IUserRepository } from '../../domain/ports/user-repository.port';
-import { AuthenticationException } from '../../domain/exceptions/auth.exception';
+import { UserProfileResult } from '../dtos/user-order.dto';
 
 @Injectable()
 export class GetCurrentUserUseCaseImpl implements IGetCurrentUserUseCase {

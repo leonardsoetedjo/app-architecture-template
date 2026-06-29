@@ -1,8 +1,10 @@
 import { Controller, Get, Post, Body, Param, BadRequestException, Inject } from '@nestjs/common';
-import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
-import { OrderId } from '@domain/models/order-id.value-object';
-import { OrderStateMachine } from '@domain/services/order-state-machine.service';
+
 import { OrderEvent } from '@domain/models/order-event.enum';
+import { OrderId } from '@domain/models/order-id.value-object';
+import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
+import { OrderStateMachine } from '@domain/services/order-state-machine.service';
+
 import { SecurityAuditLogger } from '@infrastructure/logging/security-audit-logger.service';
 
 @Controller('api/v1/orders/:orderId/state')

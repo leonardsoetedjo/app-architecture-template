@@ -1,5 +1,6 @@
 // infrastructure/persistence/order.entity.ts
 import { Entity, Column, PrimaryColumn, CreateDateColumn, OneToMany } from 'typeorm';
+
 import { OrderItemEntity } from './order-item.entity';
 
 @Entity('orders')

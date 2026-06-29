@@ -4,9 +4,9 @@
  * Mirrors Java Spring State Machine and Python transitions dict.
  * No framework dependencies.
  */
-import { OrderState } from '../models/order-state.enum';
-import { OrderEvent } from '../models/order-event.enum';
 import { DomainException } from '../exceptions/domain.exception';
+import { OrderEvent } from '../models/order-event.enum';
+import { OrderState } from '../models/order-state.enum';
 
 export class OrderStateMachine {
   private static readonly TRANSITIONS = new Map<

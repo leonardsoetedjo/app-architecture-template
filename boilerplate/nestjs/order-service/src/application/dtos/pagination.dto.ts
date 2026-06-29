@@ -1,6 +1,6 @@
 // application/dtos/pagination.dto.ts
-import { IsOptional, IsInt, IsString, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsOptional, IsInt, IsString, IsIn } from 'class-validator';
 
 export class PaginationDto {
   @IsOptional()

@@ -1,6 +1,7 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { CacheManager } from '@domain/ports/cache-manager.port';
+
 import { CacheException } from '@domain/exceptions/cache.exception';
+import { CacheManager } from '@domain/ports/cache-manager.port';
 
 /**
  * Redis implementation of CacheManager.

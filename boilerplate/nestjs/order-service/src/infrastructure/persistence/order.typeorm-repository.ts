@@ -1,10 +1,12 @@
 // infrastructure/persistence/order.typeorm-repository.ts
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
-import { Order } from '@domain/models/order.aggregate';
+import { Repository } from 'typeorm';
+
 import { OrderId } from '@domain/models/order-id.value-object';
+import { Order } from '@domain/models/order.aggregate';
+import { OrderRepositoryPort } from '@domain/ports/order-repository.port';
+
 import { OrderEntity } from './order.entity';
 import { OrderMapper } from './order.mapper';
 
@@ -21,7 +23,7 @@ export class OrderTypeOrmRepository implements OrderRepositoryPort {
   }
 
   async findById(id: OrderId): Promise<Order | null> {
-    const entity = await this.repository.findOne({ 
+    const entity = await this.repository.findOne({
       where: { id: id.value },
       relations: ['items'],
     });

@@ -1,10 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
+
 import { IRefreshTokenUseCase } from './refresh-token.use-case.interface';
-import { RefreshTokenCommand, RefreshTokenResult } from '../dtos/refresh-token.dto';
-import { ITokenParser } from '../../domain/ports/token-parser.port';
-import { ITokenGenerator } from '../../domain/ports/token-generator.port';
-import { IUserRepository } from '../../domain/ports/user-repository.port';
 import { AuthenticationException } from '../../domain/exceptions/auth.exception';
+import { ITokenGenerator } from '../../domain/ports/token-generator.port';
+import { ITokenParser } from '../../domain/ports/token-parser.port';
+import { IUserRepository } from '../../domain/ports/user-repository.port';
+import { RefreshTokenCommand, RefreshTokenResult } from '../dtos/refresh-token.dto';
 
 @Injectable()
 export class RefreshTokenUseCaseImpl implements IRefreshTokenUseCase {

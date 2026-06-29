@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { CacheManager } from '@domain/ports/cache-manager.port';
 
 /**

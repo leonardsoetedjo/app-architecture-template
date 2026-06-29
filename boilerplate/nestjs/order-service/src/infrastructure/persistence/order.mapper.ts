@@ -1,12 +1,14 @@
 // infrastructure/persistence/order.mapper.ts
-import { Order } from '@domain/models/order.aggregate';
+import { Decimal } from 'decimal.js';
+
 import { OrderId } from '@domain/models/order-id.value-object';
 import { OrderItem } from '@domain/models/order-item.value-object';
 import { OrderStatus } from '@domain/models/order-status.enum';
-import { OrderEntity } from './order.entity';
-import { Decimal } from 'decimal.js';
+import { Order } from '@domain/models/order.aggregate';
 
 import { OrderItemEntity } from './order-item.entity';
+import { OrderEntity } from './order.entity';
+
 
 export class OrderMapper {
   static toEntity(order: Order): OrderEntity {

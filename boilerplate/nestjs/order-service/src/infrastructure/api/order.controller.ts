@@ -14,17 +14,19 @@ import {
   Headers,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PlaceOrderDto } from '@application/dtos/place-order.dto';
-import { OrderResponseDto } from '@application/dtos/order-response.dto';
-import { PlaceOrderUseCase } from '@application/usecases/place-order.use-case.interface';
-import { OrderApplicationService, PaginatedResponse } from '@application/services/order.application-service';
-import { PaginationDto } from '@application/dtos/pagination.dto';
-import { IGetOrderUseCase } from '@application/usecases/get-order.use-case.interface';
-import { IUpdateOrderStatusUseCase } from '@application/usecases/update-order-status.use-case.interface';
-import { ISoftDeleteOrderUseCase } from '@application/usecases/soft-delete-order.use-case.interface';
+
 import { ITokenParser } from '@domain/ports/token-parser.port';
+
+import { OrderResponseDto } from '@application/dtos/order-response.dto';
+import { PaginationDto } from '@application/dtos/pagination.dto';
+import { PlaceOrderDto } from '@application/dtos/place-order.dto';
 import { UpdateOrderStatusCommand } from '@application/dtos/user-order.dto';
 import { SoftDeleteOrderCommand } from '@application/dtos/user-order.dto';
+import { OrderApplicationService, PaginatedResponse } from '@application/services/order.application-service';
+import { IGetOrderUseCase } from '@application/usecases/get-order.use-case.interface';
+import { PlaceOrderUseCase } from '@application/usecases/place-order.use-case.interface';
+import { ISoftDeleteOrderUseCase } from '@application/usecases/soft-delete-order.use-case.interface';
+import { IUpdateOrderStatusUseCase } from '@application/usecases/update-order-status.use-case.interface';
 
 @Controller('api/v1/orders')
 export class OrderController {

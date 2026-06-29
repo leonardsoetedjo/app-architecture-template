@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { ILogoutUseCase } from './logout.use-case.interface';
 import { UserId } from '../../domain/models/user-id.value-object';
 

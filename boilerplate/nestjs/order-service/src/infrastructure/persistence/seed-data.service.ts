@@ -1,10 +1,11 @@
 import { Injectable, OnModuleInit, Inject } from '@nestjs/common';
-import { IUserRepository } from '../../domain/ports/user-repository.port';
-import { IPasswordHasher } from '../../domain/ports/password-hasher.port';
+
 import { Email } from '../../domain/models/email.value-object';
 import { Password } from '../../domain/models/password.value-object';
-import { User } from '../../domain/models/user.aggregate';
 import { Role } from '../../domain/models/role';
+import { User } from '../../domain/models/user.aggregate';
+import { IPasswordHasher } from '../../domain/ports/password-hasher.port';
+import { IUserRepository } from '../../domain/ports/user-repository.port';
 
 @Injectable()
 export class SeedDataService implements OnModuleInit {

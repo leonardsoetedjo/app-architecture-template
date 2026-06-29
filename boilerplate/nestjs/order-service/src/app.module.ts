@@ -1,34 +1,36 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import databaseConfig from './config/database.config';
-import { OrderEntity } from './infrastructure/persistence/order.entity';
-import { OutboxEvent } from './infrastructure/persistence/outbox-event.entity';
-import { User } from './infrastructure/persistence/user.entity';
-import { OrderItemEntity } from './infrastructure/persistence/order-item.entity';
-import { OrderTypeOrmRepository } from './infrastructure/persistence/order.typeorm-repository';
-import { PlaceOrderUseCaseImpl } from './application/usecases/place-order.use-case.impl';
-import { OrderApplicationService } from './application/services/order.application-service';
+
 import { OrderController } from './infrastructure/api/order.controller';
 import { OrderStateController } from './infrastructure/api/order-state.controller';
 import { AuthController } from './infrastructure/api/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrderApplicationService } from './application/services/order.application-service';
+
 import { AuthenticateUserUseCaseImpl } from './application/usecases/authenticate-user.use-case.impl';
-import { RegisterUserUseCaseImpl } from './application/usecases/register-user.use-case.impl';
 import { GetCurrentUserUseCaseImpl } from './application/usecases/get-current-user.use-case.impl';
 import { GetOrderUseCaseImpl } from './application/usecases/get-order.use-case.impl';
 import { ListOrdersUseCaseImpl } from './application/usecases/list-orders.use-case.impl';
-import { UpdateOrderStatusUseCaseImpl } from './application/usecases/update-order-status.use-case.impl';
+import { PlaceOrderUseCaseImpl } from './application/usecases/place-order.use-case.impl';
+import { RegisterUserUseCaseImpl } from './application/usecases/register-user.use-case.impl';
 import { SoftDeleteOrderUseCaseImpl } from './application/usecases/soft-delete-order.use-case.impl';
-import { BCryptPasswordHasher } from './infrastructure/security/bcrypt-password-hasher';
-import { JwtTokenService } from './infrastructure/security/jwt-token.service';
-import { SeedDataService } from './infrastructure/persistence/seed-data.service';
-import { UserTypeOrmRepository } from './infrastructure/persistence/user.typeorm-repository';
+import { UpdateOrderStatusUseCaseImpl } from './application/usecases/update-order-status.use-case.impl';
+import databaseConfig from './config/database.config';
 import { EventEmitterPublisherAdapter } from './infrastructure/events/event-emitter-publisher.adapter';
 import { SecurityAuditLogger } from './infrastructure/logging/security-audit-logger.service';
+import { OrderItemEntity } from './infrastructure/persistence/order-item.entity';
+import { OrderEntity } from './infrastructure/persistence/order.entity';
+import { OrderTypeOrmRepository } from './infrastructure/persistence/order.typeorm-repository';
+import { OutboxEvent } from './infrastructure/persistence/outbox-event.entity';
+import { SeedDataService } from './infrastructure/persistence/seed-data.service';
+import { User } from './infrastructure/persistence/user.entity';
+import { UserTypeOrmRepository } from './infrastructure/persistence/user.typeorm-repository';
+import { BCryptPasswordHasher } from './infrastructure/security/bcrypt-password-hasher';
+import { JwtTokenService } from './infrastructure/security/jwt-token.service';
 
 @Module({
   imports: [

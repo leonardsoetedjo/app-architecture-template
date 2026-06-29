@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column, CreateDateColumn } from 'typeorm';
+
 import { Role } from '../../domain/models/role';
 
 @Entity('users')

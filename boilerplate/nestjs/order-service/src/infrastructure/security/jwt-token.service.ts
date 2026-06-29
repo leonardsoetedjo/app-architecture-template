@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+
+import { UserId } from '../../domain/models/user-id.value-object';
+import { User } from '../../domain/models/user.aggregate';
 import { ITokenGenerator } from '../../domain/ports/token-generator.port';
 import { ITokenParser } from '../../domain/ports/token-parser.port';
-import { User } from '../../domain/models/user.aggregate';
-import { UserId } from '../../domain/models/user-id.value-object';
 
 @Injectable()
 export class JwtTokenService implements ITokenGenerator, ITokenParser {

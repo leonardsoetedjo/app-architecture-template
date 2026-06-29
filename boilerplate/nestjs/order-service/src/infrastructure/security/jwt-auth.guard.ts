@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+
 import { ITokenParser } from '../../domain/ports/token-parser.port';
 
 @Injectable()

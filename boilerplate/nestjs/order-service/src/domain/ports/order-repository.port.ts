@@ -1,6 +1,6 @@
 // domain/ports/order-repository.port.ts
-import { Order } from '../models/order.aggregate';
 import { OrderId } from '../models/order-id.value-object';
+import { Order } from '../models/order.aggregate';
 
 export interface OrderRepositoryPort {
   save(order: Order): Promise<void>;

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
-import { OutboxEvent } from '../persistence/outbox-event.entity';
+
 import { IEventPublisher } from '@domain/ports/event-publisher.port';
-import { Cron, CronExpression } from '@nestjs/schedule';
+
+import { OutboxEvent } from '../persistence/outbox-event.entity';
 
 /**
  * Outbox relay service.

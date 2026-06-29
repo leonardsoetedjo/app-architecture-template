@@ -1,9 +1,9 @@
-import { UserId } from './user-id.value-object';
 import { Email } from './email.value-object';
 import { Password } from './password.value-object';
 import { Role } from './role';
-import { IPasswordHasher } from '../ports/password-hasher.port';
+import { UserId } from './user-id.value-object';
 import { AuthenticationException } from '../exceptions/auth.exception';
+import { IPasswordHasher } from '../ports/password-hasher.port';
 
 export class User {
     constructor(

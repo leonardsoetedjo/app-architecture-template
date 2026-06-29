@@ -6,8 +6,8 @@
  *
  * Mirrors Java OrderPlacementService and Python order_placement_service.
  */
-import { Order } from '../models/order.aggregate';
 import { DomainException } from '../exceptions/domain.exception';
+import { Order } from '../models/order.aggregate';
 
 export class OrderPlacementService {
   validateOrder(order: Order): void {

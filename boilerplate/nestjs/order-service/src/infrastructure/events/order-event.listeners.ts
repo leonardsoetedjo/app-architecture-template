@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+
 import { CacheInvalidationService } from '../cache/cache-invalidation.service';
 import { SecurityAuditLogger } from '../logging/security-audit-logger.service';
 

@@ -1,8 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
+
 import { IListOrdersUseCase } from './list-orders.use-case.interface';
-import { OrderListItemResult, PaginatedResult } from '../dtos/user-order.dto';
 import { OrderStatus } from '../../domain/models/order-status.enum';
 import { OrderRepositoryPort } from '../../domain/ports/order-repository.port';
+import { OrderListItemResult, PaginatedResult } from '../dtos/user-order.dto';
 
 @Injectable()
 export class ListOrdersUseCaseImpl implements IListOrdersUseCase {

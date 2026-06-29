@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { IEventPublisher } from '@domain/ports/event-publisher.port';
-import { EventPublishException } from '@domain/exceptions/event-publish.exception';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
+import { EventPublishException } from '@domain/exceptions/event-publish.exception';
+import { IEventPublisher } from '@domain/ports/event-publisher.port';
 
 /**
  * In-memory event publisher adapter.

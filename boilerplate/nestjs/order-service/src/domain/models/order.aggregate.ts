@@ -1,8 +1,9 @@
 // domain/models/order.aggregate.ts
+import { Decimal } from 'decimal.js';
+
 import { OrderId } from './order-id.value-object';
 import { OrderItem } from './order-item.value-object';
 import { OrderStatus } from './order-status.enum';
-import { Decimal } from 'decimal.js';
 import { DomainException } from '../exceptions/domain.exception';
 
 const VALID_TRANSITIONS: Record<OrderStatus, Set<OrderStatus>> = {

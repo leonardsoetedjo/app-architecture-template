@@ -1,5 +1,6 @@
 // domain/models/order-item.value-object.ts
 import { Decimal } from 'decimal.js';
+
 import { DomainException } from '../exceptions/domain.exception';
 
 export class OrderItem {

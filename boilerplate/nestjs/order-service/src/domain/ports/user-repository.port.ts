@@ -1,6 +1,6 @@
-import { User } from '../models/user.aggregate';
-import { UserId } from '../models/user-id.value-object';
 import { Email } from '../models/email.value-object';
+import { UserId } from '../models/user-id.value-object';
+import { User } from '../models/user.aggregate';
 
 export interface IUserRepository {
     save(user: User): Promise<User>;

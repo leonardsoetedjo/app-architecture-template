@@ -1,13 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common';
+
 import { IAuthenticateUserUseCase } from './authenticate-user.use-case.interface';
-import { LoginCommand, LoginResult } from '../dtos/auth.dto';
-import { IUserRepository } from '../../domain/ports/user-repository.port';
+import { UserLoggedInEvent } from '../../domain/events/user-logged-in.event';
+import { AuthenticationException } from '../../domain/exceptions/auth.exception';
+import { Email } from '../../domain/models/email.value-object';
+import { IEventPublisher } from '../../domain/ports/event-publisher.port';
 import { IPasswordHasher } from '../../domain/ports/password-hasher.port';
 import { ITokenGenerator } from '../../domain/ports/token-generator.port';
-import { IEventPublisher } from '../../domain/ports/event-publisher.port';
-import { Email } from '../../domain/models/email.value-object';
-import { AuthenticationException } from '../../domain/exceptions/auth.exception';
-import { UserLoggedInEvent } from '../../domain/events/user-logged-in.event';
+import { IUserRepository } from '../../domain/ports/user-repository.port';
+import { LoginCommand, LoginResult } from '../dtos/auth.dto';
 
 @Injectable()
 export class AuthenticateUserUseCaseImpl implements IAuthenticateUserUseCase {

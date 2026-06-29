@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AuthenticateUserUseCaseImpl } from '../../application/usecases/authenticate-user.use-case.impl';
-import { RefreshTokenUseCaseImpl } from '../../application/usecases/refresh-token.use-case.impl';
-import { LogoutUseCaseImpl } from '../../application/usecases/logout.use-case.impl';
-import { AuthController } from '../api/auth.controller';
+
 import { BCryptPasswordHasher } from './bcrypt-password-hasher';
 import { JwtTokenService } from './jwt-token.service';
-import { UserTypeOrmRepository } from '../persistence/user.typeorm-repository';
+import { AuthenticateUserUseCaseImpl } from '../../application/usecases/authenticate-user.use-case.impl';
+import { LogoutUseCaseImpl } from '../../application/usecases/logout.use-case.impl';
+import { RefreshTokenUseCaseImpl } from '../../application/usecases/refresh-token.use-case.impl';
+import { AuthController } from '../api/auth.controller';
 import { EventEmitterPublisherAdapter } from '../events/event-emitter-publisher.adapter';
+import { UserTypeOrmRepository } from '../persistence/user.typeorm-repository';
 
 @Module({
     imports: [

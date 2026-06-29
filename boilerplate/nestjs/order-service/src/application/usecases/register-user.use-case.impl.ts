@@ -1,14 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
+
 import { IRegisterUserUseCase } from './register-user.use-case.interface';
-import { RegisterCommand, RegisterResult } from '../dtos/user-order.dto';
-import { IUserRepository } from '../../domain/ports/user-repository.port';
-import { IPasswordHasher } from '../../domain/ports/password-hasher.port';
-import { IEventPublisher } from '../../domain/ports/event-publisher.port';
+import { AuthenticationException } from '../../domain/exceptions/auth.exception';
 import { Email } from '../../domain/models/email.value-object';
 import { Password } from '../../domain/models/password.value-object';
-import { User } from '../../domain/models/user.aggregate';
 import { Role } from '../../domain/models/role';
-import { AuthenticationException } from '../../domain/exceptions/auth.exception';
+import { User } from '../../domain/models/user.aggregate';
+import { IEventPublisher } from '../../domain/ports/event-publisher.port';
+import { IPasswordHasher } from '../../domain/ports/password-hasher.port';
+import { IUserRepository } from '../../domain/ports/user-repository.port';
+import { RegisterCommand, RegisterResult } from '../dtos/user-order.dto';
 
 @Injectable()
 export class RegisterUserUseCaseImpl implements IRegisterUserUseCase {

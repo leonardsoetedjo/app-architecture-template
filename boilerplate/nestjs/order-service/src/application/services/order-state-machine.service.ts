@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { OrderStateMachine } from '@domain/services/order-state-machine.service';
-import { OrderState } from '@domain/models/order-state.enum';
-import { OrderEvent } from '@domain/models/order-event.enum';
+
 import { DomainException } from '@domain/exceptions/domain.exception';
+import { OrderEvent } from '@domain/models/order-event.enum';
+import { OrderState } from '@domain/models/order-state.enum';
+import { OrderStateMachine } from '@domain/services/order-state-machine.service';
 
 /**
  * Order state machine service.
