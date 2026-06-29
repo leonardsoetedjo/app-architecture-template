@@ -1,21 +1,10 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { normalizeError } from './errorHandler';
+import { tokenProvider } from './tokenProvider';
 
 function generateCorrelationId(): string {
   return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-}
-
-function getStoredAuth():
-  | { accessToken?: string; refreshToken?: string; user?: unknown }
-  | null {
-  const raw = localStorage.getItem('auth-storage');
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as ReturnType<typeof getStoredAuth>;
-  } catch {
-    return null;
-  }
 }
 
 export const apiClient: AxiosInstance = axios.create({
@@ -29,9 +18,9 @@ export const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     config.headers.set('X-Correlation-ID', generateCorrelationId());
-    const stored = getStoredAuth();
-    if (stored?.accessToken) {
-      config.headers.set('Authorization', `Bearer ${stored.accessToken}`);
+    const token = tokenProvider.getAccessToken();
+    if (token) {
+      config.headers.set('Authorization', `Bearer ${token}`);
     }
     return config;
   },
@@ -43,7 +32,7 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig | undefined;
 
-    // Token refresh on 401 (unchanged)
+    // Token refresh on 401
     if (
       error.response?.status === 401 &&
       originalRequest &&
@@ -51,26 +40,23 @@ apiClient.interceptors.response.use(
     ) {
       (originalRequest as unknown as { _retry: boolean })._retry = true;
       try {
-        const stored = getStoredAuth();
-        if (!stored?.refreshToken) throw new Error('No refresh token');
+        const refresh = tokenProvider.getRefreshToken();
+        if (!refresh) throw new Error('No refresh token');
 
         const res = await axios.create({
           baseURL: apiClient.defaults.baseURL,
           timeout: 30000,
         }).post('/auth/refresh', {
-          refreshToken: stored.refreshToken,
+          refreshToken: refresh,
         });
         const data = res.data as { accessToken: string; refreshToken: string };
 
-        localStorage.setItem(
-          'auth-storage',
-          JSON.stringify({ ...stored, ...data }),
-        );
+        tokenProvider.setTokens(data.accessToken, data.refreshToken);
 
         originalRequest.headers.set('Authorization', `Bearer ${data.accessToken}`);
         return apiClient(originalRequest);
       } catch (_refreshError) {
-        localStorage.removeItem('auth-storage');
+        tokenProvider.clearTokens();
         window.location.href = '/login';
         return Promise.reject(_refreshError);
       }

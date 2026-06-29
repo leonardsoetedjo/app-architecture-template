@@ -8,6 +8,7 @@ import {
 } from './authApi';
 import { useSelector } from 'react-redux';
 import type { RootState } from 'app/store';
+import { tokenProvider } from 'shared/api/tokenProvider';
 
 export function useAuth() {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ export function useAuth() {
   const handleLogin = useCallback(
     async (email: string, password: string) => {
       const result = await loginMutation({ email, password }).unwrap();
+      tokenProvider.setTokens(result.accessToken, result.refreshToken);
       dispatch(
         setCredentials({
           accessToken: result.accessToken,
@@ -43,6 +45,7 @@ export function useAuth() {
   const handleRegister = useCallback(
     async (email: string, password: string) => {
       const result = await registerMutation({ email, password }).unwrap();
+      tokenProvider.setTokens(result.accessToken, result.refreshToken);
       dispatch(
         setCredentials({
           accessToken: result.accessToken,
@@ -61,6 +64,7 @@ export function useAuth() {
   );
 
   const handleLogout = useCallback(() => {
+    tokenProvider.clearTokens();
     dispatch(logout());
     window.location.href = '/login';
   }, [dispatch]);
