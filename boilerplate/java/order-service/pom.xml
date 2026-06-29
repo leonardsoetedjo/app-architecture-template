@@ -103,13 +103,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Database: H2 (for local dev / standalone) -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- Redis: Spring Data Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
