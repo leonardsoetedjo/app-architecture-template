@@ -1,10 +1,11 @@
 // test/unit/domain/order.aggregate.spec.ts
-import { Order } from '../../../src/domain/models/order.aggregate';
+import { Decimal } from 'decimal.js';
+
+import { DomainException } from '../../../src/domain/exceptions/domain.exception';
 import { OrderId } from '../../../src/domain/models/order-id.value-object';
 import { OrderItem } from '../../../src/domain/models/order-item.value-object';
 import { OrderStatus } from '../../../src/domain/models/order-status.enum';
-import { Decimal } from 'decimal.js';
-import { DomainException } from '../../../src/domain/exceptions/domain.exception';
+import { Order } from '../../../src/domain/models/order.aggregate';
 
 describe('Order Aggregate', () => {
   const createOrder = (status?: OrderStatus): Order => {

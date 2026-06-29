@@ -1,5 +1,5 @@
-import { CacheInvalidationService } from '../../src/infrastructure/cache/cache-invalidation.service';
 import { CacheManager } from '../../src/domain/ports/cache-manager.port';
+import { CacheInvalidationService } from '../../src/infrastructure/cache/cache-invalidation.service';
 
 describe('CacheInvalidationService', () => {
   let cache: jest.Mocked<CacheManager>;

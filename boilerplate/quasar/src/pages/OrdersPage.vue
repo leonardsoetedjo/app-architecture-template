@@ -9,10 +9,8 @@
       :rows="orders"
       :columns="columns"
       row-key="id"
-      :pagination="pagination"
       v-model:pagination="pagination"
       @request="onRequest"
-      binary-state-sort-break
     >
       <template v-slot:body-cell-items="props">
         <q-td :props="props">
@@ -73,28 +71,46 @@ const columns = [
 ];
 
 const orders = ref<Order[]>([]);
-const pagination = ref({
-  rows: 0,
-  currentPage: 1,
-  pageSize: 10,
+interface PaginationState {
+  page: number;
+  rowsPerPage: number;
+  sortBy?: string;
+  descending?: boolean;
+  rowsNumber?: number;
+}
+
+const pagination = ref<PaginationState>({
+  page: 1,
+  rowsPerPage: 10,
+  sortBy: 'createdAt',
+  descending: false,
+  rowsNumber: 0,
 });
 
-async function onRequest(props: any) {
-  const { page, rows, sortBy } = props.pagination;
-  
-  const sortField = sortBy ? sortBy.toString().toLowerCase() : 'createdAt';
-  const sortOrder = sortBy ? (sortBy.toString().includes('desc') ? 'desc' : 'asc') : 'desc';
+interface TableRequestProps {
+  pagination: {
+    page: number;
+    rowsPerPage: number;
+    sortBy?: string;
+    descending?: boolean;
+  };
+}
 
-  // Note: q-table pagination can be complex, let's simplify for the mock service
+async function onRequest(props: TableRequestProps) {
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
+  
+  const sortField = sortBy ?? 'createdAt';
+  const sortOrder = descending ? 'desc' : 'asc' as const;
+
   const response = await ordersPortInstance.getOrders({
     page: page,
-    pageSize: rows,
+    pageSize: rowsPerPage,
     sortField: sortField,
-    sortOrder: sortOrder as 'asc' | 'desc'
+    sortOrder: sortOrder
   });
 
   orders.value = response.data;
-  pagination.value.rows = response.totalCount;
+  pagination.value.rowsNumber = response.totalCount;
 }
 
 onMounted(() => {

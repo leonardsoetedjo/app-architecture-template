@@ -2,7 +2,7 @@
  * Architecture tests for Quasar boilerplate.
  *
  * Rule Coverage:
- *   - DDD-DOMAIN-PURITY-QUASAR: features/*/types/ must not import vue/quasar/pinia/axios
+ *   - DDD-DOMAIN-PURITY-QUASAR: features/{feature}/types/ must not import vue/quasar/pinia/axios
  *   - QUASAR-COMPOSABLE-PATTERN: .vue files must not contain business logic (no API calls)
  *   - QUASAR-API-ISOLATION: .vue files must not import axios directly
  *

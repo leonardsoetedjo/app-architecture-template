@@ -1,6 +1,6 @@
 // test/unit/domain/order-id.value-object.spec.ts
-import { OrderId } from '../../../src/domain/models/order-id.value-object';
 import { DomainException } from '../../../src/domain/exceptions/domain.exception';
+import { OrderId } from '../../../src/domain/models/order-id.value-object';
 
 describe('OrderId Value Object', () => {
   it('should create with valid value', () => {

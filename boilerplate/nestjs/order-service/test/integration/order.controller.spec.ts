@@ -1,7 +1,8 @@
 // test/integration/order.controller.spec.ts
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
+
 import { AppModule } from '../../src/app.module';
 
 describe('OrderController (integration)', () => {

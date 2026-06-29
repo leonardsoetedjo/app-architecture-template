@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from starlette.status import HTTP_422_UNPROCESSABLE_CONTENT, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 from domain.exceptions import InvalidOrderException, DomainException
 from domain.models.user import AuthenticationException
@@ -42,6 +42,6 @@ def setup_exception_handlers(app: FastAPI) -> None:
     ) -> JSONResponse:
         logger.warning(f"Domain error: {exc.code} - {exc.message}")
         return JSONResponse(
-            status_code=HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
             content={"error": exc.code, "message": exc.message},
         )

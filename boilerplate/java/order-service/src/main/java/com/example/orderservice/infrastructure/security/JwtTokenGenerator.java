@@ -5,6 +5,7 @@ import com.example.orderservice.domain.models.User;
 import com.example.orderservice.domain.ports.TokenGenerator;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,28 +32,32 @@ public class JwtTokenGenerator implements TokenGenerator {
     private final SecretKeySpec signingKey;
     private final long accessTokenTtlSeconds;
     private final long refreshTokenTtlSeconds;
+    private final String secret;
 
     public JwtTokenGenerator(
             @Value("${jwt.secret:change-me-in-production-change-me-in-production-change-me-now}") String secret,
             @Value("${jwt.access-token-ttl:3600}") long accessTokenTtlSeconds,
             @Value("${jwt.refresh-token-ttl:86400}") long refreshTokenTtlSeconds) {
-        if (secret == null || secret.isBlank()) {
-            throw new IllegalStateException(
-                "JWT_SECRET is not set. Generate one: " + GENERATE_COMMAND
-            );
-        }
+        this.secret = secret;
         byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
-        if (secretBytes.length < MIN_SECRET_BYTES) {
-            throw new IllegalStateException(
-                "JWT_SECRET must be at least " + MIN_SECRET_BYTES +
-                " bytes (" + (MIN_SECRET_BYTES * 8) + " bits). " +
-                "Current: " + secretBytes.length + " bytes. " +
-                "Generate a new one: " + GENERATE_COMMAND
-            );
-        }
         this.signingKey = new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
         this.accessTokenTtlSeconds = accessTokenTtlSeconds;
         this.refreshTokenTtlSeconds = refreshTokenTtlSeconds;
+    }
+
+    @PostConstruct
+    public void validate() {
+        if (secret == null || secret.isBlank() || "change-me-in-production-change-me-in-production-change-me-now".equals(secret)) {
+            throw new IllegalStateException(
+                "JWT_SECRET is not set. Generate one: openssl rand -base64 32"
+            );
+        }
+        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException(
+                "JWT_SECRET must be at least 32 bytes (256 bits). Current: " + secret.getBytes(StandardCharsets.UTF_8).length + " bytes. " +
+                "Generate a new one: openssl rand -base64 32"
+            );
+        }
     }
 
     @Override

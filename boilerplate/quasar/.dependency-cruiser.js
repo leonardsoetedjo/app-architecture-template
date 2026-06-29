@@ -23,12 +23,7 @@ export default {
         pathNot: '\\.test\\.ts$',
       },
       to: {
-        dependencyTypes: [
-          'npm:vue',
-          'npm:quasar', 
-          'npm:pinia',
-          'npm:axios',
-        ],
+        path: 'node_modules/(vue|quasar|pinia|axios)/',
       },
     },
     {
@@ -86,11 +81,6 @@ export default {
         'dist',
         '.quasar',
       ],
-    },
-    excludeTests: false,
-    progress: {
-      on: true,
-      favicon: '🔍',
     },
   },
 };

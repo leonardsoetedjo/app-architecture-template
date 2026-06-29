@@ -1,7 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CorrelationIdInterceptor } from '../../src/infrastructure/logging/correlation-id.interceptor';
 import { ExecutionContext, CallHandler } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { of } from 'rxjs';
+
+import { CorrelationIdInterceptor } from '../../src/infrastructure/logging/correlation-id.interceptor';
 
 describe('CorrelationIdInterceptor', () => {
   let interceptor: CorrelationIdInterceptor;

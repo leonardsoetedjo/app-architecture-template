@@ -24,10 +24,10 @@
   "dependencies": {
     "@quasar/extras": "^1.16.9",
     "axios": "^1.6.2",
+    "decimal.js": "^10.4.3",
     "jwt-decode": "^4.0.0",
     "pinia": "^2.1.7",
     "quasar": "^2.14.2",
-    "decimal.js": "^10.4.3",
     "vue": "^3.4.0",
     "vue-router": "^4.2.5"
   },
@@ -46,17 +46,17 @@
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/test-utils": "^2.4.3",
     "autoprefixer": "^10.4.16",
+    "dependency-cruiser": "^16.0.0",
     "eslint": "^8.55.0",
     "eslint-plugin-vue": "^9.19.2",
     "jsdom": "^23.0.1",
     "msw": "^2.14.6",
-    "prettier": "^3.2.5",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.10",
-    "vitest": "^1.1.0",
     "openapi-typescript": "^7.0.0",
     "openapi-typescript-fetch": "^2.2.1",
-    "dependency-cruiser": "^16.0.0"
+    "prettier": "^3.2.5",
+    "typescript": "^5.9.3",
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0"
   },
   "engines": {
     "node": ">=18.0.0",

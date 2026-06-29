@@ -1,9 +1,10 @@
 // test/unit/application/place-order.use-case.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { PlaceOrderUseCaseImpl } from '../../../src/application/usecases/place-order.use-case.impl';
 import { PlaceOrderUseCase } from '../../../src/application/usecases/place-order.use-case.interface';
-import { OrderRepositoryPort } from '../../../src/domain/ports/order-repository.port';
 import { DomainException } from '../../../src/domain/exceptions/domain.exception';
+import { OrderRepositoryPort } from '../../../src/domain/ports/order-repository.port';
 
 const mockRepo: jest.Mocked<OrderRepositoryPort> = {
   save: jest.fn().mockResolvedValue(undefined),
