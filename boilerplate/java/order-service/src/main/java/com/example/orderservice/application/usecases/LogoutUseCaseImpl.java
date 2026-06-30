@@ -3,9 +3,8 @@ package com.example.orderservice.application.usecases;
 import com.example.orderservice.domain.models.UserId;
 import com.example.orderservice.domain.ports.TokenBlacklist;
 import com.example.orderservice.domain.ports.TokenParser;
-import org.springframework.stereotype.Service;
 
-@Service
+// No @Service annotation - application layer is Spring-free (Clean Architecture)
 public class LogoutUseCaseImpl implements LogoutUseCase {
 
     private final TokenParser tokenParser;

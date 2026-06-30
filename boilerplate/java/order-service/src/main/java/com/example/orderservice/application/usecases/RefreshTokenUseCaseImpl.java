@@ -8,13 +8,12 @@ import com.example.orderservice.domain.models.UserId;
 import com.example.orderservice.domain.ports.TokenGenerator;
 import com.example.orderservice.domain.ports.TokenParser;
 import com.example.orderservice.domain.ports.UserRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+// No @Service annotation - application layer is Spring-free (Clean Architecture)
 public class RefreshTokenUseCaseImpl implements RefreshTokenUseCase {
 
     private final TokenParser tokenParser;
