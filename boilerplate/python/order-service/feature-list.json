@@ -2,6 +2,8 @@
   "version": "1.0",
   "project": "order-service-python",
   "generated_at": "2026-06-04T00:00:00Z",
+  "stack": "Python 3.11+ + FastAPI + SQLModel + Pydantic v2",
+  "architecture": "Clean Architecture + Dependency Injection",
   "features": [
     {
       "id": "AUTH-001",
@@ -46,6 +48,62 @@
       ],
       "passes": true,
       "notes": "Boilerplate structure enforces Clean Architecture"
+    },
+    {
+      "id": "CORR-001",
+      "category": "non-functional",
+      "priority": 2,
+      "description": "Correlation ID / MDC logging for distributed tracing",
+      "acceptance_criteria": [
+        "X-Correlation-ID header extracted from request or generated as UUID",
+        "Correlation ID added to all log statements via contextvars",
+        "Correlation ID included in response headers",
+        "User ID optionally attached to logs after authentication"
+      ],
+      "passes": true,
+      "notes": "Implemented: src/infrastructure/logging/correlation_id_middleware.py"
+    },
+    {
+      "id": "OBS-001",
+      "category": "non-functional",
+      "priority": 2,
+      "description": "Observability - Prometheus metrics and health checks",
+      "acceptance_criteria": [
+        "/metrics endpoint exposes Prometheus-format metrics",
+        "/health endpoint returns service status",
+        "/ready endpoint returns dependency health (DB, Redis)",
+        "Request duration, count, and error rate tracked"
+      ],
+      "passes": true,
+      "notes": "Implemented: prometheus-fastapi-instrumentator, infrastructure/health/"
+    },
+    {
+      "id": "CACHE-001",
+      "category": "non-functional",
+      "priority": 3,
+      "description": "Redis caching for frequently accessed data",
+      "acceptance_criteria": [
+        "Redis connection configured via environment variable",
+        "Cache layer abstracted behind port/adapter pattern",
+        "TTL-based cache invalidation supported",
+        "Cache miss falls through to database"
+      ],
+      "passes": true,
+      "notes": "Implemented: src/infrastructure/cache/"
+    },
+    {
+      "id": "EVENT-001",
+      "category": "non-functional",
+      "priority": 2,
+      "description": "Domain events with in-memory event bus",
+      "acceptance_criteria": [
+        "Domain events defined in domain/events/",
+        "Event bus publishes events from use cases",
+        "Event handlers process events asynchronously",
+        "OrderPlaced event emitted on order creation"
+      ],
+      "passes": true,
+      "notes": "Implemented: src/domain/events/, src/infrastructure/events/"
     }
   ]
 }
