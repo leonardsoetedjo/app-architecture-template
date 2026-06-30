@@ -53,7 +53,7 @@ npm run lint                                            # Lint
 
 ## 5. Smoke Test (Bruno)
 
-Run after `docker compose up` to verify backend + frontend integration:
+Run after `docker compose up`. Full details: `docs/01-agnostic/03-guidelines/01-deployment.md`.
 
 ```bash
 cd boilerplate/tests/bruno
@@ -62,15 +62,13 @@ bru run --env local
 
 | Test | What it catches |
 |------|-----------------|
-| `health-check.bru` | Service not started, wrong port |
-| `login.bru` | Auth mismatch, JWT shape drift |
-| `get-orders.bru` | Pagination API contract violation |
-
-> **Why Bruno?** Smoke test runs in ~10s. If it fails, Playwright (2–3 min) is guaranteed to fail too — catch proxy/port/config errors fast. See #217 for full rationale.
+| `health-check.bru` | Service not started |
+| `login.bru` | Auth mismatch |
+| `get-orders.bru` | API contract violation |
 
 ## 6. Verification
 
 - [ ] dependency-cruiser passes
-- [ ] Bruno smoke tests pass (`bru run --env local`)
+- [ ] Bruno smoke tests pass
 - [ ] No NestJS/TypeORM imports in `domain/`
-- [ ] Commit message includes "Architecture: depcruise PASSED"
+- [ ] Commit: "Architecture: depcruise PASSED"

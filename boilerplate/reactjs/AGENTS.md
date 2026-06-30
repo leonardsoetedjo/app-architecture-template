@@ -64,54 +64,23 @@ npm run depcruise && npx tsc --noEmit && npm run lint && npm test
 
 ## 6. API Type Generation
 
-### Generate from OpenAPI
-
-ReactJS types are auto-generated from backend OpenAPI specs. Do NOT manually edit `src/generated/api.ts`.
+Auto-generated from backend OpenAPI. Full details: `docs/01-agnostic/03-guidelines/01-deployment.md`.
 
 ```bash
-# Start backend (Java/NestJS/Python) on localhost:8080
-cd boilerplate/reactjs
 npm run generate:api-types     # Fetches /v3/api-docs → src/generated/api.ts
-```
-
-### Check freshness (CI gate)
-
-```bash
-npm run check:api-types        # Fails if backend spec has drifted
-```
-
-### Using generated types
-
-```typescript
-import type { components } from '../generated/api';
-
-// components["schemas"]["OrderResponse"] is the canonical type
-export type OrderDetail = components["schemas"]["OrderResponse"];
+npm run check:api-types        # CI gate: fails if spec drifted
 ```
 
 ## 7. Critical Patterns
 
-Auth `hasCheckedAuth` flag required (guards skip redirect on `null`→frequent-mistakes.md). Playwright cache path: `PLAYWRIGHT_BROWSERS_PATH=/tmp/pw-browsers`.
+- Auth `hasCheckedAuth` flag required
+- Playwright cache: `PLAYWRIGHT_BROWSERS_PATH=/tmp/pw-browsers`
 
-## 8. Deployment Modes
+## 8. Deployment
 
-### A. Standalone (Local Dev)
+**VITE_API_BASE_URL** is a **build arg** (Dockerfile), not runtime env. Vite bundles it; nginx can't override.
 
-Use when running outside the `hermes-design` fleet.
+- **Standalone:** `docker compose up` → `localhost:8082`
+- **Fleet:** `docker compose -f docker-compose.traefik.yml up` → Traefik routing
 
-- `VITE_API_BASE_URL` is a **build arg** in the Dockerfile, NOT a runtime env var
-- Frontend accesses backend via nginx proxy on the same origin
-- Host port forwarding: `localhost:8082` → nginx → backend
-
-**docker-compose.yml** uses `build.args.VITE_API_BASE_URL`, not `environment`.
-
-### B. Fleet Mode (Traefik + Tailscale)
-
-Use when deployed inside the `hermes-design` runtime.
-
-- Services attach to `traefik-net` (external Docker network)
-- Traefik routes HTTPS traffic via Tailscale hostname
-- **Port mappings removed** — Traefik handles all routing
-- The `Host()` rule is injected by the fleet runtime, never hardcoded in project repos
-
-**Critical:** `VITE_API_BASE_URL` must be set at **build time** (Dockerfile `ARG`), not runtime. Vite bundles the value into the SPA; nginx cannot override it at runtime.
+Full deployment guide: `docs/01-agnostic/03-guidelines/01-deployment.md`
