@@ -8,7 +8,19 @@ on:
 # To disable: Settings > Notifications > uncheck "Participating" or customize per-repo.
 
 jobs:
-  java-ci:
+  boilerplate-parity:
+    name: Boilerplate Parity Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Run parity validation
+      run: python3 scripts/verify-boilerplate-parity.py
     name: Java CI
     runs-on: ubuntu-latest
   
