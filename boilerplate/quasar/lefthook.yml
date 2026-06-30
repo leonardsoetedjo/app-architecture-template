@@ -22,6 +22,11 @@ pre-commit:
       run: |
         npx prettier --check "src/**/*.{ts,vue}"
         echo "Format: PASSED"
+    # Gate 5a: Frontend config sanity
+    config-sanity:
+      run: |
+        bash ../../scripts/gate-5a-quasar.sh .
+        echo "Gate 5a: PASSED"
     # Gate 7: Security scan
     security:
       run: |
