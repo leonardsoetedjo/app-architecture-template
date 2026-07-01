@@ -13,7 +13,7 @@ import { describe, it, expect } from 'vitest'
 import { readFileSync, readdirSync, statSync } from 'fs'
 import { join, extname } from 'path'
 
-const SRC_ROOT = join(__dirname, '..', 'src')
+const SRC_ROOT = join(__dirname, '..')
 
 // --- Helpers ---
 

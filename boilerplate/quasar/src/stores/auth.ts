@@ -17,6 +17,7 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const correlationId = ref<string | null>(null)
   const hasCheckedAuth = ref(false)
 
   const isAuthenticated = computed(() => !!user.value)
@@ -24,6 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username: string, password: string): Promise<boolean> {
     loading.value = true
     error.value = null
+    correlationId.value = null
     try {
       const result: AuthResult = await authPortInstance.login({ username, password })
       if (result.success) {
@@ -31,6 +33,11 @@ export const useAuthStore = defineStore('auth', () => {
         return true
       }
       error.value = result.error || 'Login failed'
+      // Extract correlation ID from error message if present
+      const match = result.error?.match(/\(Ref: (req_\w+)\)/)
+      if (match) {
+        correlationId.value = match[1]
+      }
       return false
     } finally {
       loading.value = false
@@ -87,6 +94,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     loading,
     error,
+    correlationId,
     isAuthenticated,
     hasCheckedAuth,
     login,

@@ -18,12 +18,41 @@ import type {
 
 const API_BASE = 'http://localhost:8000'
 
+// Generate correlation ID: req_<timestamp>_<random>
+function generateCorrelationId(): string {
+  const timestamp = Date.now().toString(36)
+  const random = Math.random().toString(36).substring(2, 8)
+  return `req_${timestamp}_${random}`
+}
+
 // Axios instance with credentials to send httpOnly cookies
 const apiClient = axios.create({
   baseURL: API_BASE,
   timeout: 30000,
   withCredentials: true, // Send httpOnly cookies automatically
 })
+
+// Request interceptor: add X-Correlation-ID header
+apiClient.interceptors.request.use((config) => {
+  const correlationId = generateCorrelationId()
+  config.headers['X-Correlation-ID'] = correlationId
+  // Store correlation ID on config for error handler access
+  config.metadata = { ...config.metadata, correlationId }
+  return config
+})
+
+// Response error interceptor: extract correlation ID from error
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const correlationId = 
+      error.config?.metadata?.correlationId ||
+      error.response?.headers?.['x-correlation-id'] ||
+      null
+    error.correlationId = correlationId
+    return Promise.reject(error)
+  }
+)
 
 export interface AuthPort {
   login(credentials: LoginCredentials): Promise<AuthResult>
@@ -55,10 +84,12 @@ export class HttpAuthService implements AuthPort {
         tokens
       }
     } catch (err: unknown) {
-      const axiosErr = err as { response?: { data?: { detail?: string } } }
+      const axiosErr = err as { response?: { data?: { detail?: string } }; correlationId?: string }
+      const correlationId = axiosErr.correlationId
+      const baseError = axiosErr.response?.data?.detail || 'Login failed'
       return {
         success: false,
-        error: axiosErr.response?.data?.detail || 'Login failed'
+        error: correlationId ? `${baseError} (Ref: ${correlationId})` : baseError
       }
     }
   }
@@ -68,10 +99,12 @@ export class HttpAuthService implements AuthPort {
       const res = await apiClient.post('/api/v1/auth/register', credentials)
       return { success: true, user: res.data }
     } catch (err: unknown) {
-      const axiosErr = err as { response?: { data?: { detail?: string } } }
+      const axiosErr = err as { response?: { data?: { detail?: string } }; correlationId?: string }
+      const correlationId = axiosErr.correlationId
+      const baseError = axiosErr.response?.data?.detail || 'Registration failed'
       return {
         success: false,
-        error: axiosErr.response?.data?.detail || 'Registration failed'
+        error: correlationId ? `${baseError} (Ref: ${correlationId})` : baseError
       }
     }
   }
@@ -90,9 +123,12 @@ export class HttpAuthService implements AuthPort {
         tokens
       }
     } catch (err: unknown) {
+      const axiosErr = err as { correlationId?: string }
+      const correlationId = axiosErr.correlationId
+      const baseError = 'Session expired'
       return {
         success: false,
-        error: 'Session expired'
+        error: correlationId ? `${baseError} (Ref: ${correlationId})` : baseError
       }
     }
   }

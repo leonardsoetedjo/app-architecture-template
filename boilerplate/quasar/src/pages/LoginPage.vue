@@ -36,6 +36,7 @@
 
           <div v-if="generalError" class="text-negative text-center q-mt-sm" data-testid="login-general-error">
             {{ generalError }}
+            <span v-if="correlationId" class="text-caption q-ml-sm">(Ref: {{ correlationId }})</span>
           </div>
 
           <q-btn
@@ -65,6 +66,7 @@ const password = ref('')
 const usernameError = ref('')
 const passwordError = ref('')
 const generalError = ref('')
+const correlationId = ref('')
 
 const isEmpty = computed(() => !username.value || !password.value)
 
@@ -90,6 +92,7 @@ async function handleSubmit() {
   usernameError.value = ''
   passwordError.value = ''
   generalError.value = ''
+  correlationId.value = ''
 
   let hasError = false
   if (!username.value) {
@@ -108,6 +111,11 @@ async function handleSubmit() {
     router.push('/landing')
   } else {
     generalError.value = auth.error || 'Invalid username or password'
+    // Extract correlation ID from error message
+    const match = auth.error?.match(/\(Ref: (req_\w+)\)/)
+    if (match) {
+      correlationId.value = match[1]
+    }
     password.value = ''
   }
 }
