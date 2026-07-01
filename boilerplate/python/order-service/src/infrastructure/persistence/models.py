@@ -20,6 +20,7 @@ class OrderEntity(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     status = Column(String(20), nullable=False, default="PENDING")
     confirmed_at = Column(DateTime, nullable=True)
+    version = Column(Integer, nullable=False, default=0, server_default='0')
 
     # One-to-many relationship
     items = relationship(

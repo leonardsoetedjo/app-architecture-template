@@ -33,6 +33,8 @@ class SqlAlchemyOrderRepository(OrderRepository):
                     existing.status = order.status
                     existing.customer_id = order.customer_id
                     existing.confirmed_at = order.confirmed_at
+                    # Increment version for optimistic locking
+                    existing.version = (existing.version or 0) + 1
                     session.commit()
                     session.refresh(existing)
                     return OrderMapper.to_domain(existing)
