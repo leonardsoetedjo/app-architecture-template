@@ -57,7 +57,9 @@ pre-commit:
     format-end-of-file:
       glob: "*.{py,java,ts,tsx,vue,js,jsx,md,yaml,yml,json,xml,gradle}"
       run: |
-        [ -n "$(tail -c1 {staged_files})" ] && echo "" >> {staged_files}
+        for f in {staged_files}; do
+          [ -f "$f" ] && [ "$(tail -c1 "$f")" != "$(printf '\n')" ] && printf '\n' >> "$f"
+        done
       skip:
         - merge
         - rebase
