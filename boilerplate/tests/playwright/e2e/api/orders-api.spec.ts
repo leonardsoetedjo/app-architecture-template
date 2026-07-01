@@ -38,7 +38,13 @@ test.describe('Orders API', () => {
     expect(response.ok()).toBeTruthy();
     
     const body = await response.json();
-    expect(Array.isArray(body)).toBeTruthy();
+    // API returns paginated object, not raw array
+    expect(body).toHaveProperty('content');
+    expect(body).toHaveProperty('page');
+    expect(body).toHaveProperty('size');
+    expect(body).toHaveProperty('totalElements');
+    expect(body).toHaveProperty('totalPages');
+    expect(Array.isArray(body.content)).toBeTruthy();
   });
 
   test('GET /actuator/health returns UP', async ({ request }) => {
