@@ -1,0 +1,28 @@
+{
+  "name": "@app-architecture-template/common",
+  "version": "1.0.0",
+  "description": "Shared utilities for NestJS microservices",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/",
+    "depcruise": "depcruise --validate .dependency-cruiser.cjs src/"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "rxjs": "^7.8.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.0",
+    "dependency-cruiser": "^16.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0",
+    "rxjs": "^7.8.0"
+  }
+}
