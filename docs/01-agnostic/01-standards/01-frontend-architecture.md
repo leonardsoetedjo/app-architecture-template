@@ -251,11 +251,11 @@ export function OrderForm() {
 
 ---
 
-## 7. General Frontend Best Practices
+## 8. General Frontend Best Practices
 
 These practices apply regardless of framework (React, Quasar/Vue, Angular). They are derived from industry consensus on frontend quality, accessibility, and maintainability.
 
-### 7.1 Responsive Design
+### 8.1 Responsive Design
 
 Every screen must adapt gracefully to the device's viewport. Use CSS Grid, Flexbox, and media queries as the primary tools. Framework-level helpers (e.g., Quasar's `col-`, `col-sm-`, `col-md-` classes) are preferred over manual media queries where available.
 
@@ -278,7 +278,7 @@ Every screen must adapt gracefully to the device's viewport. Use CSS Grid, Flexb
 </template>
 ```
 
-### 7.2 Semantic HTML
+### 8.2 Semantic HTML
 
 Use semantic tags to convey structure and meaning. This improves accessibility, SEO, and screen-reader behavior.
 
@@ -293,7 +293,7 @@ Use semantic tags to convey structure and meaning. This improves accessibility, 
 
 **Rule**: Every page must contain exactly one `<main>` element. Navigation must be wrapped in `<nav>`.
 
-### 7.3 Accessibility (a11y)
+### 8.3 Accessibility (a11y)
 
 All UI must comply with **WCAG 2.1 Level AA**.
 
@@ -309,7 +309,7 @@ All UI must comply with **WCAG 2.1 Level AA**.
 <q-btn icon="delete" aria-label="Delete order" @click="deleteOrder" />
 ```
 
-### 7.4 Minimalism
+### 8.4 Minimalism
 
 Display only information and controls that are immediately relevant. Avoid cluttered dashboards, excessive form fields, and redundant navigation.
 
@@ -319,7 +319,7 @@ Display only information and controls that are immediately relevant. Avoid clutt
 - Error messages should be concise and actionable ("Enter a valid email address" not "Invalid input").
 - Loading states should use skeleton screens, not spinners on empty pages.
 
-### 7.5 Code Comments
+### 8.5 Code Comments
 
 Comments should explain *why*, not *what*. The code explains what; the comment explains the business reason or constraint.
 
@@ -340,11 +340,11 @@ counter++;
 
 ---
 
-## 8. Form Validation & Input Handling Standards
+## 9. Form Validation & Input Handling Standards
 
 To ensure consistent, testable, and accessible form behaviour across all frontend implementations, every form must implement the following validation and interaction patterns.
 
-### 8.1 Per-Field Validation
+### 9.1 Per-Field Validation
 
 Every input field **must** have its own dedicated error message area. This enables precise user feedback and stable Playwright selectors.
 
@@ -385,7 +385,7 @@ Every input field **must** have its own dedicated error message area. This enabl
 </span>
 ```
 
-### 8.2 Submit Button State
+### 9.2 Submit Button State
 
 The primary submit button **must** reflect form readiness to prevent accidental or premature submission.
 
@@ -397,7 +397,7 @@ The primary submit button **must** reflect form readiness to prevent accidental 
 
 **Anti-pattern:** Buttons that are always enabled and rely solely on server-side rejection create a poor user experience and are harder to test deterministically.
 
-### 8.3 Validation Trigger Points
+### 9.3 Validation Trigger Points
 
 | Trigger | Behaviour |
 |---|---|
@@ -406,7 +406,7 @@ The primary submit button **must** reflect form readiness to prevent accidental 
 | On field input (typing) | That field's error **clears immediately**; other fields' errors remain |
 | On server rejection (wrong password, etc.) | General error banner appears **above the form**; per-field errors remain if they were already shown |
 
-### 8.4 Server-Error Handling
+### 9.4 Server-Error Handling
 
 When the server rejects a submission (e.g. invalid credentials), the form must:
 
@@ -415,7 +415,7 @@ When the server rejects a submission (e.g. invalid credentials), the form must:
 3. Clear the password field for security
 4. Keep focus management sensible (return focus to the first errored field or the password field)
 
-### 8.5 Testing Selectors
+### 9.5 Testing Selectors
 
 Every form element involved in validation must have a `data-testid` for Playwright stability:
 
