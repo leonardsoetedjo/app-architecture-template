@@ -161,3 +161,4 @@ poetry run pytest tests/archunit/ -v
 
 **Ready?** Start with `docs/quick-start/` for your chosen stack.
  boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/services/OrderEvent.java boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/services/OrderStateMachine.java boilerplate/java/order-service/src/main/java/com/example/orderservice/infrastructure/config/OrderStateMachineConfig.java boilerplate/nestjs/order-service/test/jest-e2e.json
+ boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/services/OrderEvent.java

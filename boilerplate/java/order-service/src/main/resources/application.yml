@@ -2,21 +2,25 @@ spring:
   application:
     name: order-service
   datasource:
-    url: jdbc:h2:mem:orders-db
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    # PostgreSQL default (production parity per DDD-DATABASE-001)
+    # Override via DATABASE_URL for different environments
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/order_db}
+    driver-class-name: ${DATABASE_DRIVER:org.postgresql.Driver}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: ${HIBERNATE_DDL:validate}
+    show-sql: ${HIBERNATE_SHOW_SQL:false}
     properties:
       hibernate:
         format_sql: true
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+        dialect: ${HIBERNATE_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
+  # H2 console disabled per DDD-DATABASE-001 (PostgreSQL only)
+  # h2:
+  #   console:
+  #     enabled: false
+  #     path: /h2-console
 
 server:
   port: 8080
