@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPage, setFilterStatus, setSort, resetFilters } from './ordersSlice';
-import { useListOrdersQuery, useDeleteOrderMutation } from 'entities/order/api';
+import { useListOrdersQuery, useDeleteOrderMutation } from './api';
 import type { RootState } from 'app/store';
 import type { OrderStateLiteral } from 'entities/order/types';
 

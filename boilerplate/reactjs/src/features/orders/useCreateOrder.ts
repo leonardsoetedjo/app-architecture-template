@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { useCreateOrderMutation } from 'entities/order/api';
+import { useCreateOrderMutation } from './api';
 import { useFormValidation } from 'shared/lib/validation';
 import type { CreateOrderItemCommand } from 'entities/order/types';
 

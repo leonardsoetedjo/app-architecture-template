@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useGetOrderQuery, useUpdateOrderStatusMutation } from 'entities/order/api';
+import { useGetOrderQuery, useUpdateOrderStatusMutation } from './api';
 import { VALID_TRANSITIONS } from 'shared/lib/formatters';
 import type { OrderStateLiteral } from 'entities/order/types';
 import type { OrderDetail } from 'entities/order/types';

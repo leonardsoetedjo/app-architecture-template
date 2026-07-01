@@ -7,7 +7,7 @@ import type {
   CreateOrderCommand,
   OrderResult,
   OrderStateLiteral,
-} from './types';
+} from '../../entities/order/types';
 
 export type SortDirection = 'ASC' | 'DESC';
 

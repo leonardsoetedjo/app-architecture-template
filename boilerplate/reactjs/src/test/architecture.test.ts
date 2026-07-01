@@ -60,6 +60,33 @@ describe('TYPESCRIPT-STRICT-001', () => {
     }
     expect(violations).toEqual([]);
   });
+
+  it('entities/ must contain only pure types (no RTK Query, no framework imports)', () => {
+    const violations: string[] = [];
+
+    for (const file of walk(SRC_ROOT)) {
+      // Only check entities/ directory
+      if (!file.includes('/entities/')) continue;
+      if (!file.endsWith('.ts') && !file.endsWith('.tsx')) continue;
+
+      const content = readFileSync(file, 'utf-8');
+      
+      // Check for RTK Query patterns
+      if (/injectEndpoints|createApi|baseApi\.inject/.test(content)) {
+        violations.push(`${file}: contains RTK Query API definition — move to features/ or shared/api/`);
+      }
+      
+      // Check for framework imports that don't belong in pure types
+      if (/import.*from ['"]@reduxjs\/toolkit\/query/.test(content)) {
+        violations.push(`${file}: imports RTK Query — entities/ should be framework-agnostic`);
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error('Entity layer purity violations:\n  ' + violations.join('\n  '));
+    }
+    expect(violations).toEqual([]);
+  });
 });
 
 // --- REACT-BUSINESS-LOGIC ---
