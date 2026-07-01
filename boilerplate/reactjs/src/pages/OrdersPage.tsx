@@ -1,17 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  setPage,
-  setFilterStatus,
-  setSort,
-  resetFilters,
-} from 'features/orders/ordersSlice';
-import { useListOrdersQuery, useDeleteOrderMutation } from 'entities/order/api';
+import { useOrders } from 'features/orders/useOrders';
 import { OrderBadge } from 'shared/ui/atoms/OrderBadge';
 import { formatCurrency, formatDate } from 'shared/lib/formatters';
-import type { RootState } from 'app/store';
-import type { OrderStateLiteral } from 'entities/order';
+import type { OrderStateLiteral } from 'entities/order/types';
+import type { OrderListItem } from 'entities/order/types';
 
 const ORDER_STATES: { value: OrderStateLiteral | ''; label: string }[] = [
   { value: '', label: 'All statuses' },
@@ -37,71 +30,23 @@ const SORTABLE_COLUMNS: SortableColumn[] = [
   { key: 'createdAt', label: 'Created' },
 ];
 
-function nextDirection(current: 'ASC' | 'DESC' | null): 'ASC' | 'DESC' | null {
-  if (current === null) return 'ASC';
-  if (current === 'ASC') return 'DESC';
-  return null; // third click removes sort
-}
-
 export const OrdersPage: React.FC = () => {
-  const dispatch = useDispatch();
-  const { page, size, sort, direction, filter } = useSelector(
-    (state: RootState) => state.orders,
-  );
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const { data, isLoading, error, refetch } = useListOrdersQuery({
-    page,
-    size,
-    status: filter.status || undefined,
-    sort: sort || undefined,
-    direction: sort ? direction : undefined,
-  });
-
-  const [deleteOrder, { isLoading: isDeleting }] = useDeleteOrderMutation();
-
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure? This will soft-delete the order.')) return;
-    setDeletingId(id);
-    try {
-      await deleteOrder(id).unwrap();
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 0 && data && newPage < data.totalPages) {
-      dispatch(setPage(newPage));
-    }
-  };
-
-  const handleSort = useCallback(
-    (columnKey: string) => {
-      const currentDir = sort === columnKey ? direction : null;
-      const nextDir = nextDirection(currentDir);
-      dispatch(
-        setSort({
-          sort: nextDir ? columnKey : null,
-          direction: nextDir ?? 'DESC',
-        }),
-      );
-    },
-    [sort, direction, dispatch],
-  );
-
-  const renderSortIndicator = (columnKey: string) => {
-    if (sort !== columnKey) {
-      return <span className="ml-1 text-gray-300 select-none">⇅</span>;
-    }
-    return (
-      <span className="ml-1 text-brand-600 select-none">
-        {direction === 'ASC' ? '▲' : '▼'}
-      </span>
-    );
-  };
-
-  const isSortActive = (columnKey: string) => sort === columnKey;
+  const {
+    data,
+    isLoading,
+    error,
+    isDeleting,
+    handlePageChange,
+    handleSort,
+    handleFilterStatus,
+    handleResetFilters,
+    handleDelete,
+    handleRefresh,
+    renderSortIndicator,
+    isSortActive,
+    filter,
+    direction,
+  } = useOrders();
 
   return (
     <div className="space-y-6">
@@ -110,34 +55,33 @@ export const OrdersPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
           <p className="text-sm text-gray-500">Manage and track your orders</p>
         </div>
-        <Link to="/orders/new" className="btn-primary">+ New Order</Link>
+        <Link to="/orders/new" className="btn-primary">
+          + New Order
+        </Link>
       </div>
 
       <div className="card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex items-center space-x-2">
-          <label htmlFor="status-filter" className="text-sm font-medium text-gray-700">Status:</label>
+          <label htmlFor="status-filter" className="text-sm font-medium text-gray-700">
+            Status:
+          </label>
           <select
             id="status-filter"
             value={filter.status || ''}
-            onChange={(e) =>
-              dispatch(
-                setFilterStatus((e.target.value as OrderStateLiteral) || null),
-              )
-            }
+            onChange={e => handleFilterStatus((e.target.value as OrderStateLiteral) || null)}
             className="input w-auto min-w-[160px]"
           >
-            {ORDER_STATES.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
+            {ORDER_STATES.map(s => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
             ))}
           </select>
         </div>
-        <button
-          onClick={() => dispatch(resetFilters())}
-          className="btn-secondary text-sm"
-        >
+        <button onClick={handleResetFilters} className="btn-secondary text-sm">
           Reset
         </button>
-        <button onClick={refetch} className="btn-secondary text-sm">
+        <button onClick={handleRefresh} className="btn-secondary text-sm">
           Refresh
         </button>
       </div>
@@ -147,7 +91,7 @@ export const OrdersPage: React.FC = () => {
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 font-semibold text-gray-700">Order ID</th>
-              {SORTABLE_COLUMNS.map((col) => (
+              {SORTABLE_COLUMNS.map(col => (
                 <th
                   key={col.key}
                   scope="col"
@@ -160,7 +104,7 @@ export const OrdersPage: React.FC = () => {
                   }
                   onClick={() => handleSort(col.key)}
                   tabIndex={0}
-                  onKeyDown={(e) => {
+                  onKeyDown={e => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
                       handleSort(col.key);
@@ -196,7 +140,9 @@ export const OrdersPage: React.FC = () => {
               <tr>
                 <td colSpan={7} className="px-6 py-12 text-center text-red-500">
                   Failed to load orders.{' '}
-                  <button onClick={refetch} className="underline">Retry</button>
+                  <button onClick={handleRefresh} className="underline">
+                    Retry
+                  </button>
                 </td>
               </tr>
             )}
@@ -209,7 +155,7 @@ export const OrdersPage: React.FC = () => {
               </tr>
             )}
 
-            {data?.content.map((order) => (
+            {data?.content.map((order: OrderListItem) => (
               <tr key={order.orderId} className="hover:bg-gray-50">
                 <td className="px-6 py-3">
                   <Link
@@ -230,10 +176,10 @@ export const OrdersPage: React.FC = () => {
                 <td className="px-6 py-3 text-right">
                   <button
                     onClick={() => handleDelete(order.orderId)}
-                    disabled={isDeleting && deletingId === order.orderId}
+                    disabled={isDeleting}
                     className="text-red-600 hover:text-red-700 text-sm font-medium disabled:text-gray-300"
                   >
-                    {deletingId === order.orderId ? 'Deleting…' : 'Delete'}
+                    {isDeleting ? 'Deleting…' : 'Delete'}
                   </button>
                 </td>
               </tr>

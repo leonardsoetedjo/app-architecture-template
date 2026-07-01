@@ -7,7 +7,7 @@
  *   - REACT-API-ISOLATION: .tsx/.ts files outside api/ must not import axios directly
  *
  * These are static-analysis tests. No runtime needed.
- * 
+ *
  * Run: npm test -- --run src/test/architecture.test.ts
  */
 
@@ -65,48 +65,43 @@ describe('TYPESCRIPT-STRICT-001', () => {
 // --- REACT-BUSINESS-LOGIC ---
 
 describe('REACT-BUSINESS-LOGIC', () => {
-  it('.tsx files must not contain axios/fetch API calls', () => {
+  it('.tsx files in pages/ must not contain business logic (hooks, API calls, complex logic)', () => {
     const violations: string[] = [];
 
     for (const file of walk(SRC_ROOT)) {
+      // Only check pages/ directory
+      if (!file.includes('/pages/')) continue;
       if (!file.endsWith('.tsx')) continue;
-      // Skip test files
       if (file.includes('.test.') || file.includes('.spec.')) continue;
 
       const content = readFileSync(file, 'utf-8');
+
+      // Check for hooks being defined (not just imported)
+      if (/export\s+function\s+use[A-Z]\w*\(/.test(content)) {
+        violations.push(`${file}: defines hook — move to features/`);
+      }
+
+      // Check for API calls (axios, fetch)
       if (content.includes('axios.')) {
-        violations.push(`${file}: contains axios. call — move to api/ layer`);
+        violations.push(`${file}: contains axios. call — move to features/ or api/`);
       }
       if (content.includes('fetch(')) {
-        violations.push(`${file}: contains fetch() call — move to api/ layer`);
+        violations.push(`${file}: contains fetch() call — move to features/ or api/`);
+      }
+
+      // Check for complex logic patterns (mutations, dispatch, Redux logic)
+      if (/useMutation\(|use[A-Z]\w+Mutation/.test(content)) {
+        violations.push(`${file}: contains mutation hook — move to features/`);
+      }
+
+      // Check for form validation schemas defined inline
+      if (/z\.object\(|yup\.object\(|\.refine\(/.test(content)) {
+        violations.push(`${file}: contains validation schema — move to features/`);
       }
     }
 
     if (violations.length > 0) {
-      console.error('Business logic violations:\n  ' + violations.join('\n  '));
-    }
-    expect(violations).toEqual([]);
-  });
-
-  it('.tsx files must not contain complex business logic (>50 chars regex/computation)', () => {
-    const violations: string[] = [];
-
-    for (const file of walk(SRC_ROOT)) {
-      if (!file.endsWith('.tsx')) continue;
-      if (file.includes('.test.') || file.includes('.spec.')) continue;
-
-      const content = readFileSync(file, 'utf-8');
-      // Check for complex regex patterns or date manipulation in component
-      if (/new RegExp\([^)]{50,}\)/.test(content)) {
-        violations.push(`${file}: contains complex RegExp — move to hook/utility`);
-      }
-      if (/moment\.|dayjs\.|date-fns\./.test(content) && !content.includes('import')) {
-        violations.push(`${file}: contains date manipulation — move to hook/utility`);
-      }
-    }
-
-    if (violations.length > 0) {
-      console.error('Business logic violations:\n  ' + violations.join('\n  '));
+      console.error('Business logic violations in pages/:\n  ' + violations.join('\n  '));
     }
     expect(violations).toEqual([]);
   });

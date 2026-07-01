@@ -17,8 +17,7 @@ function renderWithProviders(ui: React.ReactNode, preloadedState = {}) {
       orders: ordersReducer,
       [baseApi.reducerPath]: baseApi.reducer,
     },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(baseApi.middleware),
+    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(baseApi.middleware),
     preloadedState: {
       auth: {
         user: { id: 'u1', email: 'test@example.com', roles: ['USER'], enabled: true },
@@ -42,7 +41,7 @@ function renderWithProviders(ui: React.ReactNode, preloadedState = {}) {
     ...render(
       <Provider store={store}>
         <BrowserRouter>{ui}</BrowserRouter>
-      </Provider>,
+      </Provider>
     ),
   };
 }
@@ -87,7 +86,7 @@ describe('OrdersPage', () => {
           totalElements: 0,
           totalPages: 0,
         });
-      }),
+      })
     );
 
     renderWithProviders(<OrdersPage />);
@@ -100,11 +99,11 @@ describe('OrdersPage', () => {
   it('shows error state with retry', async () => {
     server.use(
       http.get('/api/v1/orders', () => {
-        return new HttpResponse(
-          JSON.stringify({ message: 'Internal server error' }),
-          { status: 500, headers: { 'Content-Type': 'application/json' } },
-        );
-      }),
+        return new HttpResponse(JSON.stringify({ message: 'Internal server error' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      })
     );
 
     renderWithProviders(<OrdersPage />);
@@ -204,7 +203,7 @@ describe('OrdersPage', () => {
           totalElements: manyOrders.length,
           totalPages: Math.ceil(manyOrders.length / size),
         });
-      }),
+      })
     );
 
     renderWithProviders(<OrdersPage />);

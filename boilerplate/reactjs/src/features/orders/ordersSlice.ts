@@ -35,14 +35,11 @@ const ordersSlice = createSlice({
       state.filter.status = action.payload;
       state.page = 0;
     },
-    setSort: (
-      state,
-      action: PayloadAction<{ sort: string | null; direction: 'ASC' | 'DESC' }>,
-    ) => {
+    setSort: (state, action: PayloadAction<{ sort: string | null; direction: 'ASC' | 'DESC' }>) => {
       state.sort = action.payload.sort;
       state.direction = action.payload.direction;
     },
-    resetFilters: (state) => {
+    resetFilters: state => {
       state.page = 0;
       state.sort = null;
       state.direction = 'DESC';
@@ -51,6 +48,5 @@ const ordersSlice = createSlice({
   },
 });
 
-export const { setPage, setSize, setFilterStatus, setSort, resetFilters } =
-  ordersSlice.actions;
+export const { setPage, setSize, setFilterStatus, setSort, resetFilters } = ordersSlice.actions;
 export default ordersSlice.reducer;

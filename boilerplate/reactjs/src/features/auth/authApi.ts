@@ -29,32 +29,19 @@ export interface UserProfileResponse {
 }
 
 export const authApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    login: builder.mutation<
-      AuthResponse,
-      LoginRequest
-    >({
-      query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+  endpoints: builder => ({
+    login: builder.mutation<AuthResponse, LoginRequest>({
+      query: body => ({ url: '/auth/login', method: 'POST', body }),
       invalidatesTags: ['Auth'],
     }),
-    register: builder.mutation<
-      AuthResponse,
-      RegisterRequest
-    >({
-      query: (body) => ({ url: '/auth/register', method: 'POST', body }),
+    register: builder.mutation<AuthResponse, RegisterRequest>({
+      query: body => ({ url: '/auth/register', method: 'POST', body }),
     }),
-    getMe: builder.query<
-      UserProfileResponse,
-      void
-    >({
+    getMe: builder.query<UserProfileResponse, void>({
       query: () => ({ url: '/auth/me', method: 'GET' }),
       providesTags: ['Auth'],
     }),
   }),
 });
 
-export const {
-  useLoginMutation,
-  useRegisterMutation,
-  useGetMeQuery,
-} = authApi;
+export const { useLoginMutation, useRegisterMutation, useGetMeQuery } = authApi;

@@ -18,11 +18,14 @@ describe('authSlice', () => {
 
   it('setCredentials stores auth data and persists', () => {
     const user = { id: 'u1', email: 'a@test.com', roles: ['USER'], enabled: true };
-    const nextState = authReducer(initialAuth, setCredentials({
-      accessToken: 'tok1',
-      refreshToken: 'ref1',
-      user,
-    }));
+    const nextState = authReducer(
+      initialAuth,
+      setCredentials({
+        accessToken: 'tok1',
+        refreshToken: 'ref1',
+        user,
+      })
+    );
 
     expect(nextState.user).toEqual(user);
     expect(nextState.accessToken).toBe('tok1');
@@ -31,25 +34,36 @@ describe('authSlice', () => {
   });
 
   it('refreshTokens updates tokens', () => {
-    const withAuth = authReducer(initialAuth, setCredentials({
-      accessToken: 'tok1', refreshToken: 'ref1',
-      user: { id: 'u1', email: 'a@test.com', roles: ['USER'], enabled: true },
-    }));
+    const withAuth = authReducer(
+      initialAuth,
+      setCredentials({
+        accessToken: 'tok1',
+        refreshToken: 'ref1',
+        user: { id: 'u1', email: 'a@test.com', roles: ['USER'], enabled: true },
+      })
+    );
 
-    const nextState = authReducer(withAuth, refreshTokens({
-      accessToken: 'tok2',
-      refreshToken: 'ref2',
-    }));
+    const nextState = authReducer(
+      withAuth,
+      refreshTokens({
+        accessToken: 'tok2',
+        refreshToken: 'ref2',
+      })
+    );
 
     expect(nextState.accessToken).toBe('tok2');
     expect(nextState.refreshToken).toBe('ref2');
   });
 
   it('logout clears everything', () => {
-    const withAuth = authReducer(initialAuth, setCredentials({
-      accessToken: 'tok1', refreshToken: 'ref1',
-      user: { id: 'u1', email: 'a@test.com', roles: ['USER'], enabled: true },
-    }));
+    const withAuth = authReducer(
+      initialAuth,
+      setCredentials({
+        accessToken: 'tok1',
+        refreshToken: 'ref1',
+        user: { id: 'u1', email: 'a@test.com', roles: ['USER'], enabled: true },
+      })
+    );
 
     const nextState = authReducer(withAuth, logout());
 

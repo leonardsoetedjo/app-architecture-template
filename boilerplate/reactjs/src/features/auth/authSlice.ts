@@ -31,7 +31,7 @@ const authSlice = createSlice({
         accessToken: string;
         refreshToken: string;
         user: AuthUser;
-      }>,
+      }>
     ) => {
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
@@ -40,18 +40,18 @@ const authSlice = createSlice({
     },
     refreshTokens: (
       state,
-      action: PayloadAction<{ accessToken: string; refreshToken: string }>,
+      action: PayloadAction<{ accessToken: string; refreshToken: string }>
     ) => {
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
     },
-    logout: (state) => {
+    logout: state => {
       state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
       state.isInitialized = true;
     },
-    setInitialized: (state) => {
+    setInitialized: state => {
       state.isInitialized = true;
     },
   },

@@ -1,92 +1,44 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { z } from 'zod';
-import { useCreateOrderMutation } from 'entities/order/api';
-import { useFormValidation } from 'shared/lib/validation';
-import type { CreateOrderItemCommand } from 'entities/order';
-
-const itemSchema = z.object({
-  productId: z.string().min(1, 'Product ID is required'),
-  quantity: z.number().min(1, 'Quantity must be at least 1'),
-  unitPrice: z.string().min(1, 'Unit price is required'),
-});
-
-const createOrderSchema = z.object({
-  items: z.array(itemSchema).min(1, 'At least one item is required'),
-});
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useCreateOrder } from 'features/orders/useCreateOrder';
 
 function getFieldError(
   errors: Record<string, string>,
   touched: Record<string, boolean>,
-  path: string,
+  path: string
 ): string | undefined {
   if (!touched[path]) return undefined;
   return errors[path];
 }
 
 export const CreateOrderPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [items, setItems] = useState<CreateOrderItemCommand[]>([
-    { productId: '', quantity: 1, unitPrice: '' },
-  ]);
-  const [apiError, setApiError] = useState('');
-  const [createOrder, { isLoading }] = useCreateOrderMutation();
-
-  const { touched, errors, isValid, touchField, touchAll } = useFormValidation(
-    createOrderSchema,
-    { items },
-  );
-
-  const addItem = useCallback(() => {
-    setItems((prev) => [...prev, { productId: '', quantity: 1, unitPrice: '' }]);
-  }, []);
-
-  const removeItem = useCallback((index: number) => {
-    setItems((prev) => prev.filter((_, i) => i !== index));
-  }, []);
-
-  const updateItem = useCallback(
-    (index: number, field: keyof CreateOrderItemCommand, value: string | number) => {
-      setItems((prev) => {
-        const next = [...prev];
-        next[index] = { ...next[index], [field]: value };
-        return next;
-      });
-    },
-    [],
-  );
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      touchAll();
-      if (!isValid) return;
-      setApiError('');
-      try {
-        const result = await createOrder({
-          items: items.map((i) => ({
-            productId: crypto.randomUUID(),
-            quantity: Number(i.quantity),
-            unitPrice: i.unitPrice.trim(),
-          })),
-        }).unwrap();
-        navigate(`/orders/${result.orderId}`);
-      } catch {
-        setApiError('Failed to create order. Please try again.');
-      }
-    },
-    [items, isValid, touchAll, createOrder, navigate],
-  );
+  const {
+    items,
+    touched,
+    errors,
+    isValid,
+    isLoading,
+    apiError,
+    addItem,
+    removeItem,
+    updateItem,
+    handleSubmit,
+    touchField,
+  } = useCreateOrder();
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">New Order</h1>
-        <Link to="/orders" className="btn-secondary">Cancel</Link>
+        <Link to="/orders" className="btn-secondary">
+          Cancel
+        </Link>
       </div>
 
       {apiError && (
-        <div role="alert" className="p-4 rounded-lg bg-red-50 text-red-700 text-sm">{apiError}</div>
+        <div role="alert" className="p-4 rounded-lg bg-red-50 text-red-700 text-sm">
+          {apiError}
+        </div>
       )}
 
       <form onSubmit={handleSubmit} className="card p-6 space-y-6" noValidate>
@@ -113,11 +65,15 @@ export const CreateOrderPage: React.FC = () => {
                     aria-invalid={!!pidErr}
                     className={`input ${pidErr ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                     value={item.productId}
-                    onChange={(e) => updateItem(idx, 'productId', e.target.value)}
+                    onChange={e => updateItem(idx, 'productId', e.target.value)}
                     onBlur={() => touchField(pidPath)}
                     placeholder="prod-001"
                   />
-                  {pidErr && <p role="alert" className="text-red-600 text-xs mt-1">{pidErr}</p>}
+                  {pidErr && (
+                    <p role="alert" className="text-red-600 text-xs mt-1">
+                      {pidErr}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Qty</label>
@@ -127,10 +83,14 @@ export const CreateOrderPage: React.FC = () => {
                     aria-invalid={!!qtyErr}
                     className={`input ${qtyErr ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                     value={item.quantity}
-                    onChange={(e) => updateItem(idx, 'quantity', Number(e.target.value))}
+                    onChange={e => updateItem(idx, 'quantity', Number(e.target.value))}
                     onBlur={() => touchField(qtyPath)}
                   />
-                  {qtyErr && <p role="alert" className="text-red-600 text-xs mt-1">{qtyErr}</p>}
+                  {qtyErr && (
+                    <p role="alert" className="text-red-600 text-xs mt-1">
+                      {qtyErr}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-1">Unit Price</label>
@@ -141,11 +101,15 @@ export const CreateOrderPage: React.FC = () => {
                     aria-invalid={!!priceErr}
                     className={`input ${priceErr ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                     value={item.unitPrice}
-                    onChange={(e) => updateItem(idx, 'unitPrice', e.target.value)}
+                    onChange={e => updateItem(idx, 'unitPrice', e.target.value)}
                     onBlur={() => touchField(pricePath)}
                     placeholder="0.00"
                   />
-                  {priceErr && <p role="alert" className="text-red-600 text-xs mt-1">{priceErr}</p>}
+                  {priceErr && (
+                    <p role="alert" className="text-red-600 text-xs mt-1">
+                      {priceErr}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <button
@@ -162,7 +126,9 @@ export const CreateOrderPage: React.FC = () => {
           })}
         </div>
 
-        <button type="button" onClick={addItem} className="btn-secondary w-full sm:w-auto">+ Add Item</button>
+        <button type="button" onClick={addItem} className="btn-secondary w-full sm:w-auto">
+          + Add Item
+        </button>
 
         <div className="border-t border-gray-200 pt-4">
           <button

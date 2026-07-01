@@ -1,11 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout, setCredentials } from './authSlice';
-import {
-  useLoginMutation,
-  useRegisterMutation,
-  useGetMeQuery,
-} from './authApi';
+import { useLoginMutation, useRegisterMutation, useGetMeQuery } from './authApi';
 import { useSelector } from 'react-redux';
 import type { RootState } from 'app/store';
 import { tokenProvider } from 'shared/api/tokenProvider';
@@ -35,11 +31,11 @@ export function useAuth() {
             roles: result.roles,
             enabled: true,
           },
-        }),
+        })
       );
       return result;
     },
-    [loginMutation, dispatch],
+    [loginMutation, dispatch]
   );
 
   const handleRegister = useCallback(
@@ -56,11 +52,11 @@ export function useAuth() {
             roles: result.roles,
             enabled: true,
           },
-        }),
+        })
       );
       return result;
     },
-    [registerMutation, dispatch],
+    [registerMutation, dispatch]
   );
 
   const handleLogout = useCallback(() => {

@@ -1,57 +1,19 @@
-import React, { useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { z } from 'zod';
-import { useAuth } from 'features/auth/useAuth';
-import { useFormValidation } from 'shared/lib/validation';
-
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useLogin } from 'features/auth/useLogin';
 
 export const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [values, setValues] = useState<LoginFormValues>({ email: '', password: '' });
-  const [apiError, setApiError] = useState('');
-  const { login, isLoading } = useAuth();
-
-  const { touched, errors, isValid, touchField, touchAll } = useFormValidation(
-    loginSchema,
+  const {
     values,
-  );
-
-  const handleChange = useCallback(
-    (field: keyof LoginFormValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValues((prev) => ({ ...prev, [field]: e.target.value }));
-      if (apiError) setApiError('');
-    },
-    [apiError],
-  );
-
-  const handleBlur = useCallback(
-    (field: keyof LoginFormValues) => () => {
-      touchField(field);
-    },
-    [touchField],
-  );
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      touchAll();
-      if (!isValid) return;
-      setApiError('');
-      try {
-        await login(values.email, values.password);
-        navigate('/orders');
-      } catch {
-        setApiError('Invalid email or password.');
-      }
-    },
-    [values, isValid, touchAll, login],
-  );
+    touched,
+    errors,
+    isValid,
+    isLoading,
+    apiError,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+  } = useLogin();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -124,13 +86,19 @@ export const LoginPage: React.FC = () => {
 
         <p className="mt-6 text-center text-sm text-gray-600">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-brand-600 hover:underline font-medium">Register</Link>
+          <Link to="/register" className="text-brand-600 hover:underline font-medium">
+            Register
+          </Link>
         </p>
 
         <div className="mt-6 p-3 rounded-lg bg-blue-50 text-blue-700 text-sm">
           <p className="font-semibold mb-1">Test credentials</p>
-          <p>Email: <code className="font-mono bg-blue-100 px-1 rounded">demo@example.com</code></p>
-          <p>Password: <code className="font-mono bg-blue-100 px-1 rounded">DemoPass1!</code></p>
+          <p>
+            Email: <code className="font-mono bg-blue-100 px-1 rounded">demo@example.com</code>
+          </p>
+          <p>
+            Password: <code className="font-mono bg-blue-100 px-1 rounded">DemoPass1!</code>
+          </p>
         </div>
       </div>
     </div>
