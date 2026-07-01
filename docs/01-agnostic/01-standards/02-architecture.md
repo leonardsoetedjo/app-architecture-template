@@ -425,21 +425,23 @@ The domain layer must have **zero dependency** on database-specific types or dri
 
 **Java (application.properties)**:
 ```properties
-# Database Selection - Change ONLY this for different databases
-spring.datasource.url=${DATABASE_URL:jdbc:h2:file:./data/order-service}
-spring.datasource.driverClassName=${DATABASE_DRIVER:org.h2.Driver}
-spring.datasource.username=${DATABASE_USER:sa}
-spring.datasource.password=${DATABASE_PASSWORD:}
+# Database Selection - PostgreSQL default (production parity per DDD-DATABASE-001)
+# Override DATABASE_URL environment variable for different environments
+spring.datasource.url=${DATABASE_URL:jdbc:postgresql://localhost:5432/order_db}
+spring.datasource.driverClassName=${DATABASE_DRIVER:org.postgresql.Driver}
+spring.datasource.username=${DATABASE_USER:postgres}
+spring.datasource.password=${DATABASE_PASSWORD:postgres}
+
+# H2 (LOCAL DEV ONLY - not recommended for production)
+# spring.datasource.url=jdbc:h2:file:./data/order-service
+# spring.datasource.driverClassName=org.h2.Driver
+# spring.datasource.username=sa
+# spring.datasource.password=
 
 # Hibernate Dialect - Auto-detected, or override if needed
-spring.jpa.properties.hibernate.dialect=${HIBERNATE_DIALECT:}
+spring.jpa.properties.hibernate.dialect=${HIBERNATE_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
 
 # For specific databases (uncomment):
-# PostgreSQL
-# spring.datasource.url=jdbc:postgresql://localhost:5432/order_db
-# spring.datasource.driverClassName=org.postgresql.Driver
-# spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-
 # MySQL
 # spring.datasource.url=jdbc:mysql://localhost:3306/order_db
 # spring.datasource.driverClassName=com.mysql.cj.jdbc.Driver
@@ -516,13 +518,19 @@ To swap databases:
 
 1. **Update dependencies in pom.xml** (Java) or `requirements.txt` (Python):
    ```xml
-   <!-- Remove H2, add new driver -->
-   <!-- <dependency><groupId>com.h2database</groupId>... -->
+   <!-- PostgreSQL driver (already included by default) -->
    <dependency>
        <groupId>org.postgresql</groupId>
        <artifactId>postgresql</artifactId>
        <scope>runtime</scope>
    </dependency>
+   
+   <!-- H2 (optional, local dev only - not recommended) -->
+   <!-- <dependency>
+       <groupId>com.h2database</groupId>
+       <artifactId>h2</artifactId>
+       <scope>runtime</scope>
+   </dependency> -->
    ```
 
 2. **Update configuration** (application.properties or .env):
@@ -537,7 +545,7 @@ To swap databases:
 
 ### 7.6 Testing Strategy
 
-- **Unit Tests**: Use in-memory database (H2, SQLite) - same code, no mocks needed
+- **Unit Tests**: Testcontainers with PostgreSQL (per DDD-DATABASE-001 — no H2/SQLite)
 - **Integration Tests**: Testcontainers with PostgreSQL for production parity
 - **Database-specific Tests**: Run same test suite against each target database
 
