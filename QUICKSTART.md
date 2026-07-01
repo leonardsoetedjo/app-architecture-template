@@ -163,3 +163,4 @@ poetry run pytest tests/archunit/ -v
  boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/services/OrderEvent.java boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/services/OrderStateMachine.java boilerplate/java/order-service/src/main/java/com/example/orderservice/infrastructure/config/OrderStateMachineConfig.java boilerplate/nestjs/order-service/test/jest-e2e.json
  boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/services/OrderEvent.java
  boilerplate/java/order-service/src/main/java/com/example/orderservice/domain/services/OrderEvent.java boilerplate/java/order-service/src/main/resources/application.yml
+ docs/01-agnostic/01-standards/02-architecture.md

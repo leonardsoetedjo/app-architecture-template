@@ -524,7 +524,7 @@ To swap databases:
        <artifactId>postgresql</artifactId>
        <scope>runtime</scope>
    </dependency>
-   
+
    <!-- H2 (optional, local dev only - not recommended) -->
    <!-- <dependency>
        <groupId>com.h2database</groupId>
