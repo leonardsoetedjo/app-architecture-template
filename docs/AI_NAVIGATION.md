@@ -55,7 +55,7 @@ status: "Active"
 | Stack | AGENTS.md | Key SOPs | Pre-Commit |
 |-------|-----------|----------|------------|
 | Java / Spring Boot | `boilerplate/java/AGENTS.md` | 01, 02, 04 | `mvn test -Dtest=CleanArchitectureRulesTest` |
-| Python / FastAPI | `boilerplate/python/AGENTS.md` | 01, 02, 16 | `pytest tests/archunit/ -v` |
+|| Python / FastAPI | `boilerplate/python/AGENTS.md` | 01, 02, 16 | `pytest tests/archunit/ -v` (custom AST harness) |
 | NestJS / TypeORM | `boilerplate/nestjs/AGENTS.md` | 01, 02, 16 | `npx depcruise --validate .dependency-cruiser.cjs src/` |
 | React / TypeScript | `boilerplate/reactjs/AGENTS.md` | 03 | `npm run depcruise` |
 | Quasar / Vue 3 | `boilerplate/quasar/AGENTS.md` | 03 | `npm run depcruise` |
