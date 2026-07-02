@@ -55,7 +55,7 @@ export const OrdersPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
           <p className="text-sm text-gray-500">Manage and track your orders</p>
         </div>
-        <Link to="/orders/new" className="btn-primary">
+        <Link to="/orders/new" className="btn-primary" data-testid="orders-new-button">
           + New Order
         </Link>
       </div>
@@ -67,6 +67,7 @@ export const OrdersPage: React.FC = () => {
           </label>
           <select
             id="status-filter"
+            data-testid="orders-status-filter"
             value={filter.status || ''}
             onChange={e => handleFilterStatus((e.target.value as OrderStateLiteral) || null)}
             className="input w-auto min-w-[160px]"
@@ -86,8 +87,8 @@ export const OrdersPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="card overflow-hidden">
-        <table className="w-full text-left text-sm">
+      <div className="card overflow-hidden" data-testid="orders-table-container">
+        <table className="w-full text-left text-sm" data-testid="orders-table">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-6 py-3 font-semibold text-gray-700">Order ID</th>

@@ -2,32 +2,37 @@ import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 /**
- * Page object for the orders page.
- * Encapsulates order-related selectors and actions.
+ * Page object for the ReactJS orders page.
+ * Uses data-testid attributes for stable selectors.
  */
 export class OrdersPage extends BasePage {
-  readonly createOrderButton: Locator;
+  readonly newOrderButton: Locator;
   readonly ordersTable: Locator;
   readonly statusFilter: Locator;
+  readonly pageTitle: Locator;
 
   constructor(page: Page) {
     super(page, `${process.env.FRONTEND_URL || 'http://localhost:5173'}/orders`);
-    this.createOrderButton = page.getByRole('button', { name: 'Create Order' });
-    this.ordersTable = page.getByRole('table');
-    this.statusFilter = page.getByLabel('Filter by status');
+    this.newOrderButton = page.locator('[data-testid="orders-new-button"]');
+    this.ordersTable = page.locator('[data-testid="orders-table"]');
+    this.statusFilter = page.locator('[data-testid="orders-status-filter"]');
+    this.pageTitle = page.locator('h1:text("Orders")');
   }
 
-  async createOrder(customerId: string, productId: string, quantity: number, unitPrice: number) {
-    await this.createOrderButton.click();
-    await this.page.getByLabel('Customer ID').fill(customerId);
-    await this.page.getByLabel('Product ID').fill(productId);
-    await this.page.getByLabel('Quantity').fill(quantity.toString());
-    await this.page.getByLabel('Unit Price').fill(unitPrice.toString());
-    await this.page.getByRole('button', { name: 'Add Item' }).click();
-    await this.page.getByRole('button', { name: 'Submit Order' }).click();
+  async waitForOrdersToLoad() {
+    await this.ordersTable.waitFor({ state: 'visible' });
   }
 
   async filterByStatus(status: string) {
     await this.statusFilter.selectOption(status);
+  }
+
+  async clickNewOrder() {
+    await this.newOrderButton.click();
+  }
+
+  async getOrdersCount(): Promise<number> {
+    const rows = this.ordersTable.locator('tbody tr');
+    return await rows.count();
   }
 }
