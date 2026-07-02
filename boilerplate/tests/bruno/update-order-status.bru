@@ -1,0 +1,28 @@
+meta {
+  name: Update Order Status
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/orders/{{orderId}}/status
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "status": "CONFIRMED"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.orderId: eq {{orderId}}
+  res.body.status: eq CONFIRMED
+}

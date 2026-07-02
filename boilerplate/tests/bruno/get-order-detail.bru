@@ -1,0 +1,24 @@
+meta {
+  name: Get Order Detail
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/orders/{{orderId}}
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.orderId: isDefined
+  res.body.id: eq {{orderId}}
+  res.body.status: isDefined
+  res.body.items: isArray
+}

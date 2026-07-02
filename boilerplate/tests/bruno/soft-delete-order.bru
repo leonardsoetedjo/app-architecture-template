@@ -1,0 +1,20 @@
+meta {
+  name: Soft Delete Order
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/orders/{{orderId}}
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{accessToken}}
+}
+
+assert {
+  res.status: eq 204
+}
