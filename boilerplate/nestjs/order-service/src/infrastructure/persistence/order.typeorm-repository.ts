@@ -1,7 +1,7 @@
 // infrastructure/persistence/order.typeorm-repository.ts
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, IsNull } from "typeorm";
 
 import { OrderId } from "@domain/models/order-id.value-object";
 import { Order } from "@domain/models/order.aggregate";
@@ -24,7 +24,7 @@ export class OrderTypeOrmRepository implements OrderRepositoryPort {
 
   async findById(id: OrderId): Promise<Order | null> {
     const entity = await this.repository.findOne({
-      where: { id: id.value },
+      where: { id: id.value, deletedAt: IsNull() },
       relations: ["items"],
     });
     return entity ? OrderMapper.toDomain(entity) : null;
@@ -40,6 +40,7 @@ export class OrderTypeOrmRepository implements OrderRepositoryPort {
       skip,
       take,
       relations: ["items"],
+      where: { deletedAt: IsNull() },
     };
 
     if (sort) {
@@ -51,6 +52,6 @@ export class OrderTypeOrmRepository implements OrderRepositoryPort {
   }
 
   async countAll(): Promise<number> {
-    return this.repository.count();
+    return this.repository.count({ where: { deletedAt: IsNull() } });
   }
 }

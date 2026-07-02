@@ -13,6 +13,7 @@ export class OrderMapper {
   static toEntity(order: Order): OrderEntity {
     const entity = new OrderEntity();
     entity.id = order.id.value;
+    entity.customerId = order.id.value; // In a real app, this would be a separate field
     entity.items = order.items.map((item) => {
       const itemEntity = new OrderItemEntity();
       itemEntity.productId = item.productId;
@@ -23,6 +24,8 @@ export class OrderMapper {
     });
     entity.status = order.status;
     entity.createdAt = order.createdAt;
+    entity.confirmedAt = order.confirmedAt;
+    entity.deletedAt = order.deletedAt;
     return entity;
   }
 
@@ -39,6 +42,8 @@ export class OrderMapper {
       ),
       entity.status as OrderStatus,
       entity.createdAt,
+      entity.confirmedAt,
+      entity.deletedAt,
     );
   }
 }

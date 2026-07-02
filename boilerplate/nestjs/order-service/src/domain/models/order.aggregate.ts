@@ -29,12 +29,16 @@ export class Order {
   readonly items: OrderItem[];
   readonly status: OrderStatus;
   readonly createdAt: Date;
+  readonly confirmedAt: Date | null;
+  readonly deletedAt: Date | null;
 
   constructor(
     id: OrderId,
     items: OrderItem[],
     status: OrderStatus = OrderStatus.PENDING,
     createdAt: Date = new Date(),
+    confirmedAt: Date | null = null,
+    deletedAt: Date | null = null,
   ) {
     if (!items || items.length === 0) {
       throw new DomainException("Order must have at least one item");
@@ -43,6 +47,8 @@ export class Order {
     this.items = [...items];
     this.status = status;
     this.createdAt = createdAt;
+    this.confirmedAt = confirmedAt;
+    this.deletedAt = deletedAt;
   }
 
   confirm(): Order {
@@ -52,6 +58,8 @@ export class Order {
       this.items,
       OrderStatus.CONFIRMED,
       this.createdAt,
+      this.confirmedAt,
+      this.deletedAt,
     );
   }
 
@@ -62,6 +70,22 @@ export class Order {
       this.items,
       OrderStatus.CANCELLED,
       this.createdAt,
+      this.confirmedAt,
+      this.deletedAt,
+    );
+  }
+
+  softDelete(): Order {
+    if (this.deletedAt !== null) {
+      throw new DomainException(`Order ${this.id.value} is already deleted`);
+    }
+    return new Order(
+      this.id,
+      this.items,
+      this.status,
+      this.createdAt,
+      this.confirmedAt,
+      new Date(),
     );
   }
 

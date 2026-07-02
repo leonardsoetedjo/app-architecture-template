@@ -21,13 +21,7 @@ export class SoftDeleteOrderUseCaseImpl implements ISoftDeleteOrderUseCase {
       throw new DomainException(`Order not found: ${id.value}`);
     }
 
-    // The current Order aggregate doesn't have a softDelete method yet.
-    // In a real scenario, we would add it to the domain aggregate.
-    // For now, we simulate it by saving the order with a deleted flag (if it existed)
-    // or throwing an error since it's not yet in the domain model.
-
-    throw new DomainException(
-      "Soft delete is not yet implemented in the Order aggregate",
-    );
+    const deletedOrder = order.softDelete();
+    await this.orderRepository.save(deletedOrder);
   }
 }
