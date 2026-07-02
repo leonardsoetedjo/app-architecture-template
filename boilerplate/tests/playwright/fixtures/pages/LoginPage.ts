@@ -26,6 +26,6 @@ export class LoginPage extends BasePage {
   }
 
   async loginAsAdmin() {
-    await this.login('admin', 'admin123');
+    await this.login('demo@example.com', 'DemoPass1!');
   }
 }
