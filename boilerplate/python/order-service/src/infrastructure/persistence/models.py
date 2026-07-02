@@ -1,6 +1,5 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, Text, Numeric, Integer
+from sqlalchemy import Column, String, DateTime, ForeignKey, Text, Numeric, Integer, Uuid
 from sqlalchemy.orm import relationship, declarative_base
-from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from uuid import uuid4
 from datetime import datetime
 
@@ -15,8 +14,8 @@ class OrderEntity(Base):
     """SQLAlchemy entity for Order table."""
     __tablename__ = "orders"
 
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    customer_id = Column(String(36), nullable=False)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=lambda: str(uuid4()))
+    customer_id = Column(Uuid(as_uuid=True), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     status = Column(String(20), nullable=False, default="PENDING")
     confirmed_at = Column(DateTime, nullable=True)
@@ -34,9 +33,9 @@ class OrderItemEntity(Base):
     """SQLAlchemy entity for OrderItem table."""
     __tablename__ = "order_items"
 
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=lambda: str(uuid4()))
     order_id = Column(
-        String(36),
+        Uuid(as_uuid=True),
         ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False,
     )
@@ -51,7 +50,7 @@ class OutboxEventEntity(Base):
     """SQLAlchemy entity for Outbox pattern."""
     __tablename__ = "outbox_events"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
     event_type = Column(String(100), nullable=False)
     aggregate_id = Column(String(100), nullable=False)
     payload = Column(Text, nullable=False)
@@ -64,7 +63,7 @@ class MfaConfigEntity(Base):
     """SQLAlchemy entity for MFA configuration table."""
     __tablename__ = "mfa_configs"
 
-    user_id = Column(PGUUID(as_uuid=True), primary_key=True)
+    user_id = Column(Uuid(as_uuid=True), primary_key=True)
     enabled = Column(Integer, nullable=False, default=0)  # SQLite boolean as int
     totp_secret = Column(String(255), nullable=True)
     totp_verified = Column(Integer, nullable=True, default=0)  # 0=False, 1=True
@@ -90,9 +89,9 @@ class BackupCodeEntity(Base):
     """SQLAlchemy entity for backup codes."""
     __tablename__ = "backup_codes"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
     user_id = Column(
-        PGUUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("mfa_configs.user_id", ondelete="CASCADE"),
         nullable=False,
     )
@@ -108,9 +107,9 @@ class WebAuthnCredentialEntity(Base):
     """SQLAlchemy entity for WebAuthn credentials."""
     __tablename__ = "webauthn_credentials"
 
-    id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid4)
     user_id = Column(
-        PGUUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("mfa_configs.user_id", ondelete="CASCADE"),
         nullable=False,
     )
