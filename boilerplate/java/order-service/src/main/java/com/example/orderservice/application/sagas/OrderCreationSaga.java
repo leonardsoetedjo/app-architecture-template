@@ -2,7 +2,7 @@ package com.example.orderservice.application.sagas;
 
 import com.example.orderservice.domain.models.Order;
 import com.example.orderservice.domain.models.OrderId;
-import com.example.orderservice.domain.services.OrderStateMachine;
+import com.example.orderservice.infrastructure.services.OrderStateMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

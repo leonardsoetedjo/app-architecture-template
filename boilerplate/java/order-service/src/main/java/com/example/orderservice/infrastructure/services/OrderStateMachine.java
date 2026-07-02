@@ -1,7 +1,8 @@
-package com.example.orderservice.domain.services;
+package com.example.orderservice.infrastructure.services;
 
 import com.example.orderservice.domain.models.Order;
 import com.example.orderservice.domain.models.OrderState;
+import com.example.orderservice.domain.services.OrderEvent;
 import org.springframework.statemachine.StateMachine;
 
 /**
@@ -9,6 +10,8 @@ import org.springframework.statemachine.StateMachine;
  *
  * Provides a simplified interface for OrderCreationSaga to trigger
  * state transitions without direct Spring Statemachine dependency.
+ *
+ * Located in infrastructure to keep domain layer free of Spring dependencies.
  */
 public class OrderStateMachine {
 

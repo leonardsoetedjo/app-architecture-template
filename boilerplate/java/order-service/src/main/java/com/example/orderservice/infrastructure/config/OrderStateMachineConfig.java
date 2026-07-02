@@ -2,7 +2,7 @@ package com.example.orderservice.infrastructure.config;
 
 import com.example.orderservice.domain.models.OrderState;
 import com.example.orderservice.domain.services.OrderEvent;
-import com.example.orderservice.domain.services.OrderStateMachine;
+import com.example.orderservice.infrastructure.services.OrderStateMachine;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.StateMachine;
